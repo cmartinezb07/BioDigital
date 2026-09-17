@@ -1,0 +1,25 @@
+# Datos reales de prospectos y clientes (RNF-01): nunca al repositorio
+data/
+*.db
+*.sqlite
+*.csv
+*.xlsx
+
+# Diagnósticos, actas y fotos generados con datos reales
+output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Secretos
+.env
+.streamlit/secrets.toml
+
+# Sistema / OneDrive
+desktop.ini
+Thumbs.db
+.DS_Store

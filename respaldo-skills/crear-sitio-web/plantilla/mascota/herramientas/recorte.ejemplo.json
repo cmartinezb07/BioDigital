@@ -1,0 +1,19 @@
+{
+  "hoja": "hoja-reacciones.png",
+  "salida": "../../mascotas",
+  "formato": "webp",
+  "alto_max": 600,
+  "filas": [38, 228, 396, 562, 725, 871, 1024],
+  "personajes": {
+    "gato": [0, 172, 335],
+    "panda": { "desde": 648, "hasta": 955, "columnas": 2 }
+  },
+  "reacciones": [
+    ["feliz", "negacion"],
+    ["triste", "enojado"],
+    ["sorprendido", "soberbio"],
+    ["pensativo", "afirmando"],
+    ["miedo", "guino"],
+    ["cansado", "muyfeliz"]
+  ]
+}

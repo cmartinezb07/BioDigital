@@ -1,0 +1,88 @@
+/* Núcleo compartido de las opciones 2 a 5: base, aparición, preguntas, menú, tema en burbuja y movimiento reducido.
+   Cada opción define su propio mundo (colores, letras, componentes) dentro de su página. mundo.js maneja el comportamiento. */
+
+@view-transition { navigation: auto; }
+.theme-bubble::view-transition-old(root),
+.theme-bubble::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+:root {
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+  --press: 160ms;
+  --maxw: 1200px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; min-height: 100vh; }
+img, svg, canvas { display: block; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; }
+button, input, select { font: inherit; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { width: min(100% - 32px, var(--maxw)); margin-inline: auto; }
+.skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 10px 14px; }
+.skip:focus { left: 16px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Aparición al entrar en pantalla: visible por defecto; mundo.js agrega .motion y .in.
+   Cada mundo puede cambiar el movimiento con --reveal (nombre de keyframes). */
+.motion .reveal:not(.in) { opacity: 0; }
+.motion .reveal.in { animation: var(--reveal, rise) .7s var(--ease-out) backwards; animation-delay: calc(min(var(--ri, 0), 6) * 60ms); }
+@keyframes rise { from { opacity: 0; translate: 0 18px; } }
+@media print { .motion .reveal:not(.in) { opacity: 1; } }
+
+/* Elementos de una lista que aparecen escalonados dentro de un bloque ya visible */
+[data-seq] > :nth-child(2) { --k: 1; }
+[data-seq] > :nth-child(3) { --k: 2; }
+[data-seq] > :nth-child(4) { --k: 3; }
+[data-seq] > :nth-child(5) { --k: 4; }
+[data-seq] > :nth-child(6) { --k: 5; }
+[data-seq] > :nth-child(7) { --k: 6; }
+[data-seq] > :nth-child(8) { --k: 7; }
+[data-seq] > :nth-child(n + 9) { --k: 8; }
+.motion .in[data-seq] > *,
+.motion .in [data-seq] > * { animation: seq-in .6s var(--ease-out) backwards; animation-delay: calc(.12s + var(--k, 0) * 60ms); }
+@keyframes seq-in { from { opacity: 0; translate: 0 12px; } }
+/* Las marcas se dibujan: el trazo del símbolo hereda el guion desde el <svg class="check"> */
+.motion .in [data-seq] > li > svg.check { stroke-dasharray: 20; animation: tick .5s var(--ease-out) backwards; animation-delay: calc(.35s + var(--k, 0) * 60ms); }
+@keyframes tick { from { stroke-dashoffset: 20; } }
+
+/* Preguntas frecuentes: la altura se anima en mundo.js */
+.faq summary { list-style: none; cursor: pointer; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .faq-i { flex: none; transition: transform .3s var(--ease-out); }
+.faq details[open]:not(.closing) summary .faq-i { transform: rotate(45deg); }
+
+/* Formulario de maqueta: estado de envío */
+.btn.busy { pointer-events: none; }
+.btn.busy .btn-ico { display: none; }
+.btn.busy::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; animation: spin .7s linear infinite; }
+@keyframes spin { to { rotate: 1turn; } }
+
+/* Menú de celular, volver arriba y barra fija de celular */
+.nav .menu-btn { display: none; }
+.to-top { position: fixed; right: 16px; bottom: 24px; z-index: 40; opacity: 0; translate: 0 8px; pointer-events: none; transition: opacity .2s ease, translate .3s var(--ease-out); }
+.to-top.show { opacity: 1; translate: none; pointer-events: auto; }
+.dock { display: none; }
+@media (max-width: 860px) {
+  .nav .menu-btn { display: grid; }
+  .nav .nav-links { display: none; }
+  .nav .nav-links.open { display: flex; transition: opacity .2s ease, translate .25s var(--ease-out); }
+  @starting-style { .nav .nav-links.open { opacity: 0; translate: 0 -6px; } }
+  .dock { position: fixed; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 45; display: flex; gap: 8px; }
+  .dock > * { flex: 1; }
+  .to-top { bottom: 88px; }
+}
+
+/* Movimiento reducido: sin desplazamientos; se mantienen color, opacidad y el indicador de carga */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-property: opacity, color, background-color, border-color, outline-color !important;
+  }
+  .btn.busy::before { animation-duration: .9s !important; animation-iteration-count: infinite !important; }
+}

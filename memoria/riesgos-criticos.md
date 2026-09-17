@@ -24,6 +24,12 @@ La verificación de una ficha nueva (postal, teléfono o video) puede tomar día
 
 A diferencia de sitio web/dominio/ficha/catálogo (entrega única), los agentes de WhatsApp y voz corren sobre APIs que cobran por uso de forma indefinida. Si se venden, hay que decidir quién paga esa cuenta después de la transferencia: el cliente con su propia cuenta, o el equipo con un cobro mensual de mantención. Detalle en [servicios-vendibles.md](servicios-vendibles.md).
 
+## 5b. IMPORTANTE — Dominio y marca (detectado 16-sep-2026)
+
+- `biodigital.cl` está registrado por un tercero hasta sept-2027 (consulta WHOIS en NIC Chile). Libres ese día: `bio-digital.cl`, `somosbiodigital.cl`, `biodigitalsur.cl`, `biodigital-concepcion.cl`.
+- "BioDigital" también es una plataforma estadounidense de anatomía 3D (biodigital.com, dato por verificar): la búsqueda de marca en Google estará disputada. Revisar INAPI antes de invertir en la marca.
+- El plan Hobby de Vercel no permite uso comercial; para el sitio se recomienda Cloudflare o Netlify.
+
 ## 6. Recordatorio propio del ramo (no genérico)
 
 Dirección y Control de Proyectos suele interrogar a cada integrante por separado y calificar según el dominio individual demostrado. Cada uno de los 5 debería poder explicar sin apoyo el modelo de scoring, el presupuesto y el cronograma — no solo la parte que ejecutó.

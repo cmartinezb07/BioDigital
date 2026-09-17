@@ -1,0 +1,117 @@
+/* Mascota reactiva: personaje fijo en la esquina que reacciona a lo que hace la persona.
+   Cada estética la integra cambiando estas variables en su propia hoja:
+   --m-ink (texto y bordes)       --m-paper (fondo del globo)     --m-font (letra del globo)
+   --m-radio (esquinas del globo) --m-borde (borde del globo)     --m-sombra (sombra del globo)
+   --m-contorno (contorno del personaje)   --m-filtro (tinte del personaje)   --m-piso (sombra en el suelo)
+   --m-control (fondo de los botoncitos)  --m-blur (desenfoque del globo, para estéticas de vidrio) */
+.mascota {
+  --m-ink: var(--fg, #111);
+  --m-paper: var(--bg, #fff);
+  --m-font: var(--mono, ui-monospace, monospace);
+  --m-radio: 0px;
+  --m-borde: 1.5px solid var(--m-ink);
+  --m-sombra: 3px 3px 0 var(--m-ink);
+  --m-contorno: transparent;
+  --m-filtro: opacity(1);
+  --m-piso: color-mix(in srgb, var(--m-ink) 30%, transparent);
+  --m-control: var(--m-paper);
+  --m-blur: none;
+  --m-alto: 124px;
+  position: fixed;
+  left: 18px;
+  bottom: 14px;
+  z-index: 44;
+  width: calc(var(--m-alto) * .75);
+  height: var(--m-alto);
+  pointer-events: none;
+  animation: m-llega .7s var(--ease-out, cubic-bezier(.23, 1, .32, 1)) .4s backwards;
+}
+@keyframes m-llega { from { opacity: 0; translate: 0 40px; } }
+.mascota.oculta { display: none; }
+
+/* Personaje: flota suave; cada reacción agrega un gesto corto */
+.m-cuerpo { position: absolute; inset: 0; animation: m-flota 3.4s ease-in-out infinite alternate; }
+@keyframes m-flota { to { translate: 0 -4px; } }
+.m-boton { position: absolute; inset: 0; padding: 0; border: 0; background: none; cursor: pointer; pointer-events: auto; transform-origin: 50% 100%; transition: transform var(--press, 160ms) var(--ease-out, ease-out); -webkit-tap-highlight-color: transparent; }
+.m-boton:active { transform: scale(.94); }
+.m-boton:focus-visible { outline: 2px solid var(--m-ink); outline-offset: 4px; }
+/* Giro: al cambiar --dir entre 1 y -1 el personaje "se da vuelta" pasando por el perfil */
+.m-giro { position: absolute; inset: 0; transform: scaleX(var(--dir, 1)); transition: transform .34s cubic-bezier(.45, 0, .2, 1); }
+.m-boton img {
+  position: absolute; left: 50%; bottom: 0; height: 100%; width: auto; max-width: none;
+  translate: -50% 0; transform-origin: 50% 100%; user-select: none; -webkit-user-drag: none;
+  filter: var(--m-filtro)
+    drop-shadow(1.5px 0 0 var(--m-contorno)) drop-shadow(-1.5px 0 0 var(--m-contorno))
+    drop-shadow(0 1.5px 0 var(--m-contorno)) drop-shadow(0 -1.5px 0 var(--m-contorno))
+    drop-shadow(0 6px 10px rgba(0, 0, 0, .2));
+}
+.m-sombra { position: absolute; left: 16%; right: 16%; bottom: -4px; height: 9px; border-radius: 50%; background: radial-gradient(closest-side, var(--m-piso), transparent); }
+
+.m-boton img.pop { animation: m-pop .32s var(--ease-out, ease-out); }
+@keyframes m-pop { 0% { scale: .9 1.06; } 55% { scale: 1.05 .96; } 100% { scale: 1; } }
+.mascota.sacude .m-boton img { animation: m-sacude .45s ease-in-out; }
+@keyframes m-sacude { 20% { translate: calc(-50% - 7px) 0; } 40% { translate: calc(-50% + 6px) 0; } 60% { translate: calc(-50% - 4px) 0; } 80% { translate: calc(-50% + 2px) 0; } }
+.mascota.salta .m-boton img { animation: m-salta .55s var(--ease-out, ease-out); }
+@keyframes m-salta { 0% { scale: 1.05 .92; } 35% { translate: -50% -18px; scale: .96 1.05; } 70% { translate: -50% 0; scale: 1.04 .96; } 100% { scale: 1; } }
+.mascota.tiembla .m-boton img { animation: m-tiembla .12s linear 4; }
+@keyframes m-tiembla { 50% { translate: calc(-50% + 1.5px) 1px; } }
+.mascota.asiente .m-boton img { animation: m-asiente .42s ease-in-out; }
+@keyframes m-asiente { 30% { scale: 1.02 .97; translate: -50% 2px; } 65% { scale: .99 1.02; translate: -50% -2px; } }
+
+/* Globo de diálogo */
+.m-globo {
+  position: absolute;
+  left: calc(100% - 6px);
+  bottom: 70%;
+  width: max-content;
+  max-width: 230px;
+  margin: 0;
+  padding: 8px 12px;
+  border: var(--m-borde);
+  border-radius: var(--m-radio);
+  background: var(--m-paper);
+  color: var(--m-ink);
+  font: 500 13px/1.4 var(--m-font);
+  box-shadow: var(--m-sombra);
+  -webkit-backdrop-filter: var(--m-blur);
+  backdrop-filter: var(--m-blur);
+  opacity: 0;
+  scale: .85;
+  translate: -6px 6px;
+  transform-origin: 0 100%;
+  transition: opacity .18s ease, scale .25s var(--ease-out, ease-out), translate .25s var(--ease-out, ease-out);
+}
+.m-globo::before { content: ""; position: absolute; left: -7px; bottom: 12px; width: 11px; height: 11px; background: var(--m-paper); border-left: var(--m-borde); border-bottom: var(--m-borde); border-bottom-left-radius: min(var(--m-radio), 3px); rotate: 45deg; }
+.mascota.habla .m-globo { opacity: 1; scale: 1; translate: 0 0; }
+
+/* Controles pequeños: cambiar de personaje y esconder */
+.m-controles { position: absolute; left: 0; right: 0; top: -30px; display: flex; justify-content: center; gap: 6px; opacity: 0; transition: opacity .2s ease; }
+.mascota:hover .m-controles, .mascota:focus-within .m-controles { opacity: 1; }
+.m-controles button { width: 26px; height: 26px; display: grid; place-items: center; padding: 0; border: var(--m-borde); border-width: 1px; border-radius: min(var(--m-radio), 13px); background: var(--m-control); color: var(--m-ink); font: 600 13px/1 var(--m-font); cursor: pointer; pointer-events: auto; transition: transform var(--press, 160ms) var(--ease-out, ease-out); }
+.m-controles button:active { transform: scale(.92); }
+.m-volver { position: fixed; left: 14px; bottom: 14px; z-index: 44; display: none; padding: 7px 12px; border: 1px solid currentColor; border-radius: 99px; background: var(--bg, #fff); color: var(--fg, var(--ink, #111)); font-size: 12px; line-height: 1; cursor: pointer; }
+.m-volver.ver { display: block; }
+
+/* Pantallas táctiles: los controles aparecen al tocar el personaje */
+@media (hover: none) {
+  .m-controles, .m-controles button { pointer-events: none; }
+  .mascota.controles .m-controles { opacity: 1; }
+  .mascota.controles .m-controles button { pointer-events: auto; }
+}
+/* Celular: el personaje vive dentro de la barra fija, a la izquierda de los botones */
+@media (max-width: 860px) {
+  .mascota { --m-alto: 86px; left: 6px; bottom: calc(4px + env(safe-area-inset-bottom)); z-index: 46; }
+  body:has(.mascota:not(.oculta)) .dock { padding-left: 64px; }
+  .m-globo { left: 4px; bottom: calc(100% + 8px); max-width: min(270px, calc(100vw - 32px)); font-size: 12px; }
+  .m-globo::before { left: 18px; bottom: -6px; rotate: -45deg; }
+  .mascota.controles .m-globo { bottom: calc(100% + 40px); }
+  .m-controles { top: -32px; justify-content: flex-start; }
+  .m-volver { bottom: calc(76px + env(safe-area-inset-bottom)); }
+}
+@media (min-width: 1500px) { .mascota { --m-alto: 150px; } }
+@media (prefers-reduced-motion: reduce) {
+  .mascota, .m-cuerpo, .m-boton img { animation: none !important; }
+  .m-giro { transition: none; }
+  .m-globo { transition: opacity .2s ease; scale: 1; translate: 0 0; }
+}
+@media print { .mascota, .m-volver { display: none; } }

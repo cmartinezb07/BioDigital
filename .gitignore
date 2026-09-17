@@ -15,6 +15,11 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# Impeccable: binario descargable (15 MB) y capturas de revisión
+.claude/skills/impeccable/scripts/bin/
+.impeccable/review/
+.impeccable/config.local.json
+
 # Secretos
 .env
 .streamlit/secrets.toml

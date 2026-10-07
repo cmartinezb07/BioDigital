@@ -2,6 +2,9 @@
 
 Leer esto primero al empezar una sesión nueva.
 
+**Repositorio:** https://github.com/cmartinezb07/BioDigital (privado, el equipo trabaja ahí desde el 2026-10-06).
+Quien llegue nuevo parte por [EMPEZAR-AQUI.md](../EMPEZAR-AQUI.md).
+
 ## Sitio web (web/propuesta/)
 - **Estética elegida: opción 8** (`opcion-8-final.html`), mezcla de la 6 (panel SaaS) y la 7 (foco fintech). Detalle en `decisiones.md`.
 - Las opciones 1–7 quedan como historial. Galería en `index.html`.

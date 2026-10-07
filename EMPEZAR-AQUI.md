@@ -8,12 +8,38 @@ puede leer la carpeta o no.
 
 ---
 
-## Antes de compartir la carpeta
+## Cómo obtener el proyecto
 
-Mándala completa **menos** `.claude/skills/` y `.claude/agents/` (son 17 MB de herramientas instaladas, no son del
-proyecto). Deja `.claude/launch.json`, que sirve para levantar el sitio.
+El proyecto vive en **https://github.com/cmartinezb07/BioDigital** (privado: Christhoper invita a cada integrante).
 
-Así pesa unos 8 MB. No contiene datos de clientes ni contraseñas: se revisó el 2026-10-06.
+Hace falta tener Git instalado (git-scm.com). Después, en la carpeta donde quieras guardarlo:
+
+```
+git clone https://github.com/cmartinezb07/BioDigital.git
+cd BioDigital
+```
+
+La primera vez pedirá iniciar sesión en GitHub.
+
+### Trabajar sin pisarse entre compañeros
+
+```
+git pull                       # 1. antes de empezar, siempre: trae lo que hicieron los demás
+                               # 2. trabajas normal
+git add -A                     # 3. marcas todo lo que cambiaste
+git commit -m "qué hiciste"    # 4. lo guardas con un mensaje claro
+git push                       # 5. lo subes para los demás
+```
+
+Tres reglas para que esto no duela:
+1. **`git pull` antes de empezar y `git push` al terminar.** Si pasan días sin subir, los cambios chocan.
+2. **Avisen por el grupo qué archivo va a tocar cada uno.** Dos personas editando el mismo archivo el mismo día es
+   la única forma real de tener conflictos.
+3. **Si Git reclama un conflicto, no borres nada:** avisa antes de resolverlo a mano.
+
+### Lo que no está en el repositorio
+Las herramientas instaladas en el computador de cada uno (`.claude/skills/`). No hacen falta para trabajar el
+proyecto. El procedimiento propio para hacer sitios sí está versionado, en `respaldo-skills/`.
 
 ---
 

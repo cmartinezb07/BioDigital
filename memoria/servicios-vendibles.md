@@ -1,5 +1,9 @@
 # Servicios vendibles — qué son, cómo se implementan, dificultad
 
+> **Nota (2026-10-06):** el catálogo vigente son los 6 servicios de [servicios/](../servicios/); el resto quedó en
+> [servicios-futuros/](../servicios-futuros/). Esta tabla se mantiene porque la evaluación técnica (dificultad y
+> estructura de costo) sigue valiendo. Ver `decisiones.md`.
+
 | Servicio | Qué es | Cómo lo implementamos | Dificultad | Estructura de costo |
 |---|---|---|---|---|
 | Sitio web (landing / multi-página) | Página informativa con contacto, servicios/productos, ubicación | Constructor no-code (WordPress+Elementor, Wix, Framer o Carrd) + hosting + dominio | Baja-Media. Landing en horas; sitio de 3-5 secciones, 1-3 días | Único |

@@ -1,0 +1,41 @@
+/* Rueda de paleta (herramienta del equipo; no va en el sitio publicado) */
+.pal-dot { width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from 0deg, var(--c1), var(--c2), var(--c1)); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line); }
+.pal {
+  position: fixed; z-index: 90; top: 84px; right: max(16px, calc(50% - 640px + 16px)); width: 316px;
+  display: grid; gap: 14px; padding: 18px; border: 1px solid var(--line); border-radius: 18px;
+  background: var(--bg-2); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .7), inset 0 1px 0 var(--line-2);
+  opacity: 0; scale: .96; translate: 0 -6px; transform-origin: 90% 0; visibility: hidden; pointer-events: none;
+  transition: opacity .2s ease, scale .25s var(--ease-out), translate .25s var(--ease-out), visibility 0s .25s;
+}
+.pal.open { opacity: 1; scale: 1; translate: 0 0; visibility: visible; pointer-events: auto; transition: opacity .2s ease, scale .25s var(--ease-out), translate .25s var(--ease-out); }
+.pal.calm { scale: 1; translate: 0 0; }
+.pal-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pal-head b { font-size: 15px; white-space: nowrap; }
+.pal-head span { white-space: nowrap; font-size: 12px; font-family: var(--mono); letter-spacing: .04em; color: var(--fg-3); padding: 2px 8px; border: 1px dashed var(--line); border-radius: 99px; }
+.pal-presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.pal-presets button { display: flex; align-items: center; gap: 4px; min-height: 40px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg-2); font-size: 12px; text-align: left; cursor: pointer; transition: border-color .2s ease, transform var(--press) var(--ease-out); }
+.pal-presets button:active { transform: scale(.97); }
+.pal-presets i { flex: none; width: 14px; height: 14px; border-radius: 50%; }
+.pal-presets i + i { margin-left: -7px; box-shadow: 0 0 0 2px var(--bg); }
+.pal-presets span { margin-left: 4px; line-height: 1.2; }
+@media (hover: hover) and (pointer: fine) { .pal-presets button:hover { border-color: var(--fg-3); color: var(--fg); } }
+.pal-wheel { position: relative; width: 180px; aspect-ratio: 1; margin-inline: auto; border-radius: 50%; touch-action: none; cursor: crosshair;
+  background: conic-gradient(from 0deg, hsl(0 85% 60%), hsl(45 85% 60%), hsl(90 85% 55%), hsl(150 80% 50%), hsl(200 85% 58%), hsl(250 85% 66%), hsl(300 80% 62%), hsl(340 85% 60%), hsl(360 85% 60%)); }
+.pal-hole { position: absolute; inset: 28px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--c1), transparent 60%), radial-gradient(circle at 65% 65%, var(--c2), transparent 60%), var(--bg-2); box-shadow: inset 0 0 0 1px var(--line); pointer-events: none; }
+.pal-h { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .45); cursor: grab; transition: scale .2s var(--ease-out); }
+.pal-h.act { scale: 1.2; }
+.pal-h:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+.pal-row { display: grid; grid-template-columns: 1fr 96px 40px; gap: 8px; align-items: center; padding: 4px; border-radius: 12px; transition: background-color .2s ease; }
+.pal-row.act { background: var(--bg-3); }
+.pal-pick { justify-self: start; padding: 6px 8px; border: 0; background: transparent; color: var(--fg); font-size: 13px; font-weight: 600; cursor: pointer; }
+.pal-hex { width: 100%; min-height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); font-family: var(--mono); font-size: 13px; }
+.pal-hex:focus { outline: none; border-color: var(--warm); }
+.pal-native { width: 40px; height: 36px; padding: 2px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); cursor: pointer; }
+.pal-note { font-size: 12px; color: var(--fg-3); }
+.pal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.pal-actions .btn { min-height: 36px; }
+.pal-status { font-size: 12px; color: var(--fg-2); overflow-wrap: anywhere; }
+.pal-status:empty { display: none; }
+@media (max-width: 860px) {
+  .pal { top: auto; bottom: calc(76px + env(safe-area-inset-bottom)); left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 120px); overflow: auto; transform-origin: 50% 100%; translate: 0 8px; }
+}

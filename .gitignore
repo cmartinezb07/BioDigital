@@ -15,8 +15,11 @@ __pycache__/
 venv/
 .pytest_cache/
 
-# Impeccable: binario descargable (15 MB) y capturas de revisión
-.claude/skills/impeccable/scripts/bin/
+# Skills instaladas de terceros: no son del proyecto, cada uno las instala en su computador
+# (la skill propia del proyecto sí se versiona, en respaldo-skills/)
+.claude/skills/
+
+# Impeccable: capturas de revisión
 .impeccable/review/
 .impeccable/config.local.json
 

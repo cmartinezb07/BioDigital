@@ -4,7 +4,11 @@
     {
       "name": "maquetas",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "4321", "--bind", "127.0.0.1", "--directory", "web/propuesta"],
+      "runtimeArgs": [
+        "web/servir.py",
+        "4321",
+        "web/propuesta"
+      ],
       "port": 4321
     }
   ]

@@ -1,4 +1,4 @@
-// Genera las opciones 3 a 7 a partir del contenido común.
+// Genera las opciones 3 a 8 a partir del contenido común.
 // Uso (desde web/propuesta):  node fuentes/generar.mjs        → todas
 //                             node fuentes/generar.mjs 3 5    → solo esas
 import { writeFileSync } from 'node:fs';
@@ -8,7 +8,7 @@ import { pagina } from './comun.mjs';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const pedidas = process.argv.slice(2);
-const todas = ['3', '4', '5', '6', '7'];
+const todas = ['3', '4', '5', '6', '7', '8'];
 
 for (const n of pedidas.length ? pedidas : todas) {
   let o;

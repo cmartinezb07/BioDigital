@@ -16,6 +16,8 @@ export default {
 /* Mascota: tarjeta del panel con filo naranjo arriba */
 .mascota { --m-paper: var(--bg-3); --m-font: var(--body); --m-radio: 12px; --m-borde: 1px solid var(--line); --m-sombra: 0 -1px 0 color-mix(in srgb, var(--warm) 60%, transparent), 0 18px 40px -20px rgba(0, 0, 0, .7); --m-contorno: color-mix(in srgb, var(--warm) 45%, transparent); --m-piso: color-mix(in srgb, var(--warm) 50%, transparent); --m-control: var(--bg-3); }
 :root[data-theme="light"] .mascota { --m-sombra: 0 -1px 0 color-mix(in srgb, var(--warm) 60%, transparent), 0 16px 34px -20px rgba(0, 0, 0, .3); }
+/* Gato: ropa con los colores de esta estética (panel: naranjo y azul) */
+.gato { --g-c1: var(--warm); --g-c2: #7890ff; }
 `,
   css: String.raw`
 :root {

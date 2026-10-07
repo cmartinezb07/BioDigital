@@ -1,0 +1,83 @@
+/* Gato de Bío Digital (gato.js). La ropa sale de los dos colores de la página:
+   chaqueta = --c1 (principal), mochila, tirantes y cordones = --c2 (luz), pantalón = --c2 apagado.
+   Si la página cambia la paleta o el tema, el gato se viste solo con los colores nuevos. */
+.gato {
+  --g-tinta: #17151b;
+  --g-piel: #fbf8f3;
+  --g-blanco: #fff;
+  --g-c1: var(--c1, #f08a4b);
+  --g-c2: var(--c2, #a47cff);
+  --g-chaqueta: var(--g-c1);
+  --g-chaqueta-2: color-mix(in oklab, var(--g-c1), #000 30%);
+  --g-polera: #232029;
+  --g-pantalon: color-mix(in oklab, var(--g-c2) 42%, #2c2833);
+  --g-pantalon-2: color-mix(in oklab, var(--g-c2) 30%, #221f28);
+  --g-bolso: var(--g-c2);
+  --g-bolso-2: color-mix(in oklab, var(--g-c2), #000 32%);
+  --g-zapato: #f6f3ee;
+  --g-rubor: #ff8c9c;
+  --g-lengua: #ff7b8e;
+  --g-punta: var(--g-tinta);
+  --g-fx: var(--fg, #17151b);
+  --g-borde: 4px;
+  --g-fina: 2.8px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.gato * { vector-effect: none; }
+.gato .g-borde { stroke: var(--g-tinta); stroke-width: var(--g-borde); stroke-linejoin: round; stroke-linecap: round; }
+.gato .g-fina { stroke-width: var(--g-fina); }
+.gato .g-linea { fill: none; stroke: var(--g-tinta); stroke-width: 3.6px; stroke-linecap: round; stroke-linejoin: round; }
+.gato .g-linea.g-fina { stroke-width: var(--g-fina); }
+.gato .g-tinta { fill: var(--g-tinta); }
+.gato .g-piel { fill: var(--g-piel); }
+.gato .g-blanco { fill: var(--g-blanco); }
+.gato .g-chaqueta { fill: var(--g-chaqueta); }
+.gato .g-chaqueta-2 { fill: var(--g-chaqueta-2); }
+.gato .g-polera { fill: var(--g-polera); }
+.gato .g-pantalon { fill: var(--g-pantalon); }
+.gato .g-pantalon-2 { fill: var(--g-pantalon-2); }
+.gato .g-bolso { fill: var(--g-bolso); }
+.gato .g-bolso-2 { fill: var(--g-bolso-2); }
+.gato .g-zapato { fill: var(--g-zapato); }
+.gato .g-lengua { fill: var(--g-lengua); }
+.gato .g-rubor { fill: var(--g-rubor); }
+.gato .g-pliegue { stroke: color-mix(in oklab, var(--g-c1), #000 45%); }
+.gato .g-logo { fill: none; stroke: var(--g-c1); stroke-width: 3.2px; stroke-linecap: round; }
+.gato .g-hebilla { fill: none; stroke: #cfc9c2; stroke-width: 2.2px; }
+.gato .g-cordon { fill: none; stroke: var(--g-c2); stroke-width: 2.6px; stroke-linecap: round; }
+.gato .g-brillo { fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 2.4px; stroke-linecap: round; }
+.gato .g-gota { fill: #9fd8ff; }
+.gato .g-vena { fill: none; stroke: #ff5b5b; stroke-width: 3.2px; stroke-linecap: round; }
+.gato .g-nota { fill: var(--g-c2); stroke: var(--g-c2); stroke-width: 2.6px; stroke-linecap: round; stroke-linejoin: round; }
+.gato .g-nube { fill: var(--g-piel); }
+.gato .g-piso { fill: color-mix(in srgb, var(--g-tinta) 55%, transparent); }
+/* Tubos (brazos, tirantes, cola): un trazo negro grueso y encima uno de color más fino */
+.gato .g-tubo { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.gato .g-tubo-borde { stroke: var(--g-tinta); stroke-width: 24px; }
+.gato .g-manga { stroke: var(--g-chaqueta); stroke-width: 16.4px; }
+.gato .g-puno { stroke: var(--g-chaqueta-2); stroke-width: 16.4px; stroke-linecap: butt; }
+.gato .g-tirante-b { stroke: var(--g-tinta); stroke-width: 11px; }
+.gato .g-tirante { stroke: var(--g-bolso); stroke-width: 5.6px; }
+.gato .g-cola-b { stroke-width: 15px; }
+.gato .g-cola-p { stroke: var(--g-piel); stroke-width: 8px; }
+.gato .g-cola-t { stroke: var(--g-punta); stroke-width: 15px; stroke-dasharray: 0 75 25; }
+.gato .g-fx-linea { fill: none; stroke: var(--g-fx); stroke-width: 3.2px; stroke-linecap: round; stroke-linejoin: round; }
+.gato .g-fx-1 { fill: var(--g-c1); }
+.gato .g-fx-2 { stroke: var(--g-c2); }
+.gato circle.g-fx-2 { fill: var(--g-c2); stroke: none; }
+/* Tema oscuro: la punta de la cola en gris muy oscuro para que no desaparezca contra el fondo */
+:root:not([data-theme="light"]) .gato { --g-punta: #45404d; }
+/* Vista de perfil: lo que queda lejos (oreja, brazo y pierna de atrás) va un poco más oscuro para dar profundidad */
+.gato .g-piel-2 { fill: #e7e1d9; }
+.gato .g-lejos .g-manga { stroke: var(--g-chaqueta-2); }
+.gato .g-lejos .g-piel { fill: #e4ded6; }
+.gato .g-lejos .g-pantalon { fill: var(--g-pantalon-2); }
+.gato .g-lejos .g-zapato { fill: #dcd6ce; }
+.gato .g-conf-1 { fill: var(--g-c1); }
+.gato .g-conf-2 { fill: var(--g-c2); }
+.gato .g-conf-3 { fill: #ffd66b; }
+/* Estrellas del mareo: con borde fino para que se vean en fondo claro y oscuro */
+.gato .g-estrella { stroke: var(--g-tinta); stroke-width: 1.6px; stroke-linejoin: round; }

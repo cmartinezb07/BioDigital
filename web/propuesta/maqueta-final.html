@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400..800&display=swap">
 <link rel="stylesheet" href="mundo.css">
 <link rel="stylesheet" href="mascota.css">
+<link rel="stylesheet" href="gato.css">
 <style>
   /* Variables que solo usa el propio elemento: no se heredan, así mover el mouse no recalcula todo el contenido */
   @property --p { syntax: "<number>"; inherits: false; initial-value: 0; }
@@ -335,6 +336,8 @@
 
   /* Mascota: globo de vidrio con contorno celeste, como los paneles */
   .mascota { --m-ink: var(--ink); --m-paper: var(--sheet); --m-font: var(--font); --m-radio: 18px; --m-borde: 1px solid var(--line); --m-sombra: var(--glass-shadow), var(--glass-inner); --m-blur: blur(20px) saturate(1.6); --m-contorno: rgba(125, 211, 252, .6); --m-piso: rgba(45, 212, 191, .4); --m-control: var(--sheet); --ease-out: var(--ease); }
+  /* Gato: ropa con los colores de esta estética (vidrio: celeste y turquesa) */
+  .gato { --g-c1: #38bdf8; --g-c2: #2dd4bf; }
   .m-globo { font-weight: 600; }
   .m-volver { background: var(--sheet); color: var(--ink); }
 </style>
@@ -743,7 +746,8 @@
   <a class="btn glass" href="mailto:biodigitalici@gmail.com">Escríbenos</a>
 </div>
 <script src="mundo.js"></script>
-<script src="mascota-personajes.js"></script>
+<script src="gato.js"></script>
+<script src="mascota-gato.js"></script>
 <script src="mascota.js"></script>
 <script>
   (function () {

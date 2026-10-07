@@ -17,6 +17,8 @@ export default {
   mascota: String.raw`
 /* Mascota: globo de terminal con sombra dura (valores por defecto de mascota.css) */
 .mascota { --m-font: var(--mono); }
+/* Gato: ropa con los colores de esta estética (ASCII: grises de terminal) */
+.gato { --g-c1: #a8a8a8; --g-c2: #5a5a5a; }
 `,
   css: String.raw`
 :root {

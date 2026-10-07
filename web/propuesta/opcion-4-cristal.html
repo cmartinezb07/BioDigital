@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="nucleo.css">
 <link rel="stylesheet" href="kit.css">
 <link rel="stylesheet" href="mascota.css">
+<link rel="stylesheet" href="gato.css">
 
 <style>
 :root {
@@ -119,6 +120,8 @@ html { background: var(--bg); }
 /* Mascota: globo facetado con filo crema, personaje con tinte cálido */
 .mascota { --m-paper: rgba(var(--ground), .94); --m-font: var(--body); --m-radio: 0px; --m-borde: 1px solid var(--accent); --m-sombra: 0 14px 30px -16px rgba(0, 0, 0, .6); --m-contorno: rgba(var(--ink), .6); --m-filtro: sepia(.2); --m-piso: rgba(var(--ink), .35); }
 .m-globo { clip-path: polygon(-14px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% + 14px), -14px calc(100% + 14px)); }
+/* Gato: ropa con los colores de esta estética (cristal: crema y arena) */
+.gato { --g-c1: #dcc19c; --g-c2: #8a7a68; }
 </style>
 </head>
 <body>
@@ -472,7 +475,8 @@ html { background: var(--bg); }
 </div>
 <script src="mundo.js"></script>
 <script src="secciones.js"></script>
-<script src="mascota-personajes.js"></script>
+<script src="gato.js"></script>
+<script src="mascota-gato.js"></script>
 <script src="mascota.js"></script>
 <script>
   (function () {

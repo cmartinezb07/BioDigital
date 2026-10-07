@@ -14,6 +14,8 @@ export default {
 /* Mascota: tarjeta flotante con brillo cobre */
 .mascota { --m-paper: var(--bg-3); --m-font: var(--body); --m-radio: 16px; --m-borde: 1px solid var(--line); --m-sombra: var(--shadow), inset 0 1px 0 var(--line-2); --m-contorno: color-mix(in srgb, var(--copper) 55%, transparent); --m-piso: color-mix(in srgb, var(--copper) 45%, transparent); --m-control: var(--bg-2); }
 .m-globo { background: radial-gradient(120% 100% at 0% 100%, color-mix(in srgb, var(--copper) 18%, transparent), transparent 65%), var(--m-paper); }
+/* Gato: ropa con los colores de esta estética (foco: cobre y violeta) */
+.gato { --g-c1: var(--copper); --g-c2: #be96ff; }
 `,
   css: String.raw`
 :root {

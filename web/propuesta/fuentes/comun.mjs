@@ -106,6 +106,7 @@ export function pagina(o) {
 <link rel="stylesheet" href="nucleo.css">
 <link rel="stylesheet" href="kit.css">
 <link rel="stylesheet" href="mascota.css">
+<link rel="stylesheet" href="gato.css">
 ${o.head || ''}
 <style>
 ${o.css.trim()}
@@ -165,7 +166,7 @@ ${o.hero.trim()}
     <div class="wrap">
       <div class="sec-head reveal">
         <h2 id="t-entregas" class="h2">Cada cosa que te entregamos</h2>
-        <p class="muted">Todos los planes incluyen la ficha de Google, las fotos y el catálogo; la web y el dominio vienen desde el plan Estándar.</p>
+        <p class="muted">${d.entregasNota ? d.entregasNota + ' ' : ''}Todos los planes incluyen la ficha de Google, las fotos y el catálogo; la web y el dominio vienen desde el plan Estándar.</p>
       </div>
       <div class="ledger reveal" data-seq>
         <div class="ledger-head" aria-hidden="true"><span>Nº</span><span>Servicio</span><span>Qué recibes</span><span>Viene en</span><span></span></div>
@@ -328,8 +329,7 @@ ${o.hero.trim()}
 </div>
 <script src="mundo.js"></script>
 <script src="secciones.js"></script>
-<script src="mascota-personajes.js"></script>
-<script src="mascota.js"></script>
+${(o.mascotaJs || ['gato.js', 'mascota-gato.js', 'mascota.js']).map((f) => `<script src="${f}"></script>`).join('\n')}
 ${o.script ? o.script.trim() : ''}
 </body>
 </html>

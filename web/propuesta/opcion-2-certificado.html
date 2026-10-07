@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&display=swap">
 <link rel="stylesheet" href="nucleo.css">
 <link rel="stylesheet" href="mascota.css">
+<link rel="stylesheet" href="gato.css">
 <style>
   @property --foil { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
   @property --sweep { syntax: "<angle>"; inherits: false; initial-value: 360deg; }
@@ -464,6 +465,8 @@
 
   /* Mascota: globo como papel de certificado con doble marco */
   .mascota { --m-ink: var(--ink); --m-paper: var(--paper-3); --m-font: var(--sans); --m-radio: 2px; --m-borde: 1px solid var(--ink); --m-sombra: 0 0 0 3px var(--paper-3), 0 0 0 4px var(--line), var(--shadow); --m-contorno: color-mix(in srgb, var(--green) 40%, transparent); --m-piso: var(--line); --m-control: var(--paper-3); }
+  /* Gato: ropa con los colores de esta estética (certificado: verde y violeta de la tinta) */
+  .gato { --g-c1: var(--green); --g-c2: var(--violet); }
   .m-globo { font-weight: 500; }
   .m-volver { background: var(--paper-3); color: var(--ink); }
 </style>
@@ -856,7 +859,8 @@
 </div>
 <script src="mundo.js"></script>
 <script src="secciones.js"></script>
-<script src="mascota-personajes.js"></script>
+<script src="gato.js"></script>
+<script src="mascota-gato.js"></script>
 <script src="mascota.js"></script>
 <script>
   (function () {

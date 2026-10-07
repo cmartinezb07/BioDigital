@@ -2,6 +2,223 @@
 
 Bitácora cronológica. Cada entrada: fecha, decisión, por qué, qué queda pendiente.
 
+## 2026-10-06 — Limpieza del repositorio
+
+**Borrado** (todo estaba versionado; se recupera con `git checkout d1e3823 -- <ruta>`):
+- `web/propuesta/mascotas/` completa, 5 MB: las imágenes recortadas de los 4 animales (panda, conejo, pingüino y el gato viejo) y el material de recorte de las hojas (`control.png`, `lamina.png`, `mira-0.png`, `mira-1.png`, `hoja-1.webp`, `hoja-2.webp`, `recortar.py`). Sin uso desde que el gato se dibuja en SVG. La versión mantenida de la herramienta de recorte vive en la skill (`respaldo-skills/crear-sitio-web/plantilla/mascota/herramientas/recortar-hoja.py`).
+- `web/propuesta/mascota-personajes.js`, 16 KB: el motor de los 4 animales, sin referencias en ninguna página.
+
+**Movido:** las hojas de referencia del gato (`gato-emociones.webp`, `gato-feliz.webp`) pasaron de `mascotas/fuente/` a `web/propuesta/referencias-gato/`. No estaban versionadas.
+
+**Resultado:** el proyecto pasó de 30 MB a 25 MB. Verificado después de borrar: las 8 páginas cargan sin errores de consola ni recursos fallidos, el gato funciona y los 8 enlaces de la galería responden 200.
+
+**Revisado y NO borrado, con su razón:**
+- **Las 8 maquetas** (`maqueta-final.html`, `opcion-2` a `opcion-8`): son 330 KB, el 1 % del proyecto, y `index.html` es una galería que las enlaza, no un archivo que las contenga. Borrarlas deja 8 enlaces rotos, en local y en el sitio publicado. Las opciones 3 a 8 se regeneran con `node fuentes/generar.mjs`, pero la 1 y la 2 están escritas a mano y no se pueden regenerar.
+- **`servicios/paginas-web/`**: no es una copia de `web/`. Una cosa es la ficha comercial del servicio que se le vende al cliente y otra es el sitio de la propia Bío Digital.
+- **`respaldo-skills/`**: es copia exacta de la skill instalada (verificado con `diff -r`), y ese es justamente su propósito: si se pierde el perfil del usuario, la skill se recupera desde el repositorio.
+- **`textos.md`**: no lo carga ningún archivo, pero es el documento de textos aprobados con el equipo.
+- **`mundo.css`**: solo lo usa `maqueta-final.html`, que es la opción 1.
+- **Binario de Impeccable** (`.claude/skills/impeccable/scripts/bin/`, 15 MB): es la mitad del espacio del proyecto, ya está excluido de git y se vuelve a descargar solo. Se mantiene porque Impeccable se usa en la fase 2 del sitio.
+
+## 2026-10-06 — Catálogo de servicios: se reduce a seis
+
+**Decisión del equipo.** El catálogo que se vende queda en estos seis servicios:
+
+1. Páginas web
+2. Videos para redes sociales
+3. Menús interactivos
+4. Registro fotográfico
+5. Reservas (sin definir cómo se entrega)
+6. Tarjetas de fidelización (las dos variantes: QR con sellos y tarjeta en Google y Apple Wallet)
+
+Todo lo demás queda en stand by como servicios futuros: ficha de Google Business, dominio y correo, bot de WhatsApp,
+agente de voz, chatbot de Instagram, automatización de reseñas, kit de marca, presencia en otros mapas, mantención
+mensual, reportes de métricas y licenciar Radar.
+
+**Estructura nueva:** cada servicio tiene su carpeta con una ficha (qué es, qué incluye, cómo se implementa,
+dificultad, costos, riesgos y qué falta) en [servicios/](../servicios/) y [servicios-futuros/](../servicios-futuros/).
+
+**Objeciones registradas (el equipo decidió igual, quedan anotadas):**
+- **La ficha de Google Business sale del catálogo**, y es el servicio de mayor impacto y menor costo para este cliente:
+  es gratis de implementar y es lo que resuelve el problema declarado en la conceptualización, que es aparecer cuando
+  alguien busca el rubro cerca. Además, el diagnóstico gratis y el puntaje de Radar están construidos sobre ella,
+  igual que el argumento central de las 8 maquetas.
+- **Sin dominio en el catálogo, un sitio de cliente queda en una dirección terminada en `.pages.dev`**, que los propios
+  requisitos definidos por el equipo descartan explícitamente.
+- **Tres de los seis servicios son nuevos y no se han hecho nunca** (video, reservas, fidelización), con 7 semanas para
+  cerrar y transferir 3 a 5 clientes.
+- **La variante de fidelización en Wallet tiene costo mensual** (del orden de 25 a 50 dólares, por verificar), lo que
+  choca con la promesa de entrega única y transferencia.
+
+**Pendientes que abre esta decisión:**
+- Precios por servicio: los paquetes del PRD (Base $150.000 / Estándar $250.000 / Premium $380.000) se armaron con el
+  catálogo anterior y hay que rehacerlos.
+- Qué mide el diagnóstico gratis y el puntaje de Radar ahora que la ficha de Google no se vende.
+- Cómo se publica el sitio de un cliente sin dominio propio.
+- Cómo actualiza el cliente su menú interactivo.
+- Cómo se entregan las reservas (sin definir).
+- Quién paga la plataforma de fidelización después de la transferencia.
+- Los textos de las 8 maquetas y el PRD todavía describen el catálogo anterior. No se tocan hasta que los precios estén firmes.
+
+## 2026-09-17 — Mascota del sitio final: solo el gato, redibujado en SVG y animado
+
+**Pedido del equipo:**
+- que el gato se mueva de forma fluida (la meta era unos 32 cuadros por segundo);
+- que no parezca un elemento externo a la página;
+- sacar los otros animales;
+- más frases con el mismo tono sarcástico;
+- que el aviso de "scroll rápido" salte solo con un scroll muy rápido.
+
+Las hojas de referencia (32 emociones y 32 cuadros de "feliz") quedaron en `web/propuesta/referencias-gato/` (movidas ahí el 2026-10-06).
+
+- **Por qué se redibujó y no se usaron las hojas cuadro a cuadro:**
+  - los 32 cuadros de "feliz" son poses sueltas generadas por IA, con el trazo distinto en cada una;
+  - puestas en secuencia "tiemblan" y no se ven fluidas;
+  - 32 imágenes por emoción pesarían varios MB.
+- **Qué se hizo:** el gato se dibujó en SVG por partes (`web/propuesta/gato.js`) respetando el diseño de las hojas: chaqueta con capucha, polera, mochila, cinturón, pantalón cargo, zapatillas y cola con punta oscura.
+  - Se anima con resortes a la tasa de la pantalla. Se midieron 61 cuadros por segundo; la cabeza se redibuja unas 53 veces por segundo.
+  - Tiene 27 poses. Entre ellas están las de las hojas y una nueva, **"indiferente"**, que se usa al escribir correo o teléfono: se da vuelta, cierra los ojos y silba.
+  - Tiene 9 gestos: saltar, celebrar con confeti, negar, asentir, temblar, saludar, bailar, reír y estirarse.
+  - Además parpadea, respira, mueve la cola y las orejas, mueve la boca al hablar y sigue el mouse con los ojos y la cabeza.
+  - Lámina de revisión para el equipo: `gato-lamina.html`.
+- **Integración con la página:** la ropa usa los colores de la paleta, así que cambia con la rueda de colores y con el tema.
+  - Chaqueta: `--c1`.
+  - Mochila, tirantes y cordones: `--c2`.
+  - Pantalón: `--c2` apagado.
+  - La polera lleva el símbolo de la marca.
+  - Sin contorno naranjo, a pedido del equipo.
+  - Al cambiar la paleta, el gato comenta su "ropa nueva".
+- **Motor (`mascota.js`):** un solo motor para todas las opciones. Si la configuración trae `rig: true`, usa el dibujo SVG en vez de las imágenes. Cambios:
+  - **Scroll rápido:** solo salta con más de 4 pantallas por segundo sostenidas durante medio segundo. No cuenta los saltos del menú ni las teclas Inicio, Fin y AvPág, y no se repite antes de 20 s.
+  - **Secciones:** las comenta solo si la persona se queda en la sección al menos 0,65 s.
+  - **Comentarios sueltos:** hasta 5 por visita, mientras la persona lee.
+- **Frases:** el archivo nuevo `mascota-gato.js` tiene solo el gato y 100 frases en 43 situaciones (antes eran 58), todas de menos de 60 caracteres y revisadas contra los textos de la página. Siguen siendo borradores para que el equipo las apruebe.
+- **Alcance:** solo la opción 8. Las opciones 3 a 7 quedaron idénticas, con los 4 animales en imágenes.
+- **Verificación** (Chrome sin ventana por CDP):
+  - **Scroll:** con 2,5 pantallas por segundo no se asusta, tampoco con un clic en el menú; con 8 pantallas por segundo sí.
+  - **Formulario:** al escribir el correo se pone "indiferente" y silba; con un dato inválido pone la mano en la cara.
+  - **Comportamiento:** con movimiento reducido no hay animación en reposo; escondido, no gasta cuadros.
+  - **Pantallas:** a 390 px no hay desborde ni tapa el botón del dock. Revisado en tema claro y oscuro y con otra paleta.
+
+**Pendiente:** que el equipo apruebe el dibujo y las frases, y probarlo en un celular real.
+
+### 2026-09-18 — Giro completo y el gato en todas las páginas
+
+- **Giro completo (pedido del equipo):** el gato ahora se da vuelta del todo hacia la derecha o la izquierda, no solo gira la cabeza.
+  - Se agregó un segundo dibujo de perfil. Tiene hocico, un solo ojo, la mochila en la espalda y las piernas una delante de la otra. La oreja, el brazo y la pierna de atrás van más oscuros para dar profundidad.
+  - **Transición:** la cara se desliza hacia el lado y el cuerpo se angosta. Al cruzar la mitad, parpadea y cambia al perfil, que en espejo sirve para mirar a la izquierda.
+  - **Medición:** 42 cuadros reales en 700 ms, grabados con `Page.startScreencast`; el cambio de dibujo ocurre a los ~150 ms.
+- **Cuándo gira del todo:**
+  - con correo o teléfono, se da vuelta hacia afuera y silba;
+  - con el mouse sobre el botón principal, lo mira de perfil y le guiña;
+  - a veces, al mirar alrededor cuando no pasa nada;
+  - en algunas reacciones al bajar o subir, en comentarios sueltos y al enviar.
+  - Las 27 poses tienen versión de perfil. Poses nuevas: `mira-d` y `mira-i`. Gesto nuevo: `vuelta`.
+- **El gato en todas las páginas:** las opciones 1 a 8 cargan `gato.js` + `mascota-gato.js`. Ya ninguna muestra el panda, el conejo ni el pingüino.
+  - Los archivos viejos (`mascota-personajes.js` y `mascotas/<animal>/`) quedan sin uso, por si se retoman.
+  - La ropa toma los colores de cada estética: 1 celeste y turquesa, 2 verde y violeta, 3 cromado, 4 crema, 5 grises, 6 naranjo y azul, 7 cobre y violeta, 8 la paleta de la rueda.
+- **Servidor local sin caché** (`web/servir.py`, usado por `.claude/launch.json`). Con `python -m http.server` el navegador mostraba copias viejas y por eso seguía apareciendo el gato anterior.
+
+### 2026-09-18 — Usos raros del mouse y del scroll, y ojos que siguen al mouse
+
+**Problema reportado por el equipo:**
+- con movimientos raros del mouse o del scroll (subir y bajar), el gato empezaba un movimiento, saltaba a otro y quedaba "entre medio";
+- al subir rápido desde el final de la página, hacía muchas posiciones seguidas.
+
+**Causa medida:** el scroll disparaba una reacción en **cada cuadro** (60 por segundo), y cada vez se elegía una pose al azar distinta de la anterior. Al subir, alternaba entre una pose de frente y otra de perfil cada ~100 ms, así que el giro nunca terminaba: en la prueba quedó hasta **683 ms a medio girar** y hubo 9 cambios de pose en 3 s.
+
+**Correcciones:**
+- **Giro (`gato.js`):** un giro empezado siempre termina. Si piden otra vista mientras gira, espera a que acabe y deja una pausa de 350 ms antes del siguiente.
+- **Gestos:** un gesto no se reinicia a medias. Además, dos gestos de cuerpo entero no se suman: el anterior se desvanece en 180 ms.
+- **Scroll (`mascota.js`):**
+  - hay una reacción por tramo de scroll, no una por cuadro;
+  - el sentido cambia solo después de recorrer el 60 % de una pantalla (1,2 pantallas si ya reaccionó en ese tramo), y reacciona como máximo una vez cada 2,5 s;
+  - con scroll rápido (más de 2,5 pantallas/s) no reacciona: solo queda el aviso de "muy rápido";
+  - la pose de la sección se aplica al parar el scroll;
+  - las poses de perfil se quitaron de las reacciones al bajar o subir.
+- **Poses de ambiente:** no cambian una cara que lleva menos de 0,8 s.
+- **Mouse sobre botones y tarjetas:** hay reacción solo si el mouse se detiene encima: 260 ms en el botón principal y 380 ms en tarjetas. No reacciona si el mouse va rápido, está agitado o fue la página la que se movió bajo el puntero.
+- **Comentarios:**
+  - un globo que se está leyendo no se tapa con otro de igual o menor importancia;
+  - pausa mínima de 4 s entre comentarios de interacción, 12 s en los de ambiente y 8 s en los de sección;
+  - máximo 5 comentarios por minuto;
+  - los importantes siempre hablan (errores, envío, toques y aviso de scroll);
+  - toques: la cara cambia como máximo una vez cada 0,9 s; con 4 seguidos se enoja e ignora los clics durante 3 s;
+  - "¿ya te vas?": como máximo cada 20 s, y no si el mouse venía agitado.
+- **Ojos que siguen al mouse (pedido del equipo):**
+  - Las pupilas apuntan hacia el puntero: miran del todo hacia allá si el puntero está a más de ~150 px, y menos si está cerca. La cabeza lo sigue un poco y el párpado sube al mirar hacia arriba; sin esto, la pupila quedaba escondida y el gato parecía dormido.
+  - Si el mouse va muy rápido, salta o se sacude, el suavizado se alarga hasta 0,45 s y los ojos siguen el promedio en vez de temblar.
+  - Cuando el mouse sale de la ventana, se pierde el foco o lleva 6 s quieto, vuelve a la mirada propia de la pose.
+  - **Poses que no lo siguen:**
+    - no lo siguen nunca: `indiferente`, `soberbio`, `negacion`, `facepalm` y `dormido`;
+    - lo siguen un poco: `pensativo` y las poses que miran a un lado a propósito.
+  - **Casos especiales:**
+    - En un campo del formulario mira fijo el campo.
+    - En el celular mira 1,5 s hacia donde se tocó.
+    - Con movimiento reducido no hay seguimiento.
+- **Mouse sacudido (comentario controlado):**
+  - Si se sacude con fuerza durante más de 1 s (7 o más cambios de sentido amplios en 1 s y más de 1.800 px/s), el gato se marea: pose `mareado` y gesto `mareo`, con estrellas alrededor de la cabeza y los ojos dando vueltas.
+  - Puede pasar como máximo 2 veces por visita, con 45 s entre mareos. Se configura en `mascota-gato.js` (`mareo`).
+- **Servidor:** `web/servir.py` ahora tiene una cola de 128 conexiones. Con la de 5, Windows rechazaba archivos cuando el navegador pedía muchos a la vez. También escucha en `::1` y no se cae si se cierra la consola que lo lanzó.
+
+**Verificación:** las pruebas se hicieron en Chrome sin ventana, con mouse y rueda reales (CDP `Input`).
+
+| Caso | Antes | Después |
+|---|---|---|
+| Subir rápido desde el final | 9 cambios de pose, 683 ms a medio girar | 1 cambio (el aviso), sin giros |
+| Rueda indecisa (subir y bajar) | — | 1 reacción |
+| Mouse subiendo y bajando sobre las tarjetas | — | 0 reacciones |
+| Sesión inquieta de 45 s | — | 27 cambios de pose, solo 1 cambio seguido en menos de 0,5 s (llegar arriba) y 7 globos, 4 de ellos por acciones de la persona |
+
+Sin errores en ninguno de estos casos: las 8 páginas, celular táctil de 390 px y movimiento reducido. La animación se mantiene a 60 cuadros por segundo.
+
+**Publicado (2026-09-18, autorizado por Christhoper):** se subió a https://biodigital-propuesta.pages.dev, con las opciones 1–8, el gato nuevo y la lámina en `/gato-lamina`. Se probó en la página publicada sin errores.
+
+### 2026-09-18 — Corrección: el gato hablaba muy poco y los globos quedaban pegados
+
+**Reclamo del equipo:** después del cambio anterior el gato comentaba mucho menos (antes era "muy dinámico" y gustaba así). Además, a veces un globo quedaba pegado aunque se siguiera bajando.
+
+**Causas (medidas con la misma lectura de 55 s en la versión anterior y en la nueva):**
+- **Pocos comentarios:** puse 8 s de pausa entre comentarios de sección y exigí que el scroll estuviera detenido. Al leer de corrido, solo se comentaban 3 de 10 secciones: 4 globos, contra 13 en la versión anterior.
+- **Globo pegado:** el globo duraba lo mismo que la reacción. Las reacciones largas (scroll, campo del formulario, "Enviando…" y dormido) mantienen la pose hasta 60 s, así que su globo también quedaba 60 s y tapaba los comentarios siguientes. En el campo y el envío ya pasaba antes.
+
+**Correcciones (`mascota.js`):**
+- **Duración del globo:** dura lo que se tarda en leerlo, de 2,2 a 4,2 s según el largo, aunque la pose siga.
+- **Secciones:**
+  - comenta cuando la sección lleva 0,65 s al centro, aunque se siga bajando despacio;
+  - si justo hay un globo recién aparecido, reintenta cada 0,5 s mientras siga en esa sección.
+- **Globo recién aparecido:**
+  - no lo tapa otro comentario igual o menos importante durante 2,2 s, ni uno más importante durante 1 s (antes había globos que duraban 0,1 s);
+  - las acciones de la persona (toques, errores, envío y aviso de scroll) siempre hablan.
+- **Ritmo:**
+  - los comentarios de ambiente esperan 6 s y el scroll habla en la mitad de los tramos;
+  - el hover espera 6 s;
+  - el tope es de 12 comentarios por minuto.
+- **Final y regreso al inicio:** esos comentarios no se pierden: reintentan hasta 3 s.
+- **Al parar el scroll** se suelta solo la reacción que puso el propio scroll: ya no corta el gesto de asentir sobre una tarjeta.
+
+**Resultado:** en la lectura de 55 s salen 11 comentarios (las 9 secciones más 2 de scroll), sin globos tapados ni pegados, con una duración de 2,2 a 3,8 s. En la opción 1 y la 6 salen 11 y 12. Las pruebas de movimientos raros siguen sin giros a medias.
+
+## 2026-09-17 — Estética elegida: opción 8 = mezcla de 6 y 7
+
+**Decisión del equipo:** una sola página con la estética de la 6 (Panel SaaS) y la 7 (Foco fintech). De las otras opciones solo se trae el contenido que no se repite, no su estética.
+
+- **Archivo:** `web/propuesta/opcion-8-final.html`, generado con `node fuentes/generar.mjs 8` desde `fuentes/opcion-8.mjs`. Primera en `index.html`.
+- **Portada:** titular y aviso de beneficio (6), foco de luz, campo en píldora que pasa el nombre al formulario y piso con grilla (7), panel del proyecto (6) con cuatro tarjetas flotantes a los lados (7).
+- **Contenido integrado de otras opciones:** vista de la ficha de Google ("Abierto · Cómo llegar · Llamar · Sitio web") y catálogo de ejemplo (1); certificado "Todo a tu nombre" con RUT, "propietario: tú", correo y firma del acta (2); la frase "lo que ves en el panel es lo que te llevas" en entregables (1). El resto de 1–5 era idéntico (informe, planes, 11 preguntas).
+- **Paleta:** todo sale de dos colores, `--c1` (principal, `#f08a4b`, entre el naranjo de la 6 y el cobre de la 7) y `--c2` (luz, `#a47cff`, el violeta de la 7). **Rueda de colores** (`paleta.js`/`paleta.css`) junto al botón de tema, **solo para el equipo**: paletas guardadas (6, 7, mezcla, ámbar), rueda arrastrable, código hex exacto y botón "Copiar enlace" (`?c1=…&c2=…`). **Se quita al publicar el sitio final**; queda fijo el color que elija el equipo.
+- **Animación nueva** (`movimiento.css`/`movimiento.js`): barra de lectura, cabecera que se asienta, títulos que se descubren, tarjetas que entran cuando se ven, panel que se endereza con el scroll, selección del panel que recorre las secciones, puntos y precios que cuentan, pasos que caen como avisos con una línea que los une, filo del plan recomendado, reflejo en el beneficio y en el botón principal, luz del cierre en movimiento. Los efectos en bucle se pausan fuera de pantalla.
+- **Arreglos de fluidez:** la grilla del piso ahora se mueve con `transform` (antes redibujaba la pantalla en cada cuadro), los focos de luz ya no usan `filter: blur`, y la portada usa `overflow: clip` (con `hidden` el panel nunca se enderezaba; la opción 6 tenía el mismo defecto).
+- **Mascota:** sin cambios, a pedido del equipo (la van a modificar).
+- **Verificación:** Chrome sin ventana en tiempo real por CDP (el panel del navegador integrado no dibuja cuadros con la pestaña en segundo plano). Sin errores de consola; sin desborde a 390, 768 y 1024 px; textos ≥ 12 px; contraste corregido. Impeccable: 22 avisos, todos de las referencias del equipo (resplandores, texto con degradado, grilla, Geist).
+
+**Pendiente:** que el equipo fije la paleta con la rueda; probar en celular real; luego `DESIGN.md` y construcción en Astro.
+
+## 2026-09-17 — Propuesta publicada en Cloudflare Pages y carpeta de enlaces
+
+- Las 7 maquetas quedaron públicas en https://biodigital-propuesta.pages.dev (proyecto `biodigital-propuesta`, cuenta `biodigitalici@gmail.com`, plan gratis, $0). Para actualizar: `npx wrangler pages deploy web/propuesta --project-name=biodigital-propuesta --branch=main` (sin `--branch=main` queda como vista previa y no en el dominio principal).
+- Nueva carpeta `enlaces/`: accesos directos por categoría y `LEEME.md` con todos los servicios, repos y referencias (usados, por usar y descartados, con el motivo).
+
 ## 2026-09-16 — No comprar la suscripción de Imperio Agéntico por ahora
 
 **Decisión:** el equipo usó la semana de prueba gratuita de Imperio Agéntico para evaluar herramientas concretas (agente de WhatsApp, agente de voz para llamadas) sin comprometer los 59 USD/mes (~$57.000 CLP). Cada integrante dedicó una semana a evaluar. Resultado: no se compra por ahora; se están evaluando otras opciones de menor costo.

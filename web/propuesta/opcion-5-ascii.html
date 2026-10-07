@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="nucleo.css">
 <link rel="stylesheet" href="kit.css">
 <link rel="stylesheet" href="mascota.css">
+<link rel="stylesheet" href="gato.css">
 
 <style>
 :root {
@@ -157,6 +158,8 @@ body { font-size: 15px; line-height: 1.7; background-image: radial-gradient(rgba
 }
 /* Mascota: globo de terminal con sombra dura (valores por defecto de mascota.css) */
 .mascota { --m-font: var(--mono); }
+/* Gato: ropa con los colores de esta estética (ASCII: grises de terminal) */
+.gato { --g-c1: #a8a8a8; --g-c2: #5a5a5a; }
 </style>
 </head>
 <body>
@@ -505,7 +508,8 @@ body { font-size: 15px; line-height: 1.7; background-image: radial-gradient(rgba
 </div>
 <script src="mundo.js"></script>
 <script src="secciones.js"></script>
-<script src="mascota-personajes.js"></script>
+<script src="gato.js"></script>
+<script src="mascota-gato.js"></script>
 <script src="mascota.js"></script>
 <script>
   (function () {

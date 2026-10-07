@@ -15,6 +15,8 @@ export default {
 /* Mascota: globo facetado con filo crema, personaje con tinte cálido */
 .mascota { --m-paper: rgba(var(--ground), .94); --m-font: var(--body); --m-radio: 0px; --m-borde: 1px solid var(--accent); --m-sombra: 0 14px 30px -16px rgba(0, 0, 0, .6); --m-contorno: rgba(var(--ink), .6); --m-filtro: sepia(.2); --m-piso: rgba(var(--ink), .35); }
 .m-globo { clip-path: polygon(-14px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% + 14px), -14px calc(100% + 14px)); }
+/* Gato: ropa con los colores de esta estética (cristal: crema y arena) */
+.gato { --g-c1: #dcc19c; --g-c2: #8a7a68; }
 `,
   css: String.raw`
 :root {

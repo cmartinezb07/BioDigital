@@ -18,6 +18,8 @@ export default {
 .mascota { --m-paper: color-mix(in srgb, var(--bg-3) 80%, transparent); --m-font: var(--body); --m-radio: 14px; --m-borde: 1px solid var(--line); --m-sombra: 0 18px 40px -18px rgba(0, 0, 0, .85), inset 0 1px 0 rgba(255, 255, 255, .08); --m-blur: blur(14px); --m-contorno: color-mix(in srgb, var(--chrome-2) 75%, transparent); --m-piso: rgba(255, 255, 255, .2); --m-control: var(--bg-3); }
 :root[data-theme="light"] .mascota { --m-sombra: 0 16px 34px -18px rgba(0, 0, 0, .35); --m-piso: rgba(0, 0, 0, .22); }
 .m-globo { font-weight: 600; }
+/* Gato: ropa con los colores de esta estética (metal: cromado) */
+.gato { --g-c1: #d9d9e0; --g-c2: #8a8a96; }
 `,
   css: String.raw`
 :root {

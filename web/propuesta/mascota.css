@@ -114,4 +114,11 @@
   .m-giro { transition: none; }
   .m-globo { transition: opacity .2s ease; scale: 1; translate: 0 0; }
 }
+/* Personaje dibujado en SVG (gato.js): se anima solo, así que no flota, no se voltea y trae su propia sombra */
+.mascota.rig { width: calc(var(--m-alto) * .8); }
+.mascota.rig .m-cuerpo { animation: none; }
+.mascota.rig .m-giro { transform: none; transition: none; }
+.mascota.rig .m-sombra { display: none; }
+.mascota.rig .m-boton:active { transform: scale(.97); }
+@media (max-width: 860px) { body:has(.mascota.rig:not(.oculta)) .dock { padding-left: 74px; } }
 @media print { .mascota, .m-volver { display: none; } }

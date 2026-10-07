@@ -1,17 +1,30 @@
-# Estado actual (punto de retorno) — 2026-09-17
+# Estado actual (punto de retorno) — 2026-09-18
 
 Leer esto primero al empezar una sesión nueva.
 
 ## Sitio web (web/propuesta/)
-- 7 maquetas listas y verificadas (sin errores de consola): 1 vidrio iOS (`maqueta-final.html`), 2 certificado (blanco puro / noche negra), 3 metal líquido, 4 cristal, 5 ASCII, 6 panel SaaS, 7 foco/fintech. Galería en `index.html`.
-- Servir: preview "maquetas" (`.claude/launch.json`, puerto 4321).
-- Páginas 3–7 se generan: `node web/propuesta/fuentes/generar.mjs [3 4 …]`. No editar los HTML generados; textos en `fuentes/comun.mjs`.
-- Mascota (sello de marca): gato (sarcástico), panda (tierno/triste), conejo (hiperactivo/enojón), pingüino (formal, "usted"). Motor genérico `mascota.js`; frases y personalidades en `mascota-personajes.js`; imágenes en `mascotas/<animal>/` (12 reacciones WebP). Hojas originales y recortador en `mascotas/fuente/`.
+- **Estética elegida: opción 8** (`opcion-8-final.html`), mezcla de la 6 (panel SaaS) y la 7 (foco fintech). Detalle en `decisiones.md`.
+- Las opciones 1–7 quedan como historial. Galería en `index.html`.
+- Servir: preview "maquetas" (`.claude/launch.json`, puerto 4321) con `web/servir.py`, sin caché.
+- Páginas 3–8 se generan: `node web/propuesta/fuentes/generar.mjs [3 4 … 8]`. No editar los HTML generados; textos comunes en `fuentes/comun.mjs`, estética en `fuentes/opcion-N.mjs`.
+- Paleta de la opción 8: dos colores (`--c1`, `--c2`) con rueda de colores para el equipo (`paleta.js`, se quita al publicar).
+- **Mascota (todas las páginas):** solo el gato, dibujado en SVG por partes (de frente y de perfil, con giro completo) y animado a la tasa de la pantalla (`gato.js`, `gato.css`). Frases en `mascota-gato.js`, motor en `mascota.js`. La ropa toma los colores de cada estética. Lámina de poses y gestos: `gato-lamina.html`.
+- **Mascota a prueba de usos raros (2026-09-18):**
+  - los ojos siguen al mouse;
+  - el giro nunca queda a medias;
+  - hay una reacción por tramo de scroll;
+  - el hover reacciona solo si el mouse se detiene;
+  - comenta cada sección como antes (unos 11 comentarios por recorrido); un globo dura lo que tarda en leerse y ya no queda pegado;
+  - con el mouse sacudido, el gato se marea (máximo 2 veces por visita).
+  - Detalle y mediciones en `decisiones.md`.
+- **Borrados el 2026-10-06** los 4 animales en imágenes y su motor (`mascota-personajes.js`, `mascotas/`): 5 MB sin uso desde que el gato se dibuja en SVG. Están en el historial de git (commit `d1e3823`); para recuperarlos: `git checkout d1e3823 -- web/propuesta/mascotas web/propuesta/mascota-personajes.js`.
+- Las hojas de referencia del gato siguen en `web/propuesta/referencias-gato/` (`gato-emociones.webp`, `gato-feliz.webp`), por si hay que redibujarlo.
+- Publicado en https://biodigital-propuesta.pages.dev (actualizado el 2026-09-18: las 8 opciones con el gato nuevo, y la lámina en `/gato-lamina`; **falta subir la corrección de los comentarios**). Para volver a subir: `npx wrangler pages deploy web/propuesta --project-name=biodigital-propuesta --branch=main --commit-dirty=true`.
 
 ## Pendiente
-- Que el equipo elija una estética (y apruebe las frases de la mascota).
+- Que el equipo fije la paleta con la rueda y apruebe el gato y sus frases.
 - Probar en celulares reales.
-- Tras la elección: `DESIGN.md` y sitio final en Astro (fase 2 de la skill).
+- Luego: `DESIGN.md` y sitio final en Astro (fase 2 de la skill).
 - Datos del negocio marcados "por confirmar" siguen sin completar.
 
 ## Skill crear-sitio-web

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gato: lámina de poses</title>
+<link rel="stylesheet" href="gato.css">
+<style>
+  :root { --c1: #f08a4b; --c2: #a47cff; --bg: #0a0a0b; --fg: #f5f3f1; --line: rgba(255, 255, 255, .1); color-scheme: dark; }
+  :root[data-theme="light"] { --bg: #f6f4f1; --fg: #19171c; --line: rgba(0, 0, 0, .1); color-scheme: light; }
+  body { margin: 0; padding: 24px; background: var(--bg); color: var(--fg); font: 13px/1.4 system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 18px; }
+  p { margin: 0 0 18px; opacity: .7; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  figure { margin: 0; padding: 10px 8px 8px; border: 1px solid var(--line); border-radius: 12px; text-align: center; cursor: pointer; }
+  figure div { height: 180px; }
+  figcaption { margin-top: 6px; font: 12px/1 ui-monospace, monospace; opacity: .8; }
+  .vivo { display: flex; gap: 16px; align-items: flex-end; margin: 0 0 20px; flex-wrap: wrap; }
+  .vivo > div:first-child { width: 190px; height: 238px; }
+  .vivo button { font: inherit; padding: 6px 10px; border-radius: 99px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; }
+  .botones { display: flex; flex-wrap: wrap; gap: 6px; max-width: 760px; }
+</style>
+</head>
+<body>
+<h1>Gato: lámina de poses</h1>
+<p>Toca una pose para verla en vivo. Los gestos se suman encima de la pose.</p>
+<div class="vivo"><div id="vivo"></div><div class="botones" id="gestos"></div></div>
+<div class="grid" id="grid"></div>
+<script src="gato.js"></script>
+<script>
+  var q = new URLSearchParams(location.search);
+  if (q.get('tema')) document.documentElement.dataset.theme = q.get('tema');
+  var vivo = MascotaRig.crear();
+  document.getElementById('vivo').appendChild(vivo.el);
+  addEventListener('pointermove', function (e) { vivo.seguir(e.clientX, e.clientY); });
+  ['salta', 'celebra', 'sacude', 'asiente', 'tiembla', 'saluda', 'baila', 'risa', 'estira', 'mareo', 'vuelta', 'hablar', 'perfil izquierda', 'de frente', 'perfil derecha'].forEach(function (g) {
+    var b = document.createElement('button'); b.textContent = g;
+    b.onclick = function () {
+      if (g === 'hablar') vivo.hablar(1800);
+      else if (g === 'perfil izquierda') vivo.mirar('i', true);
+      else if (g === 'perfil derecha') vivo.mirar('d', true);
+      else if (g === 'de frente') vivo.mirar('d', false);
+      else vivo.gesto(g);
+    };
+    document.getElementById('gestos').appendChild(b);
+  });
+  // ?grande=feliz,guino muestra solo esas poses en tamaño grande (para revisar detalles)
+  if (q.get('grande')) {
+    document.getElementById('grid').style.gridTemplateColumns = 'repeat(auto-fill, minmax(360px, 1fr))';
+    document.head.insertAdjacentHTML('beforeend', '<style>figure div{height:440px} .vivo,h1,p{display:none}</style>');
+  }
+  (q.get('grande') ? q.get('grande').split(',') : MascotaRig.poses).forEach(function (n) {
+    var fig = document.createElement('figure'), d = document.createElement('div'), c = document.createElement('figcaption');
+    var g = MascotaRig.crear({ quieto: true });
+    d.appendChild(g.el); c.textContent = n; fig.appendChild(d); fig.appendChild(c);
+    document.getElementById('grid').appendChild(fig);
+    g.fijar(n);
+    fig.onclick = function () { vivo.pose(n); };
+  });
+</script>
+</body>
+</html>

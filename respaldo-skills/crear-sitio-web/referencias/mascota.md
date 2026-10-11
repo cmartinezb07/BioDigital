@@ -1,168 +1,254 @@
 # Mascota animada (módulo opcional)
 
-La mascota es un personaje fijo en una esquina que cambia de cara, gira, salta y habla según lo que hace la persona. Es **opcional**: primero se pregunta si el cliente la quiere. Si no la quiere, se salta este módulo completo.
+Un personaje fijo en una esquina que cambia de cara, gira, salta y habla según lo que hace la persona.
+Es **opcional**: primero se pregunta si el cliente la quiere. Si dice que no, se salta este módulo completo.
 
-Piezas de la plantilla (`plantilla/mascota/`):
+## Dos caminos
+
+| | **A · Personaje dibujado en SVG** (recomendado) | **B · Personaje en imágenes** |
+|---|---|---|
+| Qué es | Un gato dibujado por partes que se anima solo a la tasa de la pantalla | Una hoja de dibujos recortada en 12 o más caras |
+| Cuándo | Por defecto. Sirve para casi cualquier negocio: se le cambia la ropa, el tono y las frases | Cuando el cliente ya tiene su propia mascota, o quiere un personaje que no es un gato |
+| Qué cuesta cambiarlo por cliente | Minutos: dos colores y las frases | Horas: conseguir o generar la hoja, recortarla y revisarla |
+| Peso | ~70 KB de código, sin imágenes | ~16 KB por cara, 12 caras mínimo |
+| Expresividad | 30 poses, 11 gestos, vista de frente y de perfil, ojos que siguen al mouse | Las caras que tenga la hoja |
+
+Los dos usan el mismo motor (`mascota.js`) y la misma configuración (`window.MascotaConfig`). Se elige con `rig`.
+
+## Piezas
 
 | Archivo | Qué es | ¿Se cambia por cliente? |
 |---|---|---|
-| `mascota.js` | Motor: eventos, prioridades, giros, animaciones cuadro a cuadro, globo, controles | No |
+| `mascota.js` | Motor: eventos, prioridades, control de comentarios, mouse, formularios | No |
 | `mascota.css` | Estilos con variables `--m-*` para adaptarse a cada estética | No (se sobrescriben las variables en la página) |
-| `mascota-personajes.js` | `window.MascotaConfig`: personajes, frases, hacia dónde mira cada dibujo, secciones, selectores, animaciones | **Sí** |
-| `herramientas/recortar-hoja.py` + `recorte.ejemplo.json` | Convierte una hoja de dibujos en imágenes WebP transparentes | Solo el JSON |
+| `gato.js` | El personaje dibujado en SVG y su animación | No, salvo que se dibuje otro personaje |
+| `gato.css` | Colores del personaje, con `--g-c1` y `--g-c2` | **Sí**, dos variables |
+| `mascota-gato.js` | Frases, secciones y selectores del camino A | **Sí**, es el archivo que se escribe por cliente |
+| `mascota-personajes.js` | Lo mismo para el camino B, más la dirección de la mirada de cada imagen | **Sí** |
+| `gato-lamina.html` | Lámina para ver las 30 poses y los 11 gestos | No (es herramienta de revisión) |
+| `herramientas/recortar-hoja.py` | Convierte una hoja de dibujos en imágenes WebP transparentes (camino B) | Solo el JSON |
+
+---
 
 ## 1. Preguntas (antes de dibujar nada)
 Usa AskUserQuestion. Pon la opción recomendada primero.
 
 1. **¿Quiere mascota?** Sí / No / Solo en algunas páginas. Si dice que no, termina aquí.
-2. **Personajes**
-   - **Cuántos:** uno fijo, o varios que la persona puede cambiar (recomendado de 2 a 4).
-   - **Qué son:** animales, un objeto del rubro (una taza, una herramienta), una persona ilustrada o la mascota que ya tenga la marca.
-3. **Estilo de dibujo:** línea negra estilo cartoon (el que mejor se recorta), color plano, pixel art, 3D suave o el estilo de la marca.
-4. **Personalidad** (por personaje): amable, sarcástica, tierna y dormilona, hiperactiva, formal ("usted"), otra. Define también:
+2. **Qué personaje:** el gato de la plantilla vestido con los colores de la marca (recomendado) · la mascota que ya
+   tiene la marca · otro animal u objeto del rubro.
+3. **Personalidad:** amable · sarcástica · tierna y dormilona · hiperactiva · formal ("usted"). Define además:
    - **Tratamiento:** tú o usted.
    - **Humor:** nada, suave o pícaro.
-   - **Límites:** el humor nunca se burla del cliente final ni de su rubro, y nunca promete algo que el negocio no ofrece.
-5. **Nivel de animación**
-   - **Sutil:** caras fijas con un pequeño "pop".
-   - **Media** (recomendada): caras, giros y gestos (saltar, sacudirse, temblar, asentir).
-   - **Alta:** además, animaciones cuadro a cuadro (saludar, bailar, dormir).
-6. **Reacciones que quiere** (multiselección):
-   - al llegar;
-   - al hacer scroll;
-   - al entrar a secciones;
-   - al pasar el mouse por los botones o precios;
-   - en formularios: mirar a otro lado en datos personales, enojarse con un error, celebrar el envío;
-   - al irse, volver o quedarse inactivo;
-   - login correcto o fallido;
-   - otras propias del negocio.
-7. **¿Quién pone las imágenes?**
-   - **(a)** El cliente o el usuario ya las tiene, o las crea y las manda. Recomendado cuando hay identidad de marca.
-   - **(b)** Se generan con una herramienta de imágenes. Pide permiso antes: tiene costo y derechos.
-   - **(c)** Por ahora se usa un personaje simple en SVG hecho a mano, y después se reemplaza.
-8. **Ubicación y control**
-   - **Ubicación:** esquina inferior izquierda (por defecto) o derecha.
-   - **Control:** botón para esconderla (siempre) y botón para cambiar de personaje (si hay varios).
+   - **Límites:** nunca se burla del cliente final ni de su rubro, y nunca promete algo que el negocio no ofrece.
+4. **Nivel de reacción:** discreta (solo llegada, secciones y formulario) · media (recomendada: + scroll, mouse y
+   estados) · habladora (+ comentarios sueltos mientras la persona lee).
+5. **Reacciones propias del negocio:** ¿hay algo que deba comentar sí o sí? (un plan destacado, un beneficio, una
+   fecha límite).
+6. **Ubicación:** esquina inferior izquierda (por defecto) o derecha.
 
-## 2. Imágenes: qué pedir o qué generar
-El recorte automático funciona mejor con **hojas en grilla**:
-- fondo claro liso;
-- contorno oscuro;
-- un personaje por celda;
-- el mismo tamaño y la misma ropa en todas las celdas;
-- los rótulos de texto **debajo o al costado de los pies**, nunca tocando el dibujo.
+---
 
-**Set mínimo por personaje (12 reacciones):** feliz, negación, triste, enojado, sorprendido, soberbio, pensativo, afirmando, miedo, guiño, cansado, muy feliz.
+## 2. Camino A — el gato de la plantilla
 
-**Lo ideal:** la misma hoja con las 12 reacciones en 6 filas × 2 columnas.
+### Qué se cambia por cliente, y cuánto cuesta
 
-**Dirección de la mirada:**
-- Anota hacia dónde mira cada dibujo (derecha, izquierda o de frente). El motor los voltea en espejo, así que **no hace falta dibujar ambos lados**.
-- Si un personaje sale siempre de perfil, conviene pedir al menos 3 o 4 poses de frente para que el giro se note.
+| Nivel | Qué se cambia | Dónde | Esfuerzo |
+|---|---|---|---|
+| 1 | **La ropa:** chaqueta, mochila, pantalón y cordones salen de dos colores | `.gato { --g-c1; --g-c2 }` en el CSS de la página | Minutos |
+| 2 | **Las frases y el tono:** todo lo que dice, por evento | `mascota-gato.js` | 1 a 2 horas, y hay que revisarlas con el cliente |
+| 3 | **Qué comenta y cuándo:** secciones, selectores de botones y precios, cuántos comentarios sueltos | `secciones`, `bases`, `selectores`, `ocioMax` | Minutos |
+| 4 | **El nombre y el título de la pestaña** | `personajes.<nombre>` y `titulo` | Minutos |
+| 5 | **Accesorios del dibujo:** lentes, mochila, logo del pecho | `gato.js`, funciones `frente()` y `perfil()` | Horas |
+| 6 | **Otro animal entero** | Dibujar un `rig` nuevo con la misma API | Días. Conviene el camino B |
 
-**Animación cuadro a cuadro** (nivel alto):
-- una fila por animación;
-- de 3 a 6 cuadros de izquierda a derecha, con la misma posición de los pies;
-- nombres `saluda-1`, `saluda-2`, …
+Por defecto `--g-c1` y `--g-c2` toman `--c1` y `--c2` de la página, así que **si la estética ya define esos dos
+colores, el personaje se viste solo**.
 
-**Plantilla de indicación (prompt)** para generar o encargar una hoja (adaptar):
+### Qué trae el personaje
+- **30 poses:** feliz, sarcástico, muy feliz, risa, guiño, afirmando, soberbio, lentes, pensativo, idea,
+  sorprendido, confundido, enojado, triste, miedo, cansado, dormido, facepalm, aburrido, indiferente, negación,
+  lengua, saluda, curioso, preocupado, burlón, orgulloso, mareado, y las dos de perfil (`mira-d`, `mira-i`).
+- **11 gestos:** salta, celebra (con confeti), sacude, asiente, tiembla, saluda, baila, risa, estira, mareo, vuelta.
+- **Dos vistas:** de frente y de perfil, con giro completo hacia cualquier lado.
+- **Ojos que siguen al puntero**, con la cabeza acompañando un poco y el párpado subiendo al mirar hacia arriba.
 
-> Hoja de personaje estilo cartoon de línea negra gruesa, fondo blanco liso, sin sombras de color. Personaje: [descripción, ropa, accesorio]. Grilla de 6 filas × 2 columnas, un personaje por celda, todos del mismo tamaño y de cuerpo entero, pies alineados. Expresiones en este orden: feliz, negación (girado mirando a otro lado), triste, enojado, sorprendido, soberbio (brazos cruzados), pensativo (mano en el mentón), afirmando (pulgar arriba), miedo, guiño, cansado, muy feliz (brazos arriba). Nombre de cada expresión escrito pequeño debajo de los pies, sin tocar el dibujo.
+Para verlas todas, abre `gato-lamina.html` con el servidor local. Tiene un botón por gesto y `?grande=pose1,pose2`
+para revisar dos poses en tamaño grande.
 
-Si el usuario manda las imágenes por el chat y no quedan como archivo, se pueden extraer del registro de la sesión (`~/.claude/projects/<proyecto>/<sesión>.jsonl`, bloques `image` en base64). Guárdalas en `mascotas/fuente/`.
+### Cómo se integra
+```html
+<link rel="stylesheet" href="mascota.css">
+<link rel="stylesheet" href="gato.css">
+...
+<script src="gato.js"></script>
+<script src="mascota-gato.js"></script>
+<script src="mascota.js"></script>
+```
+El orden importa: el dibujo, la configuración y al final el motor. En `mascota-gato.js` debe ir `rig: true`.
 
-**Derechos:**
-- Si la mascota será la marca registrada del cliente, recomienda redibujarla en vectores con derechos claros.
-- No copies personajes de terceros.
+---
 
-## 3. Recortar y preparar
-1. Copia `plantilla/mascota/` a la carpeta del sitio. Pon las hojas en `mascotas/fuente/`.
-2. Crea `recorte.json` a partir de `recorte.ejemplo.json`:
-   - `filas`: límites verticales en px, o `{ "auto": 6 }` para partir en partes iguales;
-   - `personajes`: límites horizontales de cada uno, o `{ "desde", "hasta", "columnas" }`;
-   - `reacciones`: nombre de archivo por celda.
-3. Ejecuta `python herramientas/recortar-hoja.py mascotas/fuente/recorte.json` (requiere pillow, numpy y scipy).
-4. **Mira `control.png` y `lamina.png`.** Revisa cuatro cosas:
-   - que ningún rótulo se haya colado;
-   - que no falten orejas, colas o brazos (si la fila corta la cabeza, ajusta ese límite);
-   - que el interior quede blanco y opaco (se ve bien sobre fondo oscuro);
-   - el peso: unos 16 KB por imagen, a 360×500 px aprox.
-5. Arma una lámina de "mirada" (los recortes con su nombre) y completa `mira` en la configuración: `'d'`, `'i'` o `'f'` por reacción, y `'*'` para todo el personaje.
+## 3. Camino B — personaje en imágenes
 
-## 4. Personalidad y frases (`mascota-personajes.js`)
-Cada evento es `[reacción, [frases…], gesto]`. Eventos que usa el motor:
+Se usa cuando el cliente trae su propia mascota. En la configuración **no** va `rig: true`, y se carga
+`mascota-personajes.js` en vez de `mascota-gato.js`.
+
+**Hojas:** fondo claro liso, contorno oscuro, un personaje por celda, mismo tamaño y misma ropa en todas,
+y los rótulos **debajo de los pies**, sin tocar el dibujo.
+
+**Set mínimo (12 caras):** feliz, negación, triste, enojado, sorprendido, soberbio, pensativo, afirmando, miedo,
+guiño, cansado, muy feliz. Lo ideal: una hoja de 6 filas × 2 columnas.
+
+**Dirección de la mirada:** anota hacia dónde mira cada dibujo (`'d'`, `'i'` o `'f'`). El motor voltea en espejo,
+así que no hace falta dibujar los dos lados.
+
+**Animación cuadro a cuadro** (nivel alto): una fila por animación, de 3 a 6 cuadros, con los pies en la misma
+posición, y nombres `saluda-1`, `saluda-2`, …
+
+**Plantilla de indicación para generar o encargar la hoja:**
+
+> Hoja de personaje estilo cartoon de línea negra gruesa, fondo blanco liso, sin sombras de color. Personaje:
+> [descripción, ropa, accesorio]. Grilla de 6 filas × 2 columnas, un personaje por celda, todos del mismo tamaño y
+> de cuerpo entero, pies alineados. Expresiones en este orden: feliz, negación (girado mirando a otro lado), triste,
+> enojado, sorprendido, soberbio (brazos cruzados), pensativo (mano en el mentón), afirmando (pulgar arriba), miedo,
+> guiño, cansado, muy feliz (brazos arriba). Nombre de cada expresión escrito pequeño debajo de los pies, sin tocar
+> el dibujo.
+
+**Recorte:**
+1. Pon las hojas en `mascotas/fuente/` y crea `recorte.json` a partir de `recorte.ejemplo.json`.
+2. `python herramientas/recortar-hoja.py mascotas/fuente/recorte.json` (necesita pillow, numpy y scipy).
+3. **Mira `control.png` y `lamina.png`:** que no se haya colado ningún rótulo, que no falten orejas ni colas, que el
+   interior quede blanco y opaco, y que cada imagen pese unos 16 KB a 360×500 px.
+
+**Derechos:** si la mascota va a ser la marca registrada del cliente, conviene redibujarla en vectores con derechos
+claros. Nunca copiar personajes de terceros.
+
+Si el cliente manda las imágenes por el chat y no quedan como archivo, se pueden extraer del registro de la sesión
+(`~/.claude/projects/<proyecto>/<sesión>.jsonl`, bloques `image` en base64).
+
+---
+
+## 4. Frases y eventos
+
+Cada evento es `[pose o lista de poses, [frases…], gesto]`.
 
 | Grupo | Eventos |
 |---|---|
 | Llegada y recorrido | `llegada`, `bajar`, `subir`, `rapido`, `final`, `arriba` |
-| Secciones | las claves que definas en `secciones` (p. ej. `servicios`, `planes`, `formulario`, `preguntas`, `cierre`) |
-| Mouse | `botón`, `pick`, `precio`, `pregunta`, `seleccion`, `copiar`, `achicar` |
-| Formularios | `campo`, `sensible` (se da vuelta), `tipeo`, `malDato`, `incompleto`, `enviando`, `enviado` (se reproduce 2 veces), `beneficioOk` |
+| Secciones | las claves que definas en `secciones` (p. ej. `servicios`, `planes`, `formulario`, `cierre`) |
+| Mouse | `botón`, `pick`, `precio`, `pregunta`, `seleccion`, `copiar`, `achicar`, `mareo` |
+| Formularios | `campo`, `sensible` (se da vuelta), `tipeo`, `malDato`, `incompleto`, `enviando`, `enviado`, `beneficioOk` |
 | Estado | `cansado`, `despierta`, `irse`, `volver`, `oscuro`, `claro` |
-| Toques | `toque`, `muchosToques` (4 toques en 2 s) |
-| Sistema | `loginOk`, `loginError`, `error` (vía `document.dispatchEvent(new CustomEvent('mascota', { detail: 'login-ok' }))`) |
+| Toques | `toque`, `muchosToques` |
+| Sistema | `loginOk`, `loginError`, `error`, `paleta` (vía `document.dispatchEvent(new CustomEvent('mascota', { detail: 'login-ok' }))`) |
 
-**Parámetros por personaje:**
-- `presentacion`: lo que dice al elegirlo.
-- `cansadoMs`: tras cuánto tiempo sin actividad se duerme.
-- `miedoVel`: umbral de scroll rápido; 99 = nunca se asusta.
-- `titulo`: título de la pestaña cuando te vas a otra.
+**Parámetros:** `cansadoMs` (cuándo se duerme), `ocioMax` (tope de comentarios sueltos por visita),
+`rapido` (umbral del aviso de scroll), `mareo` (pausa y tope de mareos), `titulo` (título de la pestaña al irse).
 
 **Reglas para escribir las frases:**
 - 2 o 3 variantes por evento importante: se eligen al azar sin repetir la anterior.
-- Cortas: menos de 60 caracteres. `{s}` pone "Buenos días", "Buenas tardes" o "Buenas noches" según la hora.
-- **Diferencia real entre personalidades.** Al irse, uno se ríe, otro se entristece, otro se enoja y otro se ofende con elegancia.
-- Nada falso: si dice "cupos limitados" o "sin letra chica", debe ser cierto para ese negocio.
-- Revisa el tono con el cliente. Las frases son borradores hasta que las apruebe.
+- Cortas, menos de 60 caracteres. `{s}` pone "Buenos días", "Buenas tardes" o "Buenas noches" según la hora.
+- Diferencia real entre personalidades: al irse, una se ríe, otra se entristece, otra se ofende con elegancia.
+- Nada falso: si dice "cupos limitados", debe ser cierto para ese negocio.
+- Son borradores hasta que el cliente las apruebe.
 
-## 5. Integración visual por estética
-En el `<head>` va `mascota.css`. Antes de `</body>` van `mascota-personajes.js` y luego `mascota.js`.
+---
 
-En el CSS de la página, sobrescribe las variables para que no parezca un elemento externo:
+## 5. Cuidados aprendidos (no los quites)
+
+Estos límites salieron de medir el comportamiento real con mouse y rueda. Sin ellos la mascota se ve defectuosa.
+
+**Movimiento**
+- Un giro de perfil empezado **siempre termina**. Si piden otra vista mientras gira, espera a que acabe y deja una
+  pausa de 350 ms. Sin esto, un scroll indeciso lo deja a medio girar.
+- Un gesto no se reinicia a medias, y dos gestos de cuerpo entero no se suman: el anterior se desvanece.
+- Las poses de ambiente no cambian una cara que lleva menos de 0,8 s.
+
+**Scroll**
+- Una reacción por tramo, no una por cuadro. El sentido cambia solo después de recorrer el 60 % de una pantalla.
+- Con scroll rápido no hay reacción de ambiente: solo el aviso de "muy rápido", que necesita más de 4 pantallas por
+  segundo sostenidas medio segundo, y descuenta los saltos del menú y las teclas Inicio y Fin.
+- La pose de la sección se aplica al parar el scroll.
+
+**Mouse**
+- Reacciona solo si el puntero **se detiene** encima: 260 ms en el botón principal, 380 ms en tarjetas.
+- No reacciona si el mouse va rápido, está agitado, o si fue la página la que se movió bajo un puntero quieto.
+- Los ojos siguen al puntero con suavizado adaptativo: si el mouse se sacude, siguen el promedio en vez de temblar.
+- Si el mouse sale de la ventana o lleva 6 s quieto, vuelve a la mirada propia de la pose.
+
+**Comentarios**
+- Un globo dura lo que se tarda en leerlo (2,2 a 4,2 s), **aunque la pose dure más**. Si no, una reacción larga
+  (scroll, campo, enviando, dormido) deja su globo pegado hasta un minuto.
+- Un globo recién aparecido no se tapa: 2,2 s si lo nuevo es igual o menos importante, 1 s si es más importante.
+- Los de ambiente esperan 6 s; el tope es de 12 por minuto. Lo que hace la persona (tocarlo, un error, el envío)
+  siempre habla.
+
+**Privacidad**
+- En un campo de correo, teléfono o contraseña se da vuelta, cierra los ojos y silba. Nunca lee lo que se escribe:
+  solo reacciona al foco y a si el dato es válido.
+
+---
+
+## 6. Integración visual por estética
+
+En el CSS de la página, sobrescribe las variables para que no parezca un elemento pegado encima:
 
 ```css
 .mascota {
   --m-ink: var(--fg); --m-paper: var(--bg-3); --m-font: var(--body);
   --m-radio: 14px; --m-borde: 1px solid var(--line);
   --m-sombra: 0 18px 40px -18px rgba(0,0,0,.8);
-  --m-contorno: color-mix(in srgb, var(--accent) 50%, transparent);  /* borde del personaje con el color de la marca */
-  --m-piso: color-mix(in srgb, var(--accent) 40%, transparent);      /* sombra en el suelo */
-  --m-filtro: opacity(1);   /* p. ej. sepia(.2) para paletas cálidas; nunca "none" */
+  --m-piso: color-mix(in srgb, var(--accent) 40%, transparent);
+  --m-alto: 140px;          /* tamaño del personaje */
   --m-blur: none;           /* blur(14px) si la estética usa vidrio */
 }
+.gato { --g-c1: var(--accent); --g-c2: var(--accent-2); }   /* la ropa */
 ```
 
 Recetas probadas:
 
-| Estética | Globo | Contorno del personaje |
+| Estética | Globo | Ropa del personaje |
 |---|---|---|
-| Terminal | Sin radio, sombra dura `3px 3px 0` | Sin contorno |
-| Vidrio | Radio 18 px, `--m-blur` | Celeste |
-| Certificado | Doble marco (`0 0 0 3px paper, 0 0 0 4px line`) | Verde |
+| Terminal | Sin radio, sombra dura `3px 3px 0` | Grises de terminal |
+| Vidrio | Radio 18 px, con `--m-blur` | Celeste y turquesa |
+| Certificado | Doble marco (`0 0 0 3px paper, 0 0 0 4px line`) | Verde y violeta de la tinta |
 | Metal | Vidrio oscuro | Cromado |
-| Cristal | Globo facetado con `clip-path` (dejar margen para la colita) y `--m-filtro: sepia(.2)` | Crema |
-| Panel SaaS | Filo naranjo arriba | Naranjo |
-| Fintech | Degradado cobre en el globo | Cobre |
+| Cristal | Globo facetado con `clip-path` (deja margen para la colita) | Crema y arena |
+| Panel SaaS | Filo naranjo arriba | Naranjo y azul |
+| Fintech | Degradado cobre en el globo | Cobre y violeta |
 
-Ajusta también `selectores` en la configuración, con las clases reales de botones principales, plan destacado, precios y tarjetas.
+Ajusta `selectores` con las clases reales de botones principales, plan destacado, precios y tarjetas.
 
-**En celular**, la mascota se ubica dentro de la barra fija inferior (`.dock`), que reserva espacio a la izquierda. Si el sitio no tiene esa barra, revisa que la mascota no tape botones.
+**En celular** la mascota se ubica dentro de la barra fija inferior (`.dock`), que reserva espacio a la izquierda.
+Si el sitio no tiene esa barra, revisa que no tape el botón principal.
 
-## 6. Verificación
-- Consola sin errores en cada página, y `window.Mascota` presente.
-- Por script, comprueba lo siguiente (los eventos de foco se disparan a mano si el panel no tiene foco):
-  - enfocar el correo → reacción `sensible` y `--dir` volteado;
-  - valor inválido al salir del campo → `malDato`;
-  - envío → dos `enviado`;
-  - `Mascota.evento('irse')` → la cara que corresponde a la personalidad;
-  - con una animación configurada → la secuencia de archivos completa, observando `img.src` con un MutationObserver.
-- A 375 px: sin desborde horizontal y sin tapar el botón principal.
-- Movimiento reducido: solo cambian las caras.
-- Captura de cada estética con el globo visible.
+---
+
+## 7. Verificación
+
+Con el navegador sin ventana y mouse y rueda reales (CDP `Input`), no solo llamando funciones:
+
+| Prueba | Qué debe pasar |
+|---|---|
+| Lectura normal de toda la página | Comenta cada sección; ningún globo dura menos de 2 s ni queda pegado |
+| Subir rápido desde el final | Solo el aviso de "muy rápido"; sin ráfaga de poses ni giros a medias |
+| Rueda indecisa (subir y bajar) | Una reacción, no una por cuadro |
+| Mouse cruzando tarjetas sin parar | Ninguna reacción |
+| Mouse sacudido más de un segundo | Se marea una vez (tope por visita) |
+| Correo o teléfono enfocado | Se da vuelta de perfil, ojos cerrados |
+| Dato inválido al salir del campo | `malDato` |
+| Envío | Celebra dos veces |
+| 390 px | Sin desborde y sin tapar el botón principal |
+| Movimiento reducido | Sin animación en reposo, sin seguimiento de ojos, giros instantáneos |
+| Pestaña oculta o personaje escondido | El bucle se detiene |
+
+Además: consola sin errores en cada página y 60 cuadros por segundo con el personaje visible.
+
+---
 
 ## Qué NO hacer
 - No inventar datos del negocio en las frases.
 - No hacerla obligatoria: siempre debe poder esconderse, y la preferencia se recuerda.
 - No bloquear clics: el contenedor tiene `pointer-events: none` y solo el personaje y sus botones reciben clics.
-- No usar `filter: none` combinado con otros filtros en `--m-filtro`: invalida toda la regla.
-- No hacer que la mascota lea o registre lo que se escribe. Solo reacciona al foco y a la validez del campo.
+- No hacer que lea o registre lo que se escribe.
+- No quitar los cuidados de la sección 5 para "que reaccione más": es exactamente lo que la hace ver rota.

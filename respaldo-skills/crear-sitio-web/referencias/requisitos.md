@@ -2,6 +2,12 @@
 
 Rol: desarrollador web senior, especialista en SEO y seguridad web. Objetivo: un sitio publicado en internet, listo para usarse.
 
+> **Origen:** este archivo recoge el encargo completo del equipo (el prompt de "Proyecto: sitio web para
+> [NOMBRE DEL NEGOCIO]", secciones 0 a 11) y le agrega lo aprendido construyendo. Nada del encargo quedó fuera:
+> la §0 del encargo está en SKILL.md ("Reglas que no se negocian" y las fases), la §1 en `preguntas.md`, y las
+> §2 a §11 en las secciones de abajo con la misma numeración. La **§12 es lo que el encargo no pedía** y conviene
+> hacer igual.
+
 ## 2. Tecnología y publicación
 - El framework debe generar HTML real, ya sea como sitio estático o en el servidor: **Astro** (recomendado) o Next.js con SSG. No se acepta una SPA pura con Vite + React: al ver el código fuente debe aparecer el contenido.
 - Se publica en Cloudflare Pages, Netlify o Vercel, con **dominio propio y HTTPS**. No se entrega con una URL del tipo `.vercel.app`.
@@ -76,7 +82,7 @@ Una landing de una sola página también es válida si el cliente la pide, pero 
 ## 6. Diseño y experiencia de usuario
 La plantilla ya trae resuelto lo siguiente; se conserva al portar a Astro:
 - Diseño responsive, pensado primero para móvil, con menú móvil accesible.
-- Modo oscuro o claro con botón para cambiarlo (el valor por defecto se define en la fase 0) y transición de burbuja.
+- Modo oscuro o claro: por defecto **sigue al sistema** (`prefers-color-scheme`), con botón para cambiarlo y transición de burbuja. La elección de la persona se recuerda y manda sobre el sistema. Si el cliente pide un tema fijo, se respeta y se avisa que pierde esa adaptación.
 - Animación de entrada del hero y apariciones al hacer scroll, respetando `prefers-reduced-motion`.
 - Microinteracciones y estados hover, focus y active. El hover se activa solo con mouse: `(hover: hover) and (pointer: fine)`.
 - Transiciones entre páginas con la View Transitions API (`@view-transition { navigation: auto }`).
@@ -144,6 +150,50 @@ Si no lo necesita, no se implementa y se avisa.
 4. Publicación con dominio, Analytics y Search Console (§9).
 5. Verificación final.
 
+## 12. Más allá del encargo (recomendado)
+
+Esto no estaba en el encargo original y conviene hacerlo igual. Cada punto nació de un problema real.
+
+**Rendimiento con metas medibles.** Lighthouse ≥ 90 no basta: medir también Core Web Vitals en red 4G simulada
+(LCP bajo 2,5 s, INP bajo 200 ms, CLS bajo 0,1). Dar `width` y `height` a todas las imágenes para que el contenido
+no salte, `font-display: swap` en las tipografías y precarga solo de la fuente principal.
+
+**Legal chileno.** La política de privacidad tiene que decir qué datos se piden, para qué, cuánto se guardan y cómo
+se pide el borrado (Ley 19.628 y la nueva ley de protección de datos personales: `verificar vigencia y obligaciones
+en bcn.cl`). Si en las fotos aparecen personas, autorización de uso de imagen firmada. Si el sitio vende en línea,
+además términos y condiciones y el derecho a retracto.
+
+**El formulario no puede depender solo del correo.** Guardar cada envío en un segundo lugar (planilla, base o
+webhook) y avisar en pantalla si el envío falla. Probar que el correo llega a la bandeja de entrada y no a spam,
+desde una cuenta que no sea la del equipo.
+
+**Qué pasa cuando algo se cae.** Monitoreo de caída del sitio, recordatorio de renovación del dominio y del correo,
+y una lista de quién tiene cada acceso. Un sitio que se cae en silencio es peor que no tenerlo.
+
+**Transferencia al cliente.** Todos los accesos a su nombre (dominio, hosting, analítica, correo, ficha), una
+capacitación y un acta de entrega. Dejar por escrito qué puede cambiar solo sin romper nada y qué no.
+
+**Pruebas en dispositivos reales,** no solo emulados: al menos un Android de gama baja y un iPhone. El emulador no
+muestra lo que pesa de verdad una animación.
+
+**Redirecciones 301** si alguna URL cambia después de publicar, para no perder lo que Google ya tenía indexado.
+
+**Dependencias:** revisar vulnerabilidades conocidas antes de publicar (`npm audit`) y dejar las versiones fijadas.
+Mientras menos librerías, menos superficie de ataque y menos peso.
+
+**Contenido verificable.** Nada inventado: si no hay reseñas todavía, se ofrece un beneficio de lanzamiento a
+cambio de la primera, en vez de fabricar prueba social. Una reseña falsa descubierta destruye más confianza que la
+ausencia de reseñas.
+
+**Copias de seguridad.** El código en Git con remoto, y una copia de los textos y las imágenes fuera del hosting.
+
+**Antes de publicar, barrido de restos:** nada de "lorem", enlaces `#` que no van a ninguna parte, correos de
+ejemplo, imágenes de relleno ni textos de prueba.
+
+**Accesibilidad más allá del mínimo:** área táctil de al menos 44 × 44 px, no depender solo del color para
+comunicar un estado, respetar `prefers-reduced-motion` también en videos y carruseles, y que el texto se pueda
+ampliar al 200 % sin que se rompa el diseño.
+
 ## 11. Checklist final (con evidencia)
 - [ ] Cada página tiene title y meta description únicos, un solo H1 distinto del title, canonical e imagen OG
 - [ ] El código fuente de cada página muestra el contenido
@@ -158,3 +208,9 @@ Si no lo necesita, no se implementa y se avisa.
 - [ ] No hay credenciales en el código
 - [ ] El sitio está en línea con dominio propio y HTTPS
 - [ ] No quedan `[PENDIENTE]` sin avisar al cliente
+- [ ] Core Web Vitals en verde en red 4G simulada (LCP, INP, CLS)
+- [ ] No quedó contenido de prueba: ni "lorem", ni enlaces `#`, ni correos de ejemplo
+- [ ] El formulario guarda una copia del envío además del correo, y el correo llega a bandeja de entrada
+- [ ] La política de privacidad dice qué datos se guardan, para qué y cómo se piden el borrado
+- [ ] Los accesos están a nombre del cliente y hay acta de entrega firmada
+- [ ] Probado en un celular real, no solo en el emulador

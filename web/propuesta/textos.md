@@ -1,5 +1,10 @@
 # Propuesta de textos — sitio Bío Digital (v0.1, para aprobación)
 
+> ⚠️ **Desactualizado desde el 2026-10-06.** Estos textos describen el catálogo anterior (ficha de Google
+> Business, dominio y correo). El catálogo vigente son los 6 servicios de [servicios/](../../servicios/).
+> Hay que reescribirlos antes de construir el sitio final. Los textos que están hoy en las maquetas salen de
+> `fuentes/comun.mjs`, no de este archivo.
+
 - **Tono:** cercano, directo, sin tecnicismos, tuteando. El cliente es dueño de un negocio de barrio, no un experto en marketing.
 - **Regla:** ninguna cifra, reseña ni caso inventado. Todo `[PENDIENTE: …]` es un dato que falta y no se publica hasta resolverlo.
 - **Alcance de esta versión:** textos completos de Inicio, Servicios, Ficha de Google Business (modelo para los otros cuatro servicios), Planes y Diagnóstico. Del resto: título, descripción y H1. Cuando apruebes el tono, completo lo demás con el mismo formato.

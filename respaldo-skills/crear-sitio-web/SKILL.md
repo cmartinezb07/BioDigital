@@ -38,13 +38,26 @@ Si mandan links: ábrelos (navegador integrado), lee el `src` del iframe de la d
 Qué trae resuelto la plantilla (no lo rehagas): tema claro/oscuro con transición de burbuja (View Transitions), aparición al hacer scroll con escalonado, preguntas con altura animada, menú móvil, botón volver arriba, barra fija de acciones en móvil, formulario de maqueta con estados, riel de puntaje que suma al leer, beneficio que marca la casilla del formulario, movimiento reducido, foco visible, íconos SVG.
 
 ### Fase 1a — Mascota animada (solo si el cliente la quiere)
-Proceso completo en `referencias/mascota.md`. Resumen:
+Proceso completo en `referencias/mascota.md`. Hay **dos caminos** y el mismo motor sirve para los dos:
+
+**A · Personaje dibujado en SVG (por defecto).** Ya está hecho: un gato con 30 poses, 11 gestos, vista de frente y de
+perfil y ojos que siguen al mouse. Para adaptarlo a un cliente nuevo basta con cambiar dos colores y las frases.
 1. Copia `plantilla/mascota/*` a la carpeta del sitio.
-2. Consigue las imágenes: el usuario o el cliente las manda (hoja en grilla), o se generan con permiso, o se usa un SVG simple temporal. Si llegan por el chat y no quedan como archivo, se extraen del registro de la sesión.
-3. Recorta con `python herramientas/recortar-hoja.py recorte.json` y revisa `control.png` y `lamina.png`.
-4. Completa `mascota-personajes.js`: `mira` (hacia dónde mira cada dibujo), personalidades y frases por evento, `secciones`, `selectores` y `animaciones` cuadro a cuadro si el nivel es alto.
-5. Integra en cada página: `mascota.css` en el `<head>`; `mascota-personajes.js` y después `mascota.js` al final; variables `--m-*` según la estética (tabla de recetas en `mascota.md` §5). En la plantilla generada: `head`/`script` de la estética o `comun`.
-6. Verifica por script: foco sensible → se voltea; dato inválido → enojo; envío → celebra dos veces; salida → reacción de la personalidad; animación → secuencia completa. Además, 375 px sin tapar el botón principal.
+2. Viste al personaje con la marca: `.gato { --g-c1: …; --g-c2: … }`. Si la estética ya define `--c1` y `--c2`, se
+   viste solo.
+3. Escribe `mascota-gato.js` con las frases, `secciones`, `bases` y `selectores` de ese negocio. Mantén `rig: true`.
+4. Carga en cada página: `mascota.css` y `gato.css` en el `<head>`; al final `gato.js`, `mascota-gato.js` y
+   `mascota.js`, en ese orden.
+5. Revisa las poses con el cliente abriendo `gato-lamina.html`.
+
+**B · Personaje en imágenes.** Cuando el cliente ya tiene su mascota o quiere otro personaje.
+1. Consigue la hoja en grilla (la manda el cliente, se genera con permiso, o se usa el gato mientras tanto).
+2. Recorta con `python herramientas/recortar-hoja.py recorte.json` y revisa `control.png` y `lamina.png`.
+3. Completa `mascota-personajes.js`: `mira` (hacia dónde mira cada dibujo), frases por evento, `secciones`,
+   `selectores` y animaciones cuadro a cuadro si el nivel es alto. Sin `rig: true`.
+
+**En los dos casos:** ajusta las variables `--m-*` según la estética (recetas en `mascota.md` §6), respeta los
+cuidados de `mascota.md` §5 (son los que evitan que se vea rota) y verifica con la tabla de `mascota.md` §7.
 
 ### Fase 1b — Verificación de maquetas
 Sigue `referencias/verificacion.md`: captura completa a 1440 px (escala 0.5), chequeo de desborde a 390 px, textos ≥ 12 px, consola sin errores, detector de Impeccable si está instalado. Corrige y vuelve a generar. Muestra la galería al usuario con fortalezas y riesgos honestos de cada opción.

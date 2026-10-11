@@ -28,7 +28,7 @@
       if (calm) {
         var fade = document.startViewTransition(apply);
         fade.ready.catch(function () {});
-        fade.finished.finally(function () { if (wanted === next) wanted = null; });
+        fade.finished.catch(function () {}).finally(function () { if (wanted === next) wanted = null; });
         return;
       }
       // Burbuja: el tema nuevo crece como un círculo desde el botón hasta cubrir la pantalla
@@ -43,10 +43,11 @@
       vt.ready.then(function () {
         root.animate(
           { clipPath: ['circle(' + r.width / 2 + at, 'circle(' + end + at] },
-          { duration: 700, easing: 'cubic-bezier(.32, .72, 0, 1)', pseudoElement: '::view-transition-new(root)' }
+          { duration: 560, easing: 'cubic-bezier(.22, .61, .36, 1)', pseudoElement: '::view-transition-new(root)' }
         );
       }).catch(function () {}); // el navegador puede saltarse la transición (pestaña oculta, doble clic); el tema ya cambió
-      vt.finished.finally(function () {
+      // el navegador puede cancelar la transicion; eso no debe quedar como error en la consola
+      vt.finished.catch(function () {}).finally(function () {
         if (turn !== bubbles) return;
         root.classList.remove('theme-bubble');
         wanted = null;

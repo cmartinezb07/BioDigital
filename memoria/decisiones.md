@@ -601,3 +601,19 @@ El equipo aprobó la prueba de la opción 5 y pidió extenderla a todas las pág
 ## 2026-09-16 — Repositorio Git inicializado
 
 Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` para versionar el trabajo del proyecto Bío Digital, independiente del repositorio académico general del usuario.
+
+## 2026-10-11 · Catálogo, precios y promociones en la página
+
+**Precios por producto** (costo único, sin mensualidad): página web desde $49.990 · videos para redes desde $9.990 · menú digital desde $27.990 · registro fotográfico $4.990 · sistema de reservas desde $24.990 · tarjeta de fidelización $9.990. Suma por separado **$127.940**. **Pack completo $79.990** (ahorro $47.950).
+
+**Promoción primeros 5 clientes** (reemplaza a la del "doble de soporte a cambio del caso publicado", descartada): pack completo a **$69.990**, o 10 % de descuento sobre cualquier compra desde $30.000.
+
+**Promociones fugaces**: 2 videos $17.990 · 3 videos $24.990 · tarjeta de fidelización $7.990 · menú digital + fotos $29.990 · reservas + fidelización $29.990. Las dos últimas las propuso Claude y quedaron aplicadas.
+
+**Diagnóstico gratis**: ya no mide presencia en Google. Mide qué tan digitalizado está el negocio, en cinco aspectos que suman 100 puntos: sitio propio 25 · cómo se ve 20 · qué vendes 20 · cómo te reservan 20 · si el cliente vuelve 15. Se hace en el primer contacto, no como informe enviado después.
+
+**Estructura de la página**: se borró "En 30 segundos", se fusionaron "Todo lo que tu negocio necesita" y "Cada cosa que te entregamos" en una sola sección de seis tarjetas con precio, y el diagnóstico quedó compacto. La página pasó de ~12.000 px a 8.869 px de alto a 1440 px de ancho.
+
+**Logo**: ahora son dos capas recortadas del logotipo (`marca/mascara-marca-540.png` y `marca/mascara-texto-540.png`). La "B" se pinta con la paleta (`--c1` a `--c2`) y el texto con el color de texto, así que el logo cambia con la rueda de colores y sirve en los dos temas sin dos archivos.
+
+**Pendiente**: valor anual del dominio .cl y del hosting (quedó como `[por confirmar]` en las preguntas frecuentes).

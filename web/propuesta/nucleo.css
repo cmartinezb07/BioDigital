@@ -4,6 +4,10 @@
 @view-transition { navigation: auto; }
 .theme-bubble::view-transition-old(root),
 .theme-bubble::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+/* Mientras crece la burbuja no se mueve ni se desenfoca nada detras: el circulo va parejo */
+.theme-bubble::view-transition-new(root) { will-change: clip-path; }
+.theme-bubble *, .theme-bubble *::before, .theme-bubble *::after { animation-play-state: paused !important; }
+.theme-bubble .top, .theme-bubble .dock, .theme-bubble .pal { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 
 :root {
   --ease-out: cubic-bezier(.23, 1, .32, 1);

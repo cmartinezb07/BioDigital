@@ -2,7 +2,8 @@
 .pal-dot { width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(from 0deg, var(--c1), var(--c2), var(--c1)); box-shadow: 0 0 0 2px var(--bg), 0 0 0 3px var(--line); }
 .pal {
   position: fixed; z-index: 90; top: 84px; right: max(16px, calc(50% - 640px + 16px)); width: 316px;
-  display: grid; gap: 14px; padding: 18px; border: 1px solid var(--line); border-radius: 18px;
+  max-height: calc(100dvh - 104px); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin;
+  display: grid; gap: 12px; padding: 18px; align-content: start; border: 1px solid var(--line); border-radius: 18px;
   background: var(--bg-2); box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .7), inset 0 1px 0 var(--line-2);
   opacity: 0; scale: .96; translate: 0 -6px; transform-origin: 90% 0; visibility: hidden; pointer-events: none;
   transition: opacity .2s ease, scale .25s var(--ease-out), translate .25s var(--ease-out), visibility 0s .25s;
@@ -19,7 +20,7 @@
 .pal-presets i + i { margin-left: -7px; box-shadow: 0 0 0 2px var(--bg); }
 .pal-presets span { margin-left: 4px; line-height: 1.2; }
 @media (hover: hover) and (pointer: fine) { .pal-presets button:hover { border-color: var(--fg-3); color: var(--fg); } }
-.pal-wheel { position: relative; width: 180px; aspect-ratio: 1; margin-inline: auto; border-radius: 50%; touch-action: none; cursor: crosshair;
+.pal-wheel { position: relative; width: 150px; aspect-ratio: 1; margin-inline: auto; border-radius: 50%; touch-action: none; cursor: crosshair;
   background: conic-gradient(from 0deg, hsl(0 85% 60%), hsl(45 85% 60%), hsl(90 85% 55%), hsl(150 80% 50%), hsl(200 85% 58%), hsl(250 85% 66%), hsl(300 80% 62%), hsl(340 85% 60%), hsl(360 85% 60%)); }
 .pal-hole { position: absolute; inset: 28px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--c1), transparent 60%), radial-gradient(circle at 65% 65%, var(--c2), transparent 60%), var(--bg-2); box-shadow: inset 0 0 0 1px var(--line); pointer-events: none; }
 .pal-h { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .45); cursor: grab; transition: scale .2s var(--ease-out); }

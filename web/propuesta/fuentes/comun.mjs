@@ -1,5 +1,6 @@
-// Contenido común de las opciones 3 a 7. Cada opción entrega su estética (o) y esto arma la página completa.
+// Contenido común de las opciones 3 a 8. Cada opción entrega su estética (o) y esto arma la página completa.
 // o = { n, nombre, titulo, fuentes, css, hero, fondo, script, marca, tema, deco }
+// Catálogo vigente desde el 11-oct-2026: seis productos con precio propio y un pack completo.
 
 const ICONOS = `
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -20,6 +21,11 @@ const ICONOS = `
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5 16-3.5-6.5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
     <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4.5-2 1.5a11 11 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="12.5" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m15.5 11.2 5.5-3.4v8.4l-5.5-3.4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 13.5h3.2v3.2h-3.2zM20.5 13.5v7h-3.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 10.5h17M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="m9 15 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="7.5" cy="10" r="1.5" fill="currentColor"/><circle cx="12" cy="10" r="1.5" fill="currentColor"/><circle cx="16.5" cy="10" r="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6 15h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5 5 13.5h5.5L9.5 21.5 19 10h-5.8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
@@ -32,62 +38,80 @@ const chk = (w = 16) => `<svg class="check" width="${w}" height="${w}"><use href
 const ico = (id, w = 22) => `<span class="ico"><svg width="${w}" height="${w}"><use href="#i-${id}"/></svg></span>`;
 const arrow = `<svg class="btn-ico" width="18" height="18"><use href="#i-arrow"/></svg>`;
 const li = (items, w) => items.map((t) => `<li>${chk(w)}${t}</li>`).join('');
+const clp = (n) => '$' + n.toLocaleString('es-CL');
 
+// Los seis productos vigentes: id, ícono, nombre, precio, si el precio es "desde", qué es y qué recibes.
 const SERVICIOS = [
-  ['ficha', 'pin', 'Ficha de Google Business', 'Que te encuentren en Google Maps cuando buscan tu rubro cerca.'],
-  ['fotos', 'camera', 'Fotografía para negocios', 'Que el cliente sepa cómo es tu local antes de ir.'],
-  ['catalogo', 'book', 'Catálogo digital', 'Que vean qué vendes y a qué precio sin tener que preguntar.'],
-  ['web', 'web', 'Diseño web', 'Un lugar propio en internet, claro y rápido en el celular.'],
-  ['dominio', 'mail', 'Dominio y correo', 'Una dirección con tu nombre que da confianza al escribirte.'],
+  ['web', 'web', 'Página web', 49990, true, 'Un lugar propio en internet, rápido en el celular y con tu WhatsApp a la vista.',
+    ['Hasta 5 secciones, hecha a tu medida', 'Botón de WhatsApp, mapa y horario', 'Queda a tu nombre y te enseñamos a editarla']],
+  ['videos', 'video', 'Videos para redes', 9990, true, 'Videos cortos para Instagram y TikTok, grabados y editados en tu local.',
+    ['Video vertical de 15 a 30 segundos', 'Grabación, edición, música y textos', 'Te lo entregamos listo para publicar']],
+  ['menu', 'qr', 'Menú digital', 27990, true, 'Tu carta o lista de precios en un QR que cambias cuando quieras, sin reimprimir nada.',
+    ['QR impreso para las mesas o el mesón', 'Foto, descripción y precio por producto', 'Cambias un precio en dos minutos']],
+  ['fotos', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
+    ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
+  ['reservas', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
+    ['Agenda en línea con tus horarios', 'Confirmación automática al cliente', 'Ves las reservas del día en tu teléfono']],
+  ['fidelizacion', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
+    ['QR con sellos, sin tarjetas de papel', 'Se guarda en Google Wallet y Apple Wallet', 'Ves cuántos clientes están volviendo']],
 ];
-const ENTREGAS = [
-  ['Creación o recuperación, verificación y optimización de tu ficha.', 'Todos los planes'],
-  ['10 a 15 fotos reales de tu local y tus productos.', 'Todos los planes'],
-  ['Tu menú o lista de productos en PDF, o dentro de tu web en Premium.', 'Todos los planes'],
-  ['Una sección en Estándar; de 3 a 5 secciones en Premium.', 'Estándar y Premium'],
-  ['tunegocio.cl y contacto@tunegocio.cl a tu nombre, con el primer año incluido.', 'Estándar y Premium'],
-];
+const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 127.940
+const PACK = 79990;
+const PACK_5 = 69990;                                   // promoción para los primeros 5 clientes
+const AHORRO = SUMA - PACK;                             // 47.950
+
+// Diagnóstico gratis: cinco aspectos que suman 100 puntos y miden qué tan digitalizado está el negocio.
 const ASPECTOS = [
-  ['Te encuentran', 30, ['Si apareces al buscar tu rubro en tu comuna', 'Si tu ficha de Google está verificada', 'Si la ficha es tuya o la creó otra persona'], 'Busqué y no apareció. Me fui al de al lado.', 'ficha', 'pin', 'Lo resolvemos con la ficha de Google Business', 'Creación o recuperación, verificación y optimización', null],
-  ['Información completa', 20, ['Horario actualizado, incluso festivos', 'Teléfono, dirección y enlace correctos', 'Categoría principal y secundarias'], 'Decía abierto y llegué a una cortina cerrada.', 'ficha', 'pin', 'Lo resolvemos en tu ficha de Google', 'Datos completos y te enseñamos a mantenerlos', null],
-  ['Imagen', 20, ['Cuántas fotos tienes y de qué', 'Si son tuyas o las subieron clientes', 'Fachada, interior, productos y equipo'], 'No sé cómo es por dentro. Mejor voy a uno que conozco.', 'fotos', 'camera', 'Lo resolvemos con fotografía para negocios', '10 a 15 fotos reales tomadas en tu local', null],
-  ['Reputación', 15, ['Cuántas reseñas tienes y tu nota', 'Si respondes las reseñas, también las malas'], 'Nadie contestó ese reclamo. ¿Les importará?', null, 'star', 'Te enseñamos a responder reseñas', 'Plantillas y capacitación incluidas; no borramos ni compramos reseñas', null],
-  ['Contacto', 15, ['Si tienes página web propia', 'Si tu WhatsApp o teléfono está a la vista', 'Si tu catálogo es fácil de encontrar'], 'Quería preguntar un precio y no encontré dónde.', 'web', 'web', 'Lo resolvemos con web, dominio, correo y catálogo', 'tunegocio.cl a tu nombre', 'base'],
+  ['Tu sitio propio', 25, 'web', 'web', '¿Tienes una página tuya, que se vea bien en el celular?', 'Lo resolvemos con tu página web'],
+  ['Cómo se ve tu negocio', 20, 'fotos', 'camera', '¿Las fotos y los videos que te representan son tuyos y actuales?', 'Lo resolvemos con fotos y videos'],
+  ['Qué vendes', 20, 'menu', 'qr', '¿Un cliente puede ver tu carta y tus precios sin preguntar?', 'Lo resolvemos con el menú digital'],
+  ['Cómo te reservan', 20, 'reservas', 'calendar', '¿Se puede reservar o pedir sin llamarte por teléfono?', 'Lo resolvemos con el sistema de reservas'],
+  ['Si el cliente vuelve', 15, 'fidelizacion', 'card', '¿Tienes alguna forma de premiar al que vuelve?', 'Lo resolvemos con la tarjeta de fidelización'],
 ];
-const RIEL = ['Te encuentran', 'Información', 'Imagen', 'Reputación', 'Contacto'];
+const RIEL = ASPECTOS.map((a) => a[0]);
+
 const PASOS = [
-  ['search', 'Diagnóstico', 'Tu diagnóstico está listo', 'Revisamos gratis cómo te ve un cliente en Google.'],
-  ['send', 'Propuesta', 'Te enviamos tu plan', 'En menos de 48 horas, con el precio acordado antes de empezar.'],
-  ['walk', 'Implementación', 'Vamos a tu local', 'Fotos, ficha y web listas en 3 a 7 días hábiles desde que tenemos tu material.'],
-  ['key', 'Entrega', 'Todo queda a tu nombre', 'Te capacitamos y te entregamos accesos, dominio y ficha, con acta de entrega.'],
+  ['search', 'Diagnóstico', 'Vemos juntos qué te falta', 'En el primer contacto revisamos tu negocio y te damos tu puntaje. Gratis y sin compromiso.'],
+  ['send', 'Propuesta', 'Te decimos el precio', 'Eliges productos sueltos o el pack completo. El precio queda acordado antes de empezar.'],
+  ['walk', 'Producción', 'Vamos a tu local', 'Fotos, videos y todo lo que necesite tu proyecto, en 3 a 7 días hábiles.'],
+  ['key', 'Entrega', 'Todo queda a tu nombre', 'Te capacitamos y te entregamos los accesos, con acta de entrega.'],
 ];
-const PLANES = [
-  ['Base', '$150.000', ['Ficha de Google Business', '10 a 15 fotos profesionales', 'Catálogo en PDF', '1 capacitación · 7 días de soporte'], false],
-  ['Estándar', '$250.000', ['Todo lo del plan Base', 'Página web de una sección', 'Dominio .cl y correo (1er año)', '1 capacitación · 14 días de soporte'], true],
-  ['Premium', '$380.000', ['Todo lo del plan Estándar', 'Página web de 3 a 5 secciones', 'Catálogo dentro de tu web', '2 capacitaciones · 30 días de soporte'], false],
+
+// Promociones de lanzamiento. La de los primeros 5 clientes va en su propio bloque.
+const PROMOS = [
+  ['video', '2 videos para redes', 17990, 9990 * 2, 'Dos videos distintos, grabados el mismo día.'],
+  ['video', '3 videos para redes', 24990, 9990 * 3, 'Un mes de contenido resuelto en una sola visita.'],
+  ['card', 'Tarjeta de fidelización', 7990, 9990, 'Precio de lanzamiento del primer programa de sellos.'],
+  ['qr', 'Menú digital + fotos', 29990, 27990 + 4990, 'El menú se ve mucho mejor con fotos tuyas.'],
+  ['calendar', 'Reservas + fidelización', 29990, 24990 + 9990, 'Que reserven solos y que además vuelvan.'],
 ];
+
 const PROMESAS = [
-  ['key', 'Todo a tu nombre', 'Dominio, ficha y cuentas son tuyas.'],
-  ['walk', 'Vamos a tu local', 'Fotos y capacitación presencial en el Gran Concepción.'],
-  ['learn', 'Te enseñamos a usarlo', 'Responder reseñas, cambiar horario y subir fotos.'],
-  ['tag', 'Sabes cuánto pagas', 'Precio acordado antes de empezar, sin cobros mensuales escondidos.'],
+  ['key', 'Todo a tu nombre', 'La web, el menú y las cuentas quedan tuyas.'],
+  ['walk', 'Vamos a tu local', 'Fotos, videos y capacitación presencial en el Gran Concepción.'],
+  ['learn', 'Te enseñamos a usarlo', 'Cambiar precios, subir fotos y ver tus reservas.'],
+  ['tag', 'Sabes cuánto pagas', 'Precio por producto, sin mensualidades escondidas.'],
 ];
+
 const FAQ = [
-  ['¿Cuánto cuesta?', 'Los planes parten en $150.000. El precio final se confirma después del diagnóstico gratis, antes de que pagues nada.'],
-  ['¿De verdad es gratis el diagnóstico?', 'Sí. Es la forma en que te mostramos cómo trabajamos. El informe es tuyo aunque no contrates nada.'],
-  ['¿Cuánto se demora?', 'Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. La verificación de Google puede sumar algunos días, y ese plazo lo pone Google.'],
+  ['¿Cuánto cuesta?', `Cada producto tiene su precio: la página web parte en ${clp(49990)} y los videos en ${clp(9990)}. Los seis por separado suman ${clp(SUMA)}; el pack completo queda en ${clp(PACK)}.`],
+  ['¿Puedo llevar un solo producto?', `Sí. Cada uno funciona por su cuenta. El pack conviene cuando quieres varios: te ahorras ${clp(AHORRO)}.`],
+  ['¿De verdad es gratis el diagnóstico?', 'Sí. Es nuestra primera conversación: revisamos juntos qué tiene tu negocio y qué le falta, y te decimos tu puntaje. No tienes que contratar nada después.'],
+  ['¿Cuánto se demora?', 'Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. Por eso tomamos casi todo en la visita.'],
+  ['¿El dominio y el hosting están incluidos?', 'No. El dominio .cl y el hosting se pagan una vez al año y quedan a nombre del negocio. <span class="note">por confirmar</span> Te decimos el valor exacto antes de empezar; nosotros no cobramos mensualidad.'],
   ['¿Por qué cobran anticipo?', 'Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando y firmamos el acta.'],
-  ['¿Qué pasa si me demoro en mandar mis fotos o textos?', 'El plazo de producción se corre los mismos días y te avisamos. Por eso tomamos casi todo en la visita.'],
+  ['¿La tarjeta de fidelización funciona en cualquier celular?', 'Sí. Se guarda en Google Wallet en Android y en Apple Wallet en iPhone. Tu cliente no instala ninguna aplicación nueva.'],
+  ['¿Qué pasa si me demoro en mandar mis fotos o textos?', 'El plazo de producción se corre los mismos días y te avisamos.'],
   ['¿Tengo que saber de tecnología?', 'No. Nosotros hacemos todo y al final te enseñamos solo lo que vas a usar.'],
-  ['¿Sirve si mi negocio no está en internet?', 'Sí. En ese caso el informe te dice por dónde empezar.'],
-  ['¿Me garantizan el primer lugar en Google Maps?', 'No. Nadie puede garantizarlo honestamente. Dejamos tu ficha completa y verificada, que es la base para competir.'],
-  ['¿Atienden fuera de Concepción?', 'Sí: la ficha, la página web, el dominio y el correo se pueden hacer a distancia en todo Chile. Las fotos y la capacitación presencial son en el Gran Concepción.'],
+  ['¿Atienden fuera de Concepción?', 'La página web, el menú digital, las reservas y la tarjeta de fidelización se pueden hacer a distancia en todo Chile. Las fotos, los videos y la capacitación presencial son en el Gran Concepción.'],
   ['¿Qué hacen con mis datos?', 'Solo los usamos para hacer tu diagnóstico y contactarte por él.'],
   ['¿Quiénes son?', 'Somos una startup formada por cinco estudiantes de Ingeniería Civil Industrial de la Universidad de Concepción.'],
 ];
 
 const MAIL = 'biodigitalici@gmail.com';
 const pad = (i) => String(i + 1).padStart(2, '0');
+
+export { SERVICIOS, SUMA, PACK, PACK_5, AHORRO, clp };
 
 export function pagina(o) {
   const d = o.deco || {};
@@ -99,12 +123,12 @@ export function pagina(o) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${o.titulo}</title>
-<meta name="description" content="Bío Digital: páginas web, videos, menús interactivos, fotos, reservas y fidelización para micro y pequeñas empresas del Gran Concepción.">
+<meta name="description" content="Bío Digital: páginas web, videos para redes, menús digitales, fotos, reservas y tarjetas de fidelización para micro y pequeñas empresas del Gran Concepción.">
 <link rel="icon" href="${b}marca/favicon-32.png" sizes="32x32">
 <link rel="icon" href="${b}marca/icono-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="${b}marca/apple-touch-icon.png">
 <meta property="og:title" content="${o.titulo}">
-<meta property="og:description" content="Páginas web, videos, menús interactivos, fotos, reservas y fidelización para micro y pequeñas empresas del Gran Concepción.">
+<meta property="og:description" content="Páginas web, videos para redes, menús digitales, fotos, reservas y tarjetas de fidelización para micro y pequeñas empresas del Gran Concepción.">
 <meta property="og:image" content="${b}marca/og.jpg">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -135,8 +159,8 @@ ${o.n === 8 ? '<p class="proto">Sitio de Bío Digital · <a href="plantillas/ind
     <ul class="nav-links" id="menu">
       <li><a href="#" aria-current="page">Inicio</a></li>
       <li><a href="#servicios">Servicios</a></li>
-      <li><a href="#planes">Planes</a></li>
-      <li><a href="#">Nosotros</a></li>
+      <li><a href="#planes">Precios</a></li>
+      <li><a href="#promos">Promociones</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <div class="nav-actions">
@@ -150,36 +174,20 @@ ${o.n === 8 ? '<p class="proto">Sitio de Bío Digital · <a href="plantillas/ind
 <main id="contenido">
 ${o.hero.trim()}
 
-  <section aria-labelledby="t-tldr">
-    <div class="wrap">
-      <div class="tldr reveal">
-        <h2 id="t-tldr">En 30 segundos</h2>
-        <ul data-seq>${li(['Te dejamos visible en Google y Maps con una ficha completa.', 'Tomamos fotos reales de tu local y tus productos.', 'Armamos tu catálogo y, si lo necesitas, tu web con dominio .cl.', 'Todo queda a tu nombre, con capacitación y acta de entrega.', 'Planes desde $150.000, con diagnóstico gratis antes.'])}</ul>
-      </div>
-    </div>
-  </section>
-
   <section id="servicios" aria-labelledby="t-serv">
     <div class="wrap">
       <div class="sec-head reveal">
         <h2 id="t-serv" class="h2">Todo lo que tu negocio necesita</h2>
-        <p class="muted">Cinco servicios que se combinan en un plan para que un cliente te encuentre, confíe y te contacte.</p>
+        <p class="muted">Seis productos con precio propio. Llevas el que te falta, o los seis juntos en el pack y te ahorras ${clp(AHORRO)}.</p>
       </div>
-      <div class="cards">
-        ${SERVICIOS.map(([id, ic, t, p]) => `<a class="svc reveal" href="#svc-${id}"${d.shine ? ' data-shine' : ''}><div class="svc-head">${ico(ic, 22)}<h3 class="h3">${t}</h3></div><p>${p}</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>`).join('\n        ')}
-      </div>
-    </div>
-  </section>
-
-  <section id="entregables" aria-labelledby="t-entregas">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <h2 id="t-entregas" class="h2">Cada cosa que te entregamos</h2>
-        <p class="muted">${d.entregasNota ? d.entregasNota + ' ' : ''}Todos los planes incluyen la ficha de Google, las fotos y el catálogo; la web y el dominio vienen desde el plan Estándar.</p>
-      </div>
-      <div class="ledger reveal" data-seq>
-        <div class="ledger-head" aria-hidden="true"><span>Nº</span><span>Servicio</span><span>Qué recibes</span><span>Viene en</span><span></span></div>
-        ${SERVICIOS.map(([id, , t], i) => `<a class="entry" id="svc-${id}" href="#"><span class="n">${pad(i)}</span><b>${t}</b><span class="d">${ENTREGAS[i][0]}</span><span class="inc">${ENTREGAS[i][1]}</span><svg class="chev" width="18" height="18"><use href="#i-chev"/></svg></a>`).join('\n        ')}
+      <div class="cards six">
+        ${SERVICIOS.map(([id, ic, t, precio, desde, p, items]) => `<a class="svc reveal" id="svc-${id}" href="#diagnostico"${d.shine ? ' data-shine' : ''}>
+          <div class="svc-head">${ico(ic, 22)}<h3 class="h3">${t}</h3></div>
+          <p class="tarifa">${desde ? '<small>desde</small>' : ''}<b class="num">${clp(precio)}</b></p>
+          <p>${p}</p>
+          <ul class="svc-list" data-seq>${li(items, 15)}</ul>
+          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
+        </a>`).join('\n        ')}
       </div>
     </div>
   </section>
@@ -187,11 +195,11 @@ ${o.hero.trim()}
   <section id="informe" aria-labelledby="t-informe">
     <div class="wrap">
       <div class="sec-head reveal">
-        <h2 id="t-informe" class="h2">¿Cuántos puntos saca tu negocio en Google?</h2>
-        <p class="muted">Así es el diagnóstico gratis: revisamos cómo te ve un cliente que te busca en Google y en Maps, en cinco aspectos que suman 100 puntos. Te entregamos un informe de una página con tu puntaje y las tres mejoras que más te convienen.</p>
+        <h2 id="t-informe" class="h2">¿Qué tan digitalizado está tu negocio?</h2>
+        <p class="muted">Es lo primero que hacemos cuando nos contactas: revisamos cinco aspectos que suman 100 puntos y te decimos cuál te conviene resolver primero. Gratis y sin compromiso.</p>
       </div>
       <div class="report">
-        <aside class="rail" data-rail aria-label="Recorrido del informe">
+        <aside class="rail" data-rail aria-label="Recorrido del diagnóstico">
           <div class="meter" data-score>
             ${d.medidor || '<svg viewBox="0 0 100 100" aria-hidden="true"><circle class="m-track" cx="50" cy="50" r="44"/><circle class="m-fill" cx="50" cy="50" r="44" pathLength="100"/></svg>'}
             <div class="m-read"><b class="num" data-score-out>0</b><small>de 100<br>revisados</small></div>
@@ -203,16 +211,10 @@ ${o.hero.trim()}
           <a class="btn btn-sm" href="#diagnostico">Pedir el mío</a>
         </aside>
         <div class="dims">
-          ${ASPECTOS.map(([t, pts, rev, q, svc, ic, fb, fs, base], i) => `<article class="dim reveal" id="d${i + 1}">
+          ${ASPECTOS.map(([t, pts, svc, ic, q, fix], i) => `<article class="dim corta reveal" id="d${i + 1}">
             <div class="dim-head"><div><h3 class="h2">${t}</h3><span class="tag">${numAspecto(i)}</span></div><p class="pts"><b class="num">${pts}</b><span>puntos</span></p></div>
-            <div class="dim-body">
-              <div><h4>Qué revisamos</h4><ul class="checks" data-seq>${li(rev, 15)}</ul></div>
-              <p class="low">Cuando este puntaje es bajo, el cliente piensa:<q>${q}</q></p>
-            </div>
-            <div class="fix">
-              <a class="fix-svc" href="${svc ? '#svc-' + svc : '#proceso'}">${ico(ic)}<div><b>${fb}</b><span>${fs}</span></div></a>
-              <div class="in-plans">${base ? '<span>Base: catálogo</span>' : '<span class="y">Base</span>'}<span class="y">Estándar</span><span class="y">Premium</span></div>
-            </div>
+            <p class="low"><q>${q}</q></p>
+            <a class="fix-svc" href="#svc-${svc}">${ico(ic)}<div><b>${fix}</b><span>Ver qué incluye</span></div></a>
           </article>`).join('\n          ')}
         </div>
       </div>
@@ -234,34 +236,54 @@ ${o.hero.trim()}
   <section id="planes" aria-labelledby="t-planes">
     <div class="wrap">
       <div class="sec-head center reveal">
-        <h2 id="t-planes" class="h2">Planes claros, desde <span class="num">$150.000</span></h2>
-        <p class="muted">El precio final se confirma después del diagnóstico gratis, antes de que pagues nada.</p>
+        <h2 id="t-planes" class="h2">Precios claros, producto por producto</h2>
+        <p class="muted">Sin mensualidades. Pagas una vez por lo que te hacemos y queda a tu nombre.</p>
       </div>
-      <div class="plans">
-        ${PLANES.map(([nom, precio, items, pick]) => `<article class="plan${pick ? ' pick' : ''} reveal"${d.shine ? ' data-shine' : ''}>
-          <div class="plan-top"><h3 class="h3">${nom}</h3>${pick ? '<span class="rec">Recomendado</span>' : ''}</div>
-          <p class="price"><small>desde</small><b class="num">${precio}</b></p>
-          <ul data-seq>${li(items)}</ul>
-          <a class="btn${pick ? ' btn-main' : ''}" href="#diagnostico">Empezar con ${nom}</a>
-        </article>`).join('\n        ')}
+      <div class="precios">
+        <div class="tarifario reveal" data-seq>
+          ${SERVICIOS.map(([id, ic, t, precio, desde]) => `<a class="fila" href="#svc-${id}">${ico(ic, 18)}<b>${t}</b><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}</span></a>`).join('\n          ')}
+          <p class="fila total"><b>Los seis por separado</b><span class="num">${clp(SUMA)}</span></p>
+        </div>
+        <article class="pack reveal"${d.shine ? ' data-shine' : ''}>
+          <div class="plan-top"><h3 class="h3">Pack completo</h3><span class="rec">Lo que más conviene</span></div>
+          <p class="price"><small>los seis productos</small><b class="num">${clp(PACK)}</b></p>
+          <p class="ahorro">Te ahorras <b>${clp(AHORRO)}</b> frente a comprarlos sueltos</p>
+          <ul data-seq>${li(SERVICIOS.map((s) => s[2]))}</ul>
+          <a class="btn btn-main" href="#diagnostico">Quiero el pack completo</a>
+          <small class="pack-note">Los primeros 5 clientes lo llevan en ${clp(PACK_5)}.</small>
+        </article>
       </div>
-      <ul class="promises reveal" data-seq aria-label="Lo que viene en todos los planes">
-        ${PROMESAS.map(([ic, b, s]) => `<li>${ico(ic, 20)}<div><b>${b}</b><span>${s}</span></div></li>`).join('\n        ')}
+      <ul class="promises reveal" data-seq aria-label="Lo que viene con cualquier producto">
+        ${PROMESAS.map(([ic, bb, s]) => `<li>${ico(ic, 20)}<div><b>${bb}</b><span>${s}</span></div></li>`).join('\n        ')}
       </ul>
     </div>
   </section>
 
-  <section aria-labelledby="t-launch">
+  <section id="promos" aria-labelledby="t-promos">
     <div class="wrap">
       <div class="gift-box reveal" id="beneficio">
         <div class="gift-text">
           <span class="gift-ico"><svg class="gift" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5v7h14v-7M12 12.5v7"/><g class="lid"><rect x="3.5" y="8" width="17" height="4.5" rx="1"/><path d="M12 8v4.5M12 8c-1.5-3.5-5.5-3.5-5.5-1 0 1 1 1 5.5 1Zm0 0c1.5-3.5 5.5-3.5 5.5-1 0 1-1 1-5.5 1Z"/></g></svg></span>
           <div>
-            <h2 id="t-launch">Beneficio para nuestros primeros 5 clientes</h2>
-            <p>Si nos autorizas a publicar tu caso y tu opinión, te damos el doble de soporte después de la entrega. Cupos limitados a los primeros 5 clientes.</p>
+            <h2 id="t-promos">Precio de lanzamiento para los primeros 5 clientes</h2>
+            <p>El pack completo queda en <b class="num">${clp(PACK_5)}</b> en vez de ${clp(PACK)}. Y si prefieres armar tu propia combinación, te hacemos un 10&nbsp;% de descuento sobre cualquier compra desde ${clp(30000)}. Cupos limitados a los primeros 5 clientes.</p>
           </div>
         </div>
         <a class="btn btn-main" href="#diagnostico" data-benefit>Quiero participar ${arrow}</a>
+      </div>
+
+      <div class="sec-head reveal promo-head">
+        <h2 class="h2">Promociones fugaces</h2>
+        <p class="muted">Combinaciones a precio rebajado mientras dure el lanzamiento.</p>
+      </div>
+      <div class="promos">
+        ${PROMOS.map(([ic, t, precio, normal, p]) => `<article class="promo reveal"${d.shine ? ' data-shine' : ''}>
+          <div class="promo-top">${ico(ic, 20)}<span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
+          <h3 class="h3">${t}</h3>
+          <p class="promo-price"><b class="num">${clp(precio)}</b><s class="num">${clp(normal)}</s></p>
+          <p class="promo-save">Ahorras ${clp(normal - precio)}</p>
+          <p class="promo-txt">${p}</p>
+        </article>`).join('\n        ')}
       </div>
     </div>
   </section>
@@ -271,7 +293,7 @@ ${o.hero.trim()}
       <div class="ask reveal" id="diagnostico">
         <div>
           <h2 id="t-pedir" class="h2">Pide tu <span class="accent">diagnóstico gratis</span></h2>
-          <p class="muted">Te lo entregamos por correo, o en tu local si estás en el Gran Concepción. Hacemos un solo seguimiento y no insistimos.</p>
+          <p class="muted">Te escribimos, revisamos tu negocio contigo y te damos tu puntaje de 100. Recién ahí hablamos de precios. Hacemos un solo seguimiento y no insistimos.</p>
           <div class="ask-alt">
             <b>¿Prefieres escribirnos?</b>
             <p><a href="mailto:${MAIL}">${MAIL}</a> · Recibimos solicitudes 24/7 y respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
@@ -284,8 +306,8 @@ ${o.hero.trim()}
           <label>Comuna<input name="comuna" autocomplete="address-level2" placeholder="Ej.: San Pedro de la Paz" required></label>
           <label>Correo<input name="correo" type="email" autocomplete="email" placeholder="tu@correo.cl" required></label>
           <label><span>Teléfono <small>(opcional)</small></span><input name="telefono" type="tel" autocomplete="tel" placeholder="+56 9"></label>
-          <label class="full"><span>Enlace a tu Instagram o ficha de Maps <small>(opcional)</small></span><input name="enlace" type="url" placeholder="https://"></label>
-          <label class="check-row"><input type="checkbox" name="beneficio" data-benefit-check>Me interesa el beneficio para los primeros 5 clientes.</label>
+          <label class="full"><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes"><option value="" selected>Todavía no lo sé</option>${SERVICIOS.map((s) => `<option>${s[2]}</option>`).join('')}<option>El pack completo</option></select></label>
+          <label class="check-row"><input type="checkbox" name="beneficio" data-benefit-check>Me interesa el precio de lanzamiento para los primeros 5 clientes.</label>
           <label class="check-row"><input type="checkbox" name="acepto" required>Acepto la política de privacidad y que me contacten por este diagnóstico.</label>
           <button class="btn btn-main" type="submit"><span class="btn-label">Enviar solicitud</span>${arrow}</button>
           <p class="form-status" role="status"></p>
@@ -310,8 +332,8 @@ ${o.hero.trim()}
     <div class="wrap">
       <div class="final reveal">
         ${d.final || ''}
-        <h2 id="t-final" class="h2">¿Tu negocio aparece <span class="accent">cuando te buscan?</span></h2>
-        <p>Te lo decimos gratis. Recibimos solicitudes 24/7 y respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
+        <h2 id="t-final" class="h2">¿Tu negocio está listo <span class="accent">para vender en internet?</span></h2>
+        <p>Te lo decimos gratis en la primera conversación. Recibimos solicitudes 24/7 y respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
         <div class="cta-row">
           <a class="btn btn-main" href="#diagnostico">Pide tu diagnóstico gratis ${arrow}</a>
           <a class="btn" href="mailto:${MAIL}">${MAIL}</a>
@@ -325,7 +347,7 @@ ${o.hero.trim()}
   <div class="wrap">
     <div class="foot reveal">
       <div><strong>Bío Digital</strong><br>Presencia digital para micro y pequeñas empresas.<br>Presencial en el Gran Concepción · Remoto en todo Chile</div>
-      <nav aria-label="Pie de página"><ul><li><a href="#servicios">Servicios</a></li><li><a href="#planes">Planes</a></li><li><a href="#">Nosotros</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li></ul></nav>
+      <nav aria-label="Pie de página"><ul><li><a href="#servicios">Servicios</a></li><li><a href="#planes">Precios</a></li><li><a href="#promos">Promociones</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li></ul></nav>
       <div>${MAIL}<br>© 2026 Bío Digital</div>
     </div>
   </div>

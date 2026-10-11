@@ -75,7 +75,12 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 /* Servicios */
 .cards { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
 .svc { grid-column: span 2; position: relative; display: flex; flex-direction: column; gap: 12px; padding: 26px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-2); text-decoration: none; transition: transform .35s var(--ease-out), border-color .3s ease, box-shadow .35s ease; }
-.svc:nth-child(4), .svc:nth-child(5) { grid-column: span 3; }
+.cards:not(.six) .svc:nth-child(4), .cards:not(.six) .svc:nth-child(5) { grid-column: span 3; }
+.svc .tarifa { display: flex; align-items: baseline; gap: 6px; margin-top: -2px; }
+.svc .tarifa small { font-size: 13px; color: var(--fg-3); }
+.svc .tarifa b { font-family: var(--display); font-size: 26px; font-weight: 600; letter-spacing: -.03em; color: var(--fg); }
+.svc-list { list-style: none; display: grid; gap: 8px; font-size: 14px; color: var(--fg-2); }
+.svc-list li { display: flex; gap: 10px; align-items: baseline; }
 .svc-head { display: flex; align-items: center; gap: 14px; }
 .svc-head .ico { width: 40px; height: 40px; flex: none; }
 .svc p { color: var(--fg-2); font-size: 15px; }
@@ -128,6 +133,10 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 .dim-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
 .dim h4 { margin-bottom: 10px; font-size: 13px; font-weight: 600; color: var(--fg-3); font-family: var(--mono); letter-spacing: .04em; }
 .checks { list-style: none; display: grid; gap: 8px; font-size: 15px; }
+.dim.corta { gap: 16px; padding: clamp(18px, 2.2vw, 26px); }
+.dim.corta .dim-head .h2 { font-size: clamp(21px, 2.1vw, 26px); }
+.dim.corta .pts b { font-size: 36px; }
+.dim.corta .fix-svc { padding-top: 14px; border-top: 1px solid var(--line-2); }
 .low { padding: 16px 18px; border-radius: var(--r); background: var(--bg-3); font-size: 14px; color: var(--fg-2); }
 .low q { display: block; margin-top: 6px; font-size: 17px; color: var(--fg); quotes: "“" "”"; }
 .fix { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; padding-top: 18px; border-top: 1px solid var(--line-2); }
@@ -166,6 +175,39 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 .promises .ico { width: 40px; height: 40px; flex: none; }
 .promises b { display: block; font-size: 15px; }
 .promises span { font-size: 14px; color: var(--fg-2); }
+
+/* Precios: el tarifario de los seis productos y el pack completo */
+.precios { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 20px; align-items: start; }
+.tarifario { display: grid; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-2); overflow: hidden; }
+.tarifario .fila { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--line-2); text-decoration: none; transition: background-color .25s ease; }
+.tarifario .fila .ico { width: 36px; height: 36px; }
+.tarifario .fila b { font-size: 15px; font-weight: 500; }
+.tarifario .fila > span { font-family: var(--mono); font-size: 15px; color: var(--fg); white-space: nowrap; }
+.tarifario .fila > span small { color: var(--fg-3); font-size: 12px; }
+@media (hover: hover) and (pointer: fine) { .tarifario a.fila:hover { background: var(--bg-3); } }
+.tarifario .total { grid-template-columns: minmax(0, 1fr) auto; border-bottom: 0; background: var(--bg-3); }
+.tarifario .total b { font-size: 15px; font-weight: 600; }
+.pack { position: relative; display: flex; flex-direction: column; gap: 16px; padding: clamp(24px, 3vw, 32px); border: 1px solid var(--accent); border-radius: var(--r-lg); background: var(--bg-2); box-shadow: var(--glow); }
+.pack ul { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; font-size: 14px; }
+.pack ul li { display: flex; gap: 10px; align-items: baseline; }
+.pack .ahorro { padding: 10px 14px; border-radius: var(--r); background: var(--bg-3); font-size: 14px; color: var(--fg-2); }
+.pack .ahorro b { color: var(--fg); font-family: var(--mono); }
+.pack .btn { margin-top: auto; }
+.pack-note { font-size: 13px; color: var(--fg-3); text-align: center; }
+
+/* Promociones fugaces */
+.promo-head { margin-top: clamp(36px, 5vw, 56px); }
+.promos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.promo { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 22px 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-2); }
+.promo-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.promo-top .ico { width: 36px; height: 36px; flex: none; }
+.flash { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-family: var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--accent-fg); background: var(--accent); }
+.promo .h3 { font-size: 16px; line-height: 1.2; }
+.promo-price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.promo-price b { font-family: var(--display); font-size: 27px; font-weight: 600; letter-spacing: -.03em; }
+.promo-price s { font-family: var(--mono); font-size: 13px; color: var(--fg-3); }
+.promo-save { font-size: 13px; font-weight: 600; color: var(--fg); }
+.promo-txt { font-size: 13px; color: var(--fg-2); margin-top: auto; }
 
 /* Beneficio de lanzamiento */
 .gift-box { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; padding: clamp(24px, 3.5vw, 40px); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-2); }
@@ -230,6 +272,8 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
   .rail { position: static; grid-template-columns: 150px minmax(0, 1fr); align-items: center; }
   .rail .meter { width: 150px; grid-row: span 3; }
   .promises { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .precios { grid-template-columns: 1fr; }
+  .promos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 860px) {
   .nav-links.open { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; padding: 12px 16px 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
@@ -238,19 +282,21 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
   .tldr, .sec-grid, .ask, .faq-grid { grid-template-columns: 1fr; }
   .sec-grid > div:first-child, .faq-side { position: static; }
   .cards { grid-template-columns: 1fr; }
-  .svc, .svc:nth-child(4), .svc:nth-child(5) { grid-column: auto; }
+  .svc, .cards .svc:nth-child(4), .cards .svc:nth-child(5) { grid-column: auto; }
   .ledger-head { display: none; }
   .entry { grid-template-columns: 36px minmax(0, 1fr) 20px; gap: 4px 12px; }
   .entry .d, .entry .inc { grid-column: 2; }
   .entry .chev { grid-column: 3; grid-row: 1; }
   .plans { grid-template-columns: 1fr; }
+  .promos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dim-body { grid-template-columns: 1fr; }
   .foot { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .rail { grid-template-columns: 1fr; }
   .rail .meter { grid-row: auto; }
-  .promises { grid-template-columns: 1fr; }
+  .promises, .promos { grid-template-columns: 1fr; }
+  .pack ul { grid-template-columns: 1fr; }
   .ask form { grid-template-columns: 1fr; }
   .gift-text { flex-direction: column; align-items: start; }
   .faq details p { padding-left: 20px; }

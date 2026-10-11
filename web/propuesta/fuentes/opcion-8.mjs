@@ -11,10 +11,10 @@ export default {
   titulo: 'Bío Digital · Opción 8: Final (6 + 7)',
   tema: 'dark',
   fuentes: 'family=Geist:wght@300..700&family=Geist+Mono:wght@400..600',
-  // Logo de la marca: el logotipo completo, en dos versiones según el tema (el texto es blanco o tinta)
+  // Logo de la marca: dos capas recortadas del logotipo original. La "B" se pinta con la paleta
+  // (--c1 a --c2, lo que cambia la rueda) y el texto con el color de texto, así sirve en los dos temas.
   marcaTexto: false,   // el nombre ya está dibujado dentro del logotipo
-  marca: `<img class="logo oscuro" src="marca/logotipo-96.webp" width="144" height="32" alt="Bío Digital" decoding="async">` +
-         `<img class="logo claro" src="marca/logotipo-tinta-96.webp" width="144" height="32" alt="" aria-hidden="true" decoding="async">`,
+  marca: `<span class="logo" role="img" aria-label="Bío Digital"><i class="l-marca"></i><i class="l-texto"></i></span>`,
   deco: {
     shine: true,
     entregasNota: 'Lo que ves en el panel de arriba es lo que te llevas.',
@@ -99,11 +99,11 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
 .top { background: color-mix(in srgb, var(--bg) 85%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .nav { width: min(100% - 48px, 1180px); }
 .brand { gap: 0; }
-.brand .logo { height: 26px; width: auto; display: block; }
-.brand .claro { display: none; }
-[data-theme="light"] .brand .oscuro { display: none; }
-[data-theme="light"] .brand .claro { display: block; }
-@media (min-width: 900px) { .brand .logo { height: 30px; } }
+.brand .logo { position: relative; display: block; width: 117px; height: 26px; }
+.brand .logo i { position: absolute; inset: 0; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
+.brand .l-marca { -webkit-mask-image: url(marca/mascara-marca-540.png); mask-image: url(marca/mascara-marca-540.png); background: linear-gradient(115deg, var(--c1), var(--c2)) left center / 21.5% 100% no-repeat; }
+.brand .l-texto { -webkit-mask-image: url(marca/mascara-texto-540.png); mask-image: url(marca/mascara-texto-540.png); background: var(--fg); }
+@media (min-width: 900px) { .brand .logo { width: 135px; height: 30px; } }
 .h2 { font-weight: 560; letter-spacing: -.04em; }
 .h3 { font-weight: 560; font-size: 18px; }
 .accent { background: linear-gradient(90deg, var(--warm), var(--copper) 55%, color-mix(in oklab, var(--c2), var(--fg) 25%)); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -174,7 +174,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
 .bars6 { display: grid; gap: 10px; }
 .bars6 div { display: grid; grid-template-columns: 100px minmax(0, 1fr) 28px; gap: 10px; align-items: center; font-size: 12px; color: var(--fg-2); }
 .bars6 div i { height: 8px; border-radius: 99px; background: var(--line-2); overflow: hidden; }
-.bars6 div i::before { content: ""; display: block; height: 100%; width: calc(var(--w) / 30 * 100%); border-radius: inherit; background: linear-gradient(90deg, var(--warm), var(--copper)); transform-origin: left; }
+.bars6 div i::before { content: ""; display: block; height: 100%; width: calc(var(--w) / 25 * 100%); border-radius: inherit; background: linear-gradient(90deg, var(--warm), var(--copper)); transform-origin: left; }
 .motion .bars6.in div i::before { animation: grow 1.2s var(--ease-out) backwards; animation-delay: calc(.3s + var(--k, 0) * 80ms); }
 @keyframes grow { from { transform: scaleX(0); } }
 .bars6 div b { text-align: right; font-family: var(--mono); font-weight: 500; color: var(--fg); }
@@ -236,17 +236,19 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
 .stage .ex { position: absolute; left: 50%; bottom: 14px; translate: -50% 0; z-index: 3; font-size: 12px; color: var(--fg-3); }
 
 /* Secciones: mezcla de 6 y 7 */
-.tldr, .svc, .ledger, .rail, .dim, .step, .plan, .gift-box, .ask form, .faq details { box-shadow: inset 0 1px 0 var(--line-2); }
-.svc, .plan { background: linear-gradient(170deg, var(--bg-3), var(--bg-2) 60%); }
+.svc, .tarifario, .pack, .promo, .rail, .dim, .step, .gift-box, .ask form, .faq details { box-shadow: inset 0 1px 0 var(--line-2); }
+.svc, .tarifario, .promo { background: linear-gradient(170deg, var(--bg-3), var(--bg-2) 60%); }
 @property --mx { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
 @property --my { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
 [data-shine]::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(340px circle at var(--mx) var(--my), color-mix(in srgb, var(--warm) 13%, transparent), transparent 62%); opacity: 0; transition: opacity .4s ease; pointer-events: none; }
 @media (hover: hover) and (pointer: fine) { [data-shine]:hover::after { opacity: 1; } .svc:hover { border-color: color-mix(in srgb, var(--warm) 45%, transparent); } }
 .ico { color: var(--warm); border-radius: 12px; }
 .pts b { color: var(--warm); }
-.rec { background: var(--warm); color: #140800; }
-.pick { background: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, var(--warm) 16%, transparent), transparent 70%), linear-gradient(170deg, var(--bg-3), var(--bg-2)); border-color: color-mix(in srgb, var(--warm) 60%, transparent); }
-.pick::before { content: ""; position: absolute; left: 18%; right: 18%; top: -1px; height: 1px; background: linear-gradient(90deg, transparent, var(--warm), transparent); }
+.rec, .flash { background: var(--warm); color: #140800; }
+.svc .tarifa b, .promo-save { color: var(--warm); }
+.pack { background: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, var(--warm) 16%, transparent), transparent 70%), linear-gradient(170deg, var(--bg-3), var(--bg-2)); border-color: color-mix(in srgb, var(--warm) 60%, transparent); box-shadow: var(--glow), inset 0 1px 0 var(--line-2); }
+.pack::before { content: ""; position: absolute; left: 18%; right: 18%; top: -1px; height: 1px; background: linear-gradient(90deg, transparent, var(--warm), transparent); }
+@media (hover: hover) and (pointer: fine) { .promo:hover, .tarifario a.fila:hover { border-color: color-mix(in srgb, var(--warm) 45%, transparent); } }
 .meter .m-fill { stroke: var(--warm); }
 .rail ol a.on { box-shadow: inset 2px 0 0 var(--warm); }
 .gift-ico { background: var(--warm); color: #140800; border-radius: 50%; }
@@ -288,18 +290,18 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
   <div class="hero">
     <div class="spot" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="wrap hero-in">
-      <a class="pill enter" href="#beneficio">Beneficio para los primeros 5 clientes <b>Ver más <svg width="14" height="14"><use href="#i-arrow"/></svg></b></a>
-      <h1 class="enter enter-2">Que tu negocio aparezca <span>cuando te buscan</span></h1>
-      <p class="lead enter enter-3">Cuando alguien busca un negocio como el tuyo en Google o en Maps, elige entre los que aparecen con fotos, horario y reseñas. Dejamos el tuyo listo para competir ahí, todo a tu nombre.</p>
+      <a class="pill enter" href="#beneficio">Pack completo a $69.990 para los primeros 5 clientes <b>Ver más <svg width="14" height="14"><use href="#i-arrow"/></svg></b></a>
+      <h1 class="enter enter-2">Tu negocio, <span>listo para vender en internet</span></h1>
+      <p class="lead enter enter-3">Página web, videos para redes, menú digital, fotos, reservas y tarjeta de fidelización. Armamos lo que te falta, te lo dejamos funcionando y queda todo a tu nombre.</p>
       <form class="capture enter enter-3" data-capture aria-label="Empezar tu diagnóstico gratis">
         <label class="sr" for="cap-negocio">Nombre de tu negocio</label>
         <input id="cap-negocio" name="negocio" autocomplete="organization" placeholder="Nombre de tu negocio" required>
         <button class="btn btn-main" type="submit">Pedir diagnóstico</button>
       </form>
-      <a class="alt-link enter enter-4" href="#planes">o mira los planes <svg width="14" height="14"><use href="#i-arrow"/></svg></a>
+      <a class="alt-link enter enter-4" href="#planes">o mira los precios <svg width="14" height="14"><use href="#i-arrow"/></svg></a>
       <p class="hero-meta enter enter-4">
-        <span><svg width="14" height="14"><use href="#i-check"/></svg>Diagnóstico gratis</span>
-        <span><svg width="14" height="14"><use href="#i-check"/></svg>Planes desde $150.000</span>
+        <span><svg width="14" height="14"><use href="#i-check"/></svg>Diagnóstico gratis al primer contacto</span>
+        <span><svg width="14" height="14"><use href="#i-check"/></svg>Productos desde $4.990 · pack completo $79.990</span>
         <span><svg width="14" height="14"><use href="#i-check"/></svg>Startup de estudiantes UdeC · Gran Concepción</span>
         <span><svg width="14" height="14"><use href="#i-check"/></svg>Respondemos en menos de 24 horas <span class="note">por confirmar</span></span>
       </p>
@@ -307,34 +309,34 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
     <div class="horizon" aria-hidden="true"></div>
     <div class="stage">
       <div class="floor" aria-hidden="true"></div>
-      <figure class="dash" data-dash aria-label="Ejemplo ilustrativo del panel de un proyecto con plan Estándar">
+      <figure class="dash" data-dash aria-label="Ejemplo ilustrativo del panel de un proyecto con el pack completo">
         <nav class="dash-side" aria-hidden="true">
           <b><svg width="18" height="18"><use href="#i-pin"/></svg>Tu negocio</b>
           <i class="sel"></i>
-          <span class="on"><svg width="16" height="16"><use href="#i-web"/></svg>Resumen</span>
-          <span><svg width="16" height="16"><use href="#i-pin"/></svg>Ficha de Google</span>
-          <span><svg width="16" height="16"><use href="#i-camera"/></svg>Fotos</span>
-          <span><svg width="16" height="16"><use href="#i-book"/></svg>Catálogo</span>
-          <span><svg width="16" height="16"><use href="#i-star"/></svg>Reseñas</span>
-          <span><svg width="16" height="16"><use href="#i-mail"/></svg>Dominio y correo</span>
+          <span class="on"><svg width="16" height="16"><use href="#i-check"/></svg>Resumen</span>
+          <span><svg width="16" height="16"><use href="#i-web"/></svg>Página web</span>
+          <span><svg width="16" height="16"><use href="#i-video"/></svg>Videos</span>
+          <span><svg width="16" height="16"><use href="#i-qr"/></svg>Menú digital</span>
+          <span><svg width="16" height="16"><use href="#i-calendar"/></svg>Reservas</span>
+          <span><svg width="16" height="16"><use href="#i-card"/></svg>Fidelización</span>
         </nav>
         <div class="dash-main">
-          <div class="dash-head"><div><h2>Resumen del proyecto</h2><p>Plan Estándar · así se ve el avance</p></div><span class="tag-ej">Ejemplo ilustrativo</span></div>
+          <div class="dash-head"><div><h2>Resumen del proyecto</h2><p>Pack completo · así se ve el avance</p></div><span class="tag-ej">Ejemplo ilustrativo</span></div>
           <div class="stats reveal" data-seq>
-            <div class="stat"><small>Ficha de Google</small><b>Verificada</b><i>${ok}a tu nombre</i></div>
-            <div class="stat"><small>Fotos del local</small><b>10 a 15</b><i>${ok}en tu carpeta</i></div>
-            <div class="stat"><small>Dominio</small><b>tunegocio.cl</b><i>${ok}1er año incluido</i></div>
-            <div class="stat"><small>Soporte</small><b>14 días</b><i>${ok}después de la entrega</i></div>
+            <div class="stat"><small>Página web</small><b>Publicada</b><i>${ok}a tu nombre</i></div>
+            <div class="stat"><small>Videos</small><b>3 listos</b><i>${ok}para tus redes</i></div>
+            <div class="stat"><small>Menú digital</small><b>QR activo</b><i>${ok}lo editas tú</i></div>
+            <div class="stat"><small>Reservas</small><b>En línea</b><i>${ok}sin llamadas</i></div>
           </div>
           <div class="panels">
             <div class="panel">
               <h3>Cómo se reparte tu puntaje <small>máximo por aspecto</small></h3>
               <div class="bars6 reveal" data-seq>
-                <div style="--w:30"><span>Te encuentran</span><i></i><b>30</b></div>
-                <div style="--w:20"><span>Información</span><i></i><b>20</b></div>
-                <div style="--w:20"><span>Imagen</span><i></i><b>20</b></div>
-                <div style="--w:15"><span>Reputación</span><i></i><b>15</b></div>
-                <div style="--w:15"><span>Contacto</span><i></i><b>15</b></div>
+                <div style="--w:25"><span>Tu sitio propio</span><i></i><b>25</b></div>
+                <div style="--w:20"><span>Cómo se ve</span><i></i><b>20</b></div>
+                <div style="--w:20"><span>Qué vendes</span><i></i><b>20</b></div>
+                <div style="--w:20"><span>Cómo reservan</span><i></i><b>20</b></div>
+                <div style="--w:15"><span>Si vuelven</span><i></i><b>15</b></div>
               </div>
             </div>
             <div class="panel">
@@ -342,7 +344,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
               <ol class="timeline reveal" data-seq>
                 <li class="done"><span class="dot">${ok}</span><span>Diagnóstico gratis</span><small>Paso 1</small></li>
                 <li class="done"><span class="dot">${ok}</span><span>Propuesta y precio</span><small>Paso 2</small></li>
-                <li class="now"><span class="dot"></span><span>Visita a tu local</span><small>Paso 3</small></li>
+                <li class="now"><span class="dot"></span><span>Producción</span><small>Paso 3</small></li>
                 <li><span class="dot"></span><span>Entrega y capacitación</span><small>Paso 4</small></li>
               </ol>
             </div>
@@ -359,30 +361,30 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
           <path class="pulse" d="M0 70h50l30 30h160"/><path class="pulse" d="M0 190h70l30 30h140"/>
         </svg>
         <div class="card float g-card" data-par="-14">
-          <div class="card-head"><span class="ic"><svg width="18" height="18"><use href="#i-pin"/></svg></span><div><b>Tu ficha de Google</b><span class="ej">EJEMPLO</span></div></div>
-          <p class="state"><span class="open">Abierto</span> · Cierra a las 20:00</p>
-          <div class="acts"><span><svg width="16" height="16"><use href="#i-pin"/></svg>Cómo llegar</span><span><svg width="16" height="16"><use href="#i-phone"/></svg>Llamar</span><span><svg width="16" height="16"><use href="#i-web"/></svg>Sitio web</span></div>
+          <div class="card-head"><span class="ic"><svg width="18" height="18"><use href="#i-web"/></svg></span><div><b>Tu página web</b><span class="ej">EJEMPLO</span></div></div>
+          <p class="state"><span class="open">Publicada</span> · tunegocio.cl</p>
+          <div class="acts"><span><svg width="16" height="16"><use href="#i-phone"/></svg>WhatsApp</span><span><svg width="16" height="16"><use href="#i-pin"/></svg>Cómo llegar</span><span><svg width="16" height="16"><use href="#i-calendar"/></svg>Reservar</span></div>
         </div>
         <div class="card float cat-card" data-par="12">
-          <div class="card-head"><span class="ic"><svg width="18" height="18"><use href="#i-book"/></svg></span><div><b>Tu catálogo</b><span class="ej">EJEMPLO</span></div></div>
-          <ul><li><span>Producto destacado</span><span>$4.500</span></li><li><span>Servicio del día</span><span>$8.900</span></li></ul>
-          <small>En PDF, o dentro de tu web en Premium</small>
+          <div class="card-head"><span class="ic"><svg width="18" height="18"><use href="#i-qr"/></svg></span><div><b>Tu menú digital</b><span class="ej">EJEMPLO</span></div></div>
+          <ul><li><span>Producto destacado</span><span>$4.500</span></li><li><span>Plato del día</span><span>$8.900</span></li></ul>
+          <small>QR en las mesas · cambias un precio en dos minutos</small>
         </div>
         <div class="card float cert-card" data-par="-10">
           <span class="ok"><svg width="20" height="20"><use href="#i-check"/></svg></span>
           <b>Todo a tu nombre</b>
           <dl>
             <div><dt>Titular</dt><dd>Tu negocio, con tu RUT</dd></div>
-            <div><dt>Ficha de Google</dt><dd>propietario: tú</dd></div>
-            <div><dt>Tu correo</dt><dd>contacto@tunegocio.cl</dd></div>
+            <div><dt>Página web</dt><dd>propietario: tú</dd></div>
+            <div><dt>Menú y reservas</dt><dd>los editas tú</dd></div>
           </dl>
           <div class="sign" aria-hidden="true"><svg viewBox="0 0 160 38"><path pathLength="1" d="M6 28c10-16 18-20 20-10s-6 14 2 8 14-22 18-12-2 16 8 6 12-6 20-4 18-8 28-10"/></svg><span>ACTA DE ENTREGA · FIRMADA</span></div>
         </div>
         <div class="card float plan-card" data-par="8">
-          <label>Plan</label>
-          <div><b>Estándar</b><span>desde $250.000</span></div>
-          <label>Incluye</label>
-          <div><b>Web + dominio .cl</b><span>1er año</span></div>
+          <label>Pack completo</label>
+          <div><b>Los 6 productos</b><span>$79.990</span></div>
+          <label>Te ahorras</label>
+          <div><b>$47.950</b><span>vs. por separado</span></div>
         </div>
       </div>
       <p class="ex">Ejemplo ilustrativo</p>

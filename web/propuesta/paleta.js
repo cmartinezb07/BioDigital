@@ -5,12 +5,15 @@
   var root = document.documentElement;
   var actions = document.querySelector('.nav-actions');
   if (!actions) return;
-  var DEF = { c1: '#f08a4b', c2: '#a47cff' };
+  // El original es la paleta de la marca, tomada del logo. "Restablecer" vuelve siempre a estos dos colores.
+  var DEF = { c1: '#0da5ff', c2: '#00e5d0' };
   var PRESETS = [
+    ['Marca (logo)', '#0da5ff', '#00e5d0'],
+    ['Azul profundo', '#2f6df6', '#22d3ee'],
     ['Mezcla 6 + 7', '#f08a4b', '#a47cff'],
     ['Naranjo (opción 6)', '#ff9a3c', '#7890ff'],
     ['Cobre y violeta (opción 7)', '#e07a5f', '#be96ff'],
-    ['Ámbar y rosa', '#f2a65a', '#f096be'],
+    ['Verde y lima', '#16a34a', '#a3e635'],
   ];
   var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 

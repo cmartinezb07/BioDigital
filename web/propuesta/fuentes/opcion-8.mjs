@@ -6,12 +6,15 @@
 const ok = '<svg width="14" height="14"><use href="#i-check"/></svg>';
 export default {
   n: 8,
-  archivo: 'opcion-8-final.html',
+  archivo: 'index.html',
   nombre: 'Final (6 + 7)',
   titulo: 'Bío Digital · Opción 8: Final (6 + 7)',
   tema: 'dark',
   fuentes: 'family=Geist:wght@300..700&family=Geist+Mono:wght@400..600',
-  marca: `<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="8" fill="var(--fg)"/><g stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round"><path d="M14 7.5v13"/><path d="M8.4 10.75l11.2 6.5"/><path d="M8.4 17.25l11.2-6.5"/></g></svg>`,
+  // Logo de la marca: el logotipo completo, en dos versiones según el tema (el texto es blanco o tinta)
+  marcaTexto: false,   // el nombre ya está dibujado dentro del logotipo
+  marca: `<img class="logo oscuro" src="marca/logotipo-96.webp" width="144" height="32" alt="Bío Digital" decoding="async">` +
+         `<img class="logo claro" src="marca/logotipo-tinta-96.webp" width="144" height="32" alt="" aria-hidden="true" decoding="async">`,
   deco: {
     shine: true,
     entregasNota: 'Lo que ves en el panel de arriba es lo que te llevas.',
@@ -32,8 +35,9 @@ export default {
 `,
   css: String.raw`
 :root {
-  --c1: #f08a4b;
-  --c2: #a47cff;
+  /* Los dos colores de la marca, tomados del logo: azul del isotipo y cian del degradado */
+  --c1: #0da5ff;
+  --c2: #00e5d0;
   --bg: #0a0a0b;
   --bg-2: #111113;
   --bg-3: #19191c;
@@ -94,7 +98,12 @@ body { font-size: 16px; letter-spacing: -.005em; background: linear-gradient(90d
 main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280px; margin-inline: auto; }
 .top { background: color-mix(in srgb, var(--bg) 85%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .nav { width: min(100% - 48px, 1180px); }
-.brand b { font-weight: 600; }
+.brand { gap: 0; }
+.brand .logo { height: 26px; width: auto; display: block; }
+.brand .claro { display: none; }
+[data-theme="light"] .brand .oscuro { display: none; }
+[data-theme="light"] .brand .claro { display: block; }
+@media (min-width: 900px) { .brand .logo { height: 30px; } }
 .h2 { font-weight: 560; letter-spacing: -.04em; }
 .h3 { font-weight: 560; font-size: 18px; }
 .accent { background: linear-gradient(90deg, var(--warm), var(--copper) 55%, color-mix(in oklab, var(--c2), var(--fg) 25%)); -webkit-background-clip: text; background-clip: text; color: transparent; }

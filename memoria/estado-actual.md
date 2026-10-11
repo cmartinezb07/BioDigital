@@ -6,8 +6,8 @@ Leer esto primero al empezar una sesión nueva.
 Quien llegue nuevo parte por [EMPEZAR-AQUI.md](../EMPEZAR-AQUI.md).
 
 ## Sitio web (web/propuesta/)
-- **Estética elegida: opción 8** (`opcion-8-final.html`), mezcla de la 6 (panel SaaS) y la 7 (foco fintech). Detalle en `decisiones.md`.
-- Las opciones 1–7 quedan como historial. Galería en `index.html`.
+- **El sitio es la opción 8** (mezcla de la 6 y la 7) y se genera como `web/propuesta/index.html`. Logo aplicado y paleta de marca (`#0da5ff` / `#00e5d0`), con rueda de colores para probar otras.
+- Las siete anteriores son **plantillas ya hechas**: `web/propuesta/plantillas/`, con galería propia.
 - Servir: preview "maquetas" (`.claude/launch.json`, puerto 4321) con `web/servir.py`, sin caché.
 - Páginas 3–8 se generan: `node web/propuesta/fuentes/generar.mjs [3 4 … 8]`. No editar los HTML generados; textos comunes en `fuentes/comun.mjs`, estética en `fuentes/opcion-N.mjs`.
 - Paleta de la opción 8: dos colores (`--c1`, `--c2`) con rueda de colores para el equipo (`paleta.js`, se quita al publicar).

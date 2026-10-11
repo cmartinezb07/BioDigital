@@ -3,129 +3,173 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bío Digital · Opción 4: Cristal líquido</title>
-<meta name="description" content="Maqueta de propuesta de Bío Digital: presencia digital para micro y pequeñas empresas del Gran Concepción.">
+<title>Bío Digital · Opción 6: Panel SaaS</title>
+<meta name="description" content="Bío Digital: páginas web, videos, menús interactivos, fotos, reservas y fidelización para micro y pequeñas empresas del Gran Concepción.">
+<link rel="icon" href="../marca/favicon-32.png" sizes="32x32">
+<link rel="icon" href="../marca/icono-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../marca/apple-touch-icon.png">
+<meta property="og:title" content="Bío Digital · Opción 6: Panel SaaS">
+<meta property="og:description" content="Páginas web, videos, menús interactivos, fotos, reservas y fidelización para micro y pequeñas empresas del Gran Concepción.">
+<meta property="og:image" content="../marca/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <script>var t,q=location.search.match(/tema=(dark|light)/);try{t=localStorage.getItem('bd-theme')}catch(e){}if(q)t=q[1];document.documentElement.dataset.theme=t==='light'||t==='dark'?t:'dark'</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@500..800&family=Figtree:wght@400..700&family=JetBrains+Mono:wght@400..600&display=swap">
-<link rel="stylesheet" href="nucleo.css">
-<link rel="stylesheet" href="kit.css">
-<link rel="stylesheet" href="mascota.css">
-<link rel="stylesheet" href="gato.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="../nucleo.css">
+<link rel="stylesheet" href="../kit.css">
+<link rel="stylesheet" href="../mascota.css">
+<link rel="stylesheet" href="../gato.css">
 
 <style>
 :root {
-  --bg: #050505;
-  --bg-2: rgba(12, 11, 10, .86);
-  --bg-3: rgba(236, 216, 191, .06);
-  --fg: #f6efe6;
-  --fg-2: #c9bcad;
-  --fg-3: #978a7c;
-  --line: rgba(236, 216, 191, .2);
-  --line-2: rgba(236, 216, 191, .1);
-  --accent: #ecd8bf;
-  --accent-fg: #0a0806;
-  --ink: 236, 216, 191;
-  --ground: 5, 5, 5;
-  --display: "Syne", "Arial Black", sans-serif;
-  --body: "Figtree", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
-  --r: 4px;
-  --r-lg: 6px;
-  --btn-r: 99px;
-  --shadow: 0 24px 50px -30px rgba(236, 216, 191, .25);
-  --glow: 0 0 0 1px var(--accent), 0 0 60px -20px rgba(236, 216, 191, .45);
+  --bg: #000;
+  --bg-2: #0a0a0b;
+  --bg-3: #141416;
+  --fg: #fafafa;
+  --fg-2: #a3adbf;
+  --fg-3: #7c8595;
+  --line: rgba(255, 255, 255, .1);
+  --line-2: rgba(255, 255, 255, .06);
+  --accent: #fafafa;
+  --accent-fg: #000;
+  --warm: #ff9a3c;
+  --warm-2: #ffcf8a;
+  --side: #09090a;
+  --display: "Poppins", system-ui, sans-serif;
+  --body: "Poppins", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, monospace;
+  --r: 10px;
+  --r-lg: 16px;
+  --btn-r: 10px;
+  --shadow: 0 20px 50px -30px rgba(255, 154, 60, .35);
+  --glow: 0 0 0 1px rgba(255, 154, 60, .5), 0 30px 80px -30px rgba(255, 154, 60, .45);
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --bg: #f4ede3;
-  --bg-2: rgba(250, 246, 240, .9);
-  --bg-3: rgba(40, 30, 20, .05);
-  --fg: #16110c;
-  --fg-2: #54483c;
-  --fg-3: #7a6c5e;
-  --line: rgba(40, 30, 20, .2);
-  --line-2: rgba(40, 30, 20, .1);
-  --accent: #16110c;
-  --accent-fg: #f4ede3;
-  --ink: 22, 17, 12;
-  --ground: 244, 237, 227;
-  --shadow: 0 24px 50px -30px rgba(40, 30, 20, .35);
-  --glow: 0 0 0 1px var(--accent), 0 30px 60px -30px rgba(40, 30, 20, .4);
+  --bg: #ffffff;
+  --bg-2: #fbfbfc;
+  --bg-3: #f2f3f5;
+  --fg: #0b0c0f;
+  --fg-2: #505a6b;
+  --fg-3: #6b7383;
+  --line: rgba(11, 12, 15, .1);
+  --line-2: rgba(11, 12, 15, .06);
+  --accent: #0b0c0f;
+  --accent-fg: #fff;
+  --warm: #e2700f;
+  --warm-2: #f7a24b;
+  --side: #f5f5f6;
+  --shadow: 0 20px 50px -30px rgba(226, 112, 15, .35);
+  --glow: 0 0 0 1px rgba(226, 112, 15, .5), 0 30px 80px -30px rgba(226, 112, 15, .35);
   color-scheme: light;
 }
-#cristal { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; background: var(--bg); transition: opacity .6s ease; }
-body { background: transparent; }
-html { background: var(--bg); }
-.h2 { font-weight: 700; letter-spacing: -.035em; text-transform: none; }
-.h3 { font-family: var(--body); font-weight: 700; letter-spacing: 0; }
-.top { background: rgba(var(--ground), .82); }
-.proto { background: rgba(var(--ground), .9); }
-.brand b { font-weight: 700; }
-.accent { color: var(--accent); font-style: normal; }
+html { background: var(--side); }
+body { font-size: 16px; background: linear-gradient(90deg, var(--side), var(--side) calc(50% - 640px), var(--bg) calc(50% - 640px), var(--bg) calc(50% + 640px), var(--side) calc(50% + 640px)); }
+main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280px; margin-inline: auto; }
+.top { background: color-mix(in srgb, var(--bg) 85%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.nav { width: min(100% - 48px, 1180px); }
+.h2 { font-weight: 600; letter-spacing: -.035em; }
+.h3 { font-weight: 600; font-size: 18px; }
+.accent { background: linear-gradient(180deg, var(--fg) 20%, var(--fg-3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.btn-main { background: linear-gradient(180deg, #fff, #d9d9de); color: #000; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .12), 0 8px 24px -10px rgba(255, 255, 255, .35); }
+:root[data-theme="light"] .btn-main { background: linear-gradient(180deg, #2a2c33, #0b0c0f); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 8px 24px -12px rgba(0, 0, 0, .5); }
+.check { color: var(--warm); }
 
-/* Hero: el cristal ocupa todo; el texto va sobre un velo suave para leerse */
-.hero { min-height: min(calc(100svh - 104px), 900px); display: grid; align-items: center; padding: 56px 0 72px; }
-.hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(60% 70% at 26% 52%, rgba(var(--ground), .88), rgba(var(--ground), .55) 55%, transparent 80%); pointer-events: none; }
-.hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 56px; align-items: center; }
-.hero-copy { display: grid; gap: 24px; justify-items: start; }
-.hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(40px, 5.4vw, 80px); line-height: .95; letter-spacing: -.045em; }
-.hero h1 span { display: block; color: var(--accent); }
-.hero-meta { font-size: 14px; color: var(--fg-2); }
-.btn { border-color: var(--line); }
-.btn:not(.btn-main) { background: rgba(var(--ground), .6); }
-.chip { background: rgba(var(--ground), .7); border-color: var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: .04em; }
+/* Hero centrado con resplandor y panel */
+.hero { padding: clamp(40px, 6vw, 72px) 0 0; overflow: hidden; text-align: center; }
+.hero-in { display: grid; justify-items: center; gap: 22px; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 7px 16px; border: 1px solid rgba(120, 150, 255, .35); border-radius: 99px; font-size: 13px; color: var(--fg-2); background: rgba(80, 110, 255, .06); text-decoration: none; transition: border-color .25s ease, background-color .25s ease; }
+.pill b { color: var(--fg); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+.pill svg { transition: transform .3s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .pill:hover { border-color: rgba(120, 150, 255, .6); } .pill:hover svg { transform: translateX(3px); } }
+.hero h1 { font-weight: 600; font-size: clamp(40px, 5.8vw, 76px); line-height: 1.04; letter-spacing: -.05em; max-width: 15ch; }
+.hero h1 span { display: block; background: linear-gradient(180deg, var(--fg) 10%, color-mix(in srgb, var(--fg) 45%, var(--bg))); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lead { max-width: 36em; color: var(--fg-2); }
+.hero .cta-row { justify-content: center; }
+.hero-meta { font-size: 13px; color: var(--fg-3); }
+.horizon { position: relative; height: 150px; margin-top: 12px; }
+.horizon::before { content: ""; position: absolute; left: 50%; bottom: 0; width: min(900px, 110vw); height: 220px; translate: -50% 40%; background: radial-gradient(closest-side, color-mix(in srgb, var(--warm) 70%, transparent), color-mix(in srgb, var(--warm) 22%, transparent) 45%, transparent); filter: blur(10px); animation: breathe 6s ease-in-out infinite alternate; }
+@keyframes breathe { to { opacity: .7; scale: 1.06 1; } }
 
-.facet { position: relative; padding: 26px; border: 1px solid var(--line); background: rgba(var(--ground), .82); clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px)); }
-.facet::after { content: ""; position: absolute; right: 0; top: 0; width: 40px; height: 1px; background: var(--accent); rotate: 45deg; translate: 6px 13px; }
-.facet h2 { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); }
-.facet ol { list-style: none; display: grid; gap: 14px; margin: 18px 0; }
-.facet li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; font-size: 15px; }
-.facet li b { font-family: var(--mono); font-weight: 500; color: var(--accent); }
-.facet li i { grid-column: 1 / -1; height: 2px; background: var(--line-2); overflow: hidden; }
-.facet li i::before { content: ""; display: block; height: 100%; width: calc(var(--w) * 1%); background: var(--accent); transform-origin: left; animation: fill 1.2s var(--ease-out) backwards; animation-delay: calc(.5s + var(--k, 0) * 90ms); }
-@keyframes fill { from { transform: scaleX(0); } }
-.facet .total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 1px solid var(--line); }
-.facet .total b { font-family: var(--display); font-size: 40px; font-weight: 800; letter-spacing: -.04em; }
-.facet p { margin-top: 10px; font-size: 13px; color: var(--fg-2); }
-.hint { position: absolute; left: 50%; bottom: 20px; translate: -50% 0; font-family: var(--mono); font-size: 12px; color: var(--fg-3); letter-spacing: .06em; }
-@media (hover: none) { .hint { display: none; } }
-
-/* Superficies facetadas sobre el cristal */
-.tldr, .svc, .ledger, .rail, .dim, .step, .plan, .gift-box, .ask form, .faq details, .final, .promises li, .ask-alt { background: var(--bg-2); }
-.svc, .plan, .dim { clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%); }
-.svc { transition: transform .35s var(--ease-out), border-color .3s ease, background-color .3s ease; }
-@media (hover: hover) and (pointer: fine) { .svc:hover { background: rgba(var(--ground), .95); border-color: var(--accent); box-shadow: none; } }
-.ico { border-radius: 2px; color: var(--accent); background: transparent; rotate: 0deg; }
-.check { color: var(--accent); }
-.pick { box-shadow: none; border-color: var(--accent); background: rgba(var(--ground), .94); }
-.rec { border-radius: 2px; font-family: var(--mono); font-weight: 500; letter-spacing: .04em; }
-.price b, .pts b, .m-read b { font-family: var(--display); font-weight: 700; letter-spacing: -.04em; }
-.price b { font-size: clamp(32px, 3vw, 40px); }
-.pts b { color: var(--fg); }
-.in-plans span, .note { border-radius: 2px; }
-.gift-ico { border-radius: 2px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
-.meter .m-track { stroke-width: 2; }
-.meter .m-fill { stroke-width: 2; stroke-linecap: butt; }
-.final { background: rgba(var(--ground), .55); border-color: var(--accent); }
-.final .h2 { font-size: clamp(36px, 5.2vw, 72px); font-weight: 800; }
-.site-foot { background: rgba(var(--ground), .92); }
-
-@media (max-width: 860px) {
-  .hero { min-height: auto; }
-  .hero-grid { grid-template-columns: minmax(0, 1fr); }
-  .hero::before { background: rgba(var(--ground), .72); }
+.stage { position: relative; perspective: 1400px; margin-top: -40px; }
+.stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 90px; background: linear-gradient(transparent, var(--bg)); pointer-events: none; }
+.dash { position: relative; width: min(100% - 48px, 1030px); margin-inline: auto; display: grid; grid-template-columns: 190px minmax(0, 1fr); text-align: left; border: 1px solid var(--line); border-bottom: 0; border-radius: 16px 16px 0 0; background: var(--bg-2); box-shadow: 0 -1px 0 color-mix(in srgb, var(--warm) 60%, transparent), 0 -30px 80px -40px var(--warm); transform-origin: 50% 0; }
+@supports (animation-timeline: view()) {
+  .motion .dash { animation: tilt linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
+  @keyframes tilt { from { transform: rotateX(18deg) scale(.94); opacity: .6; } }
 }
-/* Mascota: globo facetado con filo crema, personaje con tinte cálido */
-.mascota { --m-paper: rgba(var(--ground), .94); --m-font: var(--body); --m-radio: 0px; --m-borde: 1px solid var(--accent); --m-sombra: 0 14px 30px -16px rgba(0, 0, 0, .6); --m-contorno: rgba(var(--ink), .6); --m-filtro: sepia(.2); --m-piso: rgba(var(--ink), .35); }
-.m-globo { clip-path: polygon(-14px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% + 14px), -14px calc(100% + 14px)); }
-/* Gato: ropa con los colores de esta estética (cristal: crema y arena) */
-.gato { --g-c1: #dcc19c; --g-c2: #8a7a68; }
+.dash-side { padding: 18px 12px; border-right: 1px solid var(--line-2); display: grid; align-content: start; gap: 4px; font-size: 13px; }
+.dash-side b { display: flex; align-items: center; gap: 8px; padding: 4px 8px 16px; font-weight: 600; font-size: 14px; }
+.dash-side span { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--fg-2); }
+.dash-side span.on { color: var(--fg); background: var(--bg-3); box-shadow: inset 0 0 0 1px var(--line); }
+.dash-main { padding: 18px 20px 26px; display: grid; gap: 16px; }
+.dash-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line-2); }
+.dash-head h2 { font-size: 17px; font-weight: 600; }
+.dash-head p { font-size: 12px; color: var(--fg-3); }
+.tag-ej { padding: 3px 10px; border-radius: 99px; border: 1px dashed var(--line); font-size: 12px; color: var(--fg-3); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.stat { padding: 14px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--bg-3); }
+.stat small { display: block; font-size: 12px; color: var(--fg-3); }
+.stat b { display: block; margin-top: 4px; font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+.stat i { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-style: normal; font-size: 12px; color: #3ecf8e; }
+.panels { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; }
+.panel { padding: 16px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--bg-3); }
+.panel h3 { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+.panel h3 small { font-weight: 400; color: var(--fg-3); font-size: 12px; }
+.bars6 { display: grid; gap: 10px; }
+.bars6 div { display: grid; grid-template-columns: 110px minmax(0, 1fr) 28px; gap: 10px; align-items: center; font-size: 12px; color: var(--fg-2); }
+.bars6 div i { height: 8px; border-radius: 99px; background: var(--line-2); overflow: hidden; }
+.bars6 div i::before { content: ""; display: block; height: 100%; width: calc(var(--w) / 30 * 100%); border-radius: inherit; background: linear-gradient(90deg, var(--warm), var(--warm-2)); transform-origin: left; }
+.motion .bars6.in div i::before { animation: grow 1.2s var(--ease-out) backwards; animation-delay: calc(.2s + var(--k, 0) * 80ms); }
+@keyframes grow { from { transform: scaleX(0); } }
+.bars6 div b { text-align: right; font-family: var(--mono); font-weight: 500; color: var(--fg); }
+.timeline { list-style: none; display: grid; gap: 12px; }
+.timeline li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
+.timeline .dot { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); color: var(--fg-3); }
+.timeline .done .dot { background: #3ecf8e; border-color: #3ecf8e; color: #04120b; }
+.timeline .now .dot { border-color: var(--warm); box-shadow: 0 0 0 4px color-mix(in srgb, var(--warm) 20%, transparent); }
+.timeline .now .dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warm); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { scale: .6; opacity: .6; } }
+.timeline small { color: var(--fg-3); font-size: 12px; }
+
+/* Secciones */
+.sec-head.center { text-align: center; }
+.svc, .plan { background: linear-gradient(180deg, var(--bg-3), var(--bg-2)); }
+@property --mx { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --my { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+[data-shine]::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(360px circle at var(--mx) var(--my), color-mix(in srgb, var(--warm) 12%, transparent), transparent 60%); opacity: 0; transition: opacity .4s ease; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) { [data-shine]:hover::after { opacity: 1; } .svc:hover { border-color: color-mix(in srgb, var(--warm) 45%, transparent); } }
+.ico { color: var(--warm); border-radius: 10px; }
+.rec { background: var(--warm); color: #140800; }
+.pick { background: linear-gradient(180deg, color-mix(in srgb, var(--warm) 10%, var(--bg-2)), var(--bg-2) 55%); }
+.pick::before { content: ""; position: absolute; left: 20%; right: 20%; top: -1px; height: 1px; background: linear-gradient(90deg, transparent, var(--warm), transparent); }
+.meter .m-fill { stroke: var(--warm); }
+.gift-ico { background: var(--warm); color: #140800; }
+.gift-box { background: radial-gradient(80% 140% at 0% 50%, color-mix(in srgb, var(--warm) 12%, transparent), transparent 60%), var(--bg-2); }
+.final { background: var(--bg); border: 0; overflow: hidden; }
+.final::before { content: ""; position: absolute; left: 50%; bottom: -160px; width: 900px; height: 320px; translate: -50% 0; z-index: -1; background: radial-gradient(closest-side, color-mix(in srgb, var(--warm) 55%, transparent), transparent); filter: blur(12px); }
+.final .h2 { font-size: clamp(34px, 5vw, 60px); }
+.site-foot { border-top: 1px solid var(--line-2); }
+
+@media (max-width: 900px) {
+  .dash { grid-template-columns: 1fr; width: calc(100% - 24px); }
+  .dash-side { display: none; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panels { grid-template-columns: 1fr; }
+  main, .top, .site-foot { border-inline: 0; }
+}
+@media (max-width: 480px) { .bars6 div { grid-template-columns: 88px minmax(0, 1fr) 24px; } }
+/* Mascota: tarjeta del panel con filo naranjo arriba */
+.mascota { --m-paper: var(--bg-3); --m-font: var(--body); --m-radio: 12px; --m-borde: 1px solid var(--line); --m-sombra: 0 -1px 0 color-mix(in srgb, var(--warm) 60%, transparent), 0 18px 40px -20px rgba(0, 0, 0, .7); --m-contorno: color-mix(in srgb, var(--warm) 45%, transparent); --m-piso: color-mix(in srgb, var(--warm) 50%, transparent); --m-control: var(--bg-3); }
+:root[data-theme="light"] .mascota { --m-sombra: 0 -1px 0 color-mix(in srgb, var(--warm) 60%, transparent), 0 16px 34px -20px rgba(0, 0, 0, .3); }
+/* Gato: ropa con los colores de esta estética (panel: naranjo y azul) */
+.gato { --g-c1: var(--warm); --g-c2: #7890ff; }
 </style>
 </head>
 <body>
-<canvas id="cristal" aria-hidden="true"></canvas>
+
 <a class="skip" href="#contenido">Saltar al contenido</a>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -154,11 +198,11 @@ html { background: var(--bg); }
   </defs>
 </svg>
 
-<p class="proto">Opción 4 · Cristal líquido · <a href="index.html">ver todas las opciones</a></p>
+<p class="proto">Plantilla 6 · Panel SaaS · <a href="index.html">ver todas las plantillas</a> · <a href="../index.html">ir al sitio</a></p>
 
 <header class="top">
   <nav class="nav" aria-label="Principal">
-    <a class="brand" href="#" aria-label="Bío Digital, inicio"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 2 26 9v12l-11 7L4 21V9Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M15 2v9l11-2M15 11 4 9m11 2 4 9m-4-9-5 10m9-1 7 1m-7-1-9 1 5 7m4-7-4 7" fill="none" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/></svg><b>Bío Digital</b></a>
+    <a class="brand" href="#" aria-label="Bío Digital, inicio"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="8" fill="var(--fg)"/><path d="M9 18.5V9.5h5.2a2.6 2.6 0 0 1 0 5.2H9m5.2 0a2 2 0 0 1 0 3.8H9" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Bío Digital</b></a>
     <ul class="nav-links" id="menu">
       <li><a href="#" aria-current="page">Inicio</a></li>
       <li><a href="#servicios">Servicios</a></li>
@@ -176,31 +220,60 @@ html { background: var(--bg); }
 
 <main id="contenido">
 <div class="hero">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <span class="chip enter">Startup UdeC · Gran Concepción</span>
-        <h1 class="enter enter-2">Que tu negocio aparezca <span>cuando te buscan</span></h1>
-        <p class="lead enter enter-3">Cuando alguien busca un negocio como el tuyo en Google o en Maps, elige entre los que aparecen con fotos, horario y reseñas. Dejamos tu negocio listo para competir ahí: ficha de Google, fotos profesionales, catálogo y página web, todo a tu nombre.</p>
-        <div class="cta-row enter enter-3">
-          <a class="btn btn-main" href="#diagnostico">Pide tu diagnóstico gratis <svg class="btn-ico" width="18" height="18"><use href="#i-arrow"/></svg></a>
-          <a class="btn" href="#planes">Ver planes</a>
-        </div>
-        <p class="hero-meta enter enter-4">Planes desde <span class="num">$150.000</span> · Respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
+    <div class="wrap hero-in">
+      <a class="pill enter" href="#beneficio">Beneficio para los primeros 5 clientes <b>Ver más <svg width="14" height="14"><use href="#i-arrow"/></svg></b></a>
+      <h1 class="enter enter-2">Que tu negocio aparezca <span>cuando te buscan</span></h1>
+      <p class="lead enter enter-3">Cuando alguien busca un negocio como el tuyo en Google o en Maps, elige entre los que aparecen con fotos, horario y reseñas. Dejamos tu negocio listo para competir ahí: ficha de Google, fotos profesionales, catálogo y página web, todo a tu nombre.</p>
+      <div class="cta-row enter enter-3">
+        <a class="btn btn-main" href="#diagnostico">Pide tu diagnóstico gratis <svg class="btn-ico" width="18" height="18"><use href="#i-arrow"/></svg></a>
+        <a class="btn" href="#planes">Ver planes</a>
       </div>
-      <aside class="facet enter enter-3" aria-labelledby="t-facet">
-        <h2 id="t-facet">Tu diagnóstico gratis revisa</h2>
-        <ol data-seq class="in">
-          <li style="--w:30"><span>Si te encuentran</span><b>30</b><i></i></li>
-          <li style="--w:20"><span>Si tu información está completa</span><b>20</b><i></i></li>
-          <li style="--w:20"><span>Cómo se ve tu negocio</span><b>20</b><i></i></li>
-          <li style="--w:15"><span>Tu reputación</span><b>15</b><i></i></li>
-          <li style="--w:15"><span>Si es fácil contactarte</span><b>15</b><i></i></li>
-        </ol>
-        <div class="total"><span>Puntaje máximo</span><b class="num">100</b></div>
-        <p>Te entregamos tu puntaje y las tres mejoras que más te convienen.</p>
-      </aside>
+      <p class="hero-meta enter enter-4">Startup de estudiantes UdeC · Planes desde <span class="num">$150.000</span> · Respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
     </div>
-    <p class="hint" aria-hidden="true">Mueve el mouse sobre el cristal</p>
+    <div class="horizon" aria-hidden="true"></div>
+    <div class="stage">
+      <figure class="dash" aria-label="Ejemplo ilustrativo del panel de un proyecto con plan Estándar">
+        <nav class="dash-side" aria-hidden="true">
+          <b><svg width="18" height="18"><use href="#i-pin"/></svg>Tu negocio</b>
+          <span class="on"><svg width="16" height="16"><use href="#i-web"/></svg>Resumen</span>
+          <span><svg width="16" height="16"><use href="#i-pin"/></svg>Ficha de Google</span>
+          <span><svg width="16" height="16"><use href="#i-camera"/></svg>Fotos</span>
+          <span><svg width="16" height="16"><use href="#i-book"/></svg>Catálogo</span>
+          <span><svg width="16" height="16"><use href="#i-star"/></svg>Reseñas</span>
+          <span><svg width="16" height="16"><use href="#i-mail"/></svg>Dominio y correo</span>
+        </nav>
+        <div class="dash-main">
+          <div class="dash-head"><div><h2>Resumen del proyecto</h2><p>Plan Estándar · así se ve el avance</p></div><span class="tag-ej">Ejemplo ilustrativo</span></div>
+          <div class="stats">
+            <div class="stat"><small>Ficha de Google</small><b>Verificada</b><i><svg width="14" height="14"><use href="#i-check"/></svg>a tu nombre</i></div>
+            <div class="stat"><small>Fotos del local</small><b>10 a 15</b><i><svg width="14" height="14"><use href="#i-check"/></svg>en tu carpeta</i></div>
+            <div class="stat"><small>Dominio</small><b>tunegocio.cl</b><i><svg width="14" height="14"><use href="#i-check"/></svg>1er año incluido</i></div>
+            <div class="stat"><small>Soporte</small><b>14 días</b><i><svg width="14" height="14"><use href="#i-check"/></svg>después de la entrega</i></div>
+          </div>
+          <div class="panels">
+            <div class="panel">
+              <h3>Cómo se reparte tu puntaje <small>máximo por aspecto</small></h3>
+              <div class="bars6 reveal" data-seq>
+                <div style="--w:30"><span>Te encuentran</span><i></i><b>30</b></div>
+                <div style="--w:20"><span>Información</span><i></i><b>20</b></div>
+                <div style="--w:20"><span>Imagen</span><i></i><b>20</b></div>
+                <div style="--w:15"><span>Reputación</span><i></i><b>15</b></div>
+                <div style="--w:15"><span>Contacto</span><i></i><b>15</b></div>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>Avance <small>3 a 7 días hábiles</small></h3>
+              <ol class="timeline">
+                <li class="done"><span class="dot"><svg width="14" height="14"><use href="#i-check"/></svg></span><span>Diagnóstico gratis</span><small>Paso 1</small></li>
+                <li class="done"><span class="dot"><svg width="14" height="14"><use href="#i-check"/></svg></span><span>Propuesta y precio</span><small>Paso 2</small></li>
+                <li class="now"><span class="dot"></span><span>Visita a tu local</span><small>Paso 3</small></li>
+                <li><span class="dot"></span><span>Entrega y capacitación</span><small>Paso 4</small></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
   </div>
 
   <section aria-labelledby="t-tldr">
@@ -219,11 +292,11 @@ html { background: var(--bg); }
         <p class="muted">Cinco servicios que se combinan en un plan para que un cliente te encuentre, confíe y te contacte.</p>
       </div>
       <div class="cards">
-        <a class="svc reveal" href="#svc-ficha"><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-pin"/></svg></span><h3 class="h3">Ficha de Google Business</h3></div><p>Que te encuentren en Google Maps cuando buscan tu rubro cerca.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
-        <a class="svc reveal" href="#svc-fotos"><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-camera"/></svg></span><h3 class="h3">Fotografía para negocios</h3></div><p>Que el cliente sepa cómo es tu local antes de ir.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
-        <a class="svc reveal" href="#svc-catalogo"><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-book"/></svg></span><h3 class="h3">Catálogo digital</h3></div><p>Que vean qué vendes y a qué precio sin tener que preguntar.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
-        <a class="svc reveal" href="#svc-web"><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-web"/></svg></span><h3 class="h3">Diseño web</h3></div><p>Un lugar propio en internet, claro y rápido en el celular.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
-        <a class="svc reveal" href="#svc-dominio"><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-mail"/></svg></span><h3 class="h3">Dominio y correo</h3></div><p>Una dirección con tu nombre que da confianza al escribirte.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
+        <a class="svc reveal" href="#svc-ficha" data-shine><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-pin"/></svg></span><h3 class="h3">Ficha de Google Business</h3></div><p>Que te encuentren en Google Maps cuando buscan tu rubro cerca.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
+        <a class="svc reveal" href="#svc-fotos" data-shine><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-camera"/></svg></span><h3 class="h3">Fotografía para negocios</h3></div><p>Que el cliente sepa cómo es tu local antes de ir.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
+        <a class="svc reveal" href="#svc-catalogo" data-shine><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-book"/></svg></span><h3 class="h3">Catálogo digital</h3></div><p>Que vean qué vendes y a qué precio sin tener que preguntar.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
+        <a class="svc reveal" href="#svc-web" data-shine><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-web"/></svg></span><h3 class="h3">Diseño web</h3></div><p>Un lugar propio en internet, claro y rápido en el celular.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
+        <a class="svc reveal" href="#svc-dominio" data-shine><div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-mail"/></svg></span><h3 class="h3">Dominio y correo</h3></div><p>Una dirección con tu nombre que da confianza al escribirte.</p><span class="go">Ver detalle <svg width="14" height="14"><use href="#i-arrow"/></svg></span></a>
       </div>
     </div>
   </section>
@@ -350,19 +423,19 @@ html { background: var(--bg); }
         <p class="muted">El precio final se confirma después del diagnóstico gratis, antes de que pagues nada.</p>
       </div>
       <div class="plans">
-        <article class="plan reveal">
+        <article class="plan reveal" data-shine>
           <div class="plan-top"><h3 class="h3">Base</h3></div>
           <p class="price"><small>desde</small><b class="num">$150.000</b></p>
           <ul data-seq><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Ficha de Google Business</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>10 a 15 fotos profesionales</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Catálogo en PDF</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>1 capacitación · 7 días de soporte</li></ul>
           <a class="btn" href="#diagnostico">Empezar con Base</a>
         </article>
-        <article class="plan pick reveal">
+        <article class="plan pick reveal" data-shine>
           <div class="plan-top"><h3 class="h3">Estándar</h3><span class="rec">Recomendado</span></div>
           <p class="price"><small>desde</small><b class="num">$250.000</b></p>
           <ul data-seq><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Todo lo del plan Base</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Página web de una sección</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Dominio .cl y correo (1er año)</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>1 capacitación · 14 días de soporte</li></ul>
           <a class="btn btn-main" href="#diagnostico">Empezar con Estándar</a>
         </article>
-        <article class="plan reveal">
+        <article class="plan reveal" data-shine>
           <div class="plan-top"><h3 class="h3">Premium</h3></div>
           <p class="price"><small>desde</small><b class="num">$380.000</b></p>
           <ul data-seq><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Todo lo del plan Estándar</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Página web de 3 a 5 secciones</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Catálogo dentro de tu web</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>2 capacitaciones · 30 días de soporte</li></ul>
@@ -473,114 +546,11 @@ html { background: var(--bg); }
   <a class="btn btn-main" href="#diagnostico">Diagnóstico gratis</a>
   <a class="btn" href="mailto:biodigitalici@gmail.com">Escríbenos</a>
 </div>
-<script src="mundo.js"></script>
-<script src="secciones.js"></script>
-<script src="gato.js"></script>
-<script src="mascota-gato.js"></script>
-<script src="mascota.js"></script>
-<script>
-  (function () {
-    var c = document.getElementById('cristal');
-    var gl = c && c.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
-    if (!gl) return;
-    var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-    // Celdas de Voronoi animadas; el borde entre celdas es la línea de cristal.
-    // Algunas celdas se "quiebran" con un borde más grueso; el mouse deja una onda que deforma el campo.
-    var fs = [
-      'precision highp float;',
-      'uniform vec2 R;uniform float T;uniform vec2 M;uniform float MI;uniform vec3 INK;uniform vec3 BG;',
-      'vec2 h2(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return fract(sin(p)*43758.5453);}',
-      'vec4 voro(vec2 x){vec2 n=floor(x),f=fract(x),mg,mr;float md=8.;',
-      ' for(int j=-1;j<=1;j++)for(int i=-1;i<=1;i++){vec2 g=vec2(float(i),float(j));vec2 o=h2(n+g);o=.5+.45*sin(T*.35+6.2831*o);vec2 r=g+o-f;float d=dot(r,r);if(d<md){md=d;mr=r;mg=g;}}',
-      ' md=8.;',
-      ' for(int j=-2;j<=2;j++)for(int i=-2;i<=2;i++){vec2 g=mg+vec2(float(i),float(j));vec2 o=h2(n+g);o=.5+.45*sin(T*.35+6.2831*o);vec2 r=g+o-f;if(dot(mr-r,mr-r)>1e-5)md=min(md,dot(.5*(mr+r),normalize(r-mr)));}',
-      ' return vec4(md,n+mg,0.);}',
-      'void main(){',
-      ' vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;',
-      ' vec2 m=(M-.5*R)/R.y;',
-      ' uv+=.06*vec2(sin(uv.y*3.1+T*.21),cos(uv.x*2.7-T*.17));',
-      ' vec2 d=uv-m;float dl=length(d)+1e-4;',
-      ' uv+=d/dl*sin(dl*38.-T*5.)*exp(-dl*5.)*MI*.05;',
-      ' vec4 v=voro(uv*13.);',
-      ' float id=h2(v.yz).x;',
-      ' float w=.007+.06*step(.94,id)*(.5+.5*sin(T*.5+id*40.));',
-      ' float e=1.-smoothstep(w,w+.01,v.x);',
-      ' float glow=exp(-v.x*18.)*.06;',
-      ' float near=exp(-dl*3.)*MI;',
-      ' vec3 tint=INK*(.9+.1*cos(6.2831*(id+vec3(0.,.33,.67))));',
-      ' vec3 col=mix(BG,tint,clamp(e*(.55+.45*near)+glow+near*.04,0.,1.));',
-      ' gl_FragColor=vec4(col,1.);}'
-    ].join('\n');
-    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
-    var pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs));
-    gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
-    gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
-    gl.useProgram(pr);
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    var loc = gl.getAttribLocation(pr, 'p');
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    var U = {};
-    ['R', 'T', 'M', 'MI', 'INK', 'BG'].forEach(function (n) { U[n] = gl.getUniformLocation(pr, n); });
+<script src="../mundo.js"></script>
+<script src="../secciones.js"></script>
+<script src="../gato.js"></script>
+<script src="../mascota-gato.js"></script>
+<script src="../mascota.js"></script>
 
-    var root = document.documentElement;
-    function rgb(name) { return getComputedStyle(root).getPropertyValue(name).split(',').map(function (v) { return parseFloat(v) / 255; }); }
-    var ink, bg;
-    function colors() { ink = rgb('--ink'); bg = rgb('--ground'); }
-    colors();
-    new MutationObserver(function () { colors(); if (!running) draw(performance.now()); }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-
-    // Resolución reducida: el campo es suave y así rinde en celulares
-    var scale = 0.6;
-    function size() {
-      var dpr = Math.min(devicePixelRatio || 1, 2);
-      c.width = Math.round(innerWidth * dpr * scale);
-      c.height = Math.round(innerHeight * dpr * scale);
-      gl.viewport(0, 0, c.width, c.height);
-      if (!running) draw(performance.now());
-    }
-    var mx = innerWidth * .7, my = innerHeight * .5, tx = mx, ty = my, energy = 0;
-    addEventListener('pointermove', function (e) {
-      tx = e.clientX; ty = e.clientY;
-      energy = Math.min(1, energy + .08);
-    }, { passive: true });
-
-    var running = false, raf = 0, t0 = performance.now();
-    function draw(now) {
-      mx += (tx - mx) * .08; my += (ty - my) * .08;
-      energy *= .985;
-      var k = c.width / innerWidth;
-      gl.uniform2f(U.R, c.width, c.height);
-      gl.uniform1f(U.T, calm ? 12 : (now - t0) / 1000);
-      gl.uniform2f(U.M, mx * k, c.height - my * k);
-      gl.uniform1f(U.MI, calm ? 0 : energy);
-      gl.uniform3f(U.INK, ink[0], ink[1], ink[2]);
-      gl.uniform3f(U.BG, bg[0], bg[1], bg[2]);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    }
-    function loop(now) { draw(now); raf = requestAnimationFrame(loop); }
-    function play(on) {
-      if (calm) on = false;
-      if (on === running) return;
-      running = on;
-      if (on) raf = requestAnimationFrame(loop); else cancelAnimationFrame(raf);
-    }
-    addEventListener('resize', size);
-    size();
-    draw(t0);
-    // Arriba el cristal se ve completo; al bajar se atenúa y se detiene detrás del contenido
-    var hero = document.querySelector('.hero');
-    new IntersectionObserver(function (es) {
-      var vis = es[0].isIntersecting;
-      c.style.opacity = vis ? 1 : .28;
-      play(vis && !document.hidden);
-    }).observe(hero);
-    document.addEventListener('visibilitychange', function () { play(!document.hidden && c.style.opacity !== '0.28'); });
-  })();
-</script>
 </body>
 </html>

@@ -92,21 +92,30 @@ const pad = (i) => String(i + 1).padStart(2, '0');
 export function pagina(o) {
   const d = o.deco || {};
   const numAspecto = d.aspecto || ((i) => `Aspecto ${pad(i)}`);
+  const b = o.n === 8 ? '' : '../';   // prefijo de los archivos compartidos (css, js, marca)
   return `<!doctype html>
 <html lang="es-CL">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${o.titulo}</title>
-<meta name="description" content="Maqueta de propuesta de Bío Digital: presencia digital para micro y pequeñas empresas del Gran Concepción.">
+<meta name="description" content="Bío Digital: páginas web, videos, menús interactivos, fotos, reservas y fidelización para micro y pequeñas empresas del Gran Concepción.">
+<link rel="icon" href="${b}marca/favicon-32.png" sizes="32x32">
+<link rel="icon" href="${b}marca/icono-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="${b}marca/apple-touch-icon.png">
+<meta property="og:title" content="${o.titulo}">
+<meta property="og:description" content="Páginas web, videos, menús interactivos, fotos, reservas y fidelización para micro y pequeñas empresas del Gran Concepción.">
+<meta property="og:image" content="${b}marca/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <script>var t,q=location.search.match(/tema=(dark|light)/);try{t=localStorage.getItem('bd-theme')}catch(e){}if(q)t=q[1];document.documentElement.dataset.theme=t==='light'||t==='dark'?t:'${o.tema}'</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?${o.fuentes}&display=swap">
-<link rel="stylesheet" href="nucleo.css">
-<link rel="stylesheet" href="kit.css">
-<link rel="stylesheet" href="mascota.css">
-<link rel="stylesheet" href="gato.css">
+<link rel="stylesheet" href="${b}nucleo.css">
+<link rel="stylesheet" href="${b}kit.css">
+<link rel="stylesheet" href="${b}mascota.css">
+<link rel="stylesheet" href="${b}gato.css">
 ${o.head || ''}
 <style>
 ${o.css.trim()}
@@ -118,11 +127,11 @@ ${o.fondo || ''}
 <a class="skip" href="#contenido">Saltar al contenido</a>
 ${ICONOS}
 
-<p class="proto">Opción ${o.n} · ${o.nombre} · <a href="index.html">ver todas las opciones</a></p>
+${o.n === 8 ? '<p class="proto">Sitio de Bío Digital · <a href="plantillas/index.html">ver las plantillas ya hechas</a></p>' : `<p class="proto">Plantilla ${o.n} · ${o.nombre} · <a href="index.html">ver todas las plantillas</a> · <a href="../index.html">ir al sitio</a></p>`}
 
 <header class="top">
   <nav class="nav" aria-label="Principal">
-    <a class="brand" href="#" aria-label="Bío Digital, inicio">${o.marca}<b>Bío Digital</b></a>
+    <a class="brand" href="#" aria-label="Bío Digital, inicio">${o.marca}${o.marcaTexto === false ? '' : '<b>Bío Digital</b>'}</a>
     <ul class="nav-links" id="menu">
       <li><a href="#" aria-current="page">Inicio</a></li>
       <li><a href="#servicios">Servicios</a></li>
@@ -327,9 +336,9 @@ ${o.hero.trim()}
   <a class="btn btn-main" href="#diagnostico">Diagnóstico gratis</a>
   <a class="btn" href="mailto:${MAIL}">Escríbenos</a>
 </div>
-<script src="mundo.js"></script>
-<script src="secciones.js"></script>
-${(o.mascotaJs || ['gato.js', 'mascota-gato.js', 'mascota.js']).map((f) => `<script src="${f}"></script>`).join('\n')}
+<script src="${b}mundo.js"></script>
+<script src="${b}secciones.js"></script>
+${(o.mascotaJs || ['gato.js', 'mascota-gato.js', 'mascota.js']).map((f) => `<script src="${b}${f}"></script>`).join('\n')}
 ${o.script ? o.script.trim() : ''}
 </body>
 </html>

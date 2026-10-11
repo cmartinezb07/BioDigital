@@ -2,6 +2,35 @@
 
 Bitácora cronológica. Cada entrada: fecha, decisión, por qué, qué queda pendiente.
 
+## 2026-10-11 — Logo definitivo, paleta de marca y una sola página de trabajo
+
+**Logo.** El equipo entregó tres piezas: la versión vertical, el logotipo horizontal y el ícono de app en sus dos
+fondos. Se recortaron del fondo oscuro y quedaron en `web/propuesta/marca/`:
+- `logotipo-96/240` (texto blanco, para fondo oscuro) y `logotipo-tinta-96/240` (texto azul oscuro, para fondo claro);
+- `app-oscuro-512` y `app-claro-512`, más `favicon-32`, `icono-192`, `icono-512` y `apple-touch-icon`;
+- `og.jpg` (1200 × 630) para cuando se comparte el enlace.
+La primera versión que mandaron (la "B" con el cuadradito separado) usa un isotipo **distinto** al del logotipo y
+del ícono; quedó guardada en `marca/variante-1/` y **no se usa**, para que la marca sea una sola.
+
+**Paleta.** Los dos colores por defecto de la página pasan a ser los del logo: `--c1: #0da5ff` (azul) y
+`--c2: #00e5d0` (cian), tomados del propio archivo. Toda la página deriva de esos dos, incluida la ropa del gato.
+La rueda de colores sigue funcionando: cambia la página entera, "Restablecer" vuelve a los colores de la marca, y
+se agregaron los presets "Marca (logo)" y "Azul profundo". Verificado: por defecto marca, un preset cambia todo, y
+restablecer vuelve a `#0da5ff` / `#00e5d0`.
+
+**Una sola página de trabajo.** La opción 8 (mezcla de la 6 y la 7) pasa a ser **el sitio**: se genera como
+`index.html`. Las siete anteriores quedan como plantillas ya hechas en `web/propuesta/plantillas/`, con su galería
+en `plantillas/index.html`. El generador escribe la 8 en la raíz y las otras en `plantillas/`, y los archivos
+compartidos (css, js, marca) se enlazan con `../` cuando la página vive en esa carpeta.
+`opcion-8-final.html` quedó como redirección, para no romper los enlaces ya enviados por WhatsApp.
+Los accesos directos de `enlaces/01-nuestras-paginas/` se actualizaron a las direcciones nuevas.
+
+**Verificado:** las 8 páginas, el formulario y la lámina responden 200; las plantillas cargan desde su carpeta con
+el gato y sin recursos fallidos; el logotipo se ve en los dos temas.
+
+**Pendiente:** los textos de la página siguen hablando del catálogo anterior (ficha de Google, dominio y correo).
+Hay que reescribirlos con los 6 servicios vigentes, y para eso faltan los precios.
+
 ## 2026-10-11 — Formulario de levantamiento para el cliente
 
 **Qué es:** una página web de una sola pieza (`web/propuesta/formulario.html`, y en la skill como plantilla) con

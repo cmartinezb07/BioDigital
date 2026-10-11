@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opciones de diseño · Bío Digital</title>
+<meta name="robots" content="noindex">
+<script>var t;try{t=localStorage.getItem('bd-theme')}catch(e){}document.documentElement.dataset.theme=t==='light'?'light':'dark'</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap">
+<link rel="stylesheet" href="../nucleo.css">
+<link rel="stylesheet" href="../kit.css">
+<style>
+  :root {
+    --bg: #0c0c0d; --bg-2: #141416; --bg-3: #1c1c1f;
+    --fg: #f4f4f5; --fg-2: #b1b1b8; --fg-3: #85858d;
+    --line: rgba(255, 255, 255, .12); --line-2: rgba(255, 255, 255, .06);
+    --accent: #f4f4f5; --accent-fg: #0c0c0d;
+    --display: "Geist", system-ui, sans-serif; --body: "Geist", system-ui, sans-serif; --mono: "Geist Mono", ui-monospace, monospace;
+    --r: 12px; --r-lg: 18px; --btn-r: 10px;
+    --shadow: 0 24px 50px -30px rgba(0, 0, 0, .9); --glow: none;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f5f4; --bg-2: #ffffff; --bg-3: #ececea;
+    --fg: #111112; --fg-2: #4d4d52; --fg-3: #707076;
+    --line: rgba(0, 0, 0, .12); --line-2: rgba(0, 0, 0, .06);
+    --accent: #111112; --accent-fg: #fff;
+    --shadow: 0 24px 50px -32px rgba(0, 0, 0, .35);
+    color-scheme: light;
+  }
+  .intro { padding: 64px 0 36px; display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+  .intro h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.02; letter-spacing: -.045em; font-weight: 600; margin-bottom: 14px; }
+  .opts { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; padding-bottom: 32px; }
+  .opt { position: relative; height: 100%; display: flex; flex-direction: column; gap: 12px; padding: 24px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-2); text-decoration: none; transition: transform .35s var(--ease-out), border-color .3s ease, box-shadow .35s ease; }
+  .opt:active { transform: scale(.985); }
+  @media (hover: hover) and (pointer: fine) { .opt:hover { transform: translateY(-3px); border-color: var(--fg-3); box-shadow: var(--shadow); } .opt:hover .go svg { transform: translateX(3px); } }
+  .swatch { height: 120px; border-radius: 12px; border: 1px solid var(--line-2); overflow: hidden; }
+  .opt-head { display: flex; align-items: baseline; gap: 10px; }
+  .opt-head span { font-family: var(--mono); font-size: 13px; color: var(--fg-3); }
+  .opt h2 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; }
+  .opt p { font-size: 15px; color: var(--fg-2); }
+  .opt dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 14px; }
+  .opt dt { color: var(--fg-3); }
+  .opt dd { margin: 0; }
+  .go { margin-top: auto; padding-top: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 15px; }
+  .go svg { transition: transform .3s var(--ease-out); }
+  .ref { font-size: 13px; color: var(--fg-3); }
+  .ref a { color: var(--fg-2); }
+  .new { padding: 2px 8px; border-radius: 99px; font-size: 12px; color: var(--accent-fg); background: var(--accent); }
+  /* Muestras de cada estética, solo con CSS */
+  .s1 { background: radial-gradient(60% 80% at 20% 30%, #3fb7ff88, transparent), radial-gradient(60% 80% at 80% 60%, #a46bff77, transparent), #071224; }
+  .s2 { background: repeating-radial-gradient(circle at 50% 50%, transparent 0 6px, rgba(90, 45, 130, .25) 6px 7px), #fff; }
+  :root[data-theme="dark"] .s2 { background: repeating-radial-gradient(circle at 50% 50%, transparent 0 6px, rgba(189, 163, 242, .25) 6px 7px), #000; }
+  .s3 { background: radial-gradient(circle at 42% 38%, #fff 0 6%, #a9a9b2 22%, #3b3b42 40%, #d6d6de 52%, #000 56%), #000; }
+  .s4 { background: conic-gradient(from 30deg at 30% 40%, transparent 0 20%, #ecd8bf 20% 20.6%, transparent 20.6% 60%, #ecd8bf 60% 60.4%, transparent 60.4%), conic-gradient(from 200deg at 70% 60%, transparent 0 35%, #ecd8bf 35% 35.5%, transparent 35.5% 80%, #ecd8bf 80% 80.4%, transparent 80.4%), #050505; }
+  .s5 { background: radial-gradient(rgba(255, 255, 255, .8) 1.2px, transparent 1.6px) 0 0 / 8px 8px, #000; -webkit-mask: radial-gradient(circle at 30% 50%, #000 30%, rgba(0, 0, 0, .25) 32%); mask: radial-gradient(circle at 30% 50%, #000 30%, rgba(0, 0, 0, .25) 32%); }
+  .s6 { background: radial-gradient(50% 60% at 50% 110%, #ff9a3caa, transparent), linear-gradient(#000, #000); }
+  .s7 { background: radial-gradient(40% 90% at 30% 0%, rgba(190, 150, 255, .6), transparent), radial-gradient(40% 90% at 60% 0%, rgba(240, 150, 190, .45), transparent), #0f0f0f; }
+  .s8 { background: radial-gradient(40% 90% at 30% 0%, rgba(164, 124, 255, .55), transparent), radial-gradient(50% 60% at 50% 115%, #f08a4bb0, transparent), #0a0a0b; }
+  .common { margin-bottom: 64px; padding: 24px 28px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-2); }
+  .common h2 { font-size: 19px; font-weight: 600; margin-bottom: 10px; }
+  .common ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 28px; padding-left: 18px; color: var(--fg-2); }
+  @media (max-width: 700px) { .intro { padding: 32px 0 20px; } .opts { grid-template-columns: 1fr; } .common ul { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<main class="wrap">
+  <header class="intro">
+    <div>
+      <h1>Opciones de diseño para Bío Digital</h1>
+      <p class="lead">Todas tienen el mismo contenido: servicios, entregables, diagnóstico de 100 puntos, planes, beneficio, formulario y las 11 preguntas. Cambia la estética. Ábranlas en el computador y en el celular, prueben el botón de modo claro u oscuro, y elijan una o combinen partes.</p>
+    </div>
+    <button class="icon-btn" type="button" data-theme-toggle aria-label="Cambiar tema"><svg width="20" height="20"><use href="#i-sun"/></svg></button>
+  </header>
+
+  <ul class="opts">
+    <li><a class="opt" href="../index.html">
+      <div class="swatch s8" aria-hidden="true"></div>
+      <div class="opt-head"><span>08</span><h2>Final (6 + 7)</h2><span class="new">Elegida</span></div>
+      <p>La que eligió el equipo: el panel de la 6 con las tarjetas flotantes y el foco de la 7, más lo que solo tenían otras opciones (vista de la ficha y catálogo de la 1, certificado a tu nombre de la 2). Trae la rueda de colores para decidir la paleta.</p>
+      <dl><dt>Nuevo</dt><dd>Animación en todas las secciones y rueda de paleta.</dd><dt>Falta</dt><dd>Fijar la paleta y pasar a Astro.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="maqueta-final.html">
+      <div class="swatch s1" aria-hidden="true"></div>
+      <div class="opt-head"><span>01</span><h2>Vidrio iOS con aurora</h2></div>
+      <p>La mezcla que ya eligió el equipo: widgets de vidrio sobre una aurora, con luz que sigue al mouse.</p>
+      <dl><dt>Fuerte en</dt><dd>Cercana y fácil de leer.</dd><dt>Riesgo</dt><dd>El vidrio pide más al celular.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="opcion-2-certificado.html">
+      <div class="swatch s2" aria-hidden="true"></div>
+      <div class="opt-head"><span>02</span><h2>Certificado</h2></div>
+      <p>Papel de seguridad con guilloché, sello y firmas: lo que entregan se presenta como un título a tu nombre. Fondo blanco; de noche, negro.</p>
+      <dl><dt>Fuerte en</dt><dd>Transmite seriedad y propiedad.</dd><dt>Riesgo</dt><dd>Puede sentirse formal para algunos rubros.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="opcion-3-metal.html">
+      <div class="swatch s3" aria-hidden="true"></div>
+      <div class="opt-head"><span>03</span><h2>Metal líquido</h2><span class="new">Nueva</span></div>
+      <p>Esfera cromada animada detrás del titular, fondo negro y barra de tres garantías.</p>
+      <p class="ref">Referencia: <a href="https://21st.dev/@chowlol202/components/liquid-metal-hero">Liquid Metal Hero</a></p>
+      <dl><dt>Fuerte en</dt><dd>Impacto inmediato, se ve moderna.</dd><dt>Riesgo</dt><dd>Carga una librería de efectos (WebGL).</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="opcion-4-cristal.html">
+      <div class="swatch s4" aria-hidden="true"></div>
+      <div class="opt-head"><span>04</span><h2>Cristal líquido</h2><span class="new">Nueva</span></div>
+      <p>Campo de cristal a pantalla completa que ondula cuando mueves el mouse, con paneles facetados.</p>
+      <p class="ref">Referencia: <a href="https://21st.dev/@dhileepkumargm/components/crystal-shader">Crystal Shader</a></p>
+      <dl><dt>Fuerte en</dt><dd>La más artística e interactiva.</dd><dt>Riesgo</dt><dd>Un efecto tan protagonista puede distraer del mensaje.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="opcion-5-ascii.html">
+      <div class="swatch s5" aria-hidden="true"></div>
+      <div class="opt-head"><span>05</span><h2>Terminal ASCII</h2><span class="new">Nueva</span></div>
+      <p>Ilustración en puntos (un local con el pin de Maps), letra monoespaciada y barras de sistema.</p>
+      <p class="ref">Referencia: <a href="https://21st.dev/@larsen66/components/hero-ascii-one">Hero ASCII One</a></p>
+      <dl><dt>Fuerte en</dt><dd>Muy distinta a otras agencias.</dd><dt>Riesgo</dt><dd>La letra técnica cuesta más a quien no es del rubro.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="opcion-6-panel.html">
+      <div class="swatch s6" aria-hidden="true"></div>
+      <div class="opt-head"><span>06</span><h2>Panel SaaS</h2><span class="new">Nueva</span></div>
+      <p>Titular centrado, resplandor naranjo y un panel que muestra el avance de un proyecto, rotulado como ejemplo.</p>
+      <p class="ref">Referencia: <a href="https://21st.dev/@waleedkibhen/components/saa-s-template">SaaS Template</a></p>
+      <dl><dt>Fuerte en</dt><dd>Se ve como producto serio y ordenado.</dd><dt>Riesgo</dt><dd>Es un estilo muy usado por startups de software.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+    <li><a class="opt" href="opcion-7-foco.html">
+      <div class="swatch s7" aria-hidden="true"></div>
+      <div class="opt-head"><span>07</span><h2>Foco fintech</h2><span class="new">Nueva</span></div>
+      <p>Foco de luz, piso con grilla y tarjetas flotantes; el campo del inicio pasa el nombre del negocio al formulario.</p>
+      <p class="ref">Referencia: <a href="https://lovable.dev/templates/websites/landing-page/paymark-template">Paymark</a></p>
+      <dl><dt>Fuerte en</dt><dd>La más sobria y liviana de las nuevas.</dd><dt>Riesgo</dt><dd>Menos personalidad propia.</dd></dl>
+      <span class="go">Abrir <svg width="18" height="18"><use href="#i-arrow"/></svg></span>
+    </a></li>
+  </ul>
+
+  <section class="common" aria-labelledby="t-common">
+    <h2 id="t-common">Lo que tienen en común</h2>
+    <ul>
+      <li>Botón de modo claro u oscuro con transición de burbuja.</li>
+      <li>Botones fijos en celular: "Diagnóstico gratis" y "Escríbenos".</li>
+      <li>Lo marcado "Ejemplo" o "por confirmar" es demostrativo o está pendiente.</li>
+      <li>Con movimiento reducido activado, los efectos quedan quietos.</li>
+    </ul>
+  </section>
+</main>
+<script src="../mundo.js"></script>
+</body>
+</html>

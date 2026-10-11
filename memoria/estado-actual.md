@@ -24,6 +24,8 @@ Quien llegue nuevo parte por [EMPEZAR-AQUI.md](../EMPEZAR-AQUI.md).
 - Las hojas de referencia del gato siguen en `web/propuesta/referencias-gato/` (`gato-emociones.webp`, `gato-feliz.webp`), por si hay que redibujarlo.
 - Publicado en https://biodigital-propuesta.pages.dev (actualizado el 2026-09-18: las 8 opciones con el gato nuevo, y la lámina en `/gato-lamina`; **falta subir la corrección de los comentarios**). Para volver a subir: `npx wrangler pages deploy web/propuesta --project-name=biodigital-propuesta --branch=main --commit-dirty=true`.
 
+- **Formulario para el cliente:** `web/propuesta/formulario.html` (59 preguntas, 15 minutos). Se manda por link o por WhatsApp. Cómo leer las respuestas: `respaldo-skills/crear-sitio-web/referencias/levantamiento.md`.
+
 ## Pendiente
 - Que el equipo fije la paleta con la rueda y apruebe el gato y sus frases.
 - Probar en celulares reales.

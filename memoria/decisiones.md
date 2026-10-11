@@ -2,6 +2,29 @@
 
 Bitácora cronológica. Cada entrada: fecha, decisión, por qué, qué queda pendiente.
 
+## 2026-10-11 — Formulario de levantamiento para el cliente
+
+**Qué es:** una página web de una sola pieza (`web/propuesta/formulario.html`, y en la skill como plantilla) con
+**59 preguntas en 12 bloques** que el dueño del negocio responde solo, en unos 15 minutos, desde el celular.
+Se guarda mientras lo llena, y al final entrega las respuestas ordenadas para pegarlas en la conversación.
+
+**Por qué:** el equipo atiende al cliente en terreno, no en el chat. Sin esto, las decisiones de diseño se tomaban
+adivinando. Las seis escalas de personalidad (serio ↔ cercano, clásico ↔ moderno, sobrio ↔ llamativo, humor,
+precio ↔ premium, adulto ↔ joven) son lo que no se puede adivinar.
+
+**Cómo se manda:** como link publicado junto a las maquetas, como archivo por WhatsApp, o impreso con Ctrl+P
+(la barra y los botones no salen impresos).
+
+**Lo importante está en la skill:** `referencias/levantamiento.md` explica cómo convertir cada respuesta en
+decisiones de diseño: qué estética, tipografía, paleta, animación y tono salen de cada escala, seis perfiles
+frecuentes con su estética sugerida, qué hacer cuando las respuestas se contradicen y siete señales de alerta
+(cliente sin fotos, sin propuesta de valor, varios decisores, fecha imposible).
+
+**Verificado:** 12 secciones y 59 preguntas renderizan sin errores; el avance se calcula; lo escrito sobrevive a
+recargar la página; en 375 px no hay desborde, ningún texto baja de 12 px y ningún control baja de 44 px de alto.
+
+**Pendiente:** el número de WhatsApp del equipo (hoy dice `[PENDIENTE]` en el pie del formulario).
+
 ## 2026-10-06 — Limpieza del repositorio
 
 **Borrado** (todo estaba versionado; se recupera con `git checkout d1e3823 -- <ruta>`):

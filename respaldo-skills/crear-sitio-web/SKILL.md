@@ -15,14 +15,33 @@ Flujo probado de punta a punta: preguntas → maquetas con varias estéticas →
 - **Costos**: separa siempre costo único de recurrente y marca precios de terceros como aproximados.
 - **Idioma**: escribe como habla el cliente final, frases cortas, sin jerga técnica en la página.
 
-## Fase 0 — Preguntas (siempre, antes de escribir código)
-Usa AskUserQuestion (máx. 4 preguntas por llamada, con opción recomendada primero). Banco completo en `referencias/preguntas.md`. Mínimo indispensable:
+## Fase 0 — Levantamiento (siempre, antes de escribir código)
+
+**Lo primero: ¿el dueño del negocio está en la conversación o no?**
+
+- **No está** (el caso normal: el equipo atiende al cliente aparte) → **entrega el formulario**. Copia
+  `plantilla/formulario/formulario-cliente.html` a la carpeta del proyecto, cambia `AGENCIA` por los datos del
+  equipo y dile al usuario cómo hacérselo llegar (link, archivo por WhatsApp o impreso con Ctrl+P). Son 59
+  preguntas en 12 bloques, 15 minutos, y vuelve como texto ordenado para pegar aquí.
+  **Cómo leer las respuestas y convertirlas en decisiones de diseño: `referencias/levantamiento.md`.**
+  No empieces a maquetar con el formulario a medias: lo que no se puede adivinar son las seis escalas de
+  personalidad y la pregunta de en qué se diferencia.
+- **Sí está, o el sitio es del propio equipo** → pregunta directo con AskUserQuestion (máx. 4 por llamada, con la
+  opción recomendada primero). Banco completo en `referencias/preguntas.md`. El formulario igual sirve de guion.
+
+Cuando lleguen las respuestas: resume en 10 líneas lo que entendiste y pídele al usuario que lo confirme antes de
+dibujar nada. Corregir ahí cuesta minutos; corregir después de maquetar cuesta días.
+
+Mínimo indispensable para poder empezar:
 1. **Tipo de página** y **acción principal** (cotizar, WhatsApp, agendar, comprar, pedir diagnóstico).
 2. **Datos del negocio** (lista de `preguntas.md` §2). Lo que no tengan → `[PENDIENTE]`.
 3. **Estética**: ¿tienen referencias (links/capturas)? Si no, ofrece el catálogo de `referencias/esteticas.md`. Sensación buscada, tema por defecto (claro/oscuro), logo/colores.
 4. **Animación**: sobria / media / protagonista; ¿efectos WebGL permitidos? ¿cuántas opciones de maqueta?
 5. **Publicación**: dominio, hosting, formulario, analítica, ¿necesita login?
 6. **¿Quiere mascota animada?** (sí / no / solo en algunas páginas). Si dice sí, haz el bloque de preguntas de `referencias/mascota.md` §1 (personajes, estilo de dibujo, personalidades, nivel de animación, reacciones, quién pone las imágenes).
+
+El formulario ya pregunta todo esto y bastante más (clientes, competencia, personalidad en seis escalas, qué
+contenido existe, plazos y quién decide). Úsalo como fuente única: no vuelvas a preguntar lo que ya respondió.
 
 Si mandan links: ábrelos (navegador integrado), lee el `src` del iframe de la demo y captúrala a 1440 px (ver `referencias/verificacion.md` §Referencias). Revisa dependencias (`Copy prompt`/`Code`) para usar la misma librería si es liviana.
 
@@ -70,6 +89,9 @@ Sigue `referencias/verificacion.md`: captura completa a 1440 px (escala 0.5), ch
 
 ## Fase 3 — Seguridad · Fase 4 — Publicación · Fase 5 — Checklist
 `referencias/requisitos.md` §7–§11. Formulario con validación en servidor, rate limit, honeypot + Turnstile, cabeceras de seguridad, sin secretos en el código. Dominio + HTTPS, GA4 con consentimiento, Search Console. Luego el checklist completo, con evidencia.
+
+## Levantamiento
+Formulario para el cliente y cómo traducir cada respuesta en decisiones de diseño: `referencias/levantamiento.md`.
 
 ## Herramientas y recursos
 Qué repos y sitios usar (y cuáles no) según el caso: `referencias/recursos.md`. Estándares de animación: `referencias/animaciones.md`.

@@ -1,5 +1,9 @@
 # Banco de preguntas (Fase 0)
 
+> Si el dueño del negocio **no está en la conversación**, no uses este banco pregunta por pregunta: mándale
+> `plantilla/formulario/formulario-cliente.html`, que cubre todo esto y más en 15 minutos. Este banco sirve como
+> guion para una visita en terreno y para lo que falte después. Cómo leer las respuestas: `levantamiento.md`.
+
 Pregunta en bloques de hasta 4 con AskUserQuestion. Pon la opción recomendada primero. No preguntes lo que ya se sabe por el proyecto (CLAUDE.md, memoria, PRODUCT.md): léelo antes.
 
 ## 1. Tipo y objetivo

@@ -617,3 +617,5 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 **Logo**: ahora son dos capas recortadas del logotipo (`marca/mascara-marca-540.png` y `marca/mascara-texto-540.png`). La "B" se pinta con la paleta (`--c1` a `--c2`) y el texto con el color de texto, así que el logo cambia con la rueda de colores y sirve en los dos temas sin dos archivos.
 
 **Pendiente**: valor anual del dominio .cl y del hosting (quedó como `[por confirmar]` en las preguntas frecuentes).
+
+**Gato (2026-10-11):** se quitaron de sus frases las referencias a Google/Maps/ficha y al plan Estándar; ahora habla del pack, de reservas y de la carta. Selectores del motor actualizados (`.pack`, `.promo`, `.promo-price`). Verificado en 390 px: sin desborde horizontal y sin textos menores a 12 px. La fluidez de la burbuja no se pudo medir en cuadros por segundo (el panel del navegador estaba oculto); queda por probar a ojo en el navegador del equipo.

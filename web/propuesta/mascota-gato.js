@@ -14,12 +14,12 @@ window.MascotaConfig = {
   // id de sección de la página -> evento que se comenta al llegar (sirve para todas las opciones)
   secciones: {
     servicios: 'servicios', entregables: 'detalle', detalle: 'detalle', informe: 'puntaje', puntaje: 'puntaje',
-    proceso: 'proceso', planes: 'planes', beneficio: 'beneficio', diagnostico: 'formulario',
+    proceso: 'proceso', planes: 'planes', promos: 'beneficio', beneficio: 'beneficio', diagnostico: 'formulario',
     preguntas: 'preguntas', contacto: 'cierre', cierre: 'cierre',
   },
   // Pose de fondo mientras se lee cada sección (tranquilas: se mantienen varios segundos)
   bases: { servicios: 'feliz', detalle: 'pensativo', puntaje: 'curioso', proceso: 'feliz', planes: 'sarcastico', beneficio: 'lentes', formulario: 'feliz', preguntas: 'pensativo', cierre: 'feliz' },
-  selectores: { cta: '.btn-main, .btn-primary, .btn-foil', destacado: '.pick', precio: '.price', tarjeta: '.plan, .svc, .dim, .card, a.entry' },
+  selectores: { cta: '.btn-main, .btn-primary, .btn-foil', destacado: '.pack', precio: '.price, .promo-price', tarjeta: '.pack, .promo, .svc, .dim, .card' },
 
   personajes: {
     gato: {
@@ -29,7 +29,7 @@ window.MascotaConfig = {
         llegada: ['saluda', [
           '{s}. Ah, otro humano. Pasa, pasa.',
           '{s}. Llegaste justo cuando me iba a dormir.',
-          '{s}. ¿Tu negocio aparece en Google? Yo sí.',
+          '{s}. ¿Tu negocio ya vende en internet? Yo ya vendo mi cara.',
           '{s}. Soy el gato. El que manda aquí.',
         ], 'saluda'],
         // Scroll: sin poses de perfil (es lo que más se repite; el giro completo queda para momentos puntuales)
@@ -68,7 +68,8 @@ window.MascotaConfig = {
           'El paso 1 es gratis. El gato aprueba.',
         ]],
         planes: ['guino', [
-          'Psst… el Estándar. Yo sé de estas cosas.',
+          'Psst… el pack completo. Yo sé de estas cosas.',
+          'Seis productos por $79.990. Hice la cuenta dos veces.',
           'Precio confirmado antes de pagar. Qué raro, ¿no?',
         ]],
         beneficio: ['lentes', [
@@ -197,9 +198,9 @@ window.MascotaConfig = {
         ], 'salta'],
         // Comentarios sueltos mientras la persona lee
         ocio: [['sarcastico', 'pensativo', 'aburrido', 'curioso', 'mira-d', 'mira-i'], [
-          'Si alguien te busca hoy en Maps, ¿te encuentra?',
+          'Si alguien quiere reservar hoy, ¿puede sin llamarte?',
           'Estoy pensando. No, mentira. Estoy mirando.',
-          'Pregunta seria: ¿tu ficha tiene el horario al día?',
+          'Pregunta seria: ¿tu carta está donde el cliente la ve?',
           'Sigo aquí. Por si te lo preguntabas. No lo hacías.',
           'Un local sin fotos no convence. Ni a mí.',
           'Los gatos no pagan arriendo. Envidia, lo sé.',

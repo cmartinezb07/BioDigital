@@ -25,7 +25,9 @@
 <link rel="stylesheet" href="carrusel.css">
 <script>(function(){var r=document.documentElement,h=/^#?[0-9a-f]{6}$/i,q=new URLSearchParams(location.search),p={};try{p=JSON.parse(localStorage.getItem('bd-paleta'))||{}}catch(e){}var a=q.get('c1')||p.c1,b=q.get('c2')||p.c2;if(a&&h.test(a))r.style.setProperty('--c1','#'+a.replace('#',''));if(b&&h.test(b))r.style.setProperty('--c2','#'+b.replace('#',''))})()</script>
 <link rel="stylesheet" href="movimiento.css">
+<link rel="stylesheet" href="paleta.css">
 <script src="movimiento.js" defer></script>
+<script src="paleta.js" defer></script>
 <style>
 :root {
   /* Los dos colores de la marca, tomados del logo: azul del isotipo y cian del degradado */
@@ -222,7 +224,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
   </defs>
 </svg>
 
-
+<p class="proto">Sitio de Bío Digital · <a href="plantillas/index.html">ver las plantillas ya hechas</a></p>
 
 <header class="top">
   <nav class="nav" aria-label="Principal">

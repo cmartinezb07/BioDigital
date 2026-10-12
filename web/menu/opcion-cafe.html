@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fogón del Sur · Carta y precios</title>
+<meta name="description" content="Carta digital de demostración de Bío Digital">
+<meta name="robots" content="noindex, nofollow">
+
+<meta name="theme-color" content="#1a110c">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Fogón del Sur">
+<meta property="og:title" content="Fogón del Sur · Carta y precios">
+<meta property="og:description" content="Carta digital de demostración de Bío Digital">
+<meta property="og:image" content="https://main.menu-demo.pages.dev/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="https://main.menu-demo.pages.dev/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500..700;1,500..700&family=DM+Sans:wght@400..700&display=swap">
+<link rel="stylesheet" href="menu.css">
+<style>:root{--bg:#1a110c;--bg-2:#241812;--card:#2a1d15;--card-2:#33241a;--fg:#f4e8d7;--fg-2:#d6c3a8;--fg-3:#a48e76;--line:rgba(244,232,215,.16);--c1:#cf9b4a;--c2:#e9c98f;--sobre:#111111;--serif:"Playfair Display", Georgia, "Times New Roman", serif;--sans:"DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;color-scheme:dark}:root{--ruido:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}</style>
+<script src="menu-tema.js"></script>
+
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar a la carta</a>
+<header class="portada"><div class="wrap">
+  
+  <p class="sobre">Carta</p>
+  
+  <h1>Fogón del Sur</h1>
+  <svg class="adorno" viewBox="0 0 220 14" aria-hidden="true"><path d="M0 7h86M134 7h86" stroke="currentColor" stroke-width="1" opacity=".55"/><path d="M110 1.5 115.5 7 110 12.5 104.5 7Z" fill="currentColor"/><circle cx="96" cy="7" r="1.6" fill="currentColor"/><circle cx="124" cy="7" r="1.6" fill="currentColor"/></svg>
+  <p class="lema">Cocina a las brasas en el corazón de Concepción</p>
+  <ul class="datos"><li>Barros Arana 123, Concepción</li><li>Almuerzo lunes a sábado 12:30 a 16:00</li><li>Cena miércoles a sábado 19:30 a 23:30</li></ul>
+  <p class="acciones"><button class="chip" type="button" data-compartir><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/></svg>Compartir carta</button><a class="chip" href="https://wa.me/56946941640?text=Hola%2C%20quiero%20hacer%20un%20pedido." target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5Z"/></svg>Escribir por WhatsApp</a></p>
+  <p class="aviso">Carta de demostración de Bío Digital: platos, precios y dirección son de ejemplo; las fotos son de prueba.</p>
+</div></header>
+<div class="barra"><div class="wrap">
+  <nav class="cats" aria-label="Categorías"><a href="#entradas" aria-current="true">Entradas</a><a href="#ensaladas">Ensaladas</a><a href="#fondos">Platos de fondo</a><a href="#postres">Postres</a><a href="#bebestibles">Bebestibles</a></nav>
+  <div class="buscar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><label class="sr" for="buscar">Buscar en la carta</label><input id="buscar" type="search" placeholder="Buscar un plato o bebida" autocomplete="off" maxlength="40"></div>
+</div></div>
+<main class="wrap" id="contenido">
+  <section class="favs" aria-labelledby="h-favs">
+    <h2 class="tit" id="h-favs"><span>Favoritos de la casa</span></h2>
+    <div class="favs-lista">
+      <button type="button" class="fav ver3d" data-id="empanadas">
+        <img src="fotos/empanadas.webp" alt="Foto de Empanadas de horno" width="168" height="168" fetchpriority="high" decoding="async">
+        <span class="fav-n">Empanadas de horno</span><span class="fav-p">$5.900</span><span class="fav-v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Ver en tu mesa</span>
+      </button>
+      <div class="fav">
+        <img src="fotos/lomo.webp" alt="Foto de Lomo a la parrilla con papas y arroz" width="168" height="168" fetchpriority="high" decoding="async">
+        <span class="fav-n">Lomo a la parrilla con papas y arroz</span><span class="fav-p">$13.900</span>
+      </div>
+      <button type="button" class="fav ver3d" data-id="asado">
+        <img src="fotos/asado.webp" alt="Foto de Carne asada al horno con puré" width="168" height="168" fetchpriority="high" decoding="async">
+        <span class="fav-n">Carne asada al horno con puré</span><span class="fav-p">$12.900</span><span class="fav-v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Ver en tu mesa</span>
+      </button>
+    </div>
+  </section>
+  <section class="cat" id="entradas" aria-labelledby="h-entradas">
+    <h2 class="tit" id="h-entradas"><span>Entradas</span></h2>
+    <p class="sub">Para abrir la mesa</p>
+    <div class="platos">
+      <article class="plato con-foto" data-texto="empanadas de horno tres empanadas de masa dorada al horno, con pebre de la casa.">
+        <button class="mini ver3d" type="button" data-id="empanadas" aria-label="Ver Empanadas de horno en 3D"><img src="fotos/empanadas.webp" alt="Foto de Empanadas de horno" width="168" height="168" loading="lazy" decoding="async"></button>
+        <div class="txt">
+          <div class="linea"><h3>Empanadas de horno</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$5.900</span></div>
+          <p class="desc">Tres empanadas de masa dorada al horno, con pebre de la casa.</p>
+          <p class="etq"><span>Favorito de la casa</span></p>
+          <button class="ver3d boton" type="button" data-id="empanadas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Ver en tu mesa</button>
+        </div>
+      </article>
+      <article class="plato" data-texto="provoleta a las brasas queso provolone fundido con orégano y tomate, con pan tostado.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Provoleta a las brasas</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$6.500</span></div>
+          <p class="desc">Queso provolone fundido con orégano y tomate, con pan tostado.</p>
+          <p class="etq"><span>Vegetariano</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="ostiones a la parmesana seis ostiones gratinados con queso parmesano y un toque de vino blanco.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Ostiones a la parmesana</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$9.800</span></div>
+          <p class="desc">Seis ostiones gratinados con queso parmesano y un toque de vino blanco.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="sopaipillas con pebre seis sopaipillas recién fritas, con pebre de cilantro.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Sopaipillas con pebre</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$3.900</span></div>
+          <p class="desc">Seis sopaipillas recién fritas, con pebre de cilantro.</p>
+          <p class="etq"><span>Vegano</span></p>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+  <section class="cat" id="ensaladas" aria-labelledby="h-ensaladas">
+    <h2 class="tit" id="h-ensaladas"><span>Ensaladas</span></h2>
+    <p class="sub">Frescas, de la temporada</p>
+    <div class="platos">
+      <article class="plato con-foto" data-texto="ensalada de burrata y frutas burrata con frutillas, cítricos, brotes y reducción de balsámico.">
+        <div class="mini"><img src="fotos/ensalada.webp" alt="Foto de Ensalada de burrata y frutas" width="168" height="168" loading="lazy" decoding="async"></div>
+        <div class="txt">
+          <div class="linea"><h3>Ensalada de burrata y frutas</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$8.900</span></div>
+          <p class="desc">Burrata con frutillas, cítricos, brotes y reducción de balsámico.</p>
+          <p class="etq"><span>Vegetariano</span><span>Nuevo</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="ensalada césar con pollo grillado lechuga costina, pollo a la plancha, crutones y parmesano.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Ensalada César con pollo grillado</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$7.900</span></div>
+          <p class="desc">Lechuga costina, pollo a la plancha, crutones y parmesano.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="ensalada chilena tomate, cebolla en pluma y cilantro, aliñada con limón y aceite de oliva.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Ensalada chilena</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$4.500</span></div>
+          <p class="desc">Tomate, cebolla en pluma y cilantro, aliñada con limón y aceite de oliva.</p>
+          <p class="etq"><span>Vegano</span><span>Sin gluten</span></p>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+  <section class="cat" id="fondos" aria-labelledby="h-fondos">
+    <h2 class="tit" id="h-fondos"><span>Platos de fondo</span></h2>
+    <p class="sub">Del fogón a tu mesa</p>
+    <div class="platos">
+      <article class="plato con-foto" data-texto="lomo a la parrilla con papas y arroz lomo a las brasas con papas doradas, arroz graneado, papas fritas y pimentón asado.">
+        <div class="mini"><img src="fotos/lomo.webp" alt="Foto de Lomo a la parrilla con papas y arroz" width="168" height="168" loading="lazy" decoding="async"></div>
+        <div class="txt">
+          <div class="linea"><h3>Lomo a la parrilla con papas y arroz</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$13.900</span></div>
+          <p class="desc">Lomo a las brasas con papas doradas, arroz graneado, papas fritas y pimentón asado.</p>
+          <p class="etq"><span>Favorito de la casa</span></p>
+          
+        </div>
+      </article>
+      <article class="plato con-foto" data-texto="carne asada al horno con puré láminas de carne asada con salsa, puré, papas al horno y verduras de la temporada.">
+        <button class="mini ver3d" type="button" data-id="asado" aria-label="Ver Carne asada al horno con puré en 3D"><img src="fotos/asado.webp" alt="Foto de Carne asada al horno con puré" width="168" height="168" loading="lazy" decoding="async"></button>
+        <div class="txt">
+          <div class="linea"><h3>Carne asada al horno con puré</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$12.900</span></div>
+          <p class="desc">Láminas de carne asada con salsa, puré, papas al horno y verduras de la temporada.</p>
+          <p class="etq"><span>Favorito de la casa</span></p>
+          <button class="ver3d boton" type="button" data-id="asado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Ver en tu mesa</button>
+        </div>
+      </article>
+      <article class="plato" data-texto="brocheta mixta a la parrilla pollo, cerdo y verduras a las brasas, con arroz graneado.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Brocheta mixta a la parrilla</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$11.900</span></div>
+          <p class="desc">Pollo, cerdo y verduras a las brasas, con arroz graneado.</p>
+          
+          <button class="ver3d boton" type="button" data-id="brocheta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Ver en tu mesa</button>
+        </div>
+      </article>
+      <article class="plato" data-texto="salmón a la parrilla filete de salmón con puré rústico y ensalada de temporada.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Salmón a la parrilla</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$13.900</span></div>
+          <p class="desc">Filete de salmón con puré rústico y ensalada de temporada.</p>
+          <p class="etq"><span>Sin gluten</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="pastel de choclo pino de carne, pollo y choclo cremoso gratinado en greda.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Pastel de choclo</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$9.900</span></div>
+          <p class="desc">Pino de carne, pollo y choclo cremoso gratinado en greda.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="risotto de hongos arroz arborio cremoso con champiñones, ajo y parmesano.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Risotto de hongos</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$10.900</span></div>
+          <p class="desc">Arroz arborio cremoso con champiñones, ajo y parmesano.</p>
+          <p class="etq"><span>Vegetariano</span></p>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+  <section class="cat" id="postres" aria-labelledby="h-postres">
+    <h2 class="tit" id="h-postres"><span>Postres</span></h2>
+    <p class="sub">El final dulce</p>
+    <div class="platos">
+      <article class="plato" data-texto="leche asada receta de la casa, con caramelo y canela.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Leche asada</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$3.900</span></div>
+          <p class="desc">Receta de la casa, con caramelo y canela.</p>
+          <p class="etq"><span>Vegetariano</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="brownie tibio con helado brownie de chocolate amargo con helado de crema y salsa de manjar.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Brownie tibio con helado</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$5.200</span></div>
+          <p class="desc">Brownie de chocolate amargo con helado de crema y salsa de manjar.</p>
+          <p class="etq"><span>Vegetariano</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="panqueque celestino panqueques rellenos de manjar y nueces, con crema chantilly.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Panqueque celestino</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$4.800</span></div>
+          <p class="desc">Panqueques rellenos de manjar y nueces, con crema chantilly.</p>
+          <p class="etq"><span>Vegetariano</span></p>
+          
+        </div>
+      </article>
+      <article class="plato agotado" data-texto="mote con huesillo el clásico chileno, bien frío.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Mote con huesillo</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$3.500</span></div>
+          <p class="desc">El clásico chileno, bien frío.</p>
+          <p class="etq"><span>Vegano</span></p>
+          <p class="agot">Agotado hoy</p>
+        </div>
+      </article>
+    </div>
+  </section>
+  <section class="cat" id="bebestibles" aria-labelledby="h-bebestibles">
+    <h2 class="tit" id="h-bebestibles"><span>Bebestibles</span></h2>
+    <p class="sub">Para acompañar</p>
+    <div class="platos">
+      <article class="plato" data-texto="limonada menta jengibre jarro de 500 ml, endulzada a gusto.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Limonada menta jengibre</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$3.500</span></div>
+          <p class="desc">Jarro de 500 ml, endulzada a gusto.</p>
+          <p class="etq"><span>Vegano</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="jugo natural de temporada frutilla, mango o piña, según disponibilidad.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Jugo natural de temporada</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$3.200</span></div>
+          <p class="desc">Frutilla, mango o piña, según disponibilidad.</p>
+          <p class="etq"><span>Vegano</span></p>
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="cerveza artesanal pinta de 400 ml, tipo ale. pregunta por las del día.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Cerveza artesanal</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$4.200</span></div>
+          <p class="desc">Pinta de 400 ml, tipo ale. Pregunta por las del día.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="copa de vino de la casa tinto, blanco o rosado, de valle chileno.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Copa de vino de la casa</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$4.500</span></div>
+          <p class="desc">Tinto, blanco o rosado, de valle chileno.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="cóctel de kiwi kiwi fresco, licor de manzana verde y hielo frappé.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Cóctel de kiwi</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$6.200</span></div>
+          <p class="desc">Kiwi fresco, licor de manzana verde y hielo frappé.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="café de especialidad espresso, americano o cortado, de tostado local.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Café de especialidad</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$2.500</span></div>
+          <p class="desc">Espresso, americano o cortado, de tostado local.</p>
+          
+          
+        </div>
+      </article>
+      <article class="plato" data-texto="té e infusiones té negro, verde o hierbas de la casa.">
+        
+        <div class="txt">
+          <div class="linea"><h3>Té e infusiones</h3><span class="puntos" aria-hidden="true"></span><span class="precio">$2.200</span></div>
+          <p class="desc">Té negro, verde o hierbas de la casa.</p>
+          <p class="etq"><span>Vegano</span></p>
+          
+        </div>
+      </article>
+    </div>
+  </section>
+  <p class="vacio" id="sin-resultados" hidden>No encontramos eso en la carta. Prueba con otra palabra.</p>
+</main>
+<footer><div class="wrap">
+  <svg class="adorno" viewBox="0 0 220 14" aria-hidden="true"><path d="M0 7h86M134 7h86" stroke="currentColor" stroke-width="1" opacity=".55"/><path d="M110 1.5 115.5 7 110 12.5 104.5 7Z" fill="currentColor"/><circle cx="96" cy="7" r="1.6" fill="currentColor"/><circle cx="124" cy="7" r="1.6" fill="currentColor"/></svg>
+  <p class="pie-n">Fogón del Sur</p>
+  <p>Barros Arana 123, Concepción · Almuerzo lunes a sábado 12:30 a 16:00 · Cena miércoles a sábado 19:30 a 23:30</p>
+  <p class="peq">Los platos con "Ver en tu mesa" se pueden ver en 3D y, desde un celular, sobre tu mesa con la cámara. La cámara solo se usa en tu teléfono: no se guarda ni se envía nada.</p>
+  <p class="peq"><a href="privacidad.html">Privacidad</a> · Menú digital hecho por <a href="https://biodigital-propuesta.pages.dev">Bío Digital</a></p>
+</div></footer>
+
+<dialog id="visor" aria-label="Plato en 3D">
+  <div class="visor-in">
+    <button class="cerrar" type="button" aria-label="Cerrar">×</button>
+    <model-viewer camera-controls auto-rotate touch-action="pan-y" shadow-intensity="1" exposure="1" ar ar-modes="webxr scene-viewer quick-look" ar-placement="floor" ar-scale="fixed" interaction-prompt="auto">
+      <button class="ar-oculto" slot="ar-button" tabindex="-1" aria-hidden="true"></button>
+    </model-viewer>
+    <p class="cargando">Cargando…</p>
+    <div class="visor-info"><h2></h2><p class="visor-desc"></p><div class="visor-acc"><button class="btn-ar" type="button" hidden>Ver en tu mesa</button><span class="nota-ar"></span></div></div>
+  </div>
+</dialog>
+<script type="application/json" id="menu-datos">{"libreria3d":{"url":"https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js","sri":"sha384-Ftcjj/GNLxPvzNDftO/oryXB9aGxsGZY9JGqsXG0uUKgQDl9RfDgsx9NJ/4IVNPe"},"categorias":[{"platos":[{"id":"empanadas","nombre":"Empanadas de horno","descripcion":"Tres empanadas de masa dorada al horno, con pebre de la casa.","precio":5900,"foto":"fotos/empanadas.webp","modelo":"modelos/empanadas.glb","escala":null},{"id":"provoleta","nombre":"Provoleta a las brasas","descripcion":"Queso provolone fundido con orégano y tomate, con pan tostado.","precio":6500,"foto":null,"modelo":null,"escala":null},{"id":"ostiones","nombre":"Ostiones a la parmesana","descripcion":"Seis ostiones gratinados con queso parmesano y un toque de vino blanco.","precio":9800,"foto":null,"modelo":null,"escala":null},{"id":"sopaipillas","nombre":"Sopaipillas con pebre","descripcion":"Seis sopaipillas recién fritas, con pebre de cilantro.","precio":3900,"foto":null,"modelo":null,"escala":null}]},{"platos":[{"id":"ensalada","nombre":"Ensalada de burrata y frutas","descripcion":"Burrata con frutillas, cítricos, brotes y reducción de balsámico.","precio":8900,"foto":"fotos/ensalada.webp","modelo":null,"escala":null},{"id":"cesar","nombre":"Ensalada César con pollo grillado","descripcion":"Lechuga costina, pollo a la plancha, crutones y parmesano.","precio":7900,"foto":null,"modelo":null,"escala":null},{"id":"chilena","nombre":"Ensalada chilena","descripcion":"Tomate, cebolla en pluma y cilantro, aliñada con limón y aceite de oliva.","precio":4500,"foto":null,"modelo":null,"escala":null}]},{"platos":[{"id":"lomo","nombre":"Lomo a la parrilla con papas y arroz","descripcion":"Lomo a las brasas con papas doradas, arroz graneado, papas fritas y pimentón asado.","precio":13900,"foto":"fotos/lomo.webp","modelo":null,"escala":null},{"id":"asado","nombre":"Carne asada al horno con puré","descripcion":"Láminas de carne asada con salsa, puré, papas al horno y verduras de la temporada.","precio":12900,"foto":"fotos/asado.webp","modelo":"modelos/asado.glb","escala":null},{"id":"brocheta","nombre":"Brocheta mixta a la parrilla","descripcion":"Pollo, cerdo y verduras a las brasas, con arroz graneado.","precio":11900,"foto":null,"modelo":"https://modelviewer.dev/shared-assets/models/shishkebab.glb","escala":null},{"id":"salmon","nombre":"Salmón a la parrilla","descripcion":"Filete de salmón con puré rústico y ensalada de temporada.","precio":13900,"foto":null,"modelo":null,"escala":null},{"id":"pastel","nombre":"Pastel de choclo","descripcion":"Pino de carne, pollo y choclo cremoso gratinado en greda.","precio":9900,"foto":null,"modelo":null,"escala":null},{"id":"risotto","nombre":"Risotto de hongos","descripcion":"Arroz arborio cremoso con champiñones, ajo y parmesano.","precio":10900,"foto":null,"modelo":null,"escala":null}]},{"platos":[{"id":"leche-asada","nombre":"Leche asada","descripcion":"Receta de la casa, con caramelo y canela.","precio":3900,"foto":null,"modelo":null,"escala":null},{"id":"brownie","nombre":"Brownie tibio con helado","descripcion":"Brownie de chocolate amargo con helado de crema y salsa de manjar.","precio":5200,"foto":null,"modelo":null,"escala":null},{"id":"panqueque","nombre":"Panqueque celestino","descripcion":"Panqueques rellenos de manjar y nueces, con crema chantilly.","precio":4800,"foto":null,"modelo":null,"escala":null},{"id":"mote","nombre":"Mote con huesillo","descripcion":"El clásico chileno, bien frío.","precio":3500,"foto":null,"modelo":null,"escala":null}]},{"platos":[{"id":"limonada","nombre":"Limonada menta jengibre","descripcion":"Jarro de 500 ml, endulzada a gusto.","precio":3500,"foto":null,"modelo":null,"escala":null},{"id":"jugo","nombre":"Jugo natural de temporada","descripcion":"Frutilla, mango o piña, según disponibilidad.","precio":3200,"foto":null,"modelo":null,"escala":null},{"id":"cerveza","nombre":"Cerveza artesanal","descripcion":"Pinta de 400 ml, tipo ale. Pregunta por las del día.","precio":4200,"foto":null,"modelo":null,"escala":null},{"id":"vino","nombre":"Copa de vino de la casa","descripcion":"Tinto, blanco o rosado, de valle chileno.","precio":4500,"foto":null,"modelo":null,"escala":null},{"id":"coctel","nombre":"Cóctel de kiwi","descripcion":"Kiwi fresco, licor de manzana verde y hielo frappé.","precio":6200,"foto":null,"modelo":null,"escala":null},{"id":"cafe","nombre":"Café de especialidad","descripcion":"Espresso, americano o cortado, de tostado local.","precio":2500,"foto":null,"modelo":null,"escala":null},{"id":"te","nombre":"Té e infusiones","descripcion":"Té negro, verde o hierbas de la casa.","precio":2200,"foto":null,"modelo":null,"escala":null}]}]}</script>
+
+<script src="menu.js"></script>
+</body>
+</html>

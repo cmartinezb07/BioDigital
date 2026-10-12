@@ -1,0 +1,288 @@
+{
+  "negocio": {
+    "nombre": "Fogón del Sur",
+    "lema": "Cocina a las brasas en el corazón de Concepción",
+    "logo": null,
+    "direccion": "Barros Arana 123, Concepción",
+    "horario": [
+      "Almuerzo lunes a sábado 12:30 a 16:00",
+      "Cena miércoles a sábado 19:30 a 23:30"
+    ],
+    "whatsapp": "56946941640",
+    "instagram": null,
+    "pedidos_whatsapp": false,
+    "descripcion": "Carta digital de demostración de Bío Digital",
+    "comuna": "Concepción",
+    "cocina": "Parrilla chilena",
+    "horario_estructurado": [
+      {
+        "dias": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "abre": "12:30",
+        "cierra": "16:00"
+      },
+      {
+        "dias": [
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "abre": "19:30",
+        "cierra": "23:30"
+      }
+    ]
+  },
+  "tema": {
+    "estilo": "cafe"
+  },
+  "aviso": "Carta de demostración de Bío Digital: platos, precios y dirección son de ejemplo; las fotos son de prueba.",
+  "creditos": true,
+  "categorias": [
+    {
+      "id": "entradas",
+      "nombre": "Entradas",
+      "descripcion": "Para abrir la mesa",
+      "platos": [
+        {
+          "id": "empanadas",
+          "nombre": "Empanadas de horno",
+          "descripcion": "Tres empanadas de masa dorada al horno, con pebre de la casa.",
+          "precio": 5900,
+          "foto": "fotos/empanadas.webp",
+          "modelo": "modelos/empanadas.glb",
+          "etiquetas": [
+            "favorito"
+          ]
+        },
+        {
+          "id": "provoleta",
+          "nombre": "Provoleta a las brasas",
+          "descripcion": "Queso provolone fundido con orégano y tomate, con pan tostado.",
+          "precio": 6500,
+          "etiquetas": [
+            "vegetariano"
+          ]
+        },
+        {
+          "id": "ostiones",
+          "nombre": "Ostiones a la parmesana",
+          "descripcion": "Seis ostiones gratinados con queso parmesano y un toque de vino blanco.",
+          "precio": 9800
+        },
+        {
+          "id": "sopaipillas",
+          "nombre": "Sopaipillas con pebre",
+          "descripcion": "Seis sopaipillas recién fritas, con pebre de cilantro.",
+          "precio": 3900,
+          "etiquetas": [
+            "vegano"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ensaladas",
+      "nombre": "Ensaladas",
+      "descripcion": "Frescas, de la temporada",
+      "platos": [
+        {
+          "id": "ensalada",
+          "nombre": "Ensalada de burrata y frutas",
+          "descripcion": "Burrata con frutillas, cítricos, brotes y reducción de balsámico.",
+          "precio": 8900,
+          "foto": "fotos/ensalada.webp",
+          "etiquetas": [
+            "vegetariano",
+            "nuevo"
+          ]
+        },
+        {
+          "id": "cesar",
+          "nombre": "Ensalada César con pollo grillado",
+          "descripcion": "Lechuga costina, pollo a la plancha, crutones y parmesano.",
+          "precio": 7900
+        },
+        {
+          "id": "chilena",
+          "nombre": "Ensalada chilena",
+          "descripcion": "Tomate, cebolla en pluma y cilantro, aliñada con limón y aceite de oliva.",
+          "precio": 4500,
+          "etiquetas": [
+            "vegano",
+            "sin-gluten"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fondos",
+      "nombre": "Platos de fondo",
+      "descripcion": "Del fogón a tu mesa",
+      "platos": [
+        {
+          "id": "lomo",
+          "nombre": "Lomo a la parrilla con papas y arroz",
+          "descripcion": "Lomo a las brasas con papas doradas, arroz graneado, papas fritas y pimentón asado.",
+          "precio": 13900,
+          "foto": "fotos/lomo.webp",
+          "etiquetas": [
+            "favorito"
+          ]
+        },
+        {
+          "id": "asado",
+          "nombre": "Carne asada al horno con puré",
+          "descripcion": "Láminas de carne asada con salsa, puré, papas al horno y verduras de la temporada.",
+          "precio": 12900,
+          "foto": "fotos/asado.webp",
+          "modelo": "modelos/asado.glb",
+          "etiquetas": [
+            "favorito"
+          ]
+        },
+        {
+          "id": "brocheta",
+          "nombre": "Brocheta mixta a la parrilla",
+          "descripcion": "Pollo, cerdo y verduras a las brasas, con arroz graneado.",
+          "precio": 11900,
+          "modelo": "https://modelviewer.dev/shared-assets/models/shishkebab.glb"
+        },
+        {
+          "id": "salmon",
+          "nombre": "Salmón a la parrilla",
+          "descripcion": "Filete de salmón con puré rústico y ensalada de temporada.",
+          "precio": 13900,
+          "etiquetas": [
+            "sin-gluten"
+          ]
+        },
+        {
+          "id": "pastel",
+          "nombre": "Pastel de choclo",
+          "descripcion": "Pino de carne, pollo y choclo cremoso gratinado en greda.",
+          "precio": 9900
+        },
+        {
+          "id": "risotto",
+          "nombre": "Risotto de hongos",
+          "descripcion": "Arroz arborio cremoso con champiñones, ajo y parmesano.",
+          "precio": 10900,
+          "etiquetas": [
+            "vegetariano"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "postres",
+      "nombre": "Postres",
+      "descripcion": "El final dulce",
+      "platos": [
+        {
+          "id": "leche-asada",
+          "nombre": "Leche asada",
+          "descripcion": "Receta de la casa, con caramelo y canela.",
+          "precio": 3900,
+          "etiquetas": [
+            "vegetariano"
+          ]
+        },
+        {
+          "id": "brownie",
+          "nombre": "Brownie tibio con helado",
+          "descripcion": "Brownie de chocolate amargo con helado de crema y salsa de manjar.",
+          "precio": 5200,
+          "etiquetas": [
+            "vegetariano"
+          ]
+        },
+        {
+          "id": "panqueque",
+          "nombre": "Panqueque celestino",
+          "descripcion": "Panqueques rellenos de manjar y nueces, con crema chantilly.",
+          "precio": 4800,
+          "etiquetas": [
+            "vegetariano"
+          ]
+        },
+        {
+          "id": "mote",
+          "nombre": "Mote con huesillo",
+          "descripcion": "El clásico chileno, bien frío.",
+          "precio": 3500,
+          "etiquetas": [
+            "vegano"
+          ],
+          "agotado": true
+        }
+      ]
+    },
+    {
+      "id": "bebestibles",
+      "nombre": "Bebestibles",
+      "descripcion": "Para acompañar",
+      "platos": [
+        {
+          "id": "limonada",
+          "nombre": "Limonada menta jengibre",
+          "descripcion": "Jarro de 500 ml, endulzada a gusto.",
+          "precio": 3500,
+          "etiquetas": [
+            "vegano"
+          ]
+        },
+        {
+          "id": "jugo",
+          "nombre": "Jugo natural de temporada",
+          "descripcion": "Frutilla, mango o piña, según disponibilidad.",
+          "precio": 3200,
+          "etiquetas": [
+            "vegano"
+          ]
+        },
+        {
+          "id": "cerveza",
+          "nombre": "Cerveza artesanal",
+          "descripcion": "Pinta de 400 ml, tipo ale. Pregunta por las del día.",
+          "precio": 4200
+        },
+        {
+          "id": "vino",
+          "nombre": "Copa de vino de la casa",
+          "descripcion": "Tinto, blanco o rosado, de valle chileno.",
+          "precio": 4500
+        },
+        {
+          "id": "coctel",
+          "nombre": "Cóctel de kiwi",
+          "descripcion": "Kiwi fresco, licor de manzana verde y hielo frappé.",
+          "precio": 6200
+        },
+        {
+          "id": "cafe",
+          "nombre": "Café de especialidad",
+          "descripcion": "Espresso, americano o cortado, de tostado local.",
+          "precio": 2500
+        },
+        {
+          "id": "te",
+          "nombre": "Té e infusiones",
+          "descripcion": "Té negro, verde o hierbas de la casa.",
+          "precio": 2200,
+          "etiquetas": [
+            "vegano"
+          ]
+        }
+      ]
+    }
+  ],
+  "demo": true,
+  "url": "https://main.menu-demo.pages.dev"
+}

@@ -21,6 +21,8 @@
 <link rel="stylesheet" href="../kit.css">
 <link rel="stylesheet" href="../mascota.css">
 <link rel="stylesheet" href="../gato.css">
+<link rel="stylesheet" href="../tienda.css">
+<link rel="stylesheet" href="../carrusel.css">
 
 <style>
 :root {
@@ -231,6 +233,10 @@ body { font-size: 16px; letter-spacing: -.005em; }
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.2 8.3c.3-.4.7-.3.9 0l.8 1.5c.1.3 0 .5-.2.7l-.5.5a5 5 0 0 0 2.2 2.2l.5-.5c.2-.2.5-.3.7-.2l1.5.8c.3.2.3.6 0 .9-.6.8-1.5 1.1-2.4.8a7.2 7.2 0 0 1-4.2-4.2c-.3-.9 0-1.8.7-2.5Z" fill="currentColor"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.5l2 11h10l2-8H7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.5" fill="currentColor"/><circle cx="17" cy="19" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v11H11l-4.5 3.5v-3.5H4Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
   </defs>
 </svg>
 
@@ -241,12 +247,13 @@ body { font-size: 16px; letter-spacing: -.005em; }
     <a class="brand" href="#" aria-label="Bío Digital, inicio"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><g stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M12 3v18"/><path d="M4.2 7.5l15.6 9"/><path d="M4.2 16.5l15.6-9"/></g></svg><b>Bío Digital</b></a>
     <ul class="nav-links" id="menu">
       <li><a href="#" aria-current="page">Inicio</a></li>
-      <li><a href="#servicios">Servicios</a></li>
+      
       <li><a href="#planes">Precios</a></li>
       <li><a href="#promos">Promociones</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <div class="nav-actions">
+      <button class="icon-btn cart-btn" type="button" data-cart-open aria-label="Abrir el carrito"><svg width="20" height="20"><use href="#i-cart"/></svg><span data-cart-count hidden>0</span></button>
       <button class="icon-btn" type="button" data-theme-toggle aria-label="Cambiar tema"><svg width="20" height="20"><use href="#i-sun"/></svg></button>
       <button class="icon-btn menu-btn" type="button" aria-controls="menu" aria-expanded="false" aria-label="Abrir menú"><svg width="20" height="20"><use href="#i-menu"/></svg></button>
       <a class="btn btn-main btn-sm" href="#diagnostico">Diagnóstico gratis</a>
@@ -317,123 +324,17 @@ body { font-size: 16px; letter-spacing: -.005em; }
     </div>
   </div>
 
-  <section id="servicios" aria-labelledby="t-serv">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <h2 id="t-serv" class="h2">Todo lo que tu negocio necesita</h2>
-        <p class="muted">Seis productos con precio propio. Llevas el que te falta, o los seis juntos en el pack y te ahorras $47.950.</p>
-      </div>
-      <div class="cards six">
-        <a class="svc reveal" id="svc-web" href="#diagnostico" data-shine>
-          <div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-web"/></svg></span><h3 class="h3">Página web</h3></div>
-          <p class="tarifa"><small>desde</small><b class="num">$49.990</b></p>
-          <p>Un lugar propio en internet, rápido en el celular y con tu WhatsApp a la vista.</p>
-          <ul class="svc-list" data-seq><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Hasta 5 secciones, hecha a tu medida</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Botón de WhatsApp, mapa y horario</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Queda a tu nombre y te enseñamos a editarla</li></ul>
-          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </a>
-        <a class="svc reveal" id="svc-videos" href="#diagnostico" data-shine>
-          <div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-video"/></svg></span><h3 class="h3">Videos para redes</h3></div>
-          <p class="tarifa"><small>desde</small><b class="num">$9.990</b></p>
-          <p>Videos cortos para Instagram y TikTok, grabados y editados en tu local.</p>
-          <ul class="svc-list" data-seq><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Video vertical de 15 a 30 segundos</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Grabación, edición, música y textos</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Te lo entregamos listo para publicar</li></ul>
-          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </a>
-        <a class="svc reveal" id="svc-menu" href="#diagnostico" data-shine>
-          <div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-qr"/></svg></span><h3 class="h3">Menú digital</h3></div>
-          <p class="tarifa"><small>desde</small><b class="num">$27.990</b></p>
-          <p>Tu carta o lista de precios en un QR que cambias cuando quieras, sin reimprimir nada.</p>
-          <ul class="svc-list" data-seq><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>QR impreso para las mesas o el mesón</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Foto, descripción y precio por producto</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Cambias un precio en dos minutos</li></ul>
-          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </a>
-        <a class="svc reveal" id="svc-fotos" href="#diagnostico" data-shine>
-          <div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-camera"/></svg></span><h3 class="h3">Registro fotográfico</h3></div>
-          <p class="tarifa"><b class="num">$4.990</b></p>
-          <p>Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.</p>
-          <ul class="svc-list" data-seq><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Sesión en tu local, sin estudio</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>10 a 15 fotos editadas</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Quedan tuyas, para usarlas donde quieras</li></ul>
-          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </a>
-        <a class="svc reveal" id="svc-reservas" href="#diagnostico" data-shine>
-          <div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-calendar"/></svg></span><h3 class="h3">Sistema de reservas</h3></div>
-          <p class="tarifa"><small>desde</small><b class="num">$24.990</b></p>
-          <p>Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.</p>
-          <ul class="svc-list" data-seq><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Agenda en línea con tus horarios</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Confirmación automática al cliente</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Ves las reservas del día en tu teléfono</li></ul>
-          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </a>
-        <a class="svc reveal" id="svc-fidelizacion" href="#diagnostico" data-shine>
-          <div class="svc-head"><span class="ico"><svg width="22" height="22"><use href="#i-card"/></svg></span><h3 class="h3">Tarjeta de fidelización</h3></div>
-          <p class="tarifa"><b class="num">$9.990</b></p>
-          <p>La tarjeta de sellos de toda la vida, pero en el celular del cliente.</p>
-          <ul class="svc-list" data-seq><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>QR con sellos, sin tarjetas de papel</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Se guarda en Google Wallet y Apple Wallet</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Ves cuántos clientes están volviendo</li></ul>
-          <span class="go">Lo quiero <svg width="14" height="14"><use href="#i-arrow"/></svg></span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="informe" aria-labelledby="t-informe">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <h2 id="t-informe" class="h2">¿Qué tan digitalizado está tu negocio?</h2>
-        <p class="muted">Es lo primero que hacemos cuando nos contactas: revisamos cinco aspectos que suman 100 puntos y te decimos cuál te conviene resolver primero. Gratis y sin compromiso.</p>
-      </div>
-      <div class="report">
-        <aside class="rail" data-rail aria-label="Recorrido del diagnóstico">
-          <div class="meter" data-score>
-            <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="m-track" cx="50" cy="50" r="44"/><circle class="m-fill" cx="50" cy="50" r="44" pathLength="100"/></svg>
-            <div class="m-read"><b class="num" data-score-out>0</b><small>de 100<br>revisados</small></div>
-          </div>
-          <p>Así avanza tu diagnóstico</p>
-          <ol>
-            <li><a href="#d1" data-pts="25"><span>Tu sitio propio</span><span class="num">25</span></a></li>
-            <li><a href="#d2" data-pts="20"><span>Cómo se ve tu negocio</span><span class="num">20</span></a></li>
-            <li><a href="#d3" data-pts="20"><span>Qué vendes</span><span class="num">20</span></a></li>
-            <li><a href="#d4" data-pts="20"><span>Cómo te reservan</span><span class="num">20</span></a></li>
-            <li><a href="#d5" data-pts="15"><span>Si el cliente vuelve</span><span class="num">15</span></a></li>
-          </ol>
-          <a class="btn btn-sm" href="#diagnostico">Pedir el mío</a>
-        </aside>
-        <div class="dims">
-          <article class="dim corta reveal" id="d1">
-            <div class="dim-head"><div><h3 class="h2">Tu sitio propio</h3><span class="tag">Aspecto 01</span></div><p class="pts"><b class="num">25</b><span>puntos</span></p></div>
-            <p class="low"><q>¿Tienes una página tuya, que se vea bien en el celular?</q></p>
-            <a class="fix-svc" href="#svc-web"><span class="ico"><svg width="22" height="22"><use href="#i-web"/></svg></span><div><b>Lo resolvemos con tu página web</b><span>Ver qué incluye</span></div></a>
-          </article>
-          <article class="dim corta reveal" id="d2">
-            <div class="dim-head"><div><h3 class="h2">Cómo se ve tu negocio</h3><span class="tag">Aspecto 02</span></div><p class="pts"><b class="num">20</b><span>puntos</span></p></div>
-            <p class="low"><q>¿Las fotos y los videos que te representan son tuyos y actuales?</q></p>
-            <a class="fix-svc" href="#svc-fotos"><span class="ico"><svg width="22" height="22"><use href="#i-camera"/></svg></span><div><b>Lo resolvemos con fotos y videos</b><span>Ver qué incluye</span></div></a>
-          </article>
-          <article class="dim corta reveal" id="d3">
-            <div class="dim-head"><div><h3 class="h2">Qué vendes</h3><span class="tag">Aspecto 03</span></div><p class="pts"><b class="num">20</b><span>puntos</span></p></div>
-            <p class="low"><q>¿Un cliente puede ver tu carta y tus precios sin preguntar?</q></p>
-            <a class="fix-svc" href="#svc-menu"><span class="ico"><svg width="22" height="22"><use href="#i-qr"/></svg></span><div><b>Lo resolvemos con el menú digital</b><span>Ver qué incluye</span></div></a>
-          </article>
-          <article class="dim corta reveal" id="d4">
-            <div class="dim-head"><div><h3 class="h2">Cómo te reservan</h3><span class="tag">Aspecto 04</span></div><p class="pts"><b class="num">20</b><span>puntos</span></p></div>
-            <p class="low"><q>¿Se puede reservar o pedir sin llamarte por teléfono?</q></p>
-            <a class="fix-svc" href="#svc-reservas"><span class="ico"><svg width="22" height="22"><use href="#i-calendar"/></svg></span><div><b>Lo resolvemos con el sistema de reservas</b><span>Ver qué incluye</span></div></a>
-          </article>
-          <article class="dim corta reveal" id="d5">
-            <div class="dim-head"><div><h3 class="h2">Si el cliente vuelve</h3><span class="tag">Aspecto 05</span></div><p class="pts"><b class="num">15</b><span>puntos</span></p></div>
-            <p class="low"><q>¿Tienes alguna forma de premiar al que vuelve?</q></p>
-            <a class="fix-svc" href="#svc-fidelizacion"><span class="ico"><svg width="22" height="22"><use href="#i-card"/></svg></span><div><b>Lo resolvemos con la tarjeta de fidelización</b><span>Ver qué incluye</span></div></a>
-          </article>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section id="proceso" aria-labelledby="t-como">
     <div class="wrap sec-grid">
       <div class="reveal">
         <h2 id="t-como" class="h2">Así te vamos avisando</h2>
-        <p class="lead">Del diagnóstico a la entrega, sabes en qué va tu proyecto. Todo termina a tu nombre y con capacitación.</p>
+        <p class="lead">Del diagnóstico a la entrega, siempre sabes en qué va tu proyecto.</p>
       </div>
       <ol class="steps" aria-label="Ejemplo de avisos del proceso">
-        <li class="step reveal"><span class="ico"><svg width="22" height="22"><use href="#i-search"/></svg></span><div><header><span>Diagnóstico</span><span>Paso 1</span></header><b>Vemos juntos qué te falta</b><p>En el primer contacto revisamos tu negocio y te damos tu puntaje. Gratis y sin compromiso.</p></div></li>
-        <li class="step reveal"><span class="ico"><svg width="22" height="22"><use href="#i-send"/></svg></span><div><header><span>Propuesta</span><span>Paso 2</span></header><b>Te decimos el precio</b><p>Eliges productos sueltos o el pack completo. El precio queda acordado antes de empezar.</p></div></li>
-        <li class="step reveal"><span class="ico"><svg width="22" height="22"><use href="#i-walk"/></svg></span><div><header><span>Producción</span><span>Paso 3</span></header><b>Vamos a tu local</b><p>Fotos, videos y todo lo que necesite tu proyecto, en 3 a 7 días hábiles.</p></div></li>
-        <li class="step reveal"><span class="ico"><svg width="22" height="22"><use href="#i-key"/></svg></span><div><header><span>Entrega</span><span>Paso 4</span></header><b>Todo queda a tu nombre</b><p>Te capacitamos y te entregamos los accesos, con acta de entrega.</p></div></li>
+        <li class="step reveal" data-shine><span class="ico"><svg width="22" height="22"><use href="#i-search"/></svg></span><div><header><span>Diagnóstico</span><span>Paso 1</span></header><b>Vemos juntos qué te falta</b><p>En el primer contacto revisamos tu negocio y te damos tu puntaje. Gratis y sin compromiso.</p></div></li>
+        <li class="step reveal" data-shine><span class="ico"><svg width="22" height="22"><use href="#i-send"/></svg></span><div><header><span>Propuesta</span><span>Paso 2</span></header><b>Te decimos el precio</b><p>Eliges productos sueltos o el pack completo. El precio queda acordado antes de empezar.</p></div></li>
+        <li class="step reveal" data-shine><span class="ico"><svg width="22" height="22"><use href="#i-walk"/></svg></span><div><header><span>Producción</span><span>Paso 3</span></header><b>Vamos a tu local</b><p>Fotos, videos y todo lo que necesite tu proyecto, en 3 a 7 días hábiles.</p></div></li>
+        <li class="step reveal" data-shine><span class="ico"><svg width="22" height="22"><use href="#i-key"/></svg></span><div><header><span>Entrega</span><span>Paso 4</span></header><b>Todo queda a tu nombre</b><p>Te entregamos los accesos, con acta de entrega.</p></div></li>
       </ol>
     </div>
   </section>
@@ -446,12 +347,78 @@ body { font-size: 16px; letter-spacing: -.005em; }
       </div>
       <div class="precios">
         <div class="tarifario reveal" data-seq>
-          <a class="fila" href="#svc-web"><span class="ico"><svg width="18" height="18"><use href="#i-web"/></svg></span><b>Página web</b><span class="num"><small>desde</small> $49.990</span></a>
-          <a class="fila" href="#svc-videos"><span class="ico"><svg width="18" height="18"><use href="#i-video"/></svg></span><b>Videos para redes</b><span class="num"><small>desde</small> $9.990</span></a>
-          <a class="fila" href="#svc-menu"><span class="ico"><svg width="18" height="18"><use href="#i-qr"/></svg></span><b>Menú digital</b><span class="num"><small>desde</small> $27.990</span></a>
-          <a class="fila" href="#svc-fotos"><span class="ico"><svg width="18" height="18"><use href="#i-camera"/></svg></span><b>Registro fotográfico</b><span class="num">$4.990</span></a>
-          <a class="fila" href="#svc-reservas"><span class="ico"><svg width="18" height="18"><use href="#i-calendar"/></svg></span><b>Sistema de reservas</b><span class="num"><small>desde</small> $24.990</span></a>
-          <a class="fila" href="#svc-fidelizacion"><span class="ico"><svg width="18" height="18"><use href="#i-card"/></svg></span><b>Tarjeta de fidelización</b><span class="num">$9.990</span></a>
+          <div class="item" id="svc-web" data-shine>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-web"><span class="ico"><svg width="18" height="18"><use href="#i-web"/></svg></span><b>Página web</b><span class="num"><small>desde</small> $49.990</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <div class="det" id="det-web" hidden>
+              <p>Un lugar propio en internet, rápido en el celular y con tu WhatsApp a la vista.</p>
+              <div class="det-cols">
+                <div><h4>Qué incluye</h4><ul><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Hasta 5 secciones, hecha a tu medida</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Botón de WhatsApp, mapa y horario</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Se ve bien en el celular</li></ul></div>
+                <div><h4>Cómo funciona</h4><ol><li>Nos cuentas de tu negocio y elegimos las secciones</li><li>Armamos la página con tus fotos, textos y datos</li><li>La publicamos a tu nombre y la dejamos funcionando</li></ol></div>
+              </div>
+              
+              <div class="det-foot"><span class="num"><small>desde</small> $49.990<small>Dominio .cl no incluido ($10.000 al año en NIC Chile). El hosting no tiene costo.</small></span><button class="btn btn-main btn-sm" type="button" data-add="web" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button></div>
+            </div>
+          </div>
+          <div class="item" id="svc-videos" data-shine>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-videos"><span class="ico"><svg width="18" height="18"><use href="#i-video"/></svg></span><b>Videos para redes</b><span class="num"><small>desde</small> $9.990</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <div class="det" id="det-videos" hidden>
+              <p>Videos cortos para Instagram y TikTok, grabados y editados en tu local.</p>
+              <div class="det-cols">
+                <div><h4>Qué incluye</h4><ul><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Video vertical de 15 a 30 segundos</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Grabación, edición, música y textos</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Quedan tuyos, para usarlos donde quieras</li></ul></div>
+                <div><h4>Cómo funciona</h4><ol><li>Definimos contigo qué mostrar</li><li>Grabamos en tu local</li><li>Editamos y te lo entregamos listo para publicar</li></ol></div>
+              </div>
+              
+              <div class="det-foot"><span class="num"><small>desde</small> $9.990</span><button class="btn btn-main btn-sm" type="button" data-add="videos" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button></div>
+            </div>
+          </div>
+          <div class="item" id="svc-menu" data-shine>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-menu"><span class="ico"><svg width="18" height="18"><use href="#i-qr"/></svg></span><b>Menú digital</b><span class="num"><small>desde</small> $27.990</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <div class="det" id="det-menu" hidden>
+              <p>Tu carta o lista de precios en un QR, sin cartas de papel.</p>
+              <div class="det-cols">
+                <div><h4>Qué incluye</h4><ul><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>QR impreso para las mesas o el mesón</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Foto, descripción y precio por producto</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Funciona en cualquier celular, sin instalar nada</li></ul></div>
+                <div><h4>Cómo funciona</h4><ol><li>Nos pasas tu carta y tus precios</li><li>Armamos el menú digital y el QR</li><li>Te entregamos el QR impreso, listo para usar</li></ol></div>
+              </div>
+              <div class="det-extra"><div><h4>Versión interactiva: plato en vivo <span class="rec">Cuesta más</span></h4><p>El cliente elige un plato en el menú, se abre la cámara de su celular y ve el plato sobre su mesa, como si estuviera ahí. Un menú interactivo de verdad, para que decida mirando.</p><small>Precio a cotizar según cuántos platos quieras mostrar</small></div><button class="btn btn-sm" type="button" data-add="menu-ar" data-label="Agregar la versión interactiva" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar la versión interactiva</span></button></div>
+              <div class="det-foot"><span class="num"><small>desde</small> $27.990</span><button class="btn btn-main btn-sm" type="button" data-add="menu" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button></div>
+            </div>
+          </div>
+          <div class="item" id="svc-fotos" data-shine>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-fotos"><span class="ico"><svg width="18" height="18"><use href="#i-camera"/></svg></span><b>Registro fotográfico</b><span class="num">$4.990</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <div class="det" id="det-fotos" hidden>
+              <p>Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.</p>
+              <div class="det-cols">
+                <div><h4>Qué incluye</h4><ul><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Sesión en tu local, sin estudio</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>10 a 15 fotos editadas</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Quedan tuyas, para usarlas donde quieras</li></ul></div>
+                <div><h4>Cómo funciona</h4><ol><li>Coordinamos día y hora en tu local</li><li>Sacamos las fotos de tus productos y espacios</li><li>Editamos y te entregamos de 10 a 15 fotos</li></ol></div>
+              </div>
+              
+              <div class="det-foot"><span class="num">$4.990</span><button class="btn btn-main btn-sm" type="button" data-add="fotos" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button></div>
+            </div>
+          </div>
+          <div class="item" id="svc-reservas" data-shine>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-reservas"><span class="ico"><svg width="18" height="18"><use href="#i-calendar"/></svg></span><b>Sistema de reservas</b><span class="num"><small>desde</small> $24.990</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <div class="det" id="det-reservas" hidden>
+              <p>Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.</p>
+              <div class="det-cols">
+                <div><h4>Qué incluye</h4><ul><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Agenda en línea con tus horarios</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Confirmación automática al cliente</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Ves las reservas del día en tu teléfono</li></ul></div>
+                <div><h4>Cómo funciona</h4><ol><li>Definimos tus horarios y servicios</li><li>Configuramos la agenda en línea</li><li>Tus clientes reservan solos, a cualquier hora</li></ol></div>
+              </div>
+              
+              <div class="det-foot"><span class="num"><small>desde</small> $24.990</span><button class="btn btn-main btn-sm" type="button" data-add="reservas" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button></div>
+            </div>
+          </div>
+          <div class="item" id="svc-fidelizacion" data-shine>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-fidelizacion"><span class="ico"><svg width="18" height="18"><use href="#i-card"/></svg></span><b>Tarjeta de fidelización</b><span class="num">$9.990</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <div class="det" id="det-fidelizacion" hidden>
+              <p>La tarjeta de sellos de toda la vida, pero en el celular del cliente.</p>
+              <div class="det-cols">
+                <div><h4>Qué incluye</h4><ul><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>QR con sellos, sin tarjetas de papel</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Se guarda en Google Wallet y Apple Wallet</li><li><svg class="check" width="15" height="15"><use href="#i-check"/></svg>Ves cuántos clientes están volviendo</li></ul></div>
+                <div><h4>Cómo funciona</h4><ol><li>Defines el premio y cuántos sellos lleva</li><li>Armamos la tarjeta con tu marca</li><li>Tus clientes la guardan en el celular y tú sumas sellos</li></ol></div>
+              </div>
+              
+              <div class="det-foot"><span class="num">$9.990</span><button class="btn btn-main btn-sm" type="button" data-add="fidelizacion" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button></div>
+            </div>
+          </div>
           <p class="fila total"><b>Los seis por separado</b><span class="num">$127.940</span></p>
         </div>
         <article class="pack reveal" data-shine>
@@ -459,15 +426,14 @@ body { font-size: 16px; letter-spacing: -.005em; }
           <p class="price"><small>los seis productos</small><b class="num">$79.990</b></p>
           <p class="ahorro">Te ahorras <b>$47.950</b> frente a comprarlos sueltos</p>
           <ul data-seq><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Página web</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Videos para redes</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Menú digital</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Registro fotográfico</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Sistema de reservas</li><li><svg class="check" width="16" height="16"><use href="#i-check"/></svg>Tarjeta de fidelización</li></ul>
-          <a class="btn btn-main" href="#diagnostico">Quiero el pack completo</a>
-          <small class="pack-note">Los primeros 5 clientes lo llevan en $69.990.</small>
+          <button class="btn btn-main btn-sm" type="button" data-add="pack" data-label="Agregar el pack al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar el pack al carrito</span></button>
         </article>
       </div>
       <ul class="promises reveal" data-seq aria-label="Lo que viene con cualquier producto">
         <li><span class="ico"><svg width="20" height="20"><use href="#i-key"/></svg></span><div><b>Todo a tu nombre</b><span>La web, el menú y las cuentas quedan tuyas.</span></div></li>
-        <li><span class="ico"><svg width="20" height="20"><use href="#i-walk"/></svg></span><div><b>Vamos a tu local</b><span>Fotos, videos y capacitación presencial en el Gran Concepción.</span></div></li>
-        <li><span class="ico"><svg width="20" height="20"><use href="#i-learn"/></svg></span><div><b>Te enseñamos a usarlo</b><span>Cambiar precios, subir fotos y ver tus reservas.</span></div></li>
-        <li><span class="ico"><svg width="20" height="20"><use href="#i-tag"/></svg></span><div><b>Sabes cuánto pagas</b><span>Precio por producto, sin mensualidades escondidas.</span></div></li>
+        <li><span class="ico"><svg width="20" height="20"><use href="#i-check"/></svg></span><div><b>Tu negocio funcionando</b><span>Lo probamos todo y te lo entregamos funcionando, con acta de entrega.</span></div></li>
+        <li><span class="ico"><svg width="20" height="20"><use href="#i-walk"/></svg></span><div><b>Vamos a tu local</b><span>Fotos y videos en tu local, en el Gran Concepción.</span></div></li>
+        <li><span class="ico"><svg width="20" height="20"><use href="#i-bolt"/></svg></span><div><b>Entrega rápida</b><span>De 3 a 7 días hábiles desde que tenemos tus fotos, textos y accesos.</span></div></li>
       </ul>
     </div>
   </section>
@@ -496,6 +462,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
           <p class="promo-price"><b class="num">$17.990</b><s class="num">$19.980</s></p>
           <p class="promo-save">Ahorras $1.990</p>
           <p class="promo-txt">Dos videos distintos, grabados el mismo día.</p>
+          <button class="btn btn-sm" type="button" data-add="promo-0" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button>
         </article>
         <article class="promo reveal" data-shine>
           <div class="promo-top"><span class="ico"><svg width="20" height="20"><use href="#i-video"/></svg></span><span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
@@ -503,6 +470,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
           <p class="promo-price"><b class="num">$24.990</b><s class="num">$29.970</s></p>
           <p class="promo-save">Ahorras $4.980</p>
           <p class="promo-txt">Un mes de contenido resuelto en una sola visita.</p>
+          <button class="btn btn-sm" type="button" data-add="promo-1" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button>
         </article>
         <article class="promo reveal" data-shine>
           <div class="promo-top"><span class="ico"><svg width="20" height="20"><use href="#i-card"/></svg></span><span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
@@ -510,6 +478,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
           <p class="promo-price"><b class="num">$7.990</b><s class="num">$9.990</s></p>
           <p class="promo-save">Ahorras $2.000</p>
           <p class="promo-txt">Precio de lanzamiento del primer programa de sellos.</p>
+          <button class="btn btn-sm" type="button" data-add="promo-2" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button>
         </article>
         <article class="promo reveal" data-shine>
           <div class="promo-top"><span class="ico"><svg width="20" height="20"><use href="#i-qr"/></svg></span><span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
@@ -517,6 +486,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
           <p class="promo-price"><b class="num">$29.990</b><s class="num">$32.980</s></p>
           <p class="promo-save">Ahorras $2.990</p>
           <p class="promo-txt">El menú se ve mucho mejor con fotos tuyas.</p>
+          <button class="btn btn-sm" type="button" data-add="promo-3" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button>
         </article>
         <article class="promo reveal" data-shine>
           <div class="promo-top"><span class="ico"><svg width="20" height="20"><use href="#i-calendar"/></svg></span><span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
@@ -524,6 +494,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
           <p class="promo-price"><b class="num">$29.990</b><s class="num">$34.980</s></p>
           <p class="promo-save">Ahorras $4.990</p>
           <p class="promo-txt">Que reserven solos y que además vuelvan.</p>
+          <button class="btn btn-sm" type="button" data-add="promo-4" data-label="Agregar al carrito" aria-pressed="false"><svg width="16" height="16" aria-hidden="true"><use href="#i-cart"/></svg><span class="add-t">Agregar al carrito</span></button>
         </article>
       </div>
     </div>
@@ -534,23 +505,31 @@ body { font-size: 16px; letter-spacing: -.005em; }
       <div class="ask reveal" id="diagnostico">
         <div>
           <h2 id="t-pedir" class="h2">Pide tu <span class="accent">diagnóstico gratis</span></h2>
-          <p class="muted">Te escribimos, revisamos tu negocio contigo y te damos tu puntaje de 100. Recién ahí hablamos de precios. Hacemos un solo seguimiento y no insistimos.</p>
+          <p class="muted">Revisamos tu negocio contigo y te damos tu puntaje de 100. Recién ahí hablamos de precios.</p>
           <div class="ask-alt">
             <b>¿Prefieres escribirnos?</b>
-            <p><a href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a> · Recibimos solicitudes 24/7 y respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
+            <p><a href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a></p>
+            <span class="redes"><a class="btn btn-wa btn-solo" href="https://wa.me/56946941640?text=Hola%20B%C3%ADo%20Digital%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n." target="_blank" rel="noopener" aria-label="Escribirnos por WhatsApp" title="WhatsApp"><svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg></a><a class="btn btn-ig btn-solo" href="https://www.instagram.com/biodigital.cl/" target="_blank" rel="noopener" aria-label="Seguirnos en Instagram" title="Instagram"><svg width="22" height="22" aria-hidden="true"><use href="#i-ig"/></svg></a><small>+56 9 4694 1640 · @biodigital.cl</small></span>
           </div>
         </div>
-        <form data-demo-form data-seq data-done="&lt;b&gt;Solicitud registrada.&lt;/b&gt; Así se verá la confirmación: te escribiremos a tu correo. Esta maqueta no envía datos." aria-label="Solicitud de diagnóstico (maqueta, no envía datos)">
-          <label>Tu nombre<input name="nombre" autocomplete="name" placeholder="Ej.: Carolina" required></label>
-          <label>Nombre del negocio<input name="negocio" autocomplete="organization" placeholder="Ej.: Panadería del Cerro" required data-negocio></label>
-          <label>Rubro<select name="rubro" required><option value="" selected disabled>Elige tu rubro</option><option>Gastronomía</option><option>Belleza y peluquería</option><option>Taller o servicio técnico</option><option>Almacén o tienda</option><option>Salud</option><option>Otro</option></select></label>
-          <label>Comuna<input name="comuna" autocomplete="address-level2" placeholder="Ej.: San Pedro de la Paz" required></label>
-          <label>Correo<input name="correo" type="email" autocomplete="email" placeholder="tu@correo.cl" required></label>
-          <label><span>Teléfono <small>(opcional)</small></span><input name="telefono" type="tel" autocomplete="tel" placeholder="+56 9"></label>
-          <label class="full"><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes"><option value="" selected>Todavía no lo sé</option><option>Página web</option><option>Videos para redes</option><option>Menú digital</option><option>Registro fotográfico</option><option>Sistema de reservas</option><option>Tarjeta de fidelización</option><option>El pack completo</option></select></label>
+        <form data-pedido data-seq novalidate data-mail="biodigitalici@gmail.com" data-wa="56946941640" data-sb-url="https://mkxxqhywwzsaeojfmkme.supabase.co" data-sb-key="sb_publishable_IY0ngSo4QeKmUFVQTTUTGw_jTudkX8Z" aria-label="Pedido y solicitud de diagnóstico">
+          <div class="hp" aria-hidden="true"><label>No llenar<input name="sitio" tabindex="-1" autocomplete="off"></label></div>
+          <p class="pedido-resumen"><b>Tu pedido:</b> <span data-pedido-resumen></span></p>
+          <label>Tu nombre<input name="nombre" autocomplete="name" placeholder="Ej.: Carolina Pérez" maxlength="60" required aria-describedby="e-nombre"><span class="err" id="e-nombre" data-err="nombre" role="alert"></span></label>
+          <label>Nombre del negocio<input name="negocio" autocomplete="organization" placeholder="Ej.: Panadería del Cerro" maxlength="60" required data-negocio aria-describedby="e-negocio"><span class="err" id="e-negocio" data-err="negocio" role="alert"></span></label>
+          <label>Rubro<select name="rubro" required aria-describedby="e-rubro"><option value="" selected disabled>Elige tu rubro</option><option>Gastronomía</option><option>Belleza y peluquería</option><option>Taller o servicio técnico</option><option>Almacén o tienda</option><option>Salud</option><option>Otro</option></select><span class="err" id="e-rubro" data-err="rubro" role="alert"></span></label>
+          <label>Comuna<select name="comuna" required aria-describedby="e-comuna"><option value="" selected disabled>Elige tu comuna</option><option>Concepción</option><option>Talcahuano</option><option>Hualpén</option><option>San Pedro de la Paz</option><option>Chiguayante</option><option>Coronel</option><option>Lota</option><option>Penco</option><option>Tomé</option><option>Hualqui</option></select><span class="err" id="e-comuna" data-err="comuna" role="alert"></span></label>
+          <label>Correo<input name="correo" type="email" autocomplete="email" placeholder="tu@correo.cl" maxlength="80" required aria-describedby="e-correo"><span class="err" id="e-correo" data-err="correo" role="alert"></span></label>
+          <label><span>Celular <small>(opcional)</small></span><input name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678" maxlength="16" inputmode="tel" aria-describedby="e-telefono"><span class="err" id="e-telefono" data-err="telefono" role="alert"></span></label>
+          <label class="full" data-interes><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes" aria-describedby="e-interes"><option value="" selected>Todavía no lo sé</option><option>Página web</option><option>Videos para redes</option><option>Menú digital</option><option>Registro fotográfico</option><option>Sistema de reservas</option><option>Tarjeta de fidelización</option><option>Menú digital interactivo (plato en vivo)</option><option>El pack completo</option></select><span class="err" id="e-interes" data-err="interes" role="alert"></span></label>
           <label class="check-row"><input type="checkbox" name="beneficio" data-benefit-check>Me interesa el precio de lanzamiento para los primeros 5 clientes.</label>
-          <label class="check-row"><input type="checkbox" name="acepto" required>Acepto la política de privacidad y que me contacten por este diagnóstico.</label>
-          <button class="btn btn-main" type="submit"><span class="btn-label">Enviar solicitud</span><svg class="btn-ico" width="18" height="18"><use href="#i-arrow"/></svg></button>
+          <label class="check-row"><input type="checkbox" name="acepto" required aria-describedby="e-acepto">Acepto la política de privacidad y que me contacten por este pedido.</label>
+          <span class="err full" id="e-acepto" data-err="acepto" role="alert"></span>
+          <div class="envios">
+            <button class="btn btn-main" type="button" data-enviar="correo"><svg width="18" height="18" aria-hidden="true"><use href="#i-mail"/></svg>Enviar por correo</button>
+            <button class="btn btn-wa btn-solo" type="button" data-enviar="whatsapp" aria-label="Enviar por WhatsApp" title="Enviar por WhatsApp"><svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg></button>
+          </div>
+          <p class="pedido-aviso">Se abre tu correo o WhatsApp con el pedido ya escrito; solo falta que presiones enviar. Puedes usar los dos canales.</p>
           <p class="form-status" role="status"></p>
         </form>
       </div>
@@ -564,18 +543,16 @@ body { font-size: 16px; letter-spacing: -.005em; }
         <p class="muted">¿No está tu duda? Escríbenos a <a href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a>.</p>
       </div>
       <div class="faq">
-        <details class="reveal"><summary><span class="n">01</span><span>¿Cuánto cuesta?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Cada producto tiene su precio: la página web parte en $49.990 y los videos en $9.990. Los seis por separado suman $127.940; el pack completo queda en $79.990.</p></details>
-        <details class="reveal"><summary><span class="n">02</span><span>¿Puedo llevar un solo producto?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Sí. Cada uno funciona por su cuenta. El pack conviene cuando quieres varios: te ahorras $47.950.</p></details>
-        <details class="reveal"><summary><span class="n">03</span><span>¿De verdad es gratis el diagnóstico?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Sí. Es nuestra primera conversación: revisamos juntos qué tiene tu negocio y qué le falta, y te decimos tu puntaje. No tienes que contratar nada después.</p></details>
-        <details class="reveal"><summary><span class="n">04</span><span>¿Cuánto se demora?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. Por eso tomamos casi todo en la visita.</p></details>
-        <details class="reveal"><summary><span class="n">05</span><span>¿El dominio y el hosting están incluidos?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>No. El dominio .cl y el hosting se pagan una vez al año y quedan a nombre del negocio. <span class="note">por confirmar</span> Te decimos el valor exacto antes de empezar; nosotros no cobramos mensualidad.</p></details>
-        <details class="reveal"><summary><span class="n">06</span><span>¿Por qué cobran anticipo?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando y firmamos el acta.</p></details>
-        <details class="reveal"><summary><span class="n">07</span><span>¿La tarjeta de fidelización funciona en cualquier celular?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Sí. Se guarda en Google Wallet en Android y en Apple Wallet en iPhone. Tu cliente no instala ninguna aplicación nueva.</p></details>
-        <details class="reveal"><summary><span class="n">08</span><span>¿Qué pasa si me demoro en mandar mis fotos o textos?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>El plazo de producción se corre los mismos días y te avisamos.</p></details>
-        <details class="reveal"><summary><span class="n">09</span><span>¿Tengo que saber de tecnología?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>No. Nosotros hacemos todo y al final te enseñamos solo lo que vas a usar.</p></details>
-        <details class="reveal"><summary><span class="n">10</span><span>¿Atienden fuera de Concepción?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>La página web, el menú digital, las reservas y la tarjeta de fidelización se pueden hacer a distancia en todo Chile. Las fotos, los videos y la capacitación presencial son en el Gran Concepción.</p></details>
-        <details class="reveal"><summary><span class="n">11</span><span>¿Qué hacen con mis datos?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Solo los usamos para hacer tu diagnóstico y contactarte por él.</p></details>
-        <details class="reveal"><summary><span class="n">12</span><span>¿Quiénes son?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Somos una startup formada por cinco estudiantes de Ingeniería Civil Industrial de la Universidad de Concepción.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">01</span><span>¿De verdad es gratis el diagnóstico?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Sí. Es nuestra primera conversación: revisamos juntos qué tiene tu negocio y qué le falta, y te decimos tu puntaje. No tienes que contratar nada después.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">02</span><span>¿Cuánto se demora?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. Por eso tomamos casi todo en la visita.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">03</span><span>¿El dominio y el hosting están incluidos?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>El dominio .cl no está incluido: lo registra NIC Chile, cuesta $10.000 al año y queda a nombre del negocio. El hosting de la página web va en Cloudflare, sin costo para ti. Nosotros no cobramos mensualidad.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">04</span><span>¿Por qué cobran anticipo?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando y firmamos el acta.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">05</span><span>¿La tarjeta de fidelización funciona en cualquier celular?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Sí. Se guarda en Google Wallet en Android y en Apple Wallet en iPhone. Tu cliente no instala ninguna aplicación nueva.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">06</span><span>¿Qué pasa si me demoro en mandar mis fotos o textos?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>El plazo de producción se corre los mismos días y te avisamos.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">07</span><span>¿Tengo que saber de tecnología?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>No. Nosotros hacemos todo y te lo dejamos funcionando.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">08</span><span>¿Dónde atienden?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Solo en el Gran Concepción: Concepción, Talcahuano, Hualpén, San Pedro de la Paz, Chiguayante, Coronel, Lota, Penco, Tomé y Hualqui. Vamos a tu local para las fotos y los videos.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">09</span><span>¿Qué hacen con mis datos?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Solo los usamos para hacer tu diagnóstico y contactarte por él.</p></details>
+        <details class="reveal" data-shine><summary><span class="n">10</span><span>¿Quiénes son?</span><svg class="faq-i" width="20" height="20" aria-hidden="true"><use href="#i-plus"/></svg></summary><p>Somos una startup formada por cinco estudiantes de Ingeniería Civil Industrial de la Universidad de Concepción.</p></details>
       </div>
     </div>
   </section>
@@ -588,6 +565,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
         <p>Te lo decimos gratis en la primera conversación. Recibimos solicitudes 24/7 y respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
         <div class="cta-row">
           <a class="btn btn-main" href="#diagnostico">Pide tu diagnóstico gratis <svg class="btn-ico" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-wa btn-solo" href="https://wa.me/56946941640?text=Hola%20B%C3%ADo%20Digital%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n." target="_blank" rel="noopener" aria-label="Escribirnos por WhatsApp" title="WhatsApp"><svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg></a><a class="btn btn-ig btn-solo" href="https://www.instagram.com/biodigital.cl/" target="_blank" rel="noopener" aria-label="Seguirnos en Instagram" title="Instagram"><svg width="22" height="22" aria-hidden="true"><use href="#i-ig"/></svg></a>
           <a class="btn" href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a>
         </div>
       </div>
@@ -598,8 +576,8 @@ body { font-size: 16px; letter-spacing: -.005em; }
 <footer class="site-foot">
   <div class="wrap">
     <div class="foot reveal">
-      <div><strong>Bío Digital</strong><br>Presencia digital para micro y pequeñas empresas.<br>Presencial en el Gran Concepción · Remoto en todo Chile</div>
-      <nav aria-label="Pie de página"><ul><li><a href="#servicios">Servicios</a></li><li><a href="#planes">Precios</a></li><li><a href="#promos">Promociones</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li></ul></nav>
+      <div><strong>Bío Digital</strong><br>Presencia digital para micro y pequeñas empresas.<br>Atendemos en el Gran Concepción</div>
+      <nav aria-label="Pie de página"><ul><li><a href="#planes">Precios</a></li><li><a href="#promos">Promociones</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li></ul></nav>
       <div>biodigitalici@gmail.com<br>© 2026 Bío Digital</div>
     </div>
   </div>
@@ -608,10 +586,29 @@ body { font-size: 16px; letter-spacing: -.005em; }
 <button class="to-top" type="button" aria-label="Volver arriba"><svg width="20" height="20"><use href="#i-up"/></svg></button>
 <div class="dock" role="region" aria-label="Acciones rápidas">
   <a class="btn btn-main" href="#diagnostico">Diagnóstico gratis</a>
-  <a class="btn" href="mailto:biodigitalici@gmail.com">Escríbenos</a>
+  <a class="btn btn-wa btn-solo" href="https://wa.me/56946941640?text=Hola%20B%C3%ADo%20Digital%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n." target="_blank" rel="noopener" aria-label="Escribirnos por WhatsApp" title="WhatsApp"><svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg></a><a class="btn btn-ig btn-solo" href="https://www.instagram.com/biodigital.cl/" target="_blank" rel="noopener" aria-label="Seguirnos en Instagram" title="Instagram"><svg width="22" height="22" aria-hidden="true"><use href="#i-ig"/></svg></a>
 </div>
 <script src="../mundo.js"></script>
+<div class="cart-fondo" hidden></div>
+<aside class="cart" id="carrito" role="dialog" aria-modal="true" aria-label="Tu carrito" hidden>
+  <header><h2>Tu carrito</h2><button class="cart-x" type="button" aria-label="Cerrar el carrito">×</button></header>
+  <div class="cart-cuerpo">
+    <p class="cart-vacio" data-cart-vacio>Todavía no agregas nada. Abre un producto en la sección de precios y presiona "Agregar al carrito".</p>
+    <ul data-cart-list></ul>
+  </div>
+  <div class="cart-pie" data-cart-pie hidden>
+    <p class="cart-total"><span>Total</span><b data-cart-total>$0</b></p>
+    <p class="cart-tip" data-cart-tip hidden></p>
+    <p class="cart-nota">Los precios "desde" se confirman en el diagnóstico gratis. Dominio .cl no incluido ($10.000 al año en NIC Chile).</p>
+    <button class="btn btn-main" type="button" data-cart-pedir>Enviar mi pedido</button>
+    <button class="cart-link" type="button" data-cart-seguir>Seguir mirando</button>
+    <button class="cart-link" type="button" data-cart-vaciar>Vaciar carrito</button>
+  </div>
+</aside>
+<script type="application/json" id="catalogo">[{"id":"web","nombre":"Página web","precio":49990,"desde":true},{"id":"videos","nombre":"Videos para redes","precio":9990,"desde":true},{"id":"menu","nombre":"Menú digital","precio":27990,"desde":true},{"id":"fotos","nombre":"Registro fotográfico","precio":4990,"desde":false},{"id":"reservas","nombre":"Sistema de reservas","precio":24990,"desde":true},{"id":"fidelizacion","nombre":"Tarjeta de fidelización","precio":9990,"desde":false},{"id":"pack","nombre":"Pack completo","precio":79990,"desde":false},{"id":"menu-ar","nombre":"Menú digital interactivo (plato en vivo)","precio":null,"desde":false},{"id":"promo-0","nombre":"2 videos para redes","precio":17990,"desde":false},{"id":"promo-1","nombre":"3 videos para redes","precio":24990,"desde":false},{"id":"promo-2","nombre":"Tarjeta de fidelización","precio":7990,"desde":false},{"id":"promo-3","nombre":"Menú digital + fotos","precio":29990,"desde":false},{"id":"promo-4","nombre":"Reservas + fidelización","precio":29990,"desde":false}]</script>
 <script src="../secciones.js"></script>
+<script src="../tienda.js"></script>
+<script src="../carrusel.js"></script>
 <script src="../gato.js"></script>
 <script src="../mascota-gato.js"></script>
 <script src="../mascota.js"></script>
@@ -625,7 +622,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
         e.preventDefault();
         dest.value = cap.elements.negocio.value;
         document.getElementById('diagnostico').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-        setTimeout(function () { document.querySelector('[data-demo-form] input[name="nombre"]').focus({ preventScroll: true }); }, 600);
+        setTimeout(function () { document.querySelector('[data-pedido] input[name="nombre"]').focus({ preventScroll: true }); }, 600);
       });
     }
     // Las tarjetas se desplazan un poco con el mouse, cada una a su profundidad

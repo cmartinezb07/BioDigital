@@ -7,19 +7,19 @@ window.MascotaConfig = {
   rig: true,
   // Scroll "muy rápido": más de 4 pantallas por segundo sostenido medio segundo; avisa como máximo cada 20 s
   rapido: { pantallas: 4, ventanaMs: 500, pausaMs: 20000 },
-  // Comentarios sueltos mientras la persona lee, como máximo 5 por visita
-  ocioMax: 5,
+  // Comentarios sueltos mientras la persona lee, como máximo 2 por visita
+  ocioMax: 2,
   // Mouse sacudido con fuerza (zigzag rápido sostenido): se marea como máximo 2 veces por visita, con 45 s entre mareos
   mareo: { pausaMs: 45000, max: 2 },
   // id de sección de la página -> evento que se comenta al llegar (sirve para todas las opciones)
   secciones: {
-    servicios: 'servicios', entregables: 'detalle', detalle: 'detalle', informe: 'puntaje', puntaje: 'puntaje',
+    ejemplos: 'ejemplos',
     proceso: 'proceso', planes: 'planes', promos: 'beneficio', beneficio: 'beneficio', diagnostico: 'formulario',
     preguntas: 'preguntas', contacto: 'cierre', cierre: 'cierre',
   },
   // Pose de fondo mientras se lee cada sección (tranquilas: se mantienen varios segundos)
-  bases: { servicios: 'feliz', detalle: 'pensativo', puntaje: 'curioso', proceso: 'feliz', planes: 'sarcastico', beneficio: 'lentes', formulario: 'feliz', preguntas: 'pensativo', cierre: 'feliz' },
-  selectores: { cta: '.btn-main, .btn-primary, .btn-foil', destacado: '.pack', precio: '.price, .promo-price', tarjeta: '.pack, .promo, .svc, .dim, .card' },
+  bases: { ejemplos: 'orgulloso', proceso: 'feliz', planes: 'sarcastico', beneficio: 'lentes', formulario: 'feliz', preguntas: 'pensativo', cierre: 'feliz' },
+  selectores: { cta: '.btn-main, .btn-primary, .btn-foil', destacado: '.pack', precio: '.price, .promo-price', tarjeta: '.pack, .promo, .tarifario .fila, .tg-tile' },
 
   personajes: {
     gato: {
@@ -51,26 +51,20 @@ window.MascotaConfig = {
           '¿Vas a un incendio? Aquí no se quema nada.',
           'A esa velocidad no leíste nada. Te vi.',
         ], 'tiembla'],
-        servicios: ['orgulloso', [
-          'Todo esto hacemos. Impresionante, lo sé.',
-          'Cinco servicios. Yo no hago ninguno. Soy gato.',
-        ]],
-        detalle: ['pensativo', [
-          'Y esto te llevas. Sin trucos. Qué aburrido, ¿no?',
-          'Todo a tu nombre. Ni el gato se queda con algo.',
-        ]],
-        puntaje: ['guino', [
-          'Veamos cuántos puntos sacas. Sin presión.',
-          'Cien puntos posibles. Yo saco ciento uno.',
+        ejemplos: ['orgulloso', [
+          'Así se ven las páginas que hacemos. Yo saldría mejor.',
+          'Un estilo para cada rubro. Yo ya tengo el mío.',
+          'Restaurantes, peluquerías, cabañas… yo solo duermo.',
         ]],
         proceso: ['afirmando', [
           'Cuatro pasos. Hasta yo podría. Si quisiera.',
           'El paso 1 es gratis. El gato aprueba.',
         ]],
         planes: ['guino', [
+          'Abre un producto y mira qué incluye. Yo abrí todos.',
           'Psst… el pack completo. Yo sé de estas cosas.',
           'Seis productos por $79.990. Hice la cuenta dos veces.',
-          'Precio confirmado antes de pagar. Qué raro, ¿no?',
+          'El menú digital tiene versión con plato en vivo. Con cámara y todo.',
         ]],
         beneficio: ['lentes', [
           'Cupos limitados. Yo que tú, me apuro.',
@@ -78,7 +72,17 @@ window.MascotaConfig = {
         ]],
         formulario: ['soberbio', [
           'Llénalo. Yo supervisaré. Desde lejos.',
-          'Unos pocos datos y listo. Hasta un gato podría.',
+          'Puedes enviarlo por correo o por WhatsApp. Yo prefiero WhatsApp.',
+          'Solo atendemos en el Gran Concepción. Elige tu comuna.',
+        ]],
+        carritoSuma: ['muyfeliz', [
+          'Al carrito. Buena elección.',
+          'Eso. Llena ese carrito.',
+          'Anotado. Yo no tengo bolsillos, pero sé de compras.',
+        ], 'salta'],
+        carritoQuita: ['pensativo', [
+          '¿Lo sacas? Bueno. Tú sabrás.',
+          'Uno menos. Se echa de menos.',
         ]],
         preguntas: ['pensativo', [
           '¿Dudas? Yo no tengo ninguna.',
@@ -107,7 +111,7 @@ window.MascotaConfig = {
         ]],
         precio: ['sorprendido', [
           'Precio claro, sin letra chica. Qué honestos.',
-          'Se confirma antes de pagar. Cero sorpresas.',
+          'Sin mensualidades. Pagas una vez.',
         ]],
         pregunta: ['afirmando', [
           'Buena pregunta. Casi tan buena como yo.',
@@ -201,6 +205,7 @@ window.MascotaConfig = {
           'Si alguien quiere reservar hoy, ¿puede sin llamarte?',
           'Estoy pensando. No, mentira. Estoy mirando.',
           'Pregunta seria: ¿tu carta está donde el cliente la ve?',
+          '¿Y si tu cliente viera el plato en su mesa antes de pedir? Existe.',
           'Sigo aquí. Por si te lo preguntabas. No lo hacías.',
           'Un local sin fotos no convence. Ni a mí.',
           'Los gatos no pagan arriendo. Envidia, lo sé.',

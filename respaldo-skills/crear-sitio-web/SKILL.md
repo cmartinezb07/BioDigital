@@ -15,6 +15,10 @@ Flujo probado de punta a punta: preguntas → maquetas con varias estéticas →
 - **Costos**: separa siempre costo único de recurrente y marca precios de terceros como aproximados.
 - **Idioma**: escribe como habla el cliente final, frases cortas, sin jerga técnica en la página.
 
+## Subramas (especializaciones de esta skill)
+- **`crear-menu-digital`**: carta digital con QR y plato en vivo (3D y realidad aumentada) para restaurantes y cafeterías. Hereda todo lo de aquí (reglas, formulario, estilos, seguridad, publicación, checklist) y agrega lo propio; su `referencias/requisitos-menu.md` dice qué se hereda, qué se adapta y qué no aplica. Si piden un menú, **usa esa skill** y no hagas una landing.
+- **`contexto_biodigital`**: contexto completo de Bío Digital (sitio, panel, formularios, catálogo, decisiones). Léela al retomar trabajo del proyecto.
+
 ## Fase 0 — Levantamiento (siempre, antes de escribir código)
 
 **Lo primero: ¿el dueño del negocio está en la conversación o no?**
@@ -22,7 +26,10 @@ Flujo probado de punta a punta: preguntas → maquetas con varias estéticas →
 - **No está** (el caso normal: el equipo atiende al cliente aparte) → **entrega el formulario**. Copia
   `plantilla/formulario/formulario-cliente.html` a la carpeta del proyecto, cambia `AGENCIA` por los datos del
   equipo y dile al usuario cómo hacérselo llegar (link, archivo por WhatsApp o impreso con Ctrl+P). Son 59
-  preguntas en 12 bloques, 15 minutos, y vuelve como texto ordenado para pegar aquí.
+  preguntas en 12 bloques, 15 minutos, y vuelve como texto ordenado para pegar aquí. El motor admite dos extras
+  en `AGENCIA`: `whatsapp` (botón que abre el chat con el equipo) y `envio` (el cliente aprieta "Enviar" y las respuestas
+  llegan al panel interno de Bío Digital, tabla `levantamientos`, con `tipo: 'web'` o `'menu'`). El formulario del
+  menú se arma sobre este mismo motor (`crear-menu-digital/plantilla/formulario/construir-formulario.mjs`).
   **Cómo leer las respuestas y convertirlas en decisiones de diseño: `referencias/levantamiento.md`.**
   No empieces a maquetar con el formulario a medias: lo que no se puede adivinar son las seis escalas de
   personalidad y la pregunta de en qué se diferencia.
@@ -88,7 +95,8 @@ Sigue `referencias/verificacion.md`: captura completa a 1440 px (escala 0.5), ch
 - Escribe `DESIGN.md` del sitio (tokens, tipografías, componentes, movimiento) derivado de lo construido.
 
 ## Fase 3 — Seguridad · Fase 4 — Publicación · Fase 5 — Checklist
-`referencias/requisitos.md` §7–§11. Formulario con validación en servidor, rate limit, honeypot + Turnstile, cabeceras de seguridad, sin secretos en el código. Dominio + HTTPS, GA4 con consentimiento, Search Console. Luego el checklist completo, con evidencia.
+`referencias/requisitos.md` §7–§11. Formulario con validación en servidor, rate limit, honeypot + Turnstile, cabeceras de seguridad, sin secretos en el código. Dominio + HTTPS, GA4 con consentimiento, Search Console.
+**Cloudflare Pages desde `wrangler`:** si el proyecto lo crea el primer deploy, queda con otra rama de producción y la dirección corta (`proyecto.pages.dev`) da 404 mientras `main.proyecto.pages.dev` sí abre. Solución: en Cloudflare → el proyecto → Settings, cambiar la rama de producción a `main` y volver a publicar. Las versiones para publicar deben salir **sin** la rueda de colores del equipo ni avisos de prototipo. Luego el checklist completo, con evidencia.
 
 ## Levantamiento
 Formulario para el cliente y cómo traducir cada respuesta en decisiones de diseño: `referencias/levantamiento.md`.

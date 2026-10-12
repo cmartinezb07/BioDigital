@@ -68,27 +68,4 @@
   document.querySelectorAll('[data-benefit]').forEach(function (a) {
     a.addEventListener('click', function () { if (benefit) benefit.checked = true; });
   });
-
-  // Formulario de maqueta: valida, muestra el envío y no manda datos
-  var form = document.querySelector('[data-demo-form]');
-  if (form) {
-    var status = form.querySelector('[role="status"]');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var btn = form.querySelector('button[type="submit"]');
-      var label = btn.querySelector('.btn-label');
-      var idle = label.textContent;
-      btn.disabled = true;
-      btn.classList.add('busy');
-      label.textContent = 'Enviando…';
-      status.textContent = '';
-      setTimeout(function () {
-        btn.classList.remove('busy');
-        btn.disabled = false;
-        label.textContent = idle;
-        status.innerHTML = form.dataset.done;
-        form.classList.add('sent');
-      }, 900);
-    });
-  }
 })();

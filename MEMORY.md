@@ -15,3 +15,8 @@
 - [Estado actual](memoria/estado-actual.md) — punto de retorno para sesiones nuevas: qué está listo, qué falta, cómo retomar.
 - [Decisiones](memoria/decisiones.md) — bitácora cronológica de decisiones tomadas y su justificación.
 - Skill `crear-sitio-web` (en `~/.claude/skills/`, respaldo en `respaldo-skills/`) — flujo reutilizable para sitios de clientes: preguntas, maquetas con 5 estéticas, requisitos SEO/seguridad, recursos evaluados.
+- Skills (en `~/.claude/skills/`, respaldo en `respaldo-skills/`): `crear-sitio-web` (base), `crear-menu-digital` (subrama para menús con QR y plato en vivo; usa el mismo motor de formularios) y `contexto_biodigital` (contexto completo del proyecto; reemplaza a `contexto_pagina_web`).
+- [Panel interno](web/panel/LEEME.md) — solicitudes en vivo, formularios, caja y equipo, con login y segundo factor (Supabase). Dirección: https://main.biodigital-panel.pages.dev
+- [Menú digital](web/menu/) — plantilla y demo "Fogón del Sur" (https://main.menu-demo.pages.dev): carta estilo restaurante con "Ver en tu mesa" (3D y realidad aumentada).
+- Formularios para clientes: `web/propuesta/formulario.html` (página web, 59 preguntas) y `formulario-menu.html` (menú digital, 60); se arman con `node web/propuesta/fuentes/formularios.mjs`.
+

@@ -1,4 +1,8 @@
-# Estado actual (punto de retorno) — 2026-09-18
+# Estado actual (punto de retorno) — actualizado 2026-10-12
+
+> Resumen vigente y completo: skill `contexto_biodigital` (`~/.claude/skills/` y `respaldo-skills/`). Lo de abajo es el detalle del sitio hasta septiembre; las decisiones recientes están al final de `decisiones.md`.
+
+**Estado al 12-oct-2026:** sitio con carrusel de ejemplos, tienda y carrito; panel interno con login y segundo factor en producción (Cloudflare + Supabase); formularios de página web y de menú que llegan al panel; menú digital con plato en vivo (demo publicada; AR probada en un iPhone con un plato plano; falta escaneo 3D real); skills `crear-sitio-web`, `crear-menu-digital` y `contexto_biodigital`. Mucho de esto aún **no está en un commit**.
 
 Leer esto primero al empezar una sesión nueva.
 

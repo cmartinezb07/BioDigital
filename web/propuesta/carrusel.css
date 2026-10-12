@@ -1,0 +1,26 @@
+/* Carrusel curvo de ejemplos (ver carrusel.js). El alto lo fija quien lo usa; las medidas salen de ese alto. */
+.tg { position: relative; overflow: hidden; height: clamp(300px, 46vw, 520px); }
+.tg-band { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; }
+.tg-tile { position: absolute; display: block; transform-style: preserve-3d; }
+.tg-tile { cursor: pointer; }
+.tg-slice { position: absolute; top: 0; overflow: hidden; background: var(--bg-3, #222); }
+.tg-first { border-radius: 10px 0 0 10px; }
+.tg-last { border-radius: 0 10px 10px 0; }
+.tg-slice img { position: absolute; top: 0; max-width: none; object-fit: cover; -webkit-user-drag: none; user-select: none; }
+.tg-ver { text-align: center; margin: 14px 0 0; }
+.tg-lb { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 16px; background: rgba(0, 0, 0, .72); animation: tg-fade .25s ease; }
+.tg-lb[hidden] { display: none; }
+@keyframes tg-fade { from { opacity: 0; } }
+.tg-lb-in { position: relative; width: min(100%, 960px); max-height: 100%; display: grid; gap: 12px; padding: 14px; border: 1px solid var(--line, #333); border-radius: 18px; background: var(--bg-2, #111); color: var(--fg, #fff); animation: tg-up .35s cubic-bezier(.23, 1, .32, 1); }
+@keyframes tg-up { from { opacity: 0; translate: 0 14px; scale: .98; } }
+.tg-lb-in img { width: 100%; height: auto; max-height: 68vh; object-fit: contain; border-radius: 12px; background: var(--bg-3, #222); }
+.tg-lb-x { position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border: 1px solid var(--line, #333); border-radius: 50%; background: var(--bg-2, #111); color: var(--fg, #fff); font-size: 22px; cursor: pointer; }
+.tg-lb-pie { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 0 4px 4px; }
+.tg-lb-pie small { display: block; margin-top: 2px; font-size: 12px; color: var(--fg-3, #888); }
+.tg-lb-act { font-size: 13px; color: var(--fg-2, #bbb); }
+.tg-lb-nav { display: flex; gap: 8px; }
+html.tg-lb-abierto { overflow: hidden; }
+@media (prefers-reduced-motion: reduce) { .tg-lb, .tg-lb-in { animation: none; } }
+.tg-sec { position: relative; margin-top: clamp(28px, 5vw, 56px); padding-bottom: clamp(28px, 5vw, 56px); }
+.tg-head { text-align: center; display: grid; gap: 10px; justify-items: center; margin-bottom: 8px; }
+.tg-head p { max-width: 38em; }

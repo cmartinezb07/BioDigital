@@ -88,7 +88,8 @@
 
   <div class="fin">
     <div class="aviso"><b>Último paso.</b> Aprieta el botón, se copian tus respuestas y nos las pegas por WhatsApp o correo. Si prefieres, descárgalas como archivo.</div>
-    <p><button class="pri" id="copiar">Copiar mis respuestas</button> <button id="bajar">Descargar como archivo</button> <button id="ver">Ver respuestas</button></p>
+    <p id="estado-envio" role="status" class="ok"></p>
+    <p><button class="pri" id="enviar" hidden>Enviar</button> <button class="pri" id="copiar">Copiar mis respuestas</button> <button id="wa" hidden>Abrir WhatsApp para pegarlas</button> <button id="bajar">Descargar como archivo</button> <button id="ver">Ver respuestas</button></p>
     <textarea id="salida" hidden readonly aria-label="Tus respuestas"></textarea>
   </div>
   <footer id="pie"></footer>
@@ -102,7 +103,13 @@
 
 <script>
 // ---- Quién manda el formulario (cambiar por cliente) ----
-var AGENCIA = { nombre: '[NOMBRE DE TU EMPRESA]', contacto: '[tu WhatsApp o correo]' };
+var AGENCIA = {
+  nombre: '[NOMBRE DE TU EMPRESA]',
+  contacto: '[tu WhatsApp o correo]',
+  whatsapp: '',          // opcional: número con código de país y sin +, ej. 569XXXXXXXX. Activa "Abrir WhatsApp para pegarlas"
+  envio: null,           // opcional: { url: 'https://xxxx.supabase.co', llave: 'sb_publishable_…', tipo: 'web' }  Activa "Enviar a …" (llega al panel)
+  salida: 'RESPUESTAS DEL CLIENTE'
+};
 
 // t: texto | larga | uno | varios | escala | si-no
 var FORM = [
@@ -323,7 +330,7 @@ pintar();
 
 // ---- Salida ----
 function texto() {
-  var out = ['RESPUESTAS DEL CLIENTE — ' + (datos.nombre || '(negocio sin nombre)'), 'Enviado: ' + new Date().toLocaleDateString('es-CL'), ''];
+  var out = [AGENCIA.salida + ' — ' + (datos.nombre || '(negocio sin nombre)'), 'Enviado: ' + new Date().toLocaleDateString('es-CL'), ''];
   FORM.forEach(function (sec, si) {
     var lineas = [];
     sec.p.forEach(function (p) {
@@ -349,6 +356,36 @@ function copiar() {
   else { document.execCommand('copy'); listo(); }
 }
 document.getElementById('copiar').onclick = copiar;
+
+// Opcional: abrir el chat del equipo (el cliente solo pega y envía)
+if (AGENCIA.whatsapp) {
+  var bwa = document.getElementById('wa'); bwa.hidden = false;
+  bwa.onclick = function () {
+    copiar();
+    window.open('https://wa.me/' + AGENCIA.whatsapp + '?text=' + encodeURIComponent('Hola ' + AGENCIA.nombre + ', completé el formulario' + (datos.nombre ? ' de ' + datos.nombre : '') + '. Pego aquí mis respuestas:'), '_blank', 'noopener');
+  };
+}
+// Opcional: enviar directo al panel del equipo (tabla "levantamientos", ver skill contexto_biodigital)
+if (AGENCIA.envio) {
+  var benv = document.getElementById('enviar'); benv.hidden = false; benv.textContent = 'Enviar a ' + AGENCIA.nombre;
+  benv.onclick = function () {
+    var est = document.getElementById('estado-envio');
+    var nombre = String(datos.nombre || '').trim();
+    if (nombre.length < 2) { est.className = ''; est.textContent = 'Primero escribe el nombre de tu negocio (primera sección).'; return; }
+    benv.disabled = true; est.className = ''; est.textContent = 'Enviando…';
+    fetch(AGENCIA.envio.url + '/rest/v1/levantamientos', {
+      method: 'POST', credentials: 'omit',
+      headers: { apikey: AGENCIA.envio.llave, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ tipo: AGENCIA.envio.tipo || 'web', negocio: nombre.slice(0, 80), contacto: String(datos.telefono || datos.correo || '').slice(0, 80) || null, respuestas: datos, texto: texto().slice(0, 40000) })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('no');
+      est.className = 'ok'; est.textContent = '¡Recibido! Ya tenemos tus respuestas. Te contactaremos pronto.';
+    }).catch(function () {
+      benv.disabled = false; est.className = '';
+      est.textContent = 'No pudimos enviarlo ahora. Usa "Copiar mis respuestas" y pégalas por WhatsApp o correo.';
+    });
+  };
+}
 document.getElementById('copiar2').onclick = copiar;
 document.getElementById('ver').onclick = function () { var ta = document.getElementById('salida'); ta.hidden = !ta.hidden; ta.value = texto(); };
 document.getElementById('bajar').onclick = function () {

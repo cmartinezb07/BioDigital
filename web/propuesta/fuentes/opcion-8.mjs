@@ -3,6 +3,7 @@
 // Contenido que solo tenían otras opciones, integrado en las tarjetas: vista de la ficha de Google y catálogo (1),
 // certificado a tu nombre con RUT y firmas (2).
 // Toda la paleta sale de dos colores, --c1 (principal) y --c2 (luz), que cambia la rueda de paleta.js.
+import { EJEMPLOS } from './maquetas.mjs';
 const ok = '<svg width="14" height="14"><use href="#i-check"/></svg>';
 export default {
   n: 8,
@@ -10,6 +11,7 @@ export default {
   nombre: 'Final (6 + 7)',
   titulo: 'Bío Digital · Opción 8: Final (6 + 7)',
   tema: 'dark',
+  ejemplos: true,
   fuentes: 'family=Geist:wght@300..700&family=Geist+Mono:wght@400..600',
   // Logo de la marca: dos capas recortadas del logotipo original. La "B" se pinta con la paleta
   // (--c1 a --c2, lo que cambia la rueda) y el texto con el color de texto, así sirve en los dos temas.
@@ -94,10 +96,13 @@ export default {
 
 /* Marco de la 6: columna central con filos y costados más oscuros */
 html { background: var(--side); }
-body { font-size: 16px; letter-spacing: -.005em; background: linear-gradient(90deg, var(--side), var(--side) calc(50% - 640px), var(--bg) calc(50% - 640px), var(--bg) calc(50% + 640px), var(--side) calc(50% + 640px)); }
-main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280px; margin-inline: auto; }
+/* Columna del sitio: hasta 1440 px, pero siempre deja 150 px a cada lado para el gato, que vive fuera de la página */
+:root { --col: 1280px; --maxw: calc(var(--col) - 80px); }
+@media (min-width: 1100px) { :root { --col: min(1440px, 100vw - 300px); } }
+body { font-size: 16px; letter-spacing: -.005em; background: linear-gradient(90deg, var(--side), var(--side) calc(50% - var(--col) / 2), var(--bg) calc(50% - var(--col) / 2), var(--bg) calc(50% + var(--col) / 2), var(--side) calc(50% + var(--col) / 2)); }
+main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(--col); margin-inline: auto; }
 .top { background: color-mix(in srgb, var(--bg) 85%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
-.nav { width: min(100% - 48px, 1180px); }
+.nav { width: min(100% - 48px, var(--maxw)); }
 .brand { gap: 0; }
 .brand .logo { position: relative; display: block; width: 117px; height: 26px; }
 .brand .logo i { position: absolute; inset: 0; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
@@ -140,100 +145,10 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
 .hero-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: 13px; color: var(--fg-3); }
 .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
 .hero-meta svg { color: var(--warm); }
-.horizon { position: relative; height: 130px; margin-top: 8px; pointer-events: none; }
-.horizon::before { content: ""; position: absolute; left: 50%; bottom: 0; width: min(900px, 110vw); height: 220px; translate: -50% 40%; background: radial-gradient(closest-side, color-mix(in srgb, var(--warm) 70%, transparent), color-mix(in srgb, var(--warm) 22%, transparent) 45%, transparent); animation: breathe 7s ease-in-out infinite alternate; }
-@keyframes breathe { to { opacity: .7; scale: 1.06 1; } }
-
-/* Escenario: panel (6) al centro, tarjetas (7) a los lados, piso con grilla detrás */
-.stage { position: relative; perspective: 1400px; margin-top: -40px; min-height: 500px; }
-.stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 90px; background: linear-gradient(transparent, var(--bg)); pointer-events: none; z-index: 2; }
-.floor { position: absolute; left: 50%; top: 40px; width: 1600px; height: 560px; translate: -50% 0; z-index: -1; perspective: 520px; pointer-events: none; overflow: hidden; -webkit-mask: radial-gradient(60% 70% at 50% 0%, #000 30%, transparent 75%); mask: radial-gradient(60% 70% at 50% 0%, #000 30%, transparent 75%); }
-.floor::before { content: ""; position: absolute; inset: -72px 0 -300px; background: linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 60px 36px, linear-gradient(90deg, var(--grid) 1px, transparent 1px) 50% 0 / 60px 36px; transform-origin: 50% 0; transform: rotateX(62deg) translateY(0); animation: drift 6s linear infinite; }
-@keyframes drift { to { transform: rotateX(62deg) translateY(36px); } }
-.dash { position: relative; z-index: 1; width: min(100% - 48px, 800px); margin-inline: auto; display: grid; grid-template-columns: 172px minmax(0, 1fr); text-align: left; border: 1px solid var(--line); border-bottom: 0; border-radius: 16px 16px 0 0; background: var(--bg-2); box-shadow: 0 -1px 0 color-mix(in srgb, var(--warm) 60%, transparent), 0 -30px 80px -40px var(--warm); transform-origin: 50% 0; }
-.dash-side { position: relative; padding: 18px 12px; border-right: 1px solid var(--line-2); display: grid; align-content: start; gap: 4px; font-size: 13px; }
-.dash-side b { display: flex; align-items: center; gap: 8px; padding: 4px 8px 16px; font-weight: 600; font-size: 14px; }
-.dash-side span { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--fg-2); transition: color .3s ease; }
-.dash-side span.on { color: var(--fg); }
-.dash-side .sel { position: absolute; left: 12px; right: 12px; top: 0; height: 34px; border-radius: 8px; background: var(--bg-3); box-shadow: inset 0 0 0 1px var(--line); transition: translate .5s cubic-bezier(.32, .72, 0, 1); }
-.dash-main { padding: 18px 20px 26px; display: grid; gap: 16px; }
-.dash-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line-2); }
-.dash-head h2 { font-size: 17px; font-weight: 600; }
-.dash-head p { font-size: 12px; color: var(--fg-3); }
-.tag-ej { flex: none; padding: 3px 10px; border-radius: 99px; border: 1px dashed var(--line); font-size: 12px; color: var(--fg-3); }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.stat { padding: 14px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--bg-3); }
-.stat small { display: block; font-size: 12px; color: var(--fg-3); }
-.stat b { display: block; margin-top: 4px; font-size: 17px; font-weight: 600; letter-spacing: -.025em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.stat i { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-style: normal; font-size: 12px; color: #3ecf8e; }
-:root[data-theme="light"] .stat i { color: #13865a; }
-.panels { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; }
-.panel { padding: 16px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--bg-3); }
-.panel h3 { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
-.panel h3 small { font-weight: 400; color: var(--fg-3); font-size: 12px; }
-.bars6 { display: grid; gap: 10px; }
-.bars6 div { display: grid; grid-template-columns: 100px minmax(0, 1fr) 28px; gap: 10px; align-items: center; font-size: 12px; color: var(--fg-2); }
-.bars6 div i { height: 8px; border-radius: 99px; background: var(--line-2); overflow: hidden; }
-.bars6 div i::before { content: ""; display: block; height: 100%; width: calc(var(--w) / 25 * 100%); border-radius: inherit; background: linear-gradient(90deg, var(--warm), var(--copper)); transform-origin: left; }
-.motion .bars6.in div i::before { animation: grow 1.2s var(--ease-out) backwards; animation-delay: calc(.3s + var(--k, 0) * 80ms); }
-@keyframes grow { from { transform: scaleX(0); } }
-.bars6 div b { text-align: right; font-family: var(--mono); font-weight: 500; color: var(--fg); }
-.timeline { list-style: none; display: grid; gap: 12px; }
-.timeline li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
-.timeline .dot { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); color: var(--fg-3); }
-.timeline .done .dot { background: #3ecf8e; border-color: #3ecf8e; color: #04120b; }
-.timeline .now .dot { border-color: var(--warm); box-shadow: 0 0 0 4px color-mix(in srgb, var(--warm) 20%, transparent); }
-.timeline .now .dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warm); }
-.motion .timeline.in .now .dot::before { animation: pulse 1.6s ease-in-out 1.2s 3; }
-@keyframes pulse { 50% { scale: .55; opacity: .55; } }
-.motion .timeline.in .done .dot { animation: pop .5s var(--ease-out) backwards; animation-delay: calc(.35s + var(--k, 0) * 140ms); }
-.timeline small { color: var(--fg-3); font-size: 12px; }
-
-.around { position: absolute; inset: 0; pointer-events: none; }
-.circuit { position: absolute; top: 150px; width: 240px; height: 300px; color: var(--line); z-index: -1; }
-.circuit.l { left: 0; }
-.circuit.r { right: 0; top: 230px; scale: -1 1; }
-.circuit path { fill: none; stroke: currentColor; stroke-width: 1.5; }
-.circuit .pulse { stroke: var(--warm); stroke-dasharray: 18 300; animation: current 4.5s linear infinite; }
-.circuit .pulse:nth-of-type(2n) { animation-delay: -1.7s; stroke: var(--c2); }
-@keyframes current { from { stroke-dashoffset: 318; } to { stroke-dashoffset: 0; } }
-.card { position: absolute; z-index: 3; pointer-events: auto; text-align: left; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(160deg, color-mix(in srgb, var(--bg-3) 94%, transparent), color-mix(in srgb, var(--bg-2) 94%, transparent)); box-shadow: var(--shadow), inset 0 1px 0 var(--line-2); translate: var(--px, 0) var(--py, 0); transition: translate .9s var(--ease-out); }
-.card .ej { font-size: 12px; color: var(--fg-3); font-family: var(--mono); letter-spacing: .04em; }
-.card-head { display: flex; align-items: center; gap: 10px; }
-.card-head .ic { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; color: var(--warm); background: color-mix(in srgb, var(--warm) 14%, transparent); }
-.card-head b { display: block; font-size: 14px; font-weight: 600; }
-.g-card { left: calc(50% - 602px); top: 12px; width: 230px; padding: 16px; display: grid; gap: 12px; }
-.g-card .state { font-size: 13px; color: var(--fg-2); }
-.g-card .open { color: #3ecf8e; font-weight: 500; }
-:root[data-theme="light"] .g-card .open { color: #13865a; }
-.g-card .acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.g-card .acts span { display: grid; justify-items: center; gap: 4px; padding: 8px 4px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line-2); font-size: 12px; color: var(--fg-2); }
-.g-card .acts svg { color: var(--warm); }
-.cat-card { left: calc(50% - 584px); top: 262px; width: 220px; padding: 16px; display: grid; gap: 10px; }
-.cat-card ul { list-style: none; display: grid; gap: 6px; }
-.cat-card li { display: flex; justify-content: space-between; gap: 8px; padding: 9px 12px; border-radius: 10px; background: var(--bg-2); border: 1px solid var(--line-2); font-size: 13px; }
-.cat-card li span:last-child { font-family: var(--mono); color: var(--fg-2); }
-.cat-card small { font-size: 12px; color: var(--fg-3); }
-.cert-card { left: calc(50% + 372px); top: 12px; width: 230px; padding: 18px; display: grid; gap: 10px; background: radial-gradient(80% 60% at 30% 0%, color-mix(in srgb, var(--warm) 22%, transparent), transparent), linear-gradient(160deg, var(--bg-3), var(--bg-2)); }
-.cert-card .ok { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--warm); box-shadow: 0 0 0 6px color-mix(in srgb, var(--warm) 18%, transparent); }
-.cert-card > b { font-size: 17px; font-weight: 560; }
-.cert-card dl { display: grid; gap: 6px; margin: 0; font-size: 12px; }
-.cert-card dl div { display: flex; justify-content: space-between; gap: 8px; }
-.cert-card dt { color: var(--fg-3); }
-.cert-card dd { margin: 0; text-align: right; color: var(--fg); }
-.cert-card .sign { display: grid; gap: 2px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--fg-2); }
-.cert-card .sign svg { width: 120px; height: 28px; }
-.cert-card .sign path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; }
-.motion .cert-card .sign path { stroke-dashoffset: 1; }
-.motion .cert-card.in .sign path { animation: draw 1.6s var(--ease-out) 1.4s forwards; }
-.cert-card .sign span { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; color: var(--fg-3); }
-.plan-card { left: calc(50% + 364px); top: 292px; width: 224px; padding: 16px; display: grid; gap: 8px; }
-.plan-card label { font-size: 12px; color: var(--fg-3); }
-.plan-card div { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 11px 12px; border-radius: 12px; background: var(--bg-2); border: 1px solid var(--line-2); }
-.plan-card div b { font-size: 14px; font-weight: 560; white-space: nowrap; }
-.plan-card div span { font-family: var(--mono); font-size: 12px; color: var(--fg-2); text-align: right; white-space: nowrap; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-.stage .ex { position: absolute; left: 50%; bottom: 14px; translate: -50% 0; z-index: 3; font-size: 12px; color: var(--fg-3); }
+.tg-sec { overflow: clip; }
+.tg-head .h2 { font-size: clamp(26px, 3.4vw, 40px); }
+.tg-head .muted { color: var(--fg-2); }
+.tg { -webkit-mask: linear-gradient(transparent, #000 8%, #000 92%, transparent); mask: linear-gradient(transparent, #000 8%, #000 92%, transparent); }
 
 /* Secciones: mezcla de 6 y 7 */
 .svc, .tarifario, .pack, .promo, .rail, .dim, .step, .gift-box, .ask form, .faq details { box-shadow: inset 0 1px 0 var(--line-2); }
@@ -261,37 +176,21 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
 .dock .btn { white-space: nowrap; padding-inline: 14px; }
 .card-head .ej { display: block; }
 
-@media (max-width: 1200px) {
-  .stage { min-height: 0; padding-bottom: 28px; }
-  .stage::after { display: none; }
-  .dash { border-bottom: 1px solid var(--line); border-radius: 16px; }
-  .around { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: min(100% - 48px, 800px); margin: 16px auto 0; pointer-events: auto; }
-  .circuit { display: none; }
-  .card { position: relative; left: auto; top: auto; width: auto; }
-  .stage .ex { position: static; translate: none; margin-top: 12px; text-align: center; }
-}
 @media (max-width: 900px) {
-  .dash { grid-template-columns: 1fr; width: calc(100% - 24px); }
-  .dash-side { display: none; }
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .panels { grid-template-columns: 1fr; }
-  .around { width: calc(100% - 24px); }
   main, .top, .site-foot { border-inline: 0; }
   .spot i { width: 320px; }
 }
 @media (max-width: 600px) {
-  .around { grid-template-columns: 1fr; }
-  .bars6 div { grid-template-columns: 88px minmax(0, 1fr) 24px; }
   .capture { flex-direction: column; border-radius: 24px; }
   .capture input { min-height: 44px; }
 }
 `,
   hero: String.raw`
   <div class="hero">
-    <div class="spot" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="spot" aria-hidden="true"><i data-par="40"></i><i data-par="-28"></i><i data-par="20"></i></div>
     <div class="wrap hero-in">
       <a class="pill enter" href="#beneficio">Pack completo a $69.990 para los primeros 5 clientes <b>Ver más <svg width="14" height="14"><use href="#i-arrow"/></svg></b></a>
-      <h1 class="enter enter-2">Tu negocio, <span>listo para vender en internet</span></h1>
+      <h1 class="enter enter-2" data-par="6">Tu negocio, <span>listo para vender en internet</span></h1>
       <p class="lead enter enter-3">Página web, videos para redes, menú digital, fotos, reservas y tarjeta de fidelización. Armamos lo que te falta, te lo dejamos funcionando y queda todo a tu nombre.</p>
       <form class="capture enter enter-3" data-capture aria-label="Empezar tu diagnóstico gratis">
         <label class="sr" for="cap-negocio">Nombre de tu negocio</label>
@@ -302,92 +201,15 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
       <p class="hero-meta enter enter-4">
         <span><svg width="14" height="14"><use href="#i-check"/></svg>Diagnóstico gratis al primer contacto</span>
         <span><svg width="14" height="14"><use href="#i-check"/></svg>Productos desde $4.990 · pack completo $79.990</span>
-        <span><svg width="14" height="14"><use href="#i-check"/></svg>Startup de estudiantes UdeC · Gran Concepción</span>
-        <span><svg width="14" height="14"><use href="#i-check"/></svg>Respondemos en menos de 24 horas <span class="note">por confirmar</span></span>
       </p>
     </div>
-    <div class="horizon" aria-hidden="true"></div>
-    <div class="stage">
-      <div class="floor" aria-hidden="true"></div>
-      <figure class="dash" data-dash aria-label="Ejemplo ilustrativo del panel de un proyecto con el pack completo">
-        <nav class="dash-side" aria-hidden="true">
-          <b><svg width="18" height="18"><use href="#i-pin"/></svg>Tu negocio</b>
-          <i class="sel"></i>
-          <span class="on"><svg width="16" height="16"><use href="#i-check"/></svg>Resumen</span>
-          <span><svg width="16" height="16"><use href="#i-web"/></svg>Página web</span>
-          <span><svg width="16" height="16"><use href="#i-video"/></svg>Videos</span>
-          <span><svg width="16" height="16"><use href="#i-qr"/></svg>Menú digital</span>
-          <span><svg width="16" height="16"><use href="#i-calendar"/></svg>Reservas</span>
-          <span><svg width="16" height="16"><use href="#i-card"/></svg>Fidelización</span>
-        </nav>
-        <div class="dash-main">
-          <div class="dash-head"><div><h2>Resumen del proyecto</h2><p>Pack completo · así se ve el avance</p></div><span class="tag-ej">Ejemplo ilustrativo</span></div>
-          <div class="stats reveal" data-seq>
-            <div class="stat"><small>Página web</small><b>Publicada</b><i>${ok}a tu nombre</i></div>
-            <div class="stat"><small>Videos</small><b>3 listos</b><i>${ok}para tus redes</i></div>
-            <div class="stat"><small>Menú digital</small><b>QR activo</b><i>${ok}lo editas tú</i></div>
-            <div class="stat"><small>Reservas</small><b>En línea</b><i>${ok}sin llamadas</i></div>
-          </div>
-          <div class="panels">
-            <div class="panel">
-              <h3>Cómo se reparte tu puntaje <small>máximo por aspecto</small></h3>
-              <div class="bars6 reveal" data-seq>
-                <div style="--w:25"><span>Tu sitio propio</span><i></i><b>25</b></div>
-                <div style="--w:20"><span>Cómo se ve</span><i></i><b>20</b></div>
-                <div style="--w:20"><span>Qué vendes</span><i></i><b>20</b></div>
-                <div style="--w:20"><span>Cómo reservan</span><i></i><b>20</b></div>
-                <div style="--w:15"><span>Si vuelven</span><i></i><b>15</b></div>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Avance <small>3 a 7 días hábiles</small></h3>
-              <ol class="timeline reveal" data-seq>
-                <li class="done"><span class="dot">${ok}</span><span>Diagnóstico gratis</span><small>Paso 1</small></li>
-                <li class="done"><span class="dot">${ok}</span><span>Propuesta y precio</span><small>Paso 2</small></li>
-                <li class="now"><span class="dot"></span><span>Producción</span><small>Paso 3</small></li>
-                <li><span class="dot"></span><span>Entrega y capacitación</span><small>Paso 4</small></li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </figure>
-      <div class="around" aria-label="Ejemplo ilustrativo de lo que recibe tu negocio">
-        <svg class="circuit l" viewBox="0 0 240 300" aria-hidden="true">
-          <path d="M0 20h80l30 30h130"/><path d="M0 70h50l30 30h160"/><path d="M0 130h100l30-30h110"/><path d="M0 190h70l30 30h140"/><path d="M0 250h110l30-30h100"/>
-          <path class="pulse" d="M0 20h80l30 30h130"/><path class="pulse" d="M0 130h100l30-30h110"/><path class="pulse" d="M0 250h110l30-30h100"/>
-        </svg>
-        <svg class="circuit r" viewBox="0 0 240 300" aria-hidden="true">
-          <path d="M0 20h80l30 30h130"/><path d="M0 70h50l30 30h160"/><path d="M0 130h100l30-30h110"/><path d="M0 190h70l30 30h140"/>
-          <path class="pulse" d="M0 70h50l30 30h160"/><path class="pulse" d="M0 190h70l30 30h140"/>
-        </svg>
-        <div class="card float g-card" data-par="-14">
-          <div class="card-head"><span class="ic"><svg width="18" height="18"><use href="#i-web"/></svg></span><div><b>Tu página web</b><span class="ej">EJEMPLO</span></div></div>
-          <p class="state"><span class="open">Publicada</span> · tunegocio.cl</p>
-          <div class="acts"><span><svg width="16" height="16"><use href="#i-phone"/></svg>WhatsApp</span><span><svg width="16" height="16"><use href="#i-pin"/></svg>Cómo llegar</span><span><svg width="16" height="16"><use href="#i-calendar"/></svg>Reservar</span></div>
-        </div>
-        <div class="card float cat-card" data-par="12">
-          <div class="card-head"><span class="ic"><svg width="18" height="18"><use href="#i-qr"/></svg></span><div><b>Tu menú digital</b><span class="ej">EJEMPLO</span></div></div>
-          <ul><li><span>Producto destacado</span><span>$4.500</span></li><li><span>Plato del día</span><span>$8.900</span></li></ul>
-          <small>QR en las mesas · cambias un precio en dos minutos</small>
-        </div>
-        <div class="card float cert-card" data-par="-10">
-          <span class="ok"><svg width="20" height="20"><use href="#i-check"/></svg></span>
-          <b>Todo a tu nombre</b>
-          <dl>
-            <div><dt>Titular</dt><dd>Tu negocio, con tu RUT</dd></div>
-            <div><dt>Página web</dt><dd>propietario: tú</dd></div>
-            <div><dt>Menú y reservas</dt><dd>los editas tú</dd></div>
-          </dl>
-          <div class="sign" aria-hidden="true"><svg viewBox="0 0 160 38"><path pathLength="1" d="M6 28c10-16 18-20 20-10s-6 14 2 8 14-22 18-12-2 16 8 6 12-6 20-4 18-8 28-10"/></svg><span>ACTA DE ENTREGA · FIRMADA</span></div>
-        </div>
-        <div class="card float plan-card" data-par="8">
-          <label>Pack completo</label>
-          <div><b>Los 6 productos</b><span>$79.990</span></div>
-          <label>Te ahorras</label>
-          <div><b>$47.950</b><span>vs. por separado</span></div>
-        </div>
+    <div class="tg-sec" id="ejemplos">
+      <div class="wrap tg-head reveal">
+        <h2 class="h2">Así se ven las páginas que hacemos</h2>
+        <p class="muted">Un estilo para cada rubro. Haz clic en uno para verlo en grande.</p>
       </div>
-      <p class="ex">Ejemplo ilustrativo</p>
+      <div class="tg" data-par="-12" data-tilt data-images='${JSON.stringify(EJEMPLOS.map((e) => ({ src: `ejemplos/${e.id}.svg`, url: e.url, rubro: e.rubro, nombre: e.nombre })))}' aria-label="Carrusel de ejemplos de páginas web por rubro"></div>
+      <p class="tg-ver"><button class="btn btn-sm" type="button" data-tilt-open>Ver ejemplos en grande</button></p>
     </div>
   </div>`,
   script: String.raw`
@@ -401,7 +223,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: 1280
         e.preventDefault();
         dest.value = cap.elements.negocio.value;
         document.getElementById('diagnostico').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-        setTimeout(function () { document.querySelector('[data-demo-form] input[name="nombre"]').focus({ preventScroll: true }); }, 700);
+        setTimeout(function () { document.querySelector('[data-pedido] input[name="nombre"]').focus({ preventScroll: true }); }, 700);
       });
     }
   })();

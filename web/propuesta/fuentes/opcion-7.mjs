@@ -261,7 +261,7 @@ body { font-size: 16px; letter-spacing: -.005em; }
         e.preventDefault();
         dest.value = cap.elements.negocio.value;
         document.getElementById('diagnostico').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-        setTimeout(function () { document.querySelector('[data-demo-form] input[name="nombre"]').focus({ preventScroll: true }); }, 600);
+        setTimeout(function () { document.querySelector('[data-pedido] input[name="nombre"]').focus({ preventScroll: true }); }, 600);
       });
     }
     // Las tarjetas se desplazan un poco con el mouse, cada una a su profundidad

@@ -184,16 +184,16 @@
   // ---- Control de comentarios ----
   // Un globo recién aparecido no se tapa: 2,2 s si lo nuevo es igual o menos importante, 1 s si es más importante
   // (así no hay globos que duran una fracción de segundo). Los de ambiente (scroll, sueltos) esperan 6 s desde el
-  // último globo, y hay un tope de 12 comentarios por minuto. Los importantes (prioridad 3: toques, errores, envío,
+  // último globo, y hay un tope de 5 comentarios por minuto. Los importantes (prioridad 3: toques, errores, envío,
   // aviso de scroll) siempre hablan.
   var globoPrio = 0, frasesMin = [];
   function puedeHablar(prioridad) {
     if (prioridad >= 3) return true;
     var ahora = Date.now();
     if (raiz.classList.contains('habla') && ahora - ultimaFrase < (prioridad > globoPrio ? 1000 : 2200)) return false;
-    if (prioridad === 1 && ahora - ultimaFrase < 6000) return false;
+    if (prioridad === 1 && ahora - ultimaFrase < 15000) return false;
     frasesMin = frasesMin.filter(function (t) { return ahora - t < 60000; });
-    return frasesMin.length < 12;
+    return frasesMin.length < 5;
   }
   // Tiempo de lectura de un globo: 2,2 a 4,2 s según el largo del texto
   function lectura(texto) { return Math.max(2200, Math.min(1400 + texto.length * 45, 4200)); }

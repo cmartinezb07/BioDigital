@@ -2,6 +2,58 @@
 
 Bitácora cronológica. Cada entrada: fecha, decisión, por qué, qué queda pendiente.
 
+## 2026-10-14 — Mercado Pago pasa al flujo natural del carrito
+
+Se eliminó el bloque independiente de contratación situado bajo el catálogo.
+El carrito ahora decide el siguiente paso: si todos los servicios tienen precio
+cerrado, presenta Mercado Pago y mantiene WhatsApp como alternativa; si alguno
+es “desde” o “a cotizar”, continúa solamente al diagnóstico/cotización.
+
+El navegador envía una lista de SKU, nunca montos. El servidor ordena y valida
+los SKU, suma los precios del catálogo, crea una sola orden de Orders API con
+varias líneas y las persiste en la nueva tabla D1 `order_items`. Se aplicó
+`0002_order_items.sql` únicamente a `biodigital-payments-test` y se publicó la
+rama Preview `payments-test`. El alias estable devuelve la versión actual, las
+tres páginas de retorno responden 200 y 29/29 pruebas Node pasan.
+
+`PAYMENTS_ENABLED=false`, los 14 SKU están deshabilitados y la D1 continúa con
+cero órdenes y cero líneas. No se modificaron Production, `main`, secretos ni
+credenciales. La prueba real sigue bloqueada por WCS-54274 y la credencial de
+prueba `APP_USR-` compatible con Orders API.
+
+## 2026-10-13 — D1 y Preview aislados para pagos
+
+Se creó `biodigital-payments-test` en la cuenta Cloudflare de BioDigital y se
+aplicó `migrations/0001_orders.sql`. El binding `DB`, `CHECKOUT_SITE_URL` y
+`PAYMENTS_ENABLED=false` quedaron exclusivamente en `env.preview`. Se publicó
+la rama `payments-test` en
+https://payments-test.biodigital-propuesta.pages.dev, sin modificar `main` ni
+Production. Las Pages Functions, retornos, `noindex` y barreras 403/400 fueron
+verificados; D1 quedó con cero órdenes y cero eventos.
+
+**Pendiente:** soporte debe resolver WCS-54274 y emitir/confirmar credenciales
+de prueba `APP_USR-`. Antes de probar pagos también debe confirmar si la
+aplicación 7545447256210205 tiene habilitado el contrato usado en `/v1/orders`,
+porque la guía vigente clasifica Checkout Pro bajo Preferences API. No se
+configuraron secretos, habilitaron SKU, crearon órdenes ni realizaron pagos.
+
+## 2026-10-11 — Checkout Pro: integración visual sin habilitar cobros
+
+La opción 8 incorpora selección de servicio, resumen desde el catálogo del
+servidor, pago completo y anticipos solo cuando el backend los habilite. Los
+reintentos de una misma selección reutilizan `Idempotency-Key`; el navegador
+envía únicamente `sku` y `purpose` y redirige en la misma ventana.
+
+El `access_token` de la orden se conserva solo en `sessionStorage`, nunca en la
+URL. Los retornos `/pago/exitoso`, `/pago/pendiente` y `/pago/error` consultan el
+GET autenticado: solo `processed` se muestra como pago verificado. Hasta que la
+fase 4 sincronice estados mediante webhooks, una orden `created` aparece como
+comprobación pendiente. `PAYMENTS_ENABLED=false` y todos los SKU siguen
+bloqueados.
+
+**Pendiente:** D1, credenciales de prueba, `CHECKOUT_SITE_URL`, pruebas visuales
+en navegador/celular y webhooks de fase 4. No se desplegó ni ejecutó un pago.
+
 ## 2026-10-11 — Logo definitivo, paleta de marca y una sola página de trabajo
 
 **Logo.** El equipo entregó tres piezas: la versión vertical, el logotipo horizontal y el ícono de app en sus dos

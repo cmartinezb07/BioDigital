@@ -24,6 +24,7 @@ export default {
   head: String.raw`<script>(function(){var r=document.documentElement,h=/^#?[0-9a-f]{6}$/i,q=new URLSearchParams(location.search),p={};try{p=JSON.parse(localStorage.getItem('bd-paleta'))||{}}catch(e){}var a=q.get('c1')||p.c1,b=q.get('c2')||p.c2;if(a&&h.test(a))r.style.setProperty('--c1','#'+a.replace('#',''));if(b&&h.test(b))r.style.setProperty('--c2','#'+b.replace('#',''))})()</script>
 <link rel="stylesheet" href="movimiento.css">
 <link rel="stylesheet" href="paleta.css">
+<link rel="stylesheet" href="pagos.css">
 <script src="movimiento.js" defer></script>
 <script src="paleta.js" defer></script>`,
   // Mascota: el gato dibujado en SVG (gato.js, igual en todas las opciones), vestido con los colores de la paleta

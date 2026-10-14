@@ -25,6 +25,10 @@ venv/
 
 # Secretos
 .env
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.wrangler/
 .streamlit/secrets.toml
 
 # Sistema / OneDrive

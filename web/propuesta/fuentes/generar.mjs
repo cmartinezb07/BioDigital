@@ -3,11 +3,12 @@
 // Uso (desde web/propuesta):  node fuentes/generar.mjs        → todas
 //                             node fuentes/generar.mjs --publico 8   → el sitio listo para publicar
 //                             node fuentes/generar.mjs 3 5    → solo esas
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { pagina } from './comun.mjs';
 import { escribirMaquetas } from './maquetas.mjs';
+import { PAYMENT_RETURN_ROUTES, paymentReturnPage } from './retornos.mjs';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const publico = process.argv.includes('--publico');   // versión para publicar: sin rueda de colores del equipo ni aviso de prototipo
@@ -25,4 +26,12 @@ for (const n of pedidas.length ? pedidas : todas) {
   const destino = n === '8' ? [aqui, '..', o.archivo] : [aqui, '..', 'plantillas', o.archivo];
   writeFileSync(join(...destino), pagina(o, publico));
   console.log(`opción ${n} → ${o.archivo}`);
+  if (n === '8') {
+    for (const route of PAYMENT_RETURN_ROUTES) {
+      const directory = join(aqui, '..', 'pago', route);
+      mkdirSync(directory, { recursive: true });
+      writeFileSync(join(directory, 'index.html'), paymentReturnPage(route));
+      console.log(`retorno → pago/${route}/index.html`);
+    }
+  }
 }

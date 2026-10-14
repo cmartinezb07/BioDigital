@@ -6,8 +6,18 @@
   try { JSON.parse(document.getElementById('catalogo').textContent).forEach(function (p) { cat[p.id] = p; }); } catch (e) { return; }
   var clp = function (n) { return n == null ? 'A cotizar' : '$' + n.toLocaleString('es-CL'); };
   var KEY = 'bd-carrito';
+  var LEGACY_IDS = {
+    videos: 'social-video', menu: 'interactive-menu', fotos: 'photography',
+    reservas: 'reservations', fidelizacion: 'loyalty-card', pack: 'full-pack',
+    'menu-ar': 'interactive-menu-ar', 'promo-0': 'social-video-2',
+    'promo-1': 'social-video-3', 'promo-2': 'launch-loyalty-card',
+    'promo-3': 'menu-photography', 'promo-4': 'reservations-loyalty'
+  };
   var cart = [];
-  try { cart = (JSON.parse(localStorage.getItem('bd-carrito')) || []).filter(function (id, i, a) { return cat[id] && a.indexOf(id) === i; }); } catch (e) { cart = []; }
+  try {
+    cart = (JSON.parse(localStorage.getItem(KEY)) || []).map(function (id) { return LEGACY_IDS[id] || id; })
+      .filter(function (id, i, a) { return cat[id] && a.indexOf(id) === i; });
+  } catch (e) { cart = []; }
   var save = function () { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {} };
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
@@ -34,7 +44,7 @@
   function total() {
     return cart.reduce(function (t, id) { return t + (cat[id].precio || 0); }, 0);
   }
-  var porCotizar = function () { return cart.some(function (id) { return cat[id].precio == null; }); };
+  var porCotizar = function () { return cart.some(function (id) { return cat[id].precio == null || cat[id].desde; }); };
   function render() {
     count.forEach(function (c) { c.textContent = cart.length; c.hidden = !cart.length; });
     $$('[data-add]').forEach(function (b) {
@@ -56,10 +66,10 @@
     $('[data-cart-pie]').hidden = !cart.length;
     totalEl.textContent = clp(total()) + (porCotizar() ? ' + a cotizar' : '');
     // Si lo que lleva suelto cuesta más que el pack completo, se lo decimos
-    var sueltos = cart.filter(function (id) { return id.indexOf('promo-') !== 0 && id !== 'pack' && cat[id].precio != null; });
+    var sueltos = cart.filter(function (id) { return !cat[id].promocion && id !== 'full-pack' && cat[id].precio != null; });
     var suma = sueltos.reduce(function (t, id) { return t + cat[id].precio; }, 0);
-    var pack = cat.pack.precio;
-    tip.hidden = !(cart.indexOf('pack') < 0 && suma > pack);
+    var pack = cat['full-pack'].precio;
+    tip.hidden = !(cart.indexOf('full-pack') < 0 && suma > pack);
     if (!tip.hidden) tip.textContent = 'Tus productos suman ' + clp(suma) + ': el pack completo (' + clp(pack) + ') incluye los seis y te ahorra ' + clp(suma - pack) + '.';
     // Si ya hay algo en el carrito, no hace falta preguntar qué le interesa
     var pi = $('[data-interes]');
@@ -71,6 +81,9 @@
         ? cart.map(function (id) { return cat[id].nombre + ' ' + clp(cat[id].precio); }).join(' · ') + ' · Total ' + clp(total()) + (porCotizar() ? ' + a cotizar' : '')
         : 'Tu carrito está vacío: pedirás solo el diagnóstico gratis. Puedes agregar productos desde los precios.';
     }
+    document.dispatchEvent(new CustomEvent('biodigital:cartchange', {
+      detail: { items: cart.slice(), total: total(), requiresQuote: porCotizar() }
+    }));
   }
   function toggle(id) {
     var i = cart.indexOf(id);
@@ -106,6 +119,12 @@
       else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
     }
   });
+  window.BioDigitalCart = {
+    items: function () { return cart.slice(); },
+    total: total,
+    requiresQuote: porCotizar,
+    open: open
+  };
   render();
 
   // ── Formulario del pedido: solo datos válidos, y salida por correo o por WhatsApp

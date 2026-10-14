@@ -1,0 +1,15 @@
+# Copiar como .dev.vars solo para desarrollo local. No versionar valores reales.
+PAYMENTS_ENABLED=false
+MP_ACCESS_TOKEN=replace-with-test-access-token
+MP_WEBHOOK_SECRET=replace-with-webhook-secret
+MP_APPLICATION_ID=replace-with-application-id
+MP_USER_ID=replace-with-seller-user-id
+MP_TEST_PAYER_EMAIL=replace-with-test-buyer-email
+MP_LIVE_MODE=false
+MP_COUNTRY_CODE=CHL
+ORDER_TOKEN_SECRET=replace-with-at-least-32-random-characters
+CHECKOUT_SITE_URL=https://example.test
+# Opcionales; si se omiten se usan /pago/exitoso, /pago/pendiente y /pago/error.
+# CHECKOUT_SUCCESS_PATH=/pago/exitoso
+# CHECKOUT_PENDING_PATH=/pago/pendiente
+# CHECKOUT_FAILURE_PATH=/pago/error

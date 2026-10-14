@@ -50,15 +50,15 @@ const clp = (n) => '$' + n.toLocaleString('es-CL');
 const SERVICIOS = [
   ['web', 'web', 'Página web', 49990, true, 'Un lugar propio en internet, rápido en el celular y con tu WhatsApp a la vista.',
     ['Hasta 5 secciones, hecha a tu medida', 'Botón de WhatsApp, mapa y horario', 'Se ve bien en el celular']],
-  ['videos', 'video', 'Videos para redes', 9990, true, 'Videos cortos para Instagram y TikTok, grabados y editados en tu local.',
+  ['social-video', 'video', 'Videos para redes', 9990, true, 'Videos cortos para Instagram y TikTok, grabados y editados en tu local.',
     ['Video vertical de 15 a 30 segundos', 'Grabación, edición, música y textos', 'Quedan tuyos, para usarlos donde quieras']],
-  ['menu', 'qr', 'Menú digital', 27990, true, 'Tu carta o lista de precios en un QR, sin cartas de papel.',
+  ['interactive-menu', 'qr', 'Menú digital', 27990, true, 'Tu carta o lista de precios en un QR, sin cartas de papel.',
     ['QR impreso para las mesas o el mesón', 'Foto, descripción y precio por producto', 'Funciona en cualquier celular, sin instalar nada']],
-  ['fotos', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
+  ['photography', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
     ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
-  ['reservas', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
+  ['reservations', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
     ['Agenda en línea con tus horarios', 'Confirmación automática al cliente', 'Ves las reservas del día en tu teléfono']],
-  ['fidelizacion', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
+  ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
     ['QR con sellos, sin tarjetas de papel', 'Se guarda en Google Wallet y Apple Wallet', 'Ves cuántos clientes están volviendo']],
 ];
 const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 127.940
@@ -69,15 +69,15 @@ const AHORRO = SUMA - PACK;                             // 47.950
 // Cómo funciona cada producto, en tres pasos (el flujo general está en PASOS).
 const COMO = {
   web: ['Nos cuentas de tu negocio y elegimos las secciones', 'Armamos la página con tus fotos, textos y datos', 'La publicamos a tu nombre y la dejamos funcionando'],
-  videos: ['Definimos contigo qué mostrar', 'Grabamos en tu local', 'Editamos y te lo entregamos listo para publicar'],
-  menu: ['Nos pasas tu carta y tus precios', 'Armamos el menú digital y el QR', 'Te entregamos el QR impreso, listo para usar'],
-  fotos: ['Coordinamos día y hora en tu local', 'Sacamos las fotos de tus productos y espacios', 'Editamos y te entregamos de 10 a 15 fotos'],
-  reservas: ['Definimos tus horarios y servicios', 'Configuramos la agenda en línea', 'Tus clientes reservan solos, a cualquier hora'],
-  fidelizacion: ['Defines el premio y cuántos sellos lleva', 'Armamos la tarjeta con tu marca', 'Tus clientes la guardan en el celular y tú sumas sellos'],
+  'social-video': ['Definimos contigo qué mostrar', 'Grabamos en tu local', 'Editamos y te lo entregamos listo para publicar'],
+  'interactive-menu': ['Nos pasas tu carta y tus precios', 'Armamos el menú digital y el QR', 'Te entregamos el QR impreso, listo para usar'],
+  photography: ['Coordinamos día y hora en tu local', 'Sacamos las fotos de tus productos y espacios', 'Editamos y te entregamos de 10 a 15 fotos'],
+  reservations: ['Definimos tus horarios y servicios', 'Configuramos la agenda en línea', 'Tus clientes reservan solos, a cualquier hora'],
+  'loyalty-card': ['Defines el premio y cuántos sellos lleva', 'Armamos la tarjeta con tu marca', 'Tus clientes la guardan en el celular y tú sumas sellos'],
 };
 // Versión con más trabajo de un producto: se agrega aparte y se cotiza (sin precio fijo todavía).
 const EXTRA = {
-  menu: { id: 'menu-ar', nombre: 'Menú digital interactivo (plato en vivo)', titulo: 'Versión interactiva: plato en vivo', cuesta: 'Cuesta más',
+  'interactive-menu': { id: 'interactive-menu-ar', nombre: 'Menú digital interactivo (plato en vivo)', titulo: 'Versión interactiva: plato en vivo', cuesta: 'Cuesta más',
     texto: 'El cliente elige un plato en el menú, se abre la cámara de su celular y ve el plato sobre su mesa, como si estuviera ahí. Un menú interactivo de verdad, para que decida mirando.',
     precio: 'Precio a cotizar según cuántos platos quieras mostrar' },
 };
@@ -100,11 +100,11 @@ const PASOS = [
 
 // Promociones de lanzamiento. La de los primeros 5 clientes va en su propio bloque.
 const PROMOS = [
-  ['video', '2 videos para redes', 17990, 9990 * 2, 'Dos videos distintos, grabados el mismo día.'],
-  ['video', '3 videos para redes', 24990, 9990 * 3, 'Un mes de contenido resuelto en una sola visita.'],
-  ['card', 'Tarjeta de fidelización', 7990, 9990, 'Precio de lanzamiento del primer programa de sellos.'],
-  ['qr', 'Menú digital + fotos', 29990, 27990 + 4990, 'El menú se ve mucho mejor con fotos tuyas.'],
-  ['calendar', 'Reservas + fidelización', 29990, 24990 + 9990, 'Que reserven solos y que además vuelvan.'],
+  ['video', '2 videos para redes', 17990, 9990 * 2, 'Dos videos distintos, grabados el mismo día.', 'social-video-2'],
+  ['video', '3 videos para redes', 24990, 9990 * 3, 'Un mes de contenido resuelto en una sola visita.', 'social-video-3'],
+  ['card', 'Tarjeta de fidelización', 7990, 9990, 'Precio de lanzamiento del primer programa de sellos.', 'launch-loyalty-card'],
+  ['qr', 'Menú digital + fotos', 29990, 27990 + 4990, 'El menú se ve mucho mejor con fotos tuyas.', 'menu-photography'],
+  ['calendar', 'Reservas + fidelización', 29990, 24990 + 9990, 'Que reserven solos y que además vuelvan.', 'reservations-loyalty'],
 ];
 
 const PROMESAS = [
@@ -234,7 +234,7 @@ ${o.hero.trim()}
           <p class="price"><small>los seis productos</small><b class="num">${clp(PACK)}</b></p>
           <p class="ahorro">Te ahorras <b>${clp(AHORRO)}</b> frente a comprarlos sueltos</p>
           <ul data-seq>${li(SERVICIOS.map((s) => s[2]))}</ul>
-          ${agregar('pack', 'Agregar el pack al carrito')}
+          ${agregar('full-pack', 'Agregar el pack al carrito')}
         </article>
       </div>
       <ul class="promises reveal" data-seq aria-label="Lo que viene con cualquier producto">
@@ -261,13 +261,13 @@ ${o.hero.trim()}
         <p class="muted">Combinaciones a precio rebajado mientras dure el lanzamiento.</p>
       </div>
       <div class="promos">
-        ${PROMOS.map(([ic, t, precio, normal, p], i) => `<article class="promo reveal"${d.shine ? ' data-shine' : ''}>
+        ${PROMOS.map(([ic, t, precio, normal, p, sku]) => `<article class="promo reveal"${d.shine ? ' data-shine' : ''}>
           <div class="promo-top">${ico(ic, 20)}<span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
           <h3 class="h3">${t}</h3>
           <p class="promo-price"><b class="num">${clp(precio)}</b><s class="num">${clp(normal)}</s></p>
           <p class="promo-save">Ahorras ${clp(normal - precio)}</p>
           <p class="promo-txt">${p}</p>
-          ${agregar('promo-' + i, 'Agregar al carrito', false)}
+          ${agregar(sku, 'Agregar al carrito', false)}
         </article>`).join('\n        ')}
       </div>
     </div>
@@ -354,7 +354,7 @@ ${o.hero.trim()}
 </div>
 <script src="${b}mundo.js"></script>
 <div class="cart-fondo" hidden></div>
-<aside class="cart" id="carrito" role="dialog" aria-modal="true" aria-label="Tu carrito" hidden>
+<aside class="cart" id="carrito" role="dialog" aria-modal="true" aria-label="Tu carrito" data-cart-checkout hidden>
   <header><h2>Tu carrito</h2><button class="cart-x" type="button" aria-label="Cerrar el carrito">×</button></header>
   <div class="cart-cuerpo">
     <p class="cart-vacio" data-cart-vacio>Todavía no agregas nada. Abre un producto en la sección de precios y presiona "Agregar al carrito".</p>
@@ -364,17 +364,19 @@ ${o.hero.trim()}
     <p class="cart-total"><span>Total</span><b data-cart-total>$0</b></p>
     <p class="cart-tip" data-cart-tip hidden></p>
     <p class="cart-nota">Los precios "desde" se confirman en el diagnóstico gratis. Dominio .cl no incluido ($10.000 al año en NIC Chile).</p>
-    <button class="btn btn-main" type="button" data-cart-pedir>Enviar mi pedido</button>
+    <p class="cart-payment-state" data-cart-payment-state role="status" aria-live="polite"></p>
+    <button class="btn btn-main cart-pay" type="button" data-cart-pay hidden disabled><span class="btn-label">Pagar con Mercado Pago</span></button>
+    <button class="btn cart-quote" type="button" data-cart-pedir>Continuar para cotizar</button>
     <button class="cart-link" type="button" data-cart-seguir>Seguir mirando</button>
     <button class="cart-link" type="button" data-cart-vaciar>Vaciar carrito</button>
   </div>
 </aside>
-<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4] })), { id: 'pack', nombre: 'Pack completo', precio: PACK, desde: false }, { id: 'menu-ar', nombre: EXTRA.menu.nombre, precio: null, desde: false }, ...PROMOS.map((x, i) => ({ id: 'promo-' + i, nombre: x[1], precio: x[2], desde: false }))])}</script>
+<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })), { id: 'full-pack', nombre: 'Pack completo', precio: PACK, desde: false, promocion: false }, { id: 'interactive-menu-ar', nombre: EXTRA['interactive-menu'].nombre, precio: null, desde: false, promocion: false }, ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: false, promocion: true }))])}</script>
 <script src="${b}secciones.js"></script>
 <script src="${b}tienda.js"></script>
 <script src="${b}carrusel.js"></script>
 ${(o.mascotaJs || ['gato.js', 'mascota-gato.js', 'mascota.js']).map((f) => `<script src="${b}${f}"></script>`).join('\n')}
-${o.script ? o.script.trim() : ''}
+${o.n === 8 ? '<script type="module" src="fuentes/pagos.mjs"></script>\n' : ''}${o.script ? o.script.trim() : ''}
 </body>
 </html>
 `;

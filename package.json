@@ -1,0 +1,8 @@
+{
+  "name": "biodigital",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -1,0 +1,27 @@
+name = "biodigital-propuesta"
+pages_build_output_dir = "./web/propuesta"
+compatibility_date = "2026-10-11"
+
+[vars]
+PAYMENTS_ENABLED = "false"
+
+[env.preview.vars]
+# Alias estable de la rama Preview `payments-test`. Cloudflare lo activará
+# cuando exista el primer despliegue de esa rama.
+CHECKOUT_SITE_URL = "https://payments-test.biodigital-propuesta.pages.dev"
+PAYMENTS_ENABLED = "false"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "biodigital-payments-test"
+database_id = "221dc879-c80a-4c95-b8e0-62b36af30c9d"
+
+# Antes de habilitar pagos se debe configurar CHECKOUT_SITE_URL con el origen
+# HTTPS real. Las rutas de retorno tienen valores predeterminados documentados
+# en PAGOS.md y también pueden definirse como variables del entorno.
+# MP_ACCESS_TOKEN, MP_WEBHOOK_SECRET, ORDER_TOKEN_SECRET, MP_APPLICATION_ID,
+# MP_USER_ID y MP_TEST_PAYER_EMAIL se configuran como secretos/variables del
+# entorno de prueba, nunca aquí.
+# MP_LIVE_MODE debe permanecer en "false" mientras se usen usuarios de prueba.
+
+# La base anterior es exclusivamente de prueba y no debe enlazarse a Production.

@@ -1,0 +1,52 @@
+const ROUTES = Object.freeze({
+  exitoso: { label: 'Retorno de pago', kind: 'success' },
+  pendiente: { label: 'Pago pendiente', kind: 'pending' },
+  error: { label: 'Pago no completado', kind: 'error' }
+});
+
+export function paymentReturnPage(route) {
+  const page = ROUTES[route];
+  if (!page) throw new Error('Ruta de pago desconocida');
+  return `<!doctype html>
+<html lang="es-CL" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${page.label} · Bío Digital</title>
+<link rel="icon" href="../../marca/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="../../nucleo.css">
+<link rel="stylesheet" href="../../kit.css">
+<link rel="stylesheet" href="../../pagos.css">
+<style>
+:root { --c1:#0da5ff; --c2:#00e5d0; --bg:#0a0a0b; --bg-2:#111113; --bg-3:#19191c; --fg:#f5f3f1; --fg-2:#b1adab; --fg-3:#9b979d; --line:rgba(255,255,255,.1); --line-2:rgba(255,255,255,.06); --accent:#f5f3f1; --accent-fg:#0a0a0b; --warm:var(--c1); --warm-2:#70c9ff; --spot-1:rgba(0,229,208,.18); --display:"Geist",system-ui,sans-serif; --body:"Geist",system-ui,sans-serif; --mono:"Geist Mono",ui-monospace,monospace; --r:12px; --r-lg:18px; --btn-r:99px; --shadow:0 30px 60px -30px rgba(0,0,0,.8); color-scheme:dark; }
+body { font-family:var(--body); }
+</style>
+</head>
+<body>
+<main class="payment-page" data-payment-return data-return-kind="${page.kind}">
+  <div class="payment-shell">
+    <a class="payment-brand" href="../../"><img src="../../marca/icono-192.png" alt="">Bío Digital</a>
+    <section class="payment-panel" aria-labelledby="return-title">
+      <span class="payment-badge" data-return-badge>Comprobando</span>
+      <h1 id="return-title" data-return-title>Estamos comprobando tu orden</h1>
+      <p data-return-message>La URL de retorno no se usa como comprobante de pago.</p>
+      <div class="payment-detail" data-return-detail aria-live="polite"></div>
+      <div class="payment-actions">
+        <button class="btn btn-main" type="button" data-return-retry>Comprobar de nuevo</button>
+        <a class="btn" data-return-checkout hidden>Volver a Mercado Pago</a>
+        <a class="btn" href="../../#diagnostico">Contactar a Bío Digital</a>
+      </div>
+      <p class="payment-help">Si cerraste la pestaña original o borraste los datos de sesión, contáctanos para verificar la orden sin compartir datos bancarios.</p>
+    </section>
+  </div>
+</main>
+<script type="module" src="../../fuentes/pagos.mjs"></script>
+</body>
+</html>`;
+}
+
+export const PAYMENT_RETURN_ROUTES = Object.keys(ROUTES);

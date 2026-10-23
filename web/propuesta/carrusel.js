@@ -2,7 +2,7 @@
 // Una fila de imágenes corre de derecha a izquierda por dentro de un cilindro: el centro mira de frente,
 // los extremos se curvan hacia ti y se desvanecen. Cada imagen se corta en tiras verticales (facetas del cilindro).
 // Uso: <div class="tg" data-tilt data-images='[{"src":"…","alt":"…","url":""}]'></div>
-// Si una imagen trae `url`, la tarjeta abre esa página en una pestaña nueva; si no, es solo imagen.
+// Al hacer clic se abre un visor con la página en vivo (`url`) y un botón para abrirla completa en otra pestaña.
 (function () {
   var SLICES = 16, CAMERA = 1.6, MAX_WIDTH = 55;
   var arc = function (bend) { return (CAMERA - 1 + Math.cos(bend)) / (2 * CAMERA * Math.sin(bend)); };
@@ -94,44 +94,76 @@
       })(t);
     }
 
-    // Clic en una maqueta (o en el botón "Ver ejemplos en grande", que también sirve con teclado): se abre en grande
-    var lb = null, at = 0, back = null;
+    // Clic en un ejemplo (o en "Ver ejemplos en grande", que también sirve con teclado): se abre el visor con la página en vivo.
+    // La página corre dentro de un marco a su ancho real (1440 escritorio, 390 celular) y se escala para caber.
+    var lb = null, at = 0, back = null, modo = window.innerWidth < 760 ? 'cel' : 'pc', propio = '';
+    var ANCHO = { pc: 1440, cel: 390 }, ALTO = { pc: 900, cel: 844 };
+    function ajustar() {
+      if (!lb || lb.hidden) return;
+      var caja = lb.querySelector('.tg-lb-vista'), fr = lb.querySelector('iframe');
+      var w = ANCHO[modo], h = ALTO[modo];
+      var disp = caja.clientWidth, maxH = Math.max(240, window.innerHeight - 230);
+      var k = Math.min(disp / w, maxH / h, 1);
+      fr.style.width = w + 'px'; fr.style.height = h + 'px'; fr.style.transform = 'scale(' + k + ')';
+      caja.style.height = (Math.round(h * k) + (modo === 'cel' ? 26 : 30)) + 'px';
+      lb.querySelector('.tg-lb-pantalla').style.width = Math.round(w * k) + 'px';
+    }
+    function cargar() {
+      var im = images[at], fr = lb.querySelector('iframe'), ph = lb.querySelector('.tg-lb-ph');
+      ph.src = im.ph || im.src; ph.hidden = false; lb.classList.add('cargando');
+      fr.onload = function () { if (fr.dataset.k === String(at) + modo) { ph.hidden = true; lb.classList.remove('cargando'); } };
+      fr.dataset.k = String(at) + modo;
+      fr.src = im.url ? im.url + (propio ? '?negocio=' + encodeURIComponent(propio) : '') : 'about:blank';
+      fr.title = 'Vista en vivo: ' + (im.nombre || 'ejemplo');
+    }
     function show(n) {
       at = (n + images.length) % images.length;
       var im = images[at];
-      lb.querySelector('img').src = im.src;
-      lb.querySelector('img').alt = 'Ejemplo ilustrativo de página para ' + (im.rubro || 'tu rubro').toLowerCase();
-      lb.querySelector('b').textContent = (im.rubro || '') + (im.nombre ? ' · ' + im.nombre : '');
-      var act = lb.querySelector('.tg-lb-act');
-      act.textContent = '';
-      if (im.url) {
-        var a = document.createElement('a'); a.className = 'btn btn-main btn-sm'; a.href = im.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Abrir la página completa';
-        act.appendChild(a);
-      } else { act.textContent = 'La página completa estará disponible pronto.'; }
+      lb.querySelector('b').textContent = propio ? propio + ' · así se vería tu página' : (im.nombre || '');
+      lb.querySelector('.tg-lb-meta').textContent = [im.rubro, im.comuna, im.que].filter(Boolean).join(' · ');
+      lb.querySelector('.tg-lb-dir').textContent = (propio || im.nombre || 'ejemplo').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '') + '.cl';
+      var a = lb.querySelector('.tg-lb-abrir');
+      a.href = im.url ? im.url + (propio ? '?negocio=' + encodeURIComponent(propio) : '') : '#'; a.hidden = !im.url;
       lb.querySelector('.tg-lb-n').textContent = (at + 1) + ' de ' + images.length;
+      cargar(); ajustar();
+    }
+    function setModo(m, soloMarcar) {
+      modo = m;
+      [].forEach.call(lb.querySelectorAll('[data-modo]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.modo === m)); });
+      lb.classList.toggle('es-cel', m === 'cel');
+      if (!soloMarcar) { cargar(); ajustar(); }
     }
     function open(n) {
       if (!lb) {
         lb = document.createElement('div');
-        lb.className = 'tg-lb'; lb.hidden = true; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Ejemplo de página');
+        lb.className = 'tg-lb'; lb.hidden = true; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Ejemplo de página en vivo');
         lb.innerHTML = '<div class="tg-lb-in"><button class="tg-lb-x" type="button" aria-label="Cerrar">×</button>' +
-          '<img alt=""><div class="tg-lb-pie"><div><b></b><small>Ilustración de ejemplo · <span class="tg-lb-n"></span></small></div><span class="tg-lb-act"></span>' +
-          '<span class="tg-lb-nav"><button type="button" class="btn btn-sm" data-d="-1" aria-label="Anterior">←</button><button type="button" class="btn btn-sm" data-d="1" aria-label="Siguiente">→</button></span></div></div>';
+          '<div class="tg-lb-cab"><div><b></b><small class="tg-lb-meta"></small></div>' +
+          '<div class="tg-lb-modo" role="group" aria-label="Tamaño de pantalla"><button type="button" data-modo="pc" aria-pressed="true">Escritorio</button><button type="button" data-modo="cel" aria-pressed="false">Celular</button></div></div>' +
+          '<div class="tg-lb-vista"><div class="tg-lb-pantalla"><div class="tg-lb-barra" aria-hidden="true"><i></i><i></i><i></i><span class="tg-lb-dir"></span></div>' +
+          '<div class="tg-lb-marco"><img class="tg-lb-ph" alt=""><iframe loading="lazy" referrerpolicy="no-referrer"></iframe></div></div></div>' +
+          '<div class="tg-lb-pie"><small>Negocio ficticio, hecho por Bío Digital · <span class="tg-lb-n"></span></small>' +
+          '<a class="btn btn-main btn-sm tg-lb-abrir" target="_blank" rel="noopener">Abrir la página completa ↗</a>' +
+          '<span class="tg-lb-nav"><button type="button" class="btn btn-sm" data-d="-1" aria-label="Ejemplo anterior">←</button><button type="button" class="btn btn-sm" data-d="1" aria-label="Ejemplo siguiente">→</button></span></div></div>';
         lb.addEventListener('click', function (e) {
-          var d = e.target.closest('[data-d]');
+          var d = e.target.closest('[data-d]'), m = e.target.closest('[data-modo]');
           if (d) show(at + Number(d.dataset.d));
+          else if (m) setModo(m.dataset.modo);
           else if (e.target === lb || e.target.closest('.tg-lb-x')) close();
         });
+        window.addEventListener('resize', ajustar);
         document.body.appendChild(lb);
       }
       back = document.activeElement;
-      show(n);
       lb.hidden = false;
       document.documentElement.classList.add('tg-lb-abierto');
+      setModo(window.innerWidth < 760 ? 'cel' : modo, true);
+      show(n);
       lb.querySelector('.tg-lb-x').focus();
     }
     function close() {
-      lb.hidden = true;
+      lb.hidden = true; propio = '';
+      lb.querySelector('iframe').src = 'about:blank';   // la página deja de correr al cerrar
       document.documentElement.classList.remove('tg-lb-abierto');
       if (back && back.focus) back.focus();
     }
@@ -141,17 +173,27 @@
       else if (e.key === 'ArrowLeft') show(at - 1);
       else if (e.key === 'ArrowRight') show(at + 1);
       else if (e.key === 'Tab') {
-        var f = [].slice.call(lb.querySelectorAll('button, a[href]'));
+        var f = [].slice.call(lb.querySelectorAll('button, a[href]:not([hidden]), iframe'));
         var a = f[0], z = f[f.length - 1];
         if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
         else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
       }
     });
+    // En 3D el navegador no siempre entrega el clic a la tarjeta: se busca la tira que queda bajo el puntero
     band.addEventListener('click', function (e) {
       var t = e.target.closest('.tg-tile');
+      if (!t) [].some.call(band.querySelectorAll('.tg-tile'), function (el) {
+        if (getComputedStyle(el).visibility === 'hidden') return false;
+        return [].some.call(el.children, function (sl) {
+          var r = sl.getBoundingClientRect();
+          if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) { t = el; return true; }
+        });
+      });
       if (t) open(Number(t.dataset.i) || 0);
     });
     [].forEach.call(document.querySelectorAll('[data-tilt-open]'), function (b) { b.addEventListener('click', function () { open(0); }); });
+    // "Mira tu página": abre el ejemplo de un rubro con el nombre del negocio del visitante
+    window.BDVisor = { abrir: function (i, negocio) { propio = String(negocio || '').trim().slice(0, 40); open(i); }, rubros: images.map(function (im) { return im.rubro; }) };
 
     var ro = new ResizeObserver(function (es) {
       var cr = es[0].contentRect;

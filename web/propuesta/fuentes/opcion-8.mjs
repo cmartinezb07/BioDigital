@@ -132,6 +132,26 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
 .pill b { color: var(--fg); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
 .pill svg { transition: transform .3s var(--ease-out); }
 @media (hover: hover) and (pointer: fine) { .pill:hover { border-color: color-mix(in srgb, var(--c2) 70%, transparent); } .pill:hover svg { transform: translateX(3px); } }
+/* El título se ve desde el primer cuadro (solo se mueve y se enfoca): así cuenta como el contenido principal (LCP) sin esperar la animación */
+.hero h1.enter { animation-name: enter-titulo; }
+@keyframes enter-titulo { from { translate: 0 16px; filter: blur(6px); } }
+/* "Mira tu página": rubros como fichas bajo el campo del nombre */
+.tu-pagina { margin-top: 18px; display: grid; gap: 10px; justify-items: center; text-align: center; }
+.tu-pagina p { font-size: 14px; color: var(--fg-2); }
+.tu-pagina p b { color: var(--fg); font-weight: 600; }
+.tu-rubros { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px; }
+.tu-rubros button { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 99px; background: color-mix(in srgb, var(--bg-2) 70%, transparent); color: var(--fg); font: inherit; font-size: 14px; cursor: pointer; transition: border-color .25s, background .25s, transform .3s var(--ease-out); }
+.tu-rubros button:hover { border-color: var(--c1); background: color-mix(in srgb, var(--c1) 14%, transparent); transform: translateY(-2px); }
+.tu-rubros button:active { transform: scale(.97); }
+/* Áreas táctiles de 44 px y textos de 12 px o más en toda la portada (check de accesibilidad del 22-oct) */
+.top .brand { min-height: 44px; }
+.top .icon-btn { width: 44px; height: 44px; }
+.nav-links a { min-height: 44px; display: inline-flex; align-items: center; }
+.btn-sm { min-height: 44px; }
+.alt-link { min-height: 44px; }
+.hero .pill { min-height: 44px; }
+.capture .btn, .capture input { min-height: 44px; }
+.flash { font-size: 12px; }
 .hero h1 { font-weight: 560; font-size: clamp(40px, 5.8vw, 78px); line-height: 1.03; letter-spacing: -.055em; max-width: 15ch; }
 .hero h1 span { display: block; background: linear-gradient(180deg, var(--fg) 10%, color-mix(in srgb, var(--fg) 45%, var(--bg))); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero .lead { max-width: 34em; color: var(--fg); opacity: .8; }
@@ -139,7 +159,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
 .capture input { flex: 1; min-width: 0; padding: 0 16px; border: 0; background: transparent; color: var(--fg); font-size: 15px; outline: none; }
 .capture input::placeholder { color: var(--fg-3); }
 .capture:focus-within { border-color: color-mix(in srgb, var(--warm) 60%, transparent); box-shadow: inset 0 1px 0 var(--line-2), 0 0 0 4px color-mix(in srgb, var(--warm) 14%, transparent); }
-.capture .btn { min-height: 42px; }
+.capture .btn { min-height: 44px; }
 .alt-link { font-size: 14px; color: var(--fg-2); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .alt-link svg { transition: transform .3s var(--ease-out); }
 @media (hover: hover) and (pointer: fine) { .alt-link:hover { color: var(--fg); } .alt-link:hover svg { transform: translateX(3px); } }
@@ -198,6 +218,10 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
         <input id="cap-negocio" name="negocio" autocomplete="organization" placeholder="Nombre de tu negocio" required>
         <button class="btn btn-main" type="submit">Pedir diagnóstico</button>
       </form>
+      <div class="tu-pagina enter enter-4" aria-labelledby="t-tu-pagina">
+        <p id="t-tu-pagina"><b>Mira tu página ahora:</b> escribe el nombre de tu negocio y toca tu rubro.</p>
+        <div class="tu-rubros">${EJEMPLOS.map((e, i) => e.sistema ? '' : `<button type="button" data-tu-rubro="${i}">${e.rubro}</button>`).join('')}</div>
+      </div>
       <a class="alt-link enter enter-4" href="#planes">o mira los precios <svg width="14" height="14"><use href="#i-arrow"/></svg></a>
       <p class="hero-meta enter enter-4">
         <span><svg width="14" height="14"><use href="#i-check"/></svg>Diagnóstico gratis al primer contacto</span>
@@ -207,16 +231,24 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
     <div class="tg-sec" id="ejemplos">
       <div class="wrap tg-head reveal">
         <h2 class="h2">Así se ven las páginas que hacemos</h2>
-        <p class="muted">Un estilo para cada rubro. Haz clic en uno para verlo en grande.</p>
+        <p class="muted">Negocios de ejemplo del Gran Concepción, cada uno con su estilo. Haz clic en uno para recorrerlo en vivo.</p>
       </div>
-      <div class="tg" data-par="-12" data-tilt data-images='${JSON.stringify(EJEMPLOS.map((e) => ({ src: `ejemplos/${e.id}.svg`, url: e.url, rubro: e.rubro, nombre: e.nombre })))}' aria-label="Carrusel de ejemplos de páginas web por rubro"></div>
-      <p class="tg-ver"><button class="btn btn-sm" type="button" data-tilt-open>Ver ejemplos en grande</button></p>
+      <div class="tg" data-par="-12" data-tilt data-images='${JSON.stringify(EJEMPLOS.map((e) => ({ src: e.img, ph: e.grande, url: e.url, rubro: e.rubro, nombre: e.nombre, comuna: e.comuna, que: e.que }))).replace(/&/g, '&amp;').replace(/'/g, '&#39;')}' aria-label="Carrusel de ejemplos de páginas web por rubro"></div>
+      <p class="tg-ver"><button class="btn btn-sm" type="button" data-tilt-open>Ver ejemplos en grande</button><a class="btn btn-sm" href="ejemplos/">Todos los ejemplos</a></p>
     </div>
   </div>`,
   script: String.raw`
 <script>
   (function () {
     // El campo del inicio lleva el nombre al formulario completo
+    // "Mira tu página": abre el ejemplo del rubro con el nombre que escribió el visitante
+    document.addEventListener('click', function (e) {
+      var r = e.target.closest('[data-tu-rubro]');
+      if (!r || !window.BDVisor) return;
+      var campo = document.getElementById('cap-negocio');
+      var nombre = (campo && campo.value.trim()) || 'Tu negocio';
+      window.BDVisor.abrir(Number(r.dataset.tuRubro), nombre);
+    });
     var cap = document.querySelector('[data-capture]');
     var dest = document.querySelector('[data-negocio]');
     if (cap && dest) {

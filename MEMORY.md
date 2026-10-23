@@ -11,7 +11,7 @@
 - [Servicios futuros](servicios-futuros/) — los que quedaron en stand by, también con una carpeta cada uno.
 - [Servicios vendibles](memoria/servicios-vendibles.md) — evaluación técnica previa (web, dominio, Google Business, fotos, catálogo, WhatsApp, voz): dificultad, estructura de costo y tiering. Sigue valiendo como análisis; el catálogo vigente es el de `servicios/`.
 - [PRODUCT.md](PRODUCT.md) — contexto de producto para diseño (Impeccable): usuarios, posicionamiento, restricciones, evidencia disponible.
-- [Propuesta del sitio web](web/propuesta/) — textos (`textos.md`) y galería `index.html` con 7 estéticas: 1 `maqueta-final.html` (vidrio iOS), 2 certificado, 3–7 según los links del equipo (se generan con `node fuentes/generar.mjs`); falta que el equipo elija.
+- [Propuesta del sitio web](web/propuesta/) — textos (`textos.md`) y el sitio es la opción 8 (`index.html`, generado con `node fuentes/generar.mjs 8`), con carrusel de 8 sitios de ejemplo, galería `ejemplos/` y políticas en `privacidad/` y `terminos/`.
 - [Estado actual](memoria/estado-actual.md) — punto de retorno para sesiones nuevas: qué está listo, qué falta, cómo retomar.
 - [Decisiones](memoria/decisiones.md) — bitácora cronológica de decisiones tomadas y su justificación.
 - Skill `crear-sitio-web` (en `~/.claude/skills/`, respaldo en `respaldo-skills/`) — flujo reutilizable para sitios de clientes: preguntas, maquetas con 5 estéticas, requisitos SEO/seguridad, recursos evaluados.
@@ -19,4 +19,7 @@
 - [Panel interno](web/panel/LEEME.md) — solicitudes en vivo, formularios, caja y equipo, con login y segundo factor (Supabase). Dirección: https://main.biodigital-panel.pages.dev
 - [Menú digital](web/menu/) — plantilla y demo "Fogón del Sur" (https://main.menu-demo.pages.dev): carta estilo restaurante con "Ver en tu mesa" (3D y realidad aumentada).
 - Formularios para clientes: `web/propuesta/formulario.html` (página web, 59 preguntas) y `formulario-menu.html` (menú digital, 60); se arman con `node web/propuesta/fuentes/formularios.mjs`.
-
+- [Ejemplos: matriz CREA y trazabilidad](memoria/ejemplos-matriz.md) — plantilla de referencia, segmento y matriz CREA de cada sitio de ejemplo; requisitos → criterios → pruebas.
+- [Competencia y margen de mejora](memoria/competencia.md) — mapa de competencia con precios, costo a 3 años, velocidad medida, hallazgos por impacto y decisiones pendientes (22-oct-2026).
+- [Menú digital con pedidos](memoria/menu-pedidos.md) — restaurante: pedidos en mesa, retiro y delivery, seguimiento con mapa, cocina, repartidor y panel; competencia y costos recurrentes (23-oct-2026).
+- [Sistema de reservas completo](memoria/reservas-sistema.md) — 5 rubros, panel, políticas, avisos, iCal y reportes; competencia y costos recurrentes (23-oct-2026).

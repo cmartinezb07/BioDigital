@@ -1,0 +1,14 @@
+/* Cinta "Ejemplo de Bío Digital": va en todos los sitios de muestra. No usa las variables del sitio para no chocar con su estética. */
+.bd-demo { position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); translate: -50% 0; z-index: 2147483000; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 24px); padding: 6px 6px 6px 14px; border-radius: 99px; background: rgba(12, 14, 18, .88); color: #f4f6f8; font: 500 13px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: 0; box-shadow: 0 10px 30px -8px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .12); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); animation: bd-sube .6s cubic-bezier(.23, 1, .32, 1) .8s backwards; }
+.bd-demo b { font-weight: 700; color: #6fd8ff; }
+.bd-demo a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 99px; background: linear-gradient(115deg, #0da5ff, #00e5d0); color: #04121a; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.bd-demo button { width: 44px; height: 44px; flex: none; border: 0; border-radius: 50%; background: transparent; color: #c9ced6; font-size: 20px; cursor: pointer; }
+.bd-demo button:hover { color: #fff; }
+.bd-demo .bd-txt { min-width: 0; }
+.bd-demo .bd-txt span { opacity: .8; }
+.bd-toast { position: fixed; left: 50%; top: 18px; translate: -50% 0; z-index: 2147483001; max-width: min(92vw, 420px); padding: 12px 16px; border-radius: 14px; background: rgba(12, 14, 18, .94); color: #f4f6f8; font: 500 14px/1.45 system-ui, sans-serif; box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .5); animation: bd-baja .35s cubic-bezier(.23, 1, .32, 1); }
+@keyframes bd-sube { from { opacity: 0; translate: -50% 20px; } }
+@keyframes bd-baja { from { opacity: 0; translate: -50% -12px; } }
+@media (max-width: 520px) { .bd-demo { font-size: 12px; gap: 6px; padding-left: 12px; } .bd-demo .bd-txt span { display: none; } .bd-demo a { padding: 0 12px; } }
+@media (prefers-reduced-motion: reduce) { .bd-demo, .bd-toast { animation: none; } }
+@media print { .bd-demo, .bd-toast { display: none; } }

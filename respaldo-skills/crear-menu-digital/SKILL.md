@@ -68,8 +68,19 @@ Acta con la dirección, el QR en alta resolución, la lista de platos con 3D, lo
 - Los modelos de muestra de la demo están en otros servidores (el generador lo avisa); en un cliente real siempre van en `modelos/` del propio menú.
 - Probado: AR en un iPhone 15 Pro con un plato plano hecho desde una foto (12-oct-2026). Falta probar con un escaneo 3D real y en Android.
 
+## Módulo de pedidos para restaurantes (23-oct-2026)
+Versión completa, a cotizar (no cabe en el precio del menú simple). Vive en `web/propuesta/ejemplos/fogon-del-sur/` y se suma a cualquier carta generada con 3 archivos y 4 páginas:
+- En la carta: `<link rel="stylesheet" href="sistema.css">` y, después de `menu.js`, `<script src="pedidos.js"></script><script src="pedir.js"></script>`. `pedir.js` lee `#menu-datos` y agrega "Agregar" a cada plato (los artículos deben seguir el orden de la carta), el carrito, mesa (`?mesa=N` en el QR de cada mesa), retiro y delivery con envío por comuna.
+- Páginas: `pedido/` (seguimiento con estados de color, tiempo estimado, mapa Leaflet 1.9.4 con SRI, juego `juego.js` y opinión), `cocina/` (KDS), `repartidor/` (GPS del celular) y `panel/` (visitas, pedidos, pagados, ventas, opiniones, referencias).
+- Configuración del local en `pedidos.js` → `CONFIG` (dirección y coordenadas, mesas, pedido mínimo, envío por comuna, tiempos).
+- La demo sincroniza pestañas del mismo navegador; un local real necesita base en la nube (Supabase). Costos recurrentes y competencia en `memoria/menu-pedidos.md`.
+- Prueba: `web/herramientas/pruebas/fogon-del-sur.js`. Para reservas de mesa o eventos, usar el sistema de `ejemplos/reservas/` (modo horas o bloques).
+
 ## Mascota (opcional)
 No va por defecto en un menú: la carta debe ser rápida y limpia. Si el cliente la pide, usa el módulo de `crear-sitio-web/referencias/mascota.md` y verifica que no tape los platos.
 
 ## Pendiente (preguntar al equipo)
 Precio de la versión interactiva (base + por plato), quién cobra los cambios de carta, impresión y entrega de los QR, y si la demo pública se mantiene.
+
+## Verificación con el revisor automático
+Usa `node web/herramientas/revisar.mjs http://localhost:<puerto>/<carpeta>/index.html --tag <cliente>` (ver crear-sitio-web). Para el catálogo de Bío Digital, el menú de demostración también vive copiado como ejemplo en `web/propuesta/ejemplos/fogon-del-sur/` (con la cinta "Ejemplo de Bío Digital"); el de la pastelería se generó con esta skill en `ejemplos/casa-dulce/carta/` (estilo crema). Si un cliente quiere reservas de mesa, se puede montar el módulo `ejemplos/_compartido/reservas.js` en modo horas.

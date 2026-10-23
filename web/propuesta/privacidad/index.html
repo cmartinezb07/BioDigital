@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es-CL" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de privacidad · Bío Digital</title>
+<meta name="description" content="Qué datos pedimos, para qué los usamos, con quién los compartimos y cómo puedes pedir que los cambiemos o los borremos.">
+<link rel="icon" href="../marca/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="../nucleo.css">
+<link rel="stylesheet" href="../kit.css">
+<script>var t;try{t=localStorage.getItem('bd-theme')}catch(e){}if(t==='light'||t==='dark')document.documentElement.dataset.theme=t</script>
+<style>
+:root { --c1:#0da5ff; --c2:#00e5d0; --bg:#0a0a0b; --bg-2:#111113; --bg-3:#19191c; --fg:#f5f3f1; --fg-2:#b1adab; --fg-3:#9b979d; --line:rgba(255,255,255,.1); --display:"Geist",system-ui,sans-serif; --body:"Geist",system-ui,sans-serif; color-scheme:dark; }
+:root[data-theme="light"] { --bg:#f7f6f4; --bg-2:#ffffff; --bg-3:#efedea; --fg:#151517; --fg-2:#4a4748; --fg-3:#6b676a; --line:rgba(0,0,0,.1); color-scheme:light; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--body); line-height:1.65; }
+.lg-top { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px max(16px, calc(50% - 560px)); background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+.lg-marca { display:inline-flex; align-items:center; gap:10px; min-height:44px; color:var(--fg); text-decoration:none; font-weight:600; }
+.lg-marca img { width:28px; height:28px; }
+.lg-top a.lg-volver { display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border:1px solid var(--line); border-radius:99px; color:var(--fg); text-decoration:none; font-size:14px; transition:border-color .2s, background .2s; }
+.lg-top a.lg-volver:hover { border-color:var(--c1); background:color-mix(in srgb, var(--c1) 10%, transparent); }
+.lg { display:grid; grid-template-columns:220px minmax(0, 1fr); gap:56px; max-width:1120px; margin:0 auto; padding:56px 16px 96px; }
+.lg-cab { grid-column:1 / -1; max-width:44em; }
+.lg-cab p.lg-eti { margin:0 0 10px; font-family:"Geist Mono",monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--c2); }
+.lg-cab h1 { margin:0 0 14px; font-size:clamp(36px, 5vw, 56px); line-height:1.05; letter-spacing:-.03em; font-weight:600; background:linear-gradient(90deg, var(--fg), color-mix(in srgb, var(--fg) 55%, var(--c1))); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.lg-cab .lg-res { margin:0; font-size:18px; color:var(--fg-2); }
+.lg-cab .lg-vig { margin:16px 0 0; font-size:13px; color:var(--fg-3); }
+.lg-ind { position:sticky; top:88px; align-self:start; }
+.lg-ind p { margin:0 0 10px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--fg-3); }
+.lg-ind ol { margin:0; padding:0; list-style:none; display:grid; gap:0; border-left:1px solid var(--line); }
+.lg-ind a { display:flex; align-items:center; min-height:44px; padding:4px 0 4px 14px; margin-left:-1px; border-left:2px solid transparent; color:var(--fg-2); text-decoration:none; font-size:14px; line-height:1.35; transition:color .2s, border-color .2s; }
+.lg-ind a:hover, .lg-ind a[aria-current="true"] { color:var(--fg); border-left-color:var(--c1); }
+.lg-txt { max-width:44em; }
+.lg-txt section { padding:28px 0; border-top:1px solid var(--line); scroll-margin-top:84px; }
+.lg-txt section:first-child { border-top:0; padding-top:0; }
+.lg-txt h2 { margin:0 0 12px; font-size:22px; letter-spacing:-.01em; font-weight:600; }
+.lg-txt p, .lg-txt li { color:var(--fg-2); font-size:16px; }
+.lg-txt strong { color:var(--fg); font-weight:600; }
+.lg-txt a { color:var(--c1); text-underline-offset:3px; }
+.lg-txt ul, .lg-txt ol { padding-left:1.2em; display:grid; gap:6px; }
+.lg-tabla { overflow-x:auto; }
+.lg-txt table { width:100%; border-collapse:collapse; font-size:14px; }
+.lg-txt th, .lg-txt td { padding:12px 10px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); color:var(--fg-2); }
+.lg-txt th { color:var(--fg); font-weight:600; font-size:13px; }
+.lg-pie { max-width:1120px; margin:0 auto; padding:24px 16px 48px; display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between; border-top:1px solid var(--line); font-size:14px; color:var(--fg-3); }
+.lg-pie a { color:var(--fg-2); display:inline-flex; align-items:center; min-height:44px; }
+@media (max-width: 820px) { .lg { grid-template-columns:1fr; gap:24px; padding-top:36px; } .lg-ind { position:static; } .lg-txt table, .lg-txt thead, .lg-txt tbody, .lg-txt tr, .lg-txt td { display:block; } .lg-txt thead { display:none; } .lg-txt tr { padding:10px 0; border-bottom:1px solid var(--line); } .lg-txt td { border:0; padding:3px 0; } .lg-txt td:first-child { color:var(--fg); font-weight:600; } }
+@media (prefers-reduced-motion: no-preference) { .lg-txt section { animation:lg-in .6s cubic-bezier(.23,1,.32,1) both; animation-timeline:view(); animation-range:entry 0% entry 40%; } @keyframes lg-in { from { opacity:0; translate:0 18px; } } }
+</style>
+</head>
+<body>
+<header class="lg-top">
+  <a class="lg-marca" href="../"><img src="../marca/icono-192.png" alt="">Bío Digital</a>
+  <a class="lg-volver" href="../">Volver al sitio</a>
+</header>
+<main class="lg">
+  <div class="lg-cab">
+    <p class="lg-eti">Bío Digital · Documento legal</p>
+    <h1>Política de privacidad</h1>
+    <p class="lg-res">Qué datos pedimos, para qué los usamos, con quién los compartimos y cómo puedes pedir que los cambiemos o los borremos.</p>
+    <p class="lg-vig">Vigente desde el 22 de octubre de 2026.</p>
+  </div>
+  <nav class="lg-ind" aria-label="Contenido"><p>Contenido</p><ol><li><a href="#en-simple">En simple</a></li><li><a href="#quien-es-responsable">Quién es responsable</a></li><li><a href="#que-datos-recogemos">Qué datos recogemos</a></li><li><a href="#base-para-usarlos">Base para usarlos</a></li><li><a href="#con-quien-los-compartimos">Con quién los compartimos</a></li><li><a href="#cuanto-tiempo-los-guardamos">Cuánto tiempo los guardamos</a></li><li><a href="#lo-que-se-guarda-en-tu-navegador">Lo que se guarda en tu navegador</a></li><li><a href="#tus-derechos">Tus derechos</a></li><li><a href="#seguridad">Seguridad</a></li><li><a href="#sitios-de-ejemplo">Sitios de ejemplo</a></li><li><a href="#menores-de-edad">Menores de edad</a></li><li><a href="#cambios-a-esta-politica">Cambios a esta política</a></li></ol></nav>
+  <article class="lg-txt">
+<section id="en-simple"><h2>En simple</h2><ul>
+      <li>Solo pedimos los datos necesarios para responder tu solicitud y hacer tu página.</li>
+      <li>No vendemos ni arrendamos tus datos, y no los usamos para publicidad.</li>
+      <li>No usamos cookies de seguimiento ni herramientas de publicidad.</li>
+      <li>Puedes pedirnos ver, corregir o borrar tus datos escribiendo a <a href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a>.</li>
+    </ul></section>
+<section id="quien-es-responsable"><h2>Quién es responsable</h2><p>El responsable de los datos es <strong>Bío Digital</strong>, un emprendimiento de estudiantes de Concepción (Chile) que ofrece páginas web y presencia digital a micro y pequeñas empresas del Gran Concepción. Contacto: <a href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a> · WhatsApp +56 9 4694 1640.</p></section>
+<section id="que-datos-recogemos"><h2>Qué datos recogemos</h2><div class="lg-tabla"><table>
+      <thead><tr><th>Dónde</th><th>Qué datos</th><th>Para qué</th></tr></thead>
+      <tbody>
+        <tr><td>Formulario de diagnóstico o pedido</td><td>Nombre, nombre y rubro del negocio, comuna, correo, celular (opcional), lo que te interesa y los productos del carrito.</td><td>Responder tu solicitud, hacerte el diagnóstico gratis y cotizar.</td></tr>
+        <tr><td>Formularios de levantamiento (página web y menú digital)</td><td>Datos del negocio y sus preferencias: horarios, servicios, carta, colores, fotos, textos y datos de contacto públicos del negocio.</td><td>Diseñar y construir la página o el menú que contrataste.</td></tr>
+        <tr><td>Pagos en línea (cuando estén habilitados)</td><td>Productos, montos y estado de la orden. Los datos de la tarjeta los recibe Mercado Pago, no Bío Digital.</td><td>Registrar y confirmar el pago.</td></tr>
+        <tr><td>Datos técnicos</td><td>Dirección IP y datos del navegador que registran los servidores, y un control temporal por conexión que limita los envíos repetidos.</td><td>Seguridad del sitio y prevención de abuso.</td></tr>
+      </tbody>
+    </table></div>
+    <p>No pedimos RUT, datos bancarios ni datos sensibles (salud, origen, creencias, etc.). Te pedimos que no los escribas en los formularios.</p></section>
+<section id="base-para-usarlos"><h2>Base para usarlos</h2><p>Usamos tus datos porque tú nos los entregas al enviar un formulario y aceptas esta política (consentimiento), y para cumplir el servicio que contrates. Puedes retirar tu consentimiento cuando quieras; eso no afecta lo que ya se hizo antes.</p></section>
+<section id="con-quien-los-compartimos"><h2>Con quién los compartimos</h2><p>Solo con los proveedores que necesitamos para operar, que los procesan por encargo nuestro:</p>
+    <ul>
+      <li><strong>Supabase</strong>: base de datos donde llegan las solicitudes y formularios. Servidores en São Paulo, Brasil.</li>
+      <li><strong>Cloudflare</strong>: aloja este sitio y protege de ataques.</li>
+      <li><strong>Google Fonts</strong>: entrega las tipografías del sitio (recibe tu dirección IP al cargarlas).</li>
+      <li><strong>Mercado Pago</strong>: procesa los pagos en línea cuando estén habilitados.</li>
+      <li><strong>WhatsApp y tu proveedor de correo</strong>: si eliges enviarnos el pedido por ahí, el mensaje sale desde tu cuenta y se rige también por las políticas de esos servicios.</li>
+    </ul>
+    <p>Algunos de estos proveedores guardan datos fuera de Chile. Solo los entregaríamos a una autoridad si la ley lo exige.</p></section>
+<section id="cuanto-tiempo-los-guardamos"><h2>Cuánto tiempo los guardamos</h2><ul>
+      <li>Solicitudes que no terminan en un contrato: hasta 12 meses desde el último contacto. Después se borran.</li>
+      <li>Clientes: mientras dure el servicio y después por el tiempo que exijan las leyes tributarias y comerciales.</li>
+      <li>Si pides que borremos tus datos antes, lo hacemos salvo que una ley nos obligue a guardarlos.</li>
+    </ul></section>
+<section id="lo-que-se-guarda-en-tu-navegador"><h2>Lo que se guarda en tu navegador</h2><p>El sitio guarda en tu propio navegador (almacenamiento local, no cookies) el contenido del carrito y si prefieres el tema claro u oscuro, para que no se pierdan al recargar. Al pagar, se guarda por esa sesión la referencia de la orden. Puedes borrarlos cuando quieras desde la configuración de tu navegador. Nada de eso se usa para seguirte entre sitios.</p></section>
+<section id="tus-derechos"><h2>Tus derechos</h2><p>Puedes pedir <strong>acceso</strong> a tus datos, su <strong>rectificación</strong>, <strong>supresión</strong>, <strong>oposición</strong> a que los usemos, su <strong>portabilidad</strong> y su <strong>bloqueo</strong> temporal. Escríbenos a <a href="mailto:biodigitalici@gmail.com">biodigitalici@gmail.com</a> con el asunto "Mis datos" y el correo o celular que usaste. Respondemos dentro de 15 días hábiles. Si no quedas conforme, puedes reclamar ante la autoridad que corresponda.</p>
+    <p>Esta política se basa en la Ley N° 19.628 sobre protección de la vida privada y considera la Ley N° 21.719, que la reemplaza y crea la Agencia de Protección de Datos Personales.</p></section>
+<section id="seguridad"><h2>Seguridad</h2><p>El sitio funciona con conexión cifrada (HTTPS). En la base de datos, el público solo puede enviar solicitudes: leerlas exige ser del equipo, con contraseña y segundo factor. Limitamos los envíos por conexión para frenar el abuso. Ningún sistema es infalible: si detectamos una filtración que te afecte, te avisaremos.</p></section>
+<section id="sitios-de-ejemplo"><h2>Sitios de ejemplo</h2><p>Las páginas de la sección de ejemplos son negocios ficticios hechos para mostrar nuestro trabajo. Sus formularios y reservas no envían datos a nadie: a lo más abren WhatsApp o descargan un archivo de calendario en tu equipo. Las fotos de esas páginas son referenciales.</p></section>
+<section id="menores-de-edad"><h2>Menores de edad</h2><p>El servicio está dirigido a dueños y encargados de negocios. No pedimos datos de menores de 18 años a sabiendas.</p></section>
+<section id="cambios-a-esta-politica"><h2>Cambios a esta política</h2><p>Si cambiamos lo que hacemos con tus datos, actualizaremos esta página y su fecha de vigencia. Si el cambio es importante y ya eres cliente, te avisaremos.</p></section>
+  </article>
+</main>
+<footer class="lg-pie">
+  <span>© 2026 Bío Digital · biodigitalici@gmail.com · @biodigital.cl</span>
+  <span><a href="../terminos/">Términos del servicio</a></span>
+</footer>
+<script src="../legal.js"></script>
+</body>
+</html>

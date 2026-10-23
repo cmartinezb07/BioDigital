@@ -85,9 +85,11 @@
 .mascota.habla .m-globo { opacity: 1; scale: 1; translate: 0 0; }
 
 /* Controles pequeños: cambiar de personaje y esconder */
-.m-controles { position: absolute; left: 0; right: 0; top: -30px; display: flex; justify-content: center; gap: 6px; opacity: 0; transition: opacity .2s ease; }
+.m-controles { position: absolute; left: 0; right: 0; top: -39px; display: flex; justify-content: center; gap: 6px; opacity: 0; transition: opacity .2s ease; }
 .mascota:hover .m-controles, .mascota:focus-within .m-controles { opacity: 1; }
-.m-controles button { width: 26px; height: 26px; display: grid; place-items: center; padding: 0; border: var(--m-borde); border-width: 1px; border-radius: min(var(--m-radio), 13px); background: var(--m-control); color: var(--m-ink); font: 600 13px/1 var(--m-font); cursor: pointer; pointer-events: auto; transition: transform var(--press, 160ms) var(--ease-out, ease-out); }
+.m-controles button { position: relative; isolation: isolate; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--m-ink); font: 600 13px/1 var(--m-font); cursor: pointer; pointer-events: auto; transition: transform var(--press, 160ms) var(--ease-out, ease-out); }
+/* Se ve de 26 px, pero el área táctil es de 44 px */
+.m-controles button::before { content: ""; position: absolute; inset: 9px; z-index: -1; border: var(--m-borde); border-width: 1px; border-radius: min(var(--m-radio), 13px); background: var(--m-control); }
 .m-controles button:active { transform: scale(.92); }
 .m-volver { position: fixed; left: 14px; bottom: 14px; z-index: 44; display: none; padding: 7px 12px; border: 1px solid currentColor; border-radius: 99px; background: var(--bg, #fff); color: var(--fg, var(--ink, #111)); font-size: 12px; line-height: 1; cursor: pointer; }
 .m-volver.ver { display: block; }

@@ -1,0 +1,22 @@
+/* Tarjeta de fidelización: usa la base de estilos del sistema de reservas (reservas/estilo.css). */
+.fid { padding: 20px 0 110px; display: grid; gap: 14px; max-width: 560px; }
+body:has([data-modo="local"]) .fid, html[data-modo="local"] .fid { max-width: 1120px; }
+.fid h1 { font-size: 28px; letter-spacing: -.02em; }
+.fid-neg { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--c1); font-weight: 700; }
+.tarjeta { position: relative; overflow: hidden; display: grid; gap: 14px; padding: 20px; border-radius: 24px; color: #fff; background: radial-gradient(500px 240px at 100% 0, rgba(255,255,255,.14), transparent 60%), linear-gradient(135deg, #3b2416, #6b4226 60%, #8a5a36); box-shadow: 0 24px 50px -24px rgba(59,36,22,.75); }
+.tarjeta.completa { background: radial-gradient(500px 240px at 100% 0, rgba(255,255,255,.25), transparent 60%), linear-gradient(135deg, #b45309, #e0a526); }
+.t-cab { display: flex; justify-content: space-between; gap: 10px; font-weight: 700; }
+.t-cab span:last-child { font-weight: 500; opacity: .9; }
+.t-marca { display: inline-flex; align-items: center; gap: 10px; }
+.t-marca .logo-n { border-radius: 10px; box-shadow: 0 0 0 2px rgba(255,255,255,.6); }
+.tarjeta.ejemplo { opacity: .96; }
+.sellos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.sellos i { aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; border: 2px dashed rgba(255,255,255,.55); font-style: normal; font-weight: 700; font-size: 18px; color: rgba(255,255,255,.8); }
+.sellos i.on { border-style: solid; border-color: #f3e3cf; background: #f3e3cf; color: #6b4226; }
+.tarjeta.completa .sellos i.on { color: #b45309; }
+.t-prem { font-size: 15px; }
+.t-qr { display: grid; justify-items: center; gap: 6px; padding: 16px; border-radius: 18px; background: #fff; color: #111827; }
+.t-qr .codigo { font-size: 22px; }
+.t-qr .nota { color: #4b5563; }
+.fid-alta .campos { grid-template-columns: 1fr 1fr; }
+@media (max-width: 560px) { .fid-alta .campos { grid-template-columns: 1fr; } }

@@ -1,0 +1,16 @@
+{
+  "name": "Fogón del Sur · Carta",
+  "short_name": "Fogón del Su",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#1a110c",
+  "theme_color": "#1a110c",
+  "lang": "es-CL",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

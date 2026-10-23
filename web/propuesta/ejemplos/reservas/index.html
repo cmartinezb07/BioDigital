@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es" data-ejemplo="Sistema de reservas">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reservas en línea · Demostración de Bío Digital</title>
+<meta name="description" content="Motor de reservas para cabañas, tours, centros médicos, arriendo de espacios y salones: calendario en vivo, depósito, promociones, idiomas y monedas.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../../marca/favicon-32.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="../_compartido/demo.css">
+</head>
+<body>
+<header class="top">
+  <a class="marca" href="./"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Reservas en línea</a>
+  <div class="sel">
+    <select id="idioma" aria-label="Idioma"><option value="es">Español</option><option value="en">English</option><option value="pt">Português</option></select>
+    <select id="moneda" aria-label="Moneda"><option value="CLP">CLP $</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="BRL">BRL</option></select>
+    <a class="btn chico" data-admin href="admin/">Panel del negocio</a>
+  </div>
+</header>
+<main id="app"><p class="wrap nota" style="padding:24px 0">Cargando…</p></main>
+<script src="motor.js"></script>
+<script src="reservar.js"></script>
+<script src="../_compartido/demo.js" defer></script>
+</body>
+</html>

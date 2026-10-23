@@ -1,0 +1,20 @@
+// Guion de prueba de Casa Dulce (estructura Boolka): menú, galería, encargo de torta en cuatro pasos y enlace a la carta.
+const r = {};
+const ok = (k, v, extra) => { r[k] = v ? 'ok' : 'FALLÓ' + (extra ? ' → ' + extra : ''); };
+$('[data-menu-btn]').click(); await dormir(900);
+ok('1 el menú abre', !$('[data-menu]').hidden && $('[data-menu]').classList.contains('abierto'));
+document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); await dormir(900);
+ok('1b Esc lo cierra', $('[data-menu]').hidden);
+$$('[data-foto]')[2].click(); await dormir(500);
+ok('2 la galería cambia de foto', $('[data-gal-txt] b').textContent === 'Lo recién salido');
+$('input[name="tamano"][value="15"]').click(); $('input[name="sabor"][value="pistacho"]').click(); await dormir(200);
+ok('3 tamaño y sabor arman el total', $('#r-total').textContent === '$44.000' && $('#mini').getAttribute('data-sabor') === 'pistacho', $('#r-total').textContent);
+const iso = (d) => d.toISOString().slice(0, 10);
+let d = new Date(); d.setDate(d.getDate() + 3); while (d.getDay() === 1) d.setDate(d.getDate() + 1);
+$('#fecha').value = iso(d); $('#fecha').dispatchEvent(new Event('input', { bubbles: true }));
+$('#hora').value = '15:00'; $('#hora').dispatchEvent(new Event('change', { bubbles: true }));
+$('#nombre').value = 'Camila'; $('#nombre').dispatchEvent(new Event('input', { bubbles: true })); await dormir(200);
+ok('4 con los cuatro pasos el avance llega a 4 de 4', /4 de 4|completos/.test($('#txt-avance').textContent), $('#txt-avance').textContent);
+ok('4b el mensaje incluye el nombre', /Camila/.test($('#r-mensaje').textContent));
+ok('5 el enlace a la carta existe', !!$('a[href="carta/"]'));
+return r;

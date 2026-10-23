@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es-CL" data-ejemplo="Casa Dulce">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casa Dulce · Pastelería y cafetería en San Pedro de la Paz</title>
+<meta name="description" content="Tortas, kuchen, alfajores y café en San Pedro de la Paz. Encarga tu torta en línea en cuatro pasos y mira la carta. Precios de ejemplo. Sitio de ejemplo de Bío Digital.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f7efe6">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23c8264f'/%3E%3Cpath d='M8 15h16v9H8z' fill='%23fff4e6'/%3E%3Cpath d='M8 15c2-3 14-3 16 0' fill='none' stroke='%23fff4e6' stroke-width='2'/%3E%3Ccircle cx='16' cy='9' r='2.6' fill='%23fff4e6'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Casa Dulce (sitio de ejemplo)">
+<meta property="og:title" content="Casa Dulce · San Pedro de la Paz">
+<meta property="og:description" content="Encarga tu torta en línea y mira la carta. Sitio de ejemplo hecho por Bío Digital.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Caveat+Brush&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_compartido/demo.css">
+<link rel="stylesheet" href="estilos.css">
+<script src="../_compartido/demo.js" defer></script>
+<script src="casa-dulce.js" defer></script>
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+<canvas id="confeti" aria-hidden="true" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:250"></canvas>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><g id="fresa">
+              <path d="M0 -13C13 -15 18 -3 10 9C6 15 2 19 0 20C-2 19 -6 15 -10 9C-18 -3 -13 -15 0 -13Z" fill="#D7385E" stroke="#4A2C2A" stroke-width="3" stroke-linejoin="round"/>
+              <g fill="#F6D776"><circle cx="-5" cy="-1" r="1.6"/><circle cx="4" cy="-3" r="1.6"/><circle cx="0" cy="5" r="1.6"/><circle cx="-5" cy="10" r="1.4"/><circle cx="5" cy="9" r="1.4"/></g>
+              <path d="M-9 -5q1-6 6-8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" opacity=".6"/>
+              <path d="M-8 -14L0 -8L8 -14L4 -19L0 -15L-4 -19Z" fill="#93C47D" stroke="#4A2C2A" stroke-width="2.5" stroke-linejoin="round"/>
+            </g></defs></svg>
+
+<header class="cab" data-cab>
+  <button class="cab-menu" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>Menú</button>
+  <a class="logo" href="#inicio" aria-label="Casa Dulce, inicio"><svg viewBox="0 0 40 28" aria-hidden="true"><path d="M6 14h28v11H6z"/><path d="M6 14c3-5 25-5 28 0"/><path d="M20 8V3"/><circle cx="20" cy="3" r="1.6"/></svg>casa dulce</a>
+  <a class="cab-encargar" href="#encargo">Encargar</a>
+</header>
+<div class="menu" id="menu" data-menu hidden>
+  <nav aria-label="Principal"><a href="#favoritos">Favoritos</a><a href="#encargo">Encargar torta</a><a href="#local">El local</a><a href="carta/">La carta</a><a href="#visitanos">Visítanos</a></nav>
+</div>
+
+<main id="contenido">
+  <section class="hero" id="inicio">
+    <h1 class="hero-titulo"><span class="ln"><span>Recién horneado,</span></span><span class="ln"><span>toda la tarde</span></span><span class="mano entra" style="--d:.8s">¡y con café!</span></h1>
+    <div class="hero-foto" data-hero>
+      <img src="https://images.unsplash.com/photo-1558234469-50fc184d1cc9?auto=format&fit=crop&w=1600&h=720&q=65" srcset="https://images.unsplash.com/photo-1558234469-50fc184d1cc9?auto=format&fit=crop&w=800&h=360&q=65 800w, https://images.unsplash.com/photo-1558234469-50fc184d1cc9?auto=format&fit=crop&w=1600&h=720&q=65 1600w" sizes="100vw" alt="Torta de frutillas sobre un pie de torta turquesa" fetchpriority="high" data-hero-img>
+      <span class="cartel" aria-hidden="true"><small>sí, estamos</small>ABIERTO</span>
+      <div class="hero-pie"><p class="hero-hora">Abierto mar a dom · 9:00–20:00</p><p>Tortas, kuchen, alfajores y café de grano en San Pedro de la Paz.</p></div>
+    </div>
+    <div class="cinta" aria-hidden="true"><div class="cinta-pista"><span>MOUSSE DE FRAMBUESA</span><span>GALLETAS</span><span>TORTA DE FRUTILLAS</span><span>MOCACCINO</span><span>BERLINES</span><span>TRES LECHES</span><span>MOUSSE DE FRAMBUESA</span><span>GALLETAS</span><span>TORTA DE FRUTILLAS</span><span>MOCACCINO</span><span>BERLINES</span><span>TRES LECHES</span></div></div>
+  </section>
+
+  <section class="favoritos caja" id="favoritos" aria-labelledby="t-fav">
+    <p class="sobre revela">Favoritos de Casa Dulce</p>
+    <h2 id="t-fav" class="titulo revela">Lo que todos<span class="mano">vuelven a pedir.</span></h2>
+    <svg class="garabato garabato-a" viewBox="0 0 120 90" aria-hidden="true"><path d="M10 70c20-40 60-55 95-40M70 18l35 12-14 30"/><circle cx="30" cy="62" r="6"/><circle cx="48" cy="48" r="5"/></svg>
+    <div class="tarjetas">
+      <article class="tj revela" style="--r:-1.5deg;--d:0s"><span class="etiq">Favorito</span><img src="https://images.unsplash.com/photo-1761637604698-0f9e9d3278ee?auto=format&fit=crop&w=640&h=480&q=68" alt="Pastel pequeño con frambuesa y glaseado rojo" loading="lazy" width="640" height="480"><div class="tj-txt"><h3>Mousse de frambuesa</h3><b>$3.200</b><p>Base de galleta, mousse suave y glaseado de frambuesa.</p></div></article>
+      <article class="tj revela" style="--r:1.2deg;--d:.06s"><span class="etiq">Favorito</span><img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=640&h=480&q=68" alt="Galletas con chips de chocolate en un bol" loading="lazy" width="640" height="480"><div class="tj-txt"><h3>Galletas con chips</h3><b>$1.200</b><p>Mantequilla, azúcar rubia y chocolate semiamargo.</p></div></article>
+      <article class="tj revela" style="--r:-.8deg;--d:.12s"><span class="etiq etiq-verde">De la casa</span><img src="https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?auto=format&fit=crop&w=640&h=480&q=68" alt="Café rodeado de panes recién horneados" loading="lazy" width="640" height="480"><div class="tj-txt"><h3>Mocaccino de la casa</h3><b>$3.400</b><p>Café, chocolate semiamargo y crema batida.</p></div></article>
+      <article class="tj revela" style="--r:1.6deg;--d:.18s"><span class="etiq etiq-negra">Por encargo</span><img src="https://images.unsplash.com/photo-1759426016293-1b8be5849a72?auto=format&fit=crop&w=640&h=480&q=68" alt="Trozo de torta de frutillas con crema" loading="lazy" width="640" height="480"><div class="tj-txt"><h3>Torta de frutillas</h3><b>desde $28.000</b><p>Bizcocho de vainilla, chantilly y frutillas frescas.</p></div></article>
+      <article class="tj revela" style="--r:-1.2deg;--d:.24s"><span class="etiq etiq-negra">Nuevo</span><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=640&h=480&q=68" alt="Dos medialunas doradas" loading="lazy" width="640" height="480"><div class="tj-txt"><h3>Medialuna de mantequilla</h3><b>$1.500</b><p>Hojaldre de 24 horas, recién salida del horno.</p></div></article>
+      <article class="tj revela" style="--r:.9deg;--d:.3s"><span class="etiq">Favorito</span><img src="https://images.unsplash.com/photo-1583338917451-face2751d8d5?auto=format&fit=crop&w=640&h=480&q=68" alt="Tartaletas de fruta y pasteles de chocolate en una vitrina" loading="lazy" width="640" height="480"><div class="tj-txt"><h3>Tartaleta de fruta</h3><b>$2.900</b><p>Masa sablé, crema y fruta de la estación.</p></div></article>
+    </div>
+    <svg class="garabato garabato-b" viewBox="0 0 120 90" aria-hidden="true"><path d="M15 60c15 20 70 22 90-5M30 40c10-25 50-30 70-5"/><path d="M58 18v-8M44 22l-5-7M72 22l5-7"/></svg>
+    <p class="centro revela"><a class="boton-borde" href="carta/">Ver la carta completa</a></p>
+    <p class="nota">Precios de ejemplo.</p>
+  </section>
+
+  <section class="encargo" id="encargo" aria-labelledby="h-encargo">
+  <div class="caja">
+    <div class="cab-sec revela">
+      <p class="sobre">Encargo de tortas</p>
+      <h2 class="titulo" id="h-encargo">Arma tu torta<span class="mano">en cuatro pasos.</span></h2>
+      <p class="lead">Elige el tamaño, el sabor y el día. Te dejamos el mensaje listo para mandarlo. Pedimos dos días de anticipación.</p>
+    </div>
+
+    <form class="form-enc" id="form-encargo" novalidate data-demo="Esto es un ejemplo: en el sitio real, este encargo llega al WhatsApp de la pastelería con todos los datos de la torta.">
+      <div class="avance revela">
+        <p id="txt-avance" aria-live="polite">Llevas 0 de 4 pasos</p>
+        <div class="barra" aria-hidden="true"><i id="barra-avance"></i></div>
+      </div>
+
+      <div class="pasos-col">
+        <fieldset class="paso revela" data-paso="tamano">
+          <legend><span class="leg"><span class="num-paso"><b>1</b></span>¿Para cuántos?</span></legend>
+          <div class="opciones tamanos">
+            <label class="opcion"><input type="radio" name="tamano" value="10" data-precio="28000" data-nombre="Chica · 10 porciones"><span class="caja"><b>Chica</b><small>10 porciones</small><span class="pr">$28.000</span></span></label>
+            <label class="opcion"><input type="radio" name="tamano" value="15" data-precio="38000" data-nombre="Mediana · 15 porciones"><span class="caja"><b>Mediana</b><small>15 porciones</small><span class="pr">$38.000</span></span></label>
+            <label class="opcion"><input type="radio" name="tamano" value="20" data-precio="48000" data-nombre="Grande · 20 porciones"><span class="caja"><b>Grande</b><small>20 porciones</small><span class="pr">$48.000</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="paso revela" data-paso="sabor">
+          <legend><span class="leg"><span class="num-paso"><b>2</b></span>¿De qué sabor?</span></legend>
+          <div class="opciones sabores">
+            <label class="opcion"><input type="radio" name="sabor" value="frutilla" data-extra="0" data-nombre="Frutillas con crema"><span class="caja"><span class="punto" style="--c:#D7385E"></span><b>Frutillas con crema</b><small>Vainilla y chantilly</small></span></label>
+            <label class="opcion"><input type="radio" name="sabor" value="chocolate" data-extra="2000" data-nombre="Chocolate y frambuesa"><span class="caja"><span class="punto" style="--c:#7B4A3F"></span><b>Chocolate y frambuesa</b><small>Ganache y mermelada · +$2.000</small></span></label>
+            <label class="opcion"><input type="radio" name="sabor" value="tres-leches" data-extra="-2000" data-nombre="Tres leches"><span class="caja"><span class="punto" style="--c:#FBE7B5"></span><b>Tres leches</b><small>Con merengue suave · −$2.000</small></span></label>
+            <label class="opcion"><input type="radio" name="sabor" value="pistacho" data-extra="6000" data-nombre="Pistacho y mantequilla"><span class="caja"><span class="punto" style="--c:#93C47D"></span><b>Pistacho y mantequilla</b><small>Crema de mantequilla · +$6.000</small></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="paso revela" data-paso="retiro">
+          <legend><span class="leg"><span class="num-paso"><b>3</b></span>¿Cuándo la retiras?</span></legend>
+          <div class="campos dos">
+            <div class="campo">
+              <label for="fecha">Día de retiro</label>
+              <input type="date" id="fecha" name="fecha" aria-describedby="ayuda-fecha err-fecha">
+              <p class="ayuda" id="ayuda-fecha">Abrimos de martes a domingo.</p>
+              <p class="error-msg" id="err-fecha" role="alert"></p>
+            </div>
+            <div class="campo">
+              <label for="hora">Hora</label>
+              <select id="hora" name="hora">
+                <option value="">Elige una hora</option>
+                <option value="10:00">10:00</option>
+                <option value="12:00">12:00</option>
+                <option value="15:00">15:00</option>
+                <option value="17:00">17:00</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="paso revela" data-paso="datos">
+          <legend><span class="leg"><span class="num-paso"><b>4</b></span>¿A nombre de quién?</span></legend>
+          <div class="campos">
+            <div class="campo">
+              <label for="nombre">Tu nombre</label>
+              <input type="text" id="nombre" name="nombre" autocomplete="given-name" maxlength="40" placeholder="Por ejemplo, Camila">
+            </div>
+            <div class="campo">
+              <label for="dedicatoria">Mensaje para la torta <span style="font-weight:600">(opcional)</span></label>
+              <input type="text" id="dedicatoria" name="dedicatoria" maxlength="30" placeholder="Por ejemplo, Feliz cumple, Abuela" aria-describedby="ayuda-ded">
+              <p class="ayuda" id="ayuda-ded">Hasta 30 letras.</p>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="ticket-col revela">
+        <div class="ticket">
+          <div class="ticket-cab"><h3>Tu encargo</h3><span class="sticker pist">Precios de ejemplo</span></div>
+          <svg class="mini-torta mini" id="mini" data-sabor="frutilla" viewBox="0 0 220 200" role="img" aria-label="Vista previa de tu torta, que cambia de color con el sabor y de tamaño con las porciones">
+            <defs>
+              <g id="mini-gota"><ellipse cx="110" cy="100" rx="60" ry="10"/><rect x="59" y="102" width="14" height="14" rx="7"/><rect x="83" y="106" width="14" height="18" rx="7"/><rect x="109" y="108" width="14" height="13" rx="7"/><rect x="135" y="106" width="14" height="19" rx="7"/><rect x="153" y="102" width="12" height="12" rx="6"/></g>
+            </defs>
+            <ellipse cx="110" cy="176" rx="94" ry="14" fill="#FBE7CF" stroke="#4A2C2A" stroke-width="3.5"/>
+            <g class="cuerpo" id="mini-cuerpo">
+              <path class="c-biz" d="M50 100V164a60 10 0 0 0 120 0V100a60 10 0 0 1-120 0Z" stroke="#4A2C2A" stroke-width="3.5" stroke-linejoin="round"/>
+              <path class="c-biz-o" d="M50 130a60 10 0 0 0 120 0v8a60 10 0 0 1-120 0Z"/>
+              <use href="#mini-gota" class="c-cre" stroke="#4A2C2A" stroke-width="7" stroke-linejoin="round"/>
+              <use href="#mini-gota" class="c-cre"/>
+              <g class="t t-fresa"><g transform="translate(88 96) rotate(-12) scale(.62)"><use href="#fresa"/></g><g transform="translate(132 96) rotate(12) scale(.62)"><use href="#fresa"/></g><g transform="translate(110 103) scale(.72)"><use href="#fresa"/></g></g>
+              <g class="t t-frambuesa" fill="#D7385E" stroke="#4A2C2A" stroke-width="2.5"><circle cx="86" cy="97" r="8"/><circle cx="104" cy="92" r="8"/><circle cx="124" cy="94" r="8"/><circle cx="138" cy="100" r="8"/><circle cx="112" cy="104" r="8"/></g>
+              <g class="t t-canela"><circle cx="92" cy="97" r="2" fill="#B8743A"/><circle cx="108" cy="94" r="2" fill="#B8743A"/><circle cx="126" cy="98" r="2" fill="#B8743A"/><circle cx="102" cy="104" r="2" fill="#B8743A"/><circle cx="140" cy="102" r="2" fill="#B8743A"/><circle cx="112" cy="97" r="6.5" fill="#D7385E" stroke="#4A2C2A" stroke-width="2.5"/></g>
+              <g class="t t-pistacho" stroke="#4A2C2A" stroke-width="2.2"><circle cx="88" cy="97" r="5" fill="#93C47D"/><circle cx="104" cy="93" r="5" fill="#F6D776"/><circle cx="121" cy="95" r="5" fill="#93C47D"/><circle cx="136" cy="100" r="5" fill="#F6D776"/><circle cx="112" cy="104" r="5" fill="#93C47D"/></g>
+              <rect x="106.5" y="70" width="7" height="22" rx="2.5" fill="#D7385E" stroke="#4A2C2A" stroke-width="2.8"/>
+              <path d="M110 70v-5" stroke="#4A2C2A" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M110 65C105 62 105 56 110 50C115 56 115 62 110 65Z" fill="#F6D776" stroke="#4A2C2A" stroke-width="2.4" stroke-linejoin="round"/>
+            </g>
+          </svg>
+          <dl>
+            <div><dt>Tamaño</dt><dd id="r-tamano" class="vacio">Sin elegir</dd></div>
+            <div><dt>Sabor</dt><dd id="r-sabor" class="vacio">Sin elegir</dd></div>
+            <div><dt>Retiro</dt><dd id="r-retiro" class="vacio">Sin elegir</dd></div>
+            <div><dt>A nombre de</dt><dd id="r-nombre" class="vacio">Sin completar</dd></div>
+            <div><dt>En la torta</dt><dd id="r-ded" class="vacio">Sin mensaje</dd></div>
+          </dl>
+          <div class="total"><span>Total de ejemplo</span><strong id="r-total">$0</strong></div>
+          <p class="nota-precio">Precio de ejemplo: el real lo define la pastelería.</p>
+          <div class="mensaje"><h4>Tu mensaje</h4><p id="r-mensaje">Elige un tamaño, un sabor y un día para armar el mensaje.</p></div>
+          <button class="btn" type="submit">Enviar el encargo</button>
+          <p class="estado-form" id="estado-form" role="status"></p>
+          <p class="hecho-banner" id="hecho-banner">¡Listo! En un sitio real, tu encargo llegaría ahora a la pastelería.</p>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+  <section class="local caja" id="local" aria-labelledby="t-local">
+    <p class="sobre revela">El local</p>
+    <h2 id="t-local" class="titulo revela">Pasa y mira<span class="mano">por dentro.</span></h2>
+    <div class="galeria revela">
+      <figure class="gal-grande"><img src="https://images.unsplash.com/photo-1711672284661-bd70e38f31b2?auto=format&fit=crop&w=1600&h=800&q=65" srcset="https://images.unsplash.com/photo-1711672284661-bd70e38f31b2?auto=format&fit=crop&w=800&h=400&q=65 800w, https://images.unsplash.com/photo-1711672284661-bd70e38f31b2?auto=format&fit=crop&w=1600&h=800&q=65 1600w" sizes="100vw" alt="Vitrina llena de productos horneados" loading="lazy" data-gal-img><figcaption data-gal-txt><b>La vitrina</b><span>Todo lo del día, a la vista y con precio.</span></figcaption></figure>
+      <div class="gal-miniaturas" role="tablist" aria-label="Fotos del local">
+        <button type="button" role="tab" aria-selected="true" data-foto="https://images.unsplash.com/photo-1711672284661-bd70e38f31b2?auto=format&fit=crop&w=1800&h=900&q=68" data-t="La vitrina" data-s="Todo lo del día, a la vista y con precio."><img src="https://images.unsplash.com/photo-1711672284661-bd70e38f31b2?auto=format&fit=crop&w=300&h=200&q=55" alt="La vitrina"></button>
+        <button type="button" role="tab" aria-selected="false" data-foto="https://images.unsplash.com/photo-1546237769-6f84ec1a512a?auto=format&fit=crop&w=1800&h=900&q=68" data-t="El mesón" data-s="Donde se elige, se envuelve y se conversa."><img src="https://images.unsplash.com/photo-1546237769-6f84ec1a512a?auto=format&fit=crop&w=300&h=200&q=55" alt="El mesón"></button>
+        <button type="button" role="tab" aria-selected="false" data-foto="https://images.unsplash.com/photo-1534432182912-63863115e106?auto=format&fit=crop&w=1800&h=900&q=68" data-t="Lo recién salido" data-s="Cada mañana sale una tanda nueva del horno."><img src="https://images.unsplash.com/photo-1534432182912-63863115e106?auto=format&fit=crop&w=300&h=200&q=55" alt="Lo recién salido"></button>
+        <button type="button" role="tab" aria-selected="false" data-foto="https://images.unsplash.com/photo-1511018556340-d16986a1c194?auto=format&fit=crop&w=1800&h=900&q=68" data-t="La sala" data-s="Mesas para el café de la tarde, sin apuro."><img src="https://images.unsplash.com/photo-1511018556340-d16986a1c194?auto=format&fit=crop&w=300&h=200&q=55" alt="La sala"></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="visita caja" id="visitanos" aria-labelledby="t-vis">
+    <div class="visita-caja revela">
+      <div><p class="sobre-rojo">Visítanos</p><h2 id="t-vis" class="titulo-chico">Te esperamos en<span class="mano">San Pedro de la Paz.</span></h2><p>Avenida Michimalonco (dirección de ejemplo)<br>San Pedro de la Paz, Biobío</p></div>
+      <dl class="horas" data-horas>
+        <div data-dia="2"><dt>Martes a viernes</dt><dd>9:00 – 20:00</dd></div>
+        <div data-dia="6"><dt>Sábado</dt><dd>10:00 – 20:00</dd></div>
+        <div data-dia="0"><dt>Domingo</dt><dd>10:00 – 14:00</dd></div>
+        <div data-dia="1"><dt>Lunes</dt><dd>Cerrado</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="cierre" aria-labelledby="t-cierre">
+    <p class="cierre-logo" aria-hidden="true">casa dulce</p>
+    <h2 id="t-cierre" class="titulo">Tardes dulces,<span class="mano">todo el año.</span></h2>
+    <a class="boton-borde" href="#encargo" data-demo="Esto es un ejemplo: en el sitio real, este botón abre el WhatsApp de la pastelería.">Escríbenos por WhatsApp</a>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="caja pie-in">
+    <nav class="pie-links" aria-label="Pie"><a href="#favoritos">Favoritos</a><a href="#encargo">Encargar</a><a href="carta/">La carta</a><a href="../../privacidad/">Privacidad</a><a href="../../terminos/">Términos</a></nav>
+    <p>© 2026 Casa Dulce · Negocio ficticio, sitio de ejemplo de Bío Digital · Fotos: Unsplash</p>
+  </div>
+  <svg class="pie-dibujos" viewBox="0 0 1200 140" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g fill="none" stroke="#fff4e6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"><path d="M60 140v-40h90v40M60 100c8-14 74-14 90 0M105 84v-14"/><path d="M230 140c0-30 20-50 50-50s50 20 50 50"/><path d="M262 92c4-10 32-10 36 0"/><path d="M410 140l30-60 30 60M425 110h30"/><path d="M540 140v-30a30 30 0 0 1 60 0v30M600 118h14a10 10 0 0 1 0 20h-14"/><path d="M700 140c10-40 90-40 100 0M720 110c6-8 54-8 60 0"/><path d="M880 140v-50h70v50M880 90l35-24 35 24"/><path d="M1020 140c0-26 18-44 44-44s44 18 44 44M1040 100l24-20 24 20"/></g></svg>
+</footer>
+</body>
+</html>

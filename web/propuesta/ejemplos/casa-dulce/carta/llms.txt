@@ -1,0 +1,17 @@
+# Casa Dulce
+
+> Carta digital de demostración de Bío Digital para una pastelería ficticia.
+
+- Martes a viernes 9:30 a 19:00
+- Sábado y domingo 10:00 a 18:00
+
+## Carta
+- Cafetería: 6 platos
+- Pastelería: 6 platos
+- Tortas por encargo: 4 platos
+- Salados: 5 platos
+- Bebidas frías: 4 platos
+
+## Enlaces
+- [Carta digital](/)
+- [Privacidad](privacidad)

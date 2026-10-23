@@ -235,7 +235,7 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 }
 .ask input::placeholder { color: var(--fg-3); }
 .ask input:focus, .ask select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
-.ask .check-row { display: flex; gap: 10px; align-items: start; font-weight: 400; color: var(--fg-2); }
+.ask .check-row { display: flex; gap: 10px; align-items: center; min-height: 44px; font-weight: 400; color: var(--fg-2); cursor: pointer; }
 .ask .check-row input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex: none; }
 .form-status { font-size: 14px; color: var(--fg-2); min-height: 1lh; }
 .form-status:not(:empty) { padding: 12px 14px; border-radius: var(--r); background: var(--bg-3); animation: seq-in .4s var(--ease-out); }
@@ -301,3 +301,13 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
   .gift-text { flex-direction: column; align-items: start; }
   .faq details p { padding-left: 20px; }
 }
+
+/* Enlace a la demo completa de un producto */
+.det-demo { display: grid; gap: 4px; margin: 4px 0 0; }
+.det-demo a { display: inline-flex; align-items: center; min-height: 44px; color: var(--c1); font-weight: 600; text-underline-offset: 3px; }
+.det-demo small { color: var(--fg-3); font-size: 13px; }
+
+/* Enlace a la página "Antes de contratar" */
+.antes-link { margin: 24px auto 0; text-align: center; color: var(--fg-2); font-size: 15px; }
+.antes-link a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--fg); text-underline-offset: 3px; }
+.antes-link a .btn-ico { flex: none; }

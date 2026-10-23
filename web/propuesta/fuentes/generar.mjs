@@ -7,15 +7,17 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { pagina } from './comun.mjs';
-import { escribirMaquetas } from './maquetas.mjs';
 import { PAYMENT_RETURN_ROUTES, paymentReturnPage } from './retornos.mjs';
+import { LEGALES } from './legales.mjs';
+import { ANTES } from './antes.mjs';
+import { COMO } from './como-trabajamos.mjs';
+import { escribirGaleria } from './maquetas.mjs';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const publico = process.argv.includes('--publico');   // versión para publicar: sin rueda de colores del equipo ni aviso de prototipo
 const pedidas = process.argv.slice(2).filter((a) => a !== '--publico');
 const todas = ['3', '4', '5', '6', '7', '8'];
 
-escribirMaquetas();
 for (const n of pedidas.length ? pedidas : todas) {
   let o;
   try { o = (await import(`./opcion-${n}.mjs`)).default; } catch (e) {
@@ -33,5 +35,12 @@ for (const n of pedidas.length ? pedidas : todas) {
       writeFileSync(join(directory, 'index.html'), paymentReturnPage(route));
       console.log(`retorno → pago/${route}/index.html`);
     }
+    for (const l of [...LEGALES, ANTES, COMO]) {
+      mkdirSync(join(aqui, '..', l.ruta), { recursive: true });
+      writeFileSync(join(aqui, '..', l.ruta, 'index.html'), l.html());
+      console.log(`página → ${l.ruta}/index.html`);
+    }
+    escribirGaleria();
+    console.log('galería → ejemplos/index.html');
   }
 }

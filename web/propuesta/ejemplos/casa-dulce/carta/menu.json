@@ -1,0 +1,85 @@
+{
+  "demo": true,
+  "negocio": {
+    "nombre": "Casa Dulce",
+    "lema": "Pastelería y cafetería de barrio, hecha a mano",
+    "descripcion": "Carta digital de demostración de Bío Digital para una pastelería ficticia.",
+    "comuna": "San Pedro de la Paz",
+    "horario": [
+      "Martes a viernes 9:30 a 19:00",
+      "Sábado y domingo 10:00 a 18:00"
+    ],
+    "tipo_schema": "Bakery",
+    "pedidos_whatsapp": false
+  },
+  "tema": {
+    "estilo": "crema",
+    "fuente": "Fraunces",
+    "c1": "#b32a4c",
+    "c2": "#9c2542"
+  },
+  "aviso": "Carta de demostración de Bío Digital: Casa Dulce es un negocio ficticio y todos los precios son de ejemplo.",
+  "creditos": true,
+  "categorias": [
+    {
+      "id": "cafeteria",
+      "nombre": "Cafetería",
+      "descripcion": "Para acompañar con algo dulce",
+      "platos": [
+        { "id": "espresso", "nombre": "Espresso", "descripcion": "Corto, intenso y con crema espesa.", "precio": 1800 },
+        { "id": "cortado", "nombre": "Cortado", "descripcion": "Espresso con un golpe de leche tibia.", "precio": 2200 },
+        { "id": "capuchino", "nombre": "Capuchino", "descripcion": "Espresso, leche vaporizada y espuma cremosa con cacao.", "precio": 2900 },
+        { "id": "mocaccino", "nombre": "Mocaccino de la casa", "descripcion": "Café, chocolate semiamargo y crema batida.", "precio": 3400, "etiquetas": ["favorito"] },
+        { "id": "te-chai", "nombre": "Té chai con leche", "descripcion": "Té negro con canela, cardamomo y jengibre.", "precio": 2800, "etiquetas": ["vegetariano"] },
+        { "id": "chocolate-caliente", "nombre": "Chocolate caliente", "descripcion": "Chocolate espeso, de los de cuchara, con un malvavisco.", "precio": 3200, "etiquetas": ["vegetariano"] }
+      ]
+    },
+    {
+      "id": "pasteleria",
+      "nombre": "Pastelería",
+      "descripcion": "Horneado cada mañana",
+      "platos": [
+        { "id": "kuchen-frambuesa", "nombre": "Kuchen de frambuesa", "descripcion": "Masa quebrada, crema pastelera y frambuesas.", "precio": 3200, "etiquetas": ["favorito", "vegetariano"] },
+        { "id": "brownie", "nombre": "Brownie de chocolate", "descripcion": "Húmedo por dentro, crujiente por fuera, con nueces.", "precio": 2600, "etiquetas": ["vegetariano"] },
+        { "id": "cuchufli", "nombre": "Cuchuflí con manjar", "descripcion": "Barquillo crocante relleno de manjar casero.", "precio": 1500, "etiquetas": ["vegetariano"] },
+        { "id": "alfajor", "nombre": "Alfajor de maicena", "descripcion": "Dos tapas suaves, manjar y coco rallado.", "precio": 1700, "etiquetas": ["vegetariano", "favorito"] },
+        { "id": "tartaleta-limon", "nombre": "Tartaleta de limón", "descripcion": "Crema de limón sobre masa de mantequilla, con merengue tostado.", "precio": 3300, "etiquetas": ["vegetariano", "nuevo"] },
+        { "id": "empolvado", "nombre": "Pastel de hoja con manjar", "descripcion": "Hojas finas y manjar, con azúcar flor encima.", "precio": 3000, "etiquetas": ["vegetariano"] }
+      ]
+    },
+    {
+      "id": "tortas",
+      "nombre": "Tortas por encargo",
+      "descripcion": "Se piden con anticipación. Precio desde, según tamaño",
+      "platos": [
+        { "id": "torta-frutilla", "nombre": "Torta de frutillas con crema", "descripcion": "Bizcocho de vainilla, crema chantilly y frutillas frescas. Desde 10 porciones.", "precio": 28000, "etiquetas": ["favorito", "vegetariano"] },
+        { "id": "torta-chocolate", "nombre": "Torta de chocolate y frambuesa", "descripcion": "Bizcocho de cacao, ganache y mermelada de frambuesa. Desde 10 porciones.", "precio": 30000, "etiquetas": ["vegetariano"] },
+        { "id": "torta-tres-leches", "nombre": "Torta tres leches", "descripcion": "Bizcocho bañado en tres leches, con merengue suave. Desde 10 porciones.", "precio": 26000, "etiquetas": ["vegetariano"] },
+        { "id": "torta-pistacho", "nombre": "Torta de pistacho y mantequilla", "descripcion": "Bizcocho de pistacho y crema de mantequilla. Desde 10 porciones.", "precio": 34000, "etiquetas": ["vegetariano", "nuevo"] }
+      ]
+    },
+    {
+      "id": "salados",
+      "nombre": "Salados",
+      "descripcion": "Para el almuerzo liviano o la once",
+      "platos": [
+        { "id": "tostada-palta", "nombre": "Tostada de palta", "descripcion": "Pan de masa madre, palta, limón y semillas.", "precio": 4200, "etiquetas": ["vegano"] },
+        { "id": "sandwich-jamon-queso", "nombre": "Sándwich de jamón y queso", "descripcion": "Pan de molde artesanal, jamón y queso fundido.", "precio": 3800 },
+        { "id": "croissant-queso", "nombre": "Croissant de queso", "descripcion": "Hojaldrado, relleno de queso y orégano.", "precio": 3400, "etiquetas": ["vegetariano"] },
+        { "id": "quiche", "nombre": "Quiche de espinaca", "descripcion": "Masa de mantequilla, espinaca, queso y huevo.", "precio": 4500, "etiquetas": ["vegetariano"] },
+        { "id": "empanada-queso", "nombre": "Empanada de queso", "descripcion": "Frita en el momento, crujiente y bien rellena.", "precio": 2400, "etiquetas": ["vegetariano"] }
+      ]
+    },
+    {
+      "id": "bebidas-frias",
+      "nombre": "Bebidas frías",
+      "descripcion": "Para los días de calor",
+      "platos": [
+        { "id": "limonada-menta", "nombre": "Limonada con menta", "descripcion": "Limón exprimido, menta fresca y hielo.", "precio": 3000, "etiquetas": ["vegano"] },
+        { "id": "jugo-frutilla", "nombre": "Jugo de frutilla", "descripcion": "Frutilla licuada, con o sin leche.", "precio": 3200, "etiquetas": ["vegetariano"] },
+        { "id": "cafe-helado", "nombre": "Café helado", "descripcion": "Espresso, hielo y leche fría. Con jarabe de vainilla si quieres.", "precio": 3300, "etiquetas": ["vegetariano"] },
+        { "id": "malteada", "nombre": "Malteada de manjar", "descripcion": "Helado de vainilla, leche y manjar. Con crema por encima.", "precio": 4200, "etiquetas": ["vegetariano", "favorito"] }
+      ]
+    }
+  ]
+}

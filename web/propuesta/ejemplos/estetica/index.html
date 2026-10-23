@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es-CL" data-ejemplo="Centro Aurora">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centro Aurora · Estética y bienestar en Chiguayante</title>
+<meta name="description" content="Faciales, tratamientos corporales y masajes en Chiguayante, con reserva de horas en línea. Precios de ejemplo. Sitio de ejemplo de Bío Digital.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f4f4f2">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23a9c993'/%3E%3Cpath d='M8 21c4-9 12-9 16 0' fill='none' stroke='%23161616' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='11' r='2.6' fill='%23161616'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Centro Aurora (sitio de ejemplo)">
+<meta property="og:title" content="Centro Aurora · Estética y bienestar en Chiguayante">
+<meta property="og:description" content="Faciales, corporales y masajes con reserva en línea. Sitio de ejemplo hecho por Bío Digital.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_compartido/demo.css">
+<link rel="stylesheet" href="../_compartido/reservas.css">
+<link rel="stylesheet" href="estilos.css">
+<script src="../_compartido/demo.js" defer></script>
+<script src="../_compartido/reservas.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="nav" data-nav>
+  <a class="marca" href="#inicio" aria-label="Centro Aurora, inicio">
+    <svg viewBox="0 0 40 24" width="34" height="20" aria-hidden="true"><path d="M2 20C9 6 31 6 38 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="6" r="3.4" fill="currentColor"/></svg>
+    <span>aurora</span>
+  </a>
+  <nav aria-label="Principal">
+    <a href="#tratamientos">Tratamientos</a>
+    <a href="#agenda">Agenda</a>
+    <a href="#planes">Planes</a>
+    <a class="pill pill-negro" href="#reserva">Reservar <span class="flecha" aria-hidden="true">→</span></a>
+  </nav>
+</header>
+
+<main id="contenido">
+  <section class="hero" id="inicio">
+    <div class="hero-foto" data-parallax><img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=65" srcset="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=65 800w, https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1600&q=65 1600w" sizes="100vw" alt="Persona recostada recibiendo un masaje en una sala tranquila" fetchpriority="high"></div>
+    <div class="hero-velo" aria-hidden="true"></div>
+    <div class="hero-in">
+      <div class="hero-txt">
+        <h1 class="partir">Tu pausa,<br>a tu ritmo</h1>
+        <p class="sube" style="--d:.5s">Faciales, corporales y masajes en salas privadas.<br>A pasos de la costanera de Chiguayante.</p>
+      </div>
+      <div class="hero-oferta sube" style="--d:.7s">
+        <p class="hero-precio">Primera sesión facial <b>$29.990</b></p>
+        <a class="pill pill-verde" href="#reserva" data-reservar="Limpieza facial profunda">Reservar <span class="flecha" aria-hidden="true">→</span></a>
+        <small>Solo clientes nuevos · precio de ejemplo</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="datos" aria-label="Cómo trabajamos">
+    <p class="datos-lema revela">Más atención.<br>Mejor descanso.</p>
+    <dl class="datos-lista">
+      <div class="revela" style="--d:.05s"><dt><span data-cuenta="1">1</span> persona</dt><dd>Por sala, siempre</dd></div>
+      <div class="revela" style="--d:.12s"><dt><span data-cuenta="8">8</span> tratamientos</dt><dd>Faciales, corporales y masajes</dd></div>
+      <div class="revela" style="--d:.19s"><dt>Mar a sáb</dt><dd>Horas desde las 10:00</dd></div>
+    </dl>
+  </section>
+
+  <section class="seccion" id="tratamientos" aria-labelledby="t-trat">
+    <h2 id="t-trat" class="titulo revela">Encuentra tu tratamiento.</h2>
+    <div class="filtros revela" role="tablist" aria-label="Tipo de tratamiento">
+      <button type="button" role="tab" aria-selected="true" data-filtro="todos">Todos</button>
+      <button type="button" role="tab" aria-selected="false" data-filtro="facial">Faciales</button>
+      <button type="button" role="tab" aria-selected="false" data-filtro="corporal">Corporales</button>
+      <button type="button" role="tab" aria-selected="false" data-filtro="masaje">Masajes</button>
+    </div>
+    <ul class="lista" data-lista>
+      <li class="trat revela" data-tipo="facial" data-nombre="Limpieza facial profunda" data-dur="60" data-precio="38000" data-desc="Limpieza, extracción suave y mascarilla según tu piel.">
+        <button type="button" data-reservar="Limpieza facial profunda"><span class="trat-n">Limpieza facial profunda</span><span class="trat-d">Limpieza, extracción suave y mascarilla según tu piel.<small>Facial · 60 min · $38.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="facial" data-nombre="Hidratación luminosa" data-dur="75" data-precio="46000" data-desc="Hidratación intensa con masaje facial y máscara de colágeno.">
+        <button type="button" data-reservar="Hidratación luminosa"><span class="trat-n">Hidratación luminosa</span><span class="trat-d">Hidratación intensa con masaje facial y máscara de colágeno.<small>Facial · 75 min · $46.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="facial" data-nombre="Facial calmante" data-dur="60" data-precio="42000" data-desc="Para piel sensible o enrojecida, con activos suaves.">
+        <button type="button" data-reservar="Facial calmante"><span class="trat-n">Facial calmante</span><span class="trat-d">Para piel sensible o enrojecida, con activos suaves.<small>Facial · 60 min · $42.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="corporal" data-nombre="Exfoliación corporal" data-dur="60" data-precio="40000" data-desc="Exfoliación con sales y aceite tibio, de cuello a pies.">
+        <button type="button" data-reservar="Exfoliación corporal"><span class="trat-n">Exfoliación corporal</span><span class="trat-d">Exfoliación con sales y aceite tibio, de cuello a pies.<small>Corporal · 60 min · $40.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="corporal" data-nombre="Envoltura de barro tibio" data-dur="75" data-precio="48000" data-desc="Barro mineral tibio y descanso envuelto en mantas.">
+        <button type="button" data-reservar="Envoltura de barro tibio"><span class="trat-n">Envoltura de barro tibio</span><span class="trat-d">Barro mineral tibio y descanso envuelto en mantas.<small>Corporal · 75 min · $48.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="masaje" data-nombre="Masaje relajante" data-dur="60" data-precio="36000" data-desc="Presión suave y continua para bajar las revoluciones.">
+        <button type="button" data-reservar="Masaje relajante"><span class="trat-n">Masaje relajante</span><span class="trat-d">Presión suave y continua para bajar las revoluciones.<small>Masaje · 60 min · $36.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="masaje" data-nombre="Masaje descontracturante" data-dur="60" data-precio="42000" data-desc="Trabajo profundo en espalda, cuello y hombros.">
+        <button type="button" data-reservar="Masaje descontracturante"><span class="trat-n">Masaje descontracturante</span><span class="trat-d">Trabajo profundo en espalda, cuello y hombros.<small>Masaje · 60 min · $42.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+      <li class="trat revela" data-tipo="masaje" data-nombre="Piedras calientes" data-dur="75" data-precio="52000" data-desc="Piedras volcánicas tibias y aceite de almendras.">
+        <button type="button" data-reservar="Piedras calientes"><span class="trat-n">Piedras calientes</span><span class="trat-d">Piedras volcánicas tibias y aceite de almendras.<small>Masaje · 75 min · $52.000</small></span><span class="trat-f" aria-hidden="true">↗</span></button>
+      </li>
+    </ul>
+    <p class="nota">Precios de ejemplo.</p>
+  </section>
+
+  <section class="seccion" id="agenda" aria-labelledby="t-agenda">
+    <h2 id="t-agenda" class="titulo revela">Próximas horas</h2>
+    <div class="agenda-cab revela">
+      <p class="agenda-rango" data-rango></p>
+      <span class="agenda-flechas"><button type="button" data-semana="-1" aria-label="Semana anterior">←</button><button type="button" data-semana="1" aria-label="Semana siguiente">→</button></span>
+      <span class="agenda-etiqueta">Disponibilidad de ejemplo</span>
+    </div>
+    <div class="dias revela" role="tablist" aria-label="Día" data-dias><span class="dias-marca" aria-hidden="true"></span></div>
+    <div class="tabla-envoltura revela">
+      <table class="tabla">
+        <thead><tr><th scope="col">Hora</th><th scope="col">Tratamiento</th><th scope="col" class="col-o">Sala</th><th scope="col" class="col-o">Duración</th><th scope="col">Cupos</th><th scope="col"><span class="sr">Acción</span></th></tr></thead>
+        <tbody data-horas></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="seccion" id="planes" aria-labelledby="t-planes">
+    <h2 id="t-planes" class="titulo revela">Hazlo un hábito.</h2>
+    <p class="bajada revela">Una sesión cuando la necesites o un plan para darte la pausa cada mes.</p>
+    <div class="planes">
+      <article class="plan revela" style="--d:.0s">
+        <div class="tarjeta tarjeta-blanca" data-inclina><span class="tarjeta-logo">aurora</span><span class="tarjeta-chip" aria-hidden="true"></span><span class="tarjeta-n">Sesión suelta</span><span class="tarjeta-s">Chiguayante · Bienestar</span><span class="tarjeta-brillo" aria-hidden="true"></span></div>
+        <h3>Sesión suelta</h3>
+        <p class="plan-precio">desde $36.000 <small>/ sesión</small></p>
+        <p>El tratamiento que elijas, cuando quieras.<br>Sin compromiso.</p>
+        <a class="pill pill-gris" href="#reserva">Reservar una sesión <span class="flecha" aria-hidden="true">→</span></a>
+      </article>
+      <article class="plan revela" style="--d:.1s">
+        <div class="tarjeta tarjeta-verde" data-inclina><span class="tarjeta-logo">aurora</span><span class="tarjeta-chip" aria-hidden="true"></span><span class="tarjeta-n">4 sesiones</span><span class="tarjeta-s">Chiguayante · Bienestar</span><span class="tarjeta-brillo" aria-hidden="true"></span></div>
+        <h3>4 sesiones</h3>
+        <p class="plan-precio">$139.000 <small>/ mes</small></p>
+        <p>Una sesión por semana, del tratamiento que quieras.<br>Úsalas dentro del mes.</p>
+        <a class="pill pill-gris" href="#reserva">Elegir 4 sesiones <span class="flecha" aria-hidden="true">→</span></a>
+      </article>
+      <article class="plan plan-destacado revela" style="--d:.2s">
+        <div class="tarjeta tarjeta-negra" data-inclina><span class="tarjeta-logo">aurora</span><span class="tarjeta-chip" aria-hidden="true"></span><span class="tarjeta-n">8 sesiones</span><span class="tarjeta-s">Chiguayante · Bienestar</span><span class="tarjeta-brillo" aria-hidden="true"></span></div>
+        <h3>8 sesiones</h3>
+        <p class="plan-precio">$259.000 <small>/ mes</small></p>
+        <p>Dos sesiones por semana para un cambio que se note.<br>Incluye un facial de regalo.</p>
+        <a class="pill pill-negro" href="#reserva">Elegir 8 sesiones <span class="flecha" aria-hidden="true">→</span></a>
+      </article>
+    </div>
+    <p class="nota">Precios de ejemplo.</p>
+  </section>
+
+  <section class="salas" aria-labelledby="t-salas">
+    <div class="seccion">
+      <h2 id="t-salas" class="titulo revela">Estás en buenas manos.</h2>
+      <div class="polaroids">
+        <figure class="polaroid revela" style="--r:-2.5deg;--d:0s"><img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=700&h=760&q=70" alt="Persona con una mascarilla facial durante un tratamiento" loading="lazy" width="700" height="760"><figcaption><b>Sala facial</b><span>Luz cálida, camilla térmica y productos para cada tipo de piel.</span></figcaption></figure>
+        <figure class="polaroid revela" style="--r:1.8deg;--d:.12s"><img src="https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=700&h=760&q=70" alt="Masaje con piedras volcánicas sobre la espalda" loading="lazy" width="700" height="760"><figcaption><b>Sala de masajes</b><span>Silencio, aromas suaves y temperatura a tu gusto.</span></figcaption></figure>
+        <figure class="polaroid revela" style="--r:-1.2deg;--d:.24s"><img src="https://images.unsplash.com/photo-1620733723572-11c53f73a416?auto=format&fit=crop&w=700&h=760&q=70" alt="Velas encendidas, toalla enrollada y difusor de aromas" loading="lazy" width="700" height="760"><figcaption><b>Sala de descanso</b><span>Té de hierbas y diez minutos para volver con calma.</span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion frases" aria-labelledby="t-frases">
+    <div class="frases-cab revela"><h2 id="t-frases">Lo que cuidamos en cada sesión.</h2></div>
+    <div class="frases-lista">
+      <blockquote class="revela" style="--d:0s"><p>"Te preguntamos cómo llegas antes de empezar."</p><cite>La ficha de tu piel queda guardada</cite></blockquote>
+      <blockquote class="revela" style="--d:.1s"><p>"Nada de apuros entre una persona y otra."</p><cite>15 minutos libres entre horas</cite></blockquote>
+      <blockquote class="revela" style="--d:.2s"><p>"Sales con la indicación por escrito."</p><cite>Cuidados para la casa</cite></blockquote>
+    </div>
+  </section>
+
+  <section class="reserva" id="reserva" aria-labelledby="t-reserva">
+    <div class="seccion reserva-in">
+      <div class="reserva-txt revela">
+        <h2 id="t-reserva" class="titulo">Reserva tu hora.</h2>
+        <p>Elige el tratamiento, el día y la hora. Te confirmamos por WhatsApp.</p>
+      </div>
+      <div class="reserva-caja revela" id="reserva-modulo" data-demo></div>
+    </div>
+  </section>
+
+  <section class="seccion ubicacion" aria-labelledby="t-ubica">
+    <h2 id="t-ubica" class="titulo revela">Te esperamos en Chiguayante.</h2>
+    <div class="ubica-grid">
+      <div class="revela"><p>Avenida Manuel Rodríguez (dirección de ejemplo)<br>Chiguayante, Biobío</p><p class="suave">Estacionamiento en la calle.</p><a class="pill pill-gris pill-chica" href="#reserva" data-demo="Esto es un ejemplo: en el sitio real, este botón abre Google Maps con la dirección del local.">Cómo llegar <span class="flecha" aria-hidden="true">→</span></a></div>
+      <div class="revela" style="--d:.1s"><h3>Horario</h3><dl class="horario"><div><dt>Martes a viernes</dt><dd>10:00 – 19:00</dd></div><div><dt>Sábado</dt><dd>10:00 – 15:00</dd></div><div><dt>Domingo y lunes</dt><dd>Cerrado</dd></div></dl></div>
+      <div class="revela" style="--d:.2s"><h3>Escríbenos</h3><p><a href="#reserva" data-demo>WhatsApp del centro</a><br><a href="#reserva" data-demo="Esto es un ejemplo: en el sitio real, este enlace abre Instagram.">Instagram</a></p></div>
+    </div>
+  </section>
+
+  <section class="seccion faq" aria-labelledby="t-faq">
+    <h2 id="t-faq" class="titulo revela">Antes de tu<br>primera sesión.</h2>
+    <div class="acordeon revela">
+      <details open><summary>¿Necesito experiencia o una evaluación previa?</summary><div><p>No. En tu primera sesión te hacemos unas preguntas sobre tu piel o tus molestias y ajustamos el tratamiento.</p></div></details>
+      <details><summary>¿Qué tengo que traer?</summary><div><p>Nada. Tenemos bata, toallas y pantuflas. Si vienes a un facial, llega sin maquillaje si puedes.</p></div></details>
+      <details><summary>¿Con cuánta anticipación llego?</summary><div><p>Diez minutos antes, para tomar un té y empezar a la hora.</p></div></details>
+      <details><summary>¿Y si necesito cambiar mi hora?</summary><div><p>Avísanos con 24 horas de anticipación por WhatsApp y la movemos sin costo.</p></div></details>
+      <details><summary>¿Atienden a parejas?</summary><div><p>Sí, con masajes en salas contiguas a la misma hora. Pídelo al reservar.</p></div></details>
+      <details><summary>¿Cómo funciona la primera sesión facial?</summary><div><p>Es una limpieza facial profunda a precio de bienvenida, una vez por persona.</p></div></details>
+    </div>
+  </section>
+
+  <section class="cierre" aria-labelledby="t-cierre">
+    <div class="seccion cierre-in">
+      <div class="revela"><h2 id="t-cierre">Tu primera pausa.<br>Un mejor descanso.</h2><p>Primera sesión facial a $29.990</p></div>
+      <div class="cierre-cta revela" style="--d:.1s"><a class="pill pill-negro" href="#reserva" data-reservar="Limpieza facial profunda">Reservar mi hora <span class="flecha" aria-hidden="true">→</span></a><small>Solo clientes nuevos</small></div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="seccion pie-in">
+    <a class="marca" href="#inicio"><svg viewBox="0 0 40 24" width="30" height="18" aria-hidden="true"><path d="M2 20C9 6 31 6 38 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="6" r="3.4" fill="currentColor"/></svg><span>aurora</span></a>
+    <div class="pie-links"><a href="#reserva" data-demo="Esto es un ejemplo: en el sitio real, este enlace abre Instagram.">Instagram</a><a href="#reserva" data-demo>Contacto</a><a href="#reserva" data-demo="Esto es un ejemplo: en el sitio real, este enlace abre Google Maps.">Cómo llegar</a></div>
+    <div class="pie-links"><a href="../../privacidad/">Privacidad</a><a href="../../terminos/">Términos</a></div>
+    <p class="pie-copy">© 2026 Centro Aurora · Negocio ficticio, sitio de ejemplo de Bío Digital · Fotos: Unsplash</p>
+  </div>
+</footer>
+</body>
+</html>

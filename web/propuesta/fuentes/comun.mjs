@@ -49,7 +49,7 @@ const clp = (n) => '$' + n.toLocaleString('es-CL');
 // Los seis productos vigentes: id, ícono, nombre, precio, si el precio es "desde", qué es y qué recibes.
 const SERVICIOS = [
   ['web', 'web', 'Página web', 49990, true, 'Un lugar propio en internet, rápido en el celular y con tu WhatsApp a la vista.',
-    ['Hasta 5 secciones, hecha a tu medida', 'Botón de WhatsApp, mapa y horario', 'Se ve bien en el celular']],
+    ['Hasta 5 secciones, hecha a tu medida', 'Botón de WhatsApp, mapa y horario', 'Se ve bien en el celular', 'Correo contacto@tunegocio.cl que llega a tu Gmail, sin mensualidad']],
   ['social-video', 'video', 'Videos para redes', 9990, true, 'Videos cortos para Instagram y TikTok, grabados y editados en tu local.',
     ['Video vertical de 15 a 30 segundos', 'Grabación, edición, música y textos', 'Quedan tuyos, para usarlos donde quieras']],
   ['interactive-menu', 'qr', 'Menú digital', 27990, true, 'Tu carta o lista de precios en un QR, sin cartas de papel.',
@@ -59,7 +59,7 @@ const SERVICIOS = [
   ['reservations', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
     ['Agenda en línea con tus horarios', 'Confirmación automática al cliente', 'Ves las reservas del día en tu teléfono']],
   ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
-    ['QR con sellos, sin tarjetas de papel', 'Se guarda en Google Wallet y Apple Wallet', 'Ves cuántos clientes están volviendo']],
+    ['QR con sellos, sin tarjetas de papel', 'Queda como acceso directo en el celular del cliente, sin instalar nada', 'Ves cuántos clientes están volviendo']],
 ];
 const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 127.940
 const PACK = 79990;
@@ -80,6 +80,12 @@ const EXTRA = {
   'interactive-menu': { id: 'interactive-menu-ar', nombre: 'Menú digital interactivo (plato en vivo)', titulo: 'Versión interactiva: plato en vivo', cuesta: 'Cuesta más',
     texto: 'El cliente elige un plato en el menú, se abre la cámara de su celular y ve el plato sobre su mesa, como si estuviera ahí. Un menú interactivo de verdad, para que decida mirando.',
     precio: 'Precio a cotizar según cuántos platos quieras mostrar' },
+};
+// Demos completas (páginas aparte) y su versión con más funciones: a cotizar, porque usan servicios con costo mensual o por uso.
+const DEMO = {
+  'interactive-menu': ['ejemplos/fogon-del-sur/', 'Ver la demo con pedidos y delivery', 'Versión para restaurantes con pedidos en la mesa, retiro y delivery, seguimiento con mapa, pantalla de cocina y panel: a cotizar. Puede tener costos mensuales de terceros (base de datos, mapas, pagos) si el local supera sus planes gratis.'],
+  'loyalty-card': ['ejemplos/fidelizacion/', 'Ver la tarjeta de ejemplo', 'Pruébala: crea tu tarjeta y suma sellos desde la caja del local en otra pestaña.'],
+  reservations: ['ejemplos/reservas/', 'Ver la demo de reservas', 'Versión completa con depósito, políticas de cancelación, idiomas, calendario sincronizado (iCal) y panel: a cotizar. Los avisos por WhatsApp y las pasarelas de pago cobran por uso.'],
 };
 const NOTA = { web: `Dominio .cl no incluido (${'$' + DOMINIO_ANUAL.toLocaleString('es-CL')} al año en NIC Chile). El hosting no tiene costo.` };
 
@@ -119,7 +125,7 @@ const FAQ = [
   ['¿Cuánto se demora?', 'Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. Por eso tomamos casi todo en la visita.'],
   ['¿El dominio y el hosting están incluidos?', `El dominio .cl no está incluido: lo registra NIC Chile, cuesta ${clp(DOMINIO_ANUAL)} al año y queda a nombre del negocio. El hosting de la página web va en Cloudflare, sin costo para ti. Nosotros no cobramos mensualidad.`],
   ['¿Por qué cobran anticipo?', 'Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando y firmamos el acta.'],
-  ['¿La tarjeta de fidelización funciona en cualquier celular?', 'Sí. Se guarda en Google Wallet en Android y en Apple Wallet en iPhone. Tu cliente no instala ninguna aplicación nueva.'],
+  ['¿La tarjeta de fidelización funciona en cualquier celular?', 'Sí. Se abre en el navegador de cualquier celular y queda como acceso directo, sin instalar ninguna aplicación. Si quieres que además se guarde en Google Wallet o Apple Wallet, eso se cotiza aparte, porque esas plataformas cobran una mensualidad.'],
   ['¿Qué pasa si me demoro en mandar mis fotos o textos?', 'El plazo de producción se corre los mismos días y te avisamos.'],
   ['¿Tengo que saber de tecnología?', 'No. Nosotros hacemos todo y te lo dejamos funcionando.'],
   ['¿Dónde atienden?', 'Solo en el Gran Concepción: Concepción, Talcahuano, Hualpén, San Pedro de la Paz, Chiguayante, Coronel, Lota, Penco, Tomé y Hualqui. Vamos a tu local para las fotos y los videos.'],
@@ -200,6 +206,7 @@ ${o.hero.trim()}
       <div class="reveal">
         <h2 id="t-como" class="h2">Así te vamos avisando</h2>
         <p class="lead">Del diagnóstico a la entrega, siempre sabes en qué va tu proyecto.</p>
+        <p class="antes-link" style="text-align:left"><a href="${b}como-trabajamos/">Mira el cronograma real de un proyecto, día por día ${arrow}</a></p>
       </div>
       <ol class="steps" aria-label="Ejemplo de avisos del proceso">
         ${PASOS.map(([ic, etapa, t, p], i) => `<li class="step reveal"${d.shine ? ' data-shine' : ''}>${ico(ic)}<div><header><span>${etapa}</span><span>Paso ${i + 1}</span></header><b>${t}</b><p>${p}</p></div></li>`).join('\n        ')}
@@ -224,6 +231,7 @@ ${o.hero.trim()}
                 <div><h4>Cómo funciona</h4><ol>${COMO[id].map((x) => `<li>${x}</li>`).join('')}</ol></div>
               </div>
               ${EXTRA[id] ? `<div class="det-extra"><div><h4>${EXTRA[id].titulo} <span class="rec">${EXTRA[id].cuesta}</span></h4><p>${EXTRA[id].texto}</p><small>${EXTRA[id].precio}</small></div>${agregar(EXTRA[id].id, 'Agregar la versión interactiva', false)}</div>` : ''}
+              ${DEMO[id] ? `<p class="det-demo"><a href="${b}${DEMO[id][0]}">${DEMO[id][1]} ↗</a><small>${DEMO[id][2]}</small></p>` : ''}
               <div class="det-foot"><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}${NOTA[id] ? `<small>${NOTA[id]}</small>` : ''}</span>${agregar(id)}</div>
             </div>
           </div>`).join('\n          ')}
@@ -240,6 +248,7 @@ ${o.hero.trim()}
       <ul class="promises reveal" data-seq aria-label="Lo que viene con cualquier producto">
         ${PROMESAS.map(([ic, bb, s]) => `<li>${ico(ic, 20)}<div><b>${bb}</b><span>${s}</span></div></li>`).join('\n        ')}
       </ul>
+      <p class="antes-link reveal">¿Estás comparando? <a href="${b}antes-de-contratar/">Mira las fallas que más se repiten en el mercado y qué preguntar antes de pagar ${arrow}</a></p>
     </div>
   </section>
 
@@ -296,7 +305,7 @@ ${o.hero.trim()}
           <label><span>Celular <small>(opcional)</small></span><input name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678" maxlength="16" inputmode="tel" aria-describedby="e-telefono"><span class="err" id="e-telefono" data-err="telefono" role="alert"></span></label>
           <label class="full" data-interes><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes" aria-describedby="e-interes"><option value="" selected>Todavía no lo sé</option>${SERVICIOS.map((s) => `<option>${s[2]}</option>`).join('')}<option>Menú digital interactivo (plato en vivo)</option><option>El pack completo</option></select><span class="err" id="e-interes" data-err="interes" role="alert"></span></label>
           <label class="check-row"><input type="checkbox" name="beneficio" data-benefit-check>Me interesa el precio de lanzamiento para los primeros 5 clientes.</label>
-          <label class="check-row"><input type="checkbox" name="acepto" required aria-describedby="e-acepto">Acepto la política de privacidad y que me contacten por este pedido.</label>
+          <label class="check-row"><input type="checkbox" name="acepto" required aria-describedby="e-acepto"><span>Acepto la <a href="${b}privacidad/" target="_blank" rel="noopener">política de privacidad</a> y que me contacten por este pedido.</span></label>
           <span class="err full" id="e-acepto" data-err="acepto" role="alert"></span>
           <div class="envios">
             <button class="btn btn-main" type="button" data-enviar="correo"><svg width="18" height="18" aria-hidden="true"><use href="#i-mail"/></svg>Enviar por correo</button>
@@ -341,7 +350,7 @@ ${o.hero.trim()}
   <div class="wrap">
     <div class="foot reveal">
       <div><strong>Bío Digital</strong><br>Presencia digital para micro y pequeñas empresas.<br>Atendemos en el Gran Concepción</div>
-      <nav aria-label="Pie de página"><ul><li><a href="#planes">Precios</a></li><li><a href="#promos">Promociones</a></li><li><a href="#contacto">Contacto</a></li><li><a href="#">Privacidad</a></li><li><a href="#">Términos</a></li></ul></nav>
+      <nav aria-label="Pie de página"><ul><li><a href="#planes">Precios</a></li><li><a href="#promos">Promociones</a></li><li><a href="${b}como-trabajamos/">Cómo trabajamos</a></li><li><a href="${b}antes-de-contratar/">Antes de contratar</a></li><li><a href="#contacto">Contacto</a></li><li><a href="${b}privacidad/">Privacidad</a></li><li><a href="${b}terminos/">Términos</a></li></ul></nav>
       <div>${MAIL}<br>© 2026 Bío Digital</div>
     </div>
   </div>

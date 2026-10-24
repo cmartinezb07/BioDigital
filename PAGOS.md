@@ -1,5 +1,13 @@
 # Pagos de BioDigital — estado comercial al 24 de octubre de 2026
 
+**Publicado en producción por solicitud del usuario el 24-oct-2026.**
+`main` actualizado en GitHub a `0214579`; despliegue Cloudflare `d0965b96`.
+Sitio: https://biodigital-propuesta.pages.dev.
+Comprobación posterior: 6 rutas HTTP 200, catálogo de 14 productos, 9 enlaces
+configurados, sin prueba de $100; cotizaciones y carrito combinado conservados.
+37 pruebas y verificador estricto pasan. No se ejecutó un cobro durante el despliegue.
+Las secciones siguientes describen también la preparación y los controles pendientes.
+
 La versión comercial se prepara con **enlaces de pago de monto fijo por producto**.
 La opción de $100 se retiró del catálogo, de la configuración y del HTML.
 Los servicios con precio “desde” y “a cotizar” conservan cotización previa,
@@ -40,7 +48,7 @@ Rama de preparación: `feat/pagos-comerciales-por-enlace`, sincronizada con
 
 Preview actualizado: https://payments-test.biodigital-propuesta.pages.dev.
 Despliegue: https://69bb6516.biodigital-propuesta.pages.dev.
-Production y la rama `main` no se publicaron con estos cambios.
+Production y la rama `main` se publicaron con estos cambios por solicitud del usuario.
 La preparación inicial se guardó en el commit local `0b0feea`.
 Los nueve enlaces ya están incorporados; falta revisar sus destinos y un cobro aprobado
 antes de completar la revisión, hacer push y abrir el PR.

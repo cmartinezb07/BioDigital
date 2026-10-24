@@ -116,4 +116,8 @@ automática en Cloudflare, confirmar antes qué rama dispara Production.
 Después, verificar el sitio público y los destinos de pago. Conservar el
 despliegue previo para volver a él si falla la publicación.
 
-No se ha fusionado ni publicado Production como parte de esta preparación.
+El 24-oct-2026 el usuario solicitó fusionar y publicar. Se actualizó `main` en
+GitHub a `0214579` y se desplegó Production `d0965b96` en
+https://biodigital-propuesta.pages.dev. Se verificaron 6 rutas HTTP 200,
+14 productos y 9 enlaces. No se ejecutó un nuevo cobro: sigue pendiente la
+comprobación operativa de un pago aprobado y de los importes externos.

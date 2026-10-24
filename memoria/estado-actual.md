@@ -2,7 +2,7 @@
 
 > Resumen vigente y completo: skill `contexto_biodigital` (`~/.claude/skills/` y `respaldo-skills/`). Lo de abajo es el detalle del sitio hasta septiembre; las decisiones recientes están al final de `decisiones.md`.
 
-**Estado al 24-oct-2026:** preparación comercial en `feat/pagos-comerciales-por-enlace`, sincronizada con origin/main 9b43f8f. Catálogo completo de 14 productos, sin la opción de $100. Los 9 enlaces comerciales enviados por el usuario están configurados; confirmó tarjeta de lanzamiento de $7.990. Falta revisar destinos externos y un cobro aprobado; guía `PUBLICACION-COMERCIAL.md`. Preview actualizado, despliegue `69bb6516`; 37 pruebas y verificador estricto pasan. La API automática sigue apagada. No se fusionó ni publicó main.
+**Estado al 24-oct-2026:** publicado por solicitud del usuario en https://biodigital-propuesta.pages.dev. Rama `main` en GitHub `0214579`, despliegue Production `d0965b96`. Catálogo completo de 14 productos, sin la opción de $100; 9 enlaces comerciales configurados y tarjeta de lanzamiento de $7.990 confirmada. 37 pruebas y verificador estricto pasan; comprobación de Production: 6 rutas HTTP 200, catálogo y enlaces correctos. Cotizaciones y carritos combinados siguen por WhatsApp. La API automática sigue apagada. Falta revisar destinos externos y comprobar un cobro aprobado; guía `PUBLICACION-COMERCIAL.md`.
 
 Leer esto primero al empezar una sesión nueva.
 

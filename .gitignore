@@ -38,3 +38,6 @@ Thumbs.db
 
 # Capturas y perfiles temporales del revisor
 web/herramientas/capturas/
+
+# PIN de restaurantes reales generados por nuevo-restaurante.mjs
+web/herramientas/restaurantes/

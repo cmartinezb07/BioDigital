@@ -29,7 +29,7 @@ export const FORM_MENU = [
     { id: 'objetivo', t: 'uno', q: '¿Qué es lo más importante que debe lograr?', req: 1, ops: [
       ['Que vean la carta en el celular|Sin pedirla ni esperar al garzón'],
       ['Reemplazar las cartas de papel|Que no se rompan, no se ensucien ni haya que reimprimir'],
-      ['Que vean los platos antes de pedir|Fotos, y los platos en 3D sobre su mesa'],
+      ['Que vean los platos antes de pedir|Fotos buenas de cada plato'],
       ['Que pidan por WhatsApp|Que el pedido llegue directo a mi celular'],
       ['Destacar mis platos estrella|Que lo que más quiero vender se vea primero'],
     ]},
@@ -82,17 +82,12 @@ export const FORM_MENU = [
     { id: 'no_parecer', t: 'larga', q: '¿Qué NO quieres que parezca?', a: 'Barato, recargado, frío, de comida rápida…' },
   ]},
 
-  { t: 'Fotos y platos en 3D', n: 'Aquí está lo más especial del menú: ver el plato sobre la mesa con la cámara del celular.', p: [
+  { t: 'Fotos de los platos', n: 'Un menú con fotos buenas vende más: así resolvemos las fotos.', p: [
     { id: 'fotos_tengo', t: 'uno', q: '¿Tienes fotos buenas de tus platos?', ops: [['De casi todos'], ['De algunos'], ['No tengo']] },
     { id: 'fotos_visita', t: 'uno', q: '¿Cómo quieres resolver las fotos?', ops: [
       ['Que vayan a mi local a sacarlas|Con luz natural y el plato recién servido'], ['Las mando yo|Las tomo con mi celular'], ['No sé|Explíquenme'],
     ]},
     { id: 'visita_dias', t: 'larga', q: 'Si van al local, ¿qué días y horas les acomodan?', a: 'Idealmente cuando no haya mucho servicio, para no molestar a tus clientes.' },
-    { id: 'vista', t: 'uno', q: '¿Qué tipo de vista de los platos quieres?', ops: [
-      ['Ver el plato en 3D sobre la mesa|Escaneamos cada plato; cuesta más y se cotiza'], ['Solo fotos por ahora'], ['No sé: explíquenme'],
-    ]},
-    { id: 'plato3d', t: 'larga', q: '¿Qué platos te gustaría que se vieran sobre la mesa?', a: 'Empieza por 3 a 6, los más pedidos o los más difíciles de explicar.' },
-    { id: 'no3d', t: 'larga', q: '¿Hay platos que no convenga escanear?', a: 'Sopas, líquidos, salsas muy brillantes o platos que cambian cada día.' },
     { id: 'personas_fotos', t: 'uno', q: '¿Van a aparecer personas en las fotos?', a: 'Si es así, necesitamos su autorización por escrito. Es la ley.', ops: [['No, solo platos'], ['Sí, el equipo'], ['Sí, clientes']] },
   ]},
 

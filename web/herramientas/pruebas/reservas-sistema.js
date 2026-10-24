@@ -2,7 +2,8 @@
 const r = {};
 const ok = (k, v, extra) => { r[k] = v ? 'ok' : 'FALLÓ' + (extra ? ' → ' + extra : ''); };
 const R = window.Reservas, U = R.util;
-['cabanas', 'tours', 'medico', 'espacios', 'salon'].forEach((n) => R.restablecer(n));
+// Estas pruebas miden el motor (precios, cupos, políticas); la conexión con la nube se prueba en nube-e2e.mjs. Aquí cada negocio trabaja solo en este navegador.
+['cabanas', 'tours', 'medico', 'espacios', 'salon'].forEach((n) => { R.desconectar(n); R.restablecer(n); });
 await dormir(300);
 // 1. Noches: precio con fin de semana y descuento; una unidad no se vende dos veces
 const lunes = (() => { let f = U.sumaDias(U.hoy(), 40); while (U.diaSem(f) !== 1) f = U.sumaDias(f, 1); return f; })();

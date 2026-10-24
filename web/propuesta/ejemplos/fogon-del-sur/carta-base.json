@@ -1,0 +1,647 @@
+{
+ "version": 2,
+ "marca": {
+  "nombre": "Fogón del Sur",
+  "lema": "Cocina a las brasas en el corazón de Concepción",
+  "sobre": "Carta",
+  "acento": "#cf9b4a"
+ },
+ "negocio": {
+  "direccion": "Barros Arana 123, Concepción",
+  "horarios": [
+   "Almuerzo lunes a sábado 12:30 a 16:00",
+   "Cena miércoles a sábado 19:30 a 23:30"
+  ]
+ },
+ "config": {
+  "mesas": 12,
+  "minimoDelivery": 8000,
+  "prepBase": 8,
+  "prepPorItem": 2,
+  "prepMax": 45,
+  "kmh": 22,
+  "local": {
+   "lat": -36.827,
+   "lng": -73.0503
+  },
+  "comunas": {
+   "Concepción": {
+    "envio": 1500,
+    "lat": -36.8201,
+    "lng": -73.0444
+   },
+   "Talcahuano": {
+    "envio": 2500,
+    "lat": -36.7249,
+    "lng": -73.1168
+   },
+   "Hualpén": {
+    "envio": 2200,
+    "lat": -36.79,
+    "lng": -73.095
+   },
+   "San Pedro de la Paz": {
+    "envio": 2200,
+    "lat": -36.843,
+    "lng": -73.108
+   },
+   "Chiguayante": {
+    "envio": 2200,
+    "lat": -36.905,
+    "lng": -73.025
+   },
+   "Penco": {
+    "envio": 3000,
+    "lat": -36.74,
+    "lng": -72.995
+   },
+   "Coronel": {
+    "envio": 3500,
+    "lat": -37.03,
+    "lng": -73.155
+   },
+   "Hualqui": {
+    "envio": 3500,
+    "lat": -36.975,
+    "lng": -72.94
+   },
+   "Lota": {
+    "envio": 4000,
+    "lat": -37.09,
+    "lng": -73.157
+   },
+   "Tomé": {
+    "envio": 4000,
+    "lat": -36.617,
+    "lng": -72.956
+   }
+  }
+ },
+ "categorias": [
+  {
+   "id": "entradas",
+   "nombre": "Entradas",
+   "sub": "Para abrir la mesa",
+   "platos": [
+    {
+     "id": "empanadas",
+     "nombre": "Empanadas de horno",
+     "descripcion": "Tres empanadas de masa dorada al horno, con pebre de la casa.",
+     "precio": 5900,
+     "foto": "fotos/empanadas.webp",
+     "prep": 15,
+     "etiquetas": [],
+     "destacado": true,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "provoleta",
+     "nombre": "Provoleta a las brasas",
+     "descripcion": "Queso provolone fundido con orégano y tomate, con pan tostado.",
+     "precio": 6500,
+     "foto": "fotos/provoleta.webp",
+     "prep": 12,
+     "etiquetas": [
+      "Vegetariano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "ostiones",
+     "nombre": "Ostiones a la parmesana",
+     "descripcion": "Seis ostiones gratinados con queso parmesano y un toque de vino blanco.",
+     "precio": 9800,
+     "foto": "fotos/ostiones.webp",
+     "prep": 15,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "sopaipillas",
+     "nombre": "Sopaipillas con pebre",
+     "descripcion": "Seis sopaipillas recién fritas, con pebre de cilantro.",
+     "precio": 3900,
+     "foto": "fotos/sopaipillas.webp",
+     "prep": 10,
+     "etiquetas": [
+      "Vegano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    }
+   ]
+  },
+  {
+   "id": "ensaladas",
+   "nombre": "Ensaladas",
+   "sub": "Frescas, de la temporada",
+   "platos": [
+    {
+     "id": "ensalada",
+     "nombre": "Ensalada de burrata y frutas",
+     "descripcion": "Burrata con frutillas, cítricos, brotes y reducción de balsámico.",
+     "precio": 8900,
+     "foto": "fotos/ensalada.webp",
+     "prep": 8,
+     "etiquetas": [
+      "Vegetariano",
+      "Nuevo"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "cesar",
+     "nombre": "Ensalada César con pollo grillado",
+     "descripcion": "Lechuga costina, pollo a la plancha, crutones y parmesano.",
+     "precio": 7900,
+     "foto": "fotos/cesar.webp",
+     "prep": 12,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "extras",
+       "nombre": "Agregar",
+       "tipo": "varios",
+       "max": 2,
+       "obligatorio": false,
+       "opciones": [
+        {
+         "id": "palta",
+         "nombre": "Palta",
+         "extra": 1500
+        },
+        {
+         "id": "tocino",
+         "nombre": "Tocino crocante",
+         "extra": 1200
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "chilena",
+     "nombre": "Ensalada chilena",
+     "descripcion": "Tomate, cebolla en pluma y cilantro, aliñada con limón y aceite de oliva.",
+     "precio": 4500,
+     "foto": "fotos/chilena.webp",
+     "prep": 6,
+     "etiquetas": [
+      "Vegano",
+      "Sin gluten"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    }
+   ]
+  },
+  {
+   "id": "fondos",
+   "nombre": "Platos de fondo",
+   "sub": "Del fogón a tu mesa",
+   "platos": [
+    {
+     "id": "lomo",
+     "nombre": "Lomo a la parrilla con papas y arroz",
+     "descripcion": "Lomo a las brasas con papas doradas, arroz graneado, papas fritas y pimentón asado.",
+     "precio": 13900,
+     "foto": "fotos/lomo.webp",
+     "prep": 25,
+     "etiquetas": [],
+     "destacado": true,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "termino",
+       "nombre": "Término de la carne",
+       "tipo": "uno",
+       "obligatorio": false,
+       "opciones": [
+        {
+         "id": "jugoso",
+         "nombre": "Jugoso",
+         "extra": 0
+        },
+        {
+         "id": "punto",
+         "nombre": "A punto",
+         "extra": 0
+        },
+        {
+         "id": "cocido",
+         "nombre": "Bien cocido",
+         "extra": 0
+        }
+       ]
+      },
+      {
+       "id": "acomp",
+       "nombre": "Acompañamiento",
+       "tipo": "uno",
+       "obligatorio": false,
+       "opciones": [
+        {
+         "id": "papas",
+         "nombre": "Papas fritas",
+         "extra": 0
+        },
+        {
+         "id": "pure",
+         "nombre": "Puré rústico",
+         "extra": 0
+        },
+        {
+         "id": "ensalada",
+         "nombre": "Ensalada chilena",
+         "extra": 800
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "asado",
+     "nombre": "Carne asada al horno con puré",
+     "descripcion": "Láminas de carne asada con salsa, puré, papas al horno y verduras de la temporada.",
+     "precio": 12900,
+     "foto": "fotos/asado.webp",
+     "prep": 25,
+     "etiquetas": [],
+     "destacado": true,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "termino",
+       "nombre": "Término de la carne",
+       "tipo": "uno",
+       "obligatorio": false,
+       "opciones": [
+        {
+         "id": "jugoso",
+         "nombre": "Jugoso",
+         "extra": 0
+        },
+        {
+         "id": "punto",
+         "nombre": "A punto",
+         "extra": 0
+        },
+        {
+         "id": "cocido",
+         "nombre": "Bien cocido",
+         "extra": 0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "brocheta",
+     "nombre": "Brocheta mixta a la parrilla",
+     "descripcion": "Pollo, cerdo y verduras a las brasas, con arroz graneado.",
+     "precio": 11900,
+     "foto": "fotos/brocheta.webp",
+     "prep": 22,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "salmon",
+     "nombre": "Salmón a la parrilla",
+     "descripcion": "Filete de salmón con puré rústico y ensalada de temporada.",
+     "precio": 13900,
+     "foto": "fotos/salmon.webp",
+     "prep": 22,
+     "etiquetas": [
+      "Sin gluten"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "pastel",
+     "nombre": "Pastel de choclo",
+     "descripcion": "Pino de carne, pollo y choclo cremoso gratinado en greda.",
+     "precio": 9900,
+     "foto": "fotos/pastel.webp",
+     "prep": 20,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "risotto",
+     "nombre": "Risotto de hongos",
+     "descripcion": "Arroz arborio cremoso con champiñones, ajo y parmesano.",
+     "precio": 10900,
+     "foto": "fotos/risotto.webp",
+     "prep": 22,
+     "etiquetas": [
+      "Vegetariano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    }
+   ]
+  },
+  {
+   "id": "postres",
+   "nombre": "Postres",
+   "sub": "El final dulce",
+   "platos": [
+    {
+     "id": "leche-asada",
+     "nombre": "Leche asada",
+     "descripcion": "Receta de la casa, con caramelo y canela.",
+     "precio": 3900,
+     "foto": "fotos/leche-asada.webp",
+     "prep": 3,
+     "etiquetas": [
+      "Vegetariano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "brownie",
+     "nombre": "Brownie tibio con helado",
+     "descripcion": "Brownie de chocolate amargo con helado de crema y salsa de manjar.",
+     "precio": 5200,
+     "foto": "fotos/brownie.webp",
+     "prep": 8,
+     "etiquetas": [
+      "Vegetariano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "panqueque",
+     "nombre": "Panqueque celestino",
+     "descripcion": "Panqueques rellenos de manjar y nueces, con crema chantilly.",
+     "precio": 4800,
+     "foto": "fotos/panqueque.webp",
+     "prep": 8,
+     "etiquetas": [
+      "Vegetariano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "mote",
+     "nombre": "Mote con huesillo",
+     "descripcion": "El clásico chileno, bien frío.",
+     "precio": 3500,
+     "foto": "fotos/mote.webp",
+     "prep": 2,
+     "etiquetas": [
+      "Vegano"
+     ],
+     "destacado": false,
+     "disponible": false,
+     "activo": true
+    }
+   ]
+  },
+  {
+   "id": "bebestibles",
+   "nombre": "Bebestibles",
+   "sub": "Para acompañar",
+   "platos": [
+    {
+     "id": "limonada",
+     "nombre": "Limonada menta jengibre",
+     "descripcion": "Jarro de 500 ml, endulzada a gusto.",
+     "precio": 3500,
+     "foto": "fotos/limonada.webp",
+     "prep": 4,
+     "etiquetas": [
+      "Vegano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "jugo",
+     "nombre": "Jugo natural de temporada",
+     "descripcion": "Frutilla, mango o piña, según disponibilidad.",
+     "precio": 3200,
+     "foto": "fotos/jugo.webp",
+     "prep": 4,
+     "etiquetas": [
+      "Vegano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "sabor",
+       "nombre": "Sabor",
+       "tipo": "uno",
+       "obligatorio": true,
+       "opciones": [
+        {
+         "id": "frutilla",
+         "nombre": "Frutilla",
+         "extra": 0
+        },
+        {
+         "id": "mango",
+         "nombre": "Mango",
+         "extra": 0
+        },
+        {
+         "id": "pina",
+         "nombre": "Piña",
+         "extra": 0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "cerveza",
+     "nombre": "Cerveza artesanal",
+     "descripcion": "Pinta de 400 ml, tipo ale. Pregunta por las del día.",
+     "precio": 4200,
+     "foto": "fotos/cerveza.webp",
+     "prep": 2,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "tam",
+       "nombre": "Tamaño",
+       "tipo": "uno",
+       "obligatorio": true,
+       "opciones": [
+        {
+         "id": "pinta",
+         "nombre": "Pinta 400 ml",
+         "extra": 0
+        },
+        {
+         "id": "jarro",
+         "nombre": "Jarro 1 litro",
+         "extra": 4500
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "vino",
+     "nombre": "Copa de vino de la casa",
+     "descripcion": "Tinto, blanco o rosado, de valle chileno.",
+     "precio": 4500,
+     "foto": "fotos/vino.webp",
+     "prep": 2,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "cepa",
+       "nombre": "Tipo de vino",
+       "tipo": "uno",
+       "obligatorio": true,
+       "opciones": [
+        {
+         "id": "tinto",
+         "nombre": "Tinto",
+         "extra": 0
+        },
+        {
+         "id": "blanco",
+         "nombre": "Blanco",
+         "extra": 0
+        },
+        {
+         "id": "rosado",
+         "nombre": "Rosado",
+         "extra": 0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "coctel",
+     "nombre": "Cóctel de kiwi",
+     "descripcion": "Kiwi fresco, licor de manzana verde y hielo frappé.",
+     "precio": 6200,
+     "foto": "fotos/coctel.webp",
+     "prep": 6,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true
+    },
+    {
+     "id": "cafe",
+     "nombre": "Café de especialidad",
+     "descripcion": "Espresso, americano o cortado, de tostado local.",
+     "precio": 2500,
+     "foto": "fotos/cafe.webp",
+     "prep": 4,
+     "etiquetas": [],
+     "destacado": false,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "tipo",
+       "nombre": "Tipo de café",
+       "tipo": "uno",
+       "obligatorio": true,
+       "opciones": [
+        {
+         "id": "espresso",
+         "nombre": "Espresso",
+         "extra": 0
+        },
+        {
+         "id": "americano",
+         "nombre": "Americano",
+         "extra": 0
+        },
+        {
+         "id": "cortado",
+         "nombre": "Cortado",
+         "extra": 0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "te",
+     "nombre": "Té e infusiones",
+     "descripcion": "Té negro, verde o hierbas de la casa.",
+     "precio": 2200,
+     "foto": "fotos/te.webp",
+     "prep": 3,
+     "etiquetas": [
+      "Vegano"
+     ],
+     "destacado": false,
+     "disponible": true,
+     "activo": true,
+     "grupos": [
+      {
+       "id": "infusion",
+       "nombre": "Infusión",
+       "tipo": "uno",
+       "obligatorio": true,
+       "opciones": [
+        {
+         "id": "negro",
+         "nombre": "Té negro",
+         "extra": 0
+        },
+        {
+         "id": "verde",
+         "nombre": "Té verde",
+         "extra": 0
+        },
+        {
+         "id": "hierbas",
+         "nombre": "Hierbas de la casa",
+         "extra": 0
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

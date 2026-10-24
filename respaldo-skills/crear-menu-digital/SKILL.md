@@ -5,6 +5,8 @@ description: Subrama de crear-sitio-web para el menú digital de un cliente de B
 
 # Crear menú digital (subrama de crear-sitio-web)
 
+> **Actualización 24-oct-2026:** (1) el **plato en 3D y la realidad aumentada están postergados** por decisión del usuario: no se ofrecen ni se muestran en el sitio, la carta de ejemplo ni el formulario; lo de 3D/AR de esta skill queda como referencia para cuando se retome. (2) El **sistema de pedidos del restaurante está conectado en la nube** (pedido → cocina → seguimiento → panel, con PIN por rol, juegos de espera y GPS del repartidor): ver `memoria/conexion-nube.md` y el ejemplo `web/propuesta/ejemplos/fogon-del-sur/`.
+
 **Responder siempre en español.**
 
 > **Esta skill depende de `crear-sitio-web`. Léela primero** (`~/.claude/skills/crear-sitio-web/SKILL.md` y `referencias/requisitos.md`).
@@ -79,6 +81,9 @@ Versión completa, a cotizar (no cabe en el precio del menú simple). Vive en `w
 
 ## Mascota (opcional)
 No va por defecto en un menú: la carta debe ser rápida y limpia. Si el cliente la pide, usa el módulo de `crear-sitio-web/referencias/mascota.md` y verifica que no tape los platos.
+
+## Sistema completo con pedidos (24-oct): plantilla reutilizable
+El menú de Fogón del Sur ya no es HTML fijo: la carta, fotos, precios, opciones, comunas y personal son **datos** que el dueño administra desde `panel/` y se publican sin reconstruir. Para un restaurante nuevo: `node web/herramientas/nuevo-restaurante.mjs --id <id> --nombre "<Nombre>"`, ejecutar el SQL que genera en Supabase y entrar al panel. Estados, permisos y modificación del pedido los valida el servidor. Detalle y límites en `memoria/plantilla-restaurante.md`; precios en `memoria/precios-menu-digital.md`.
 
 ## Pendiente (preguntar al equipo)
 Precio de la versión interactiva (base + por plato), quién cobra los cambios de carta, impresión y entrega de los QR, y si la demo pública se mantiene.

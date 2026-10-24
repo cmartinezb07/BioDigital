@@ -47,7 +47,7 @@ const ANTES_DOC = {
     ['La carta es un PDF que hay que agrandar con los dedos', fx(
       'Muchos menús QR son el mismo PDF de la carta impresa: el cliente escanea, espera, agranda con los dedos, se pierde buscando y termina preguntándole al garzón. Los locales que volvieron a la carta de papel no dejaron una mala idea: dejaron una mala ejecución.',
       '<a href="https://restauranttechnologynews.com/2026/08/why-restaurant-qr-menus-have-an-execution-problem-not-a-concept-problem/" target="_blank" rel="noopener">Restaurant Technology News, agosto de 2026</a>.',
-      'Tu menú es una carta hecha para el celular: categorías, buscador, favoritos, foto y precio de cada plato. Y si quieres, el plato en 3D sobre la mesa del cliente con la cámara.')],
+      'Tu menú es una carta hecha para el celular: categorías, buscador, favoritos, foto y precio de cada plato.')],
     ['Páginas pesadas y llenas de terceros', fx(
       'Una app de reservas por suscripción carga 153 archivos desde 32 servicios distintos para mostrar una página. Cada servicio externo hace más lenta la carga en el celular y suma rastreo.',
       'medición propia el 22 de octubre de 2026, con el mismo método para todos los sitios (Chrome, ancho de celular).',

@@ -1,110 +1,260 @@
-// Sistema de pedidos del menú digital (mesa, retiro y delivery): datos, estados, tiempos estimados, ruta y avisos en vivo.
-// Lo usan la carta (pedir.js), el seguimiento (pedido/), la cocina (cocina/), el repartidor (repartidor/) y el panel (panel/).
+// Sistema de pedidos del restaurante (mesa, retiro y delivery): datos, estados, tiempos estimados, modificación y ruta.
+// Lo usan la carta (pedir.js), el pago (pagar.js), el seguimiento (pedido/), el historial del cliente (mis-pedidos/), la cocina,
+// el repartidor y el panel del dueño. Todos trabajan sobre los MISMOS pedidos, guardados en la nube (_compartido/nube.js).
 //
-// DEMO: los datos viven en el navegador (localStorage) y se sincronizan al instante entre pestañas (BroadcastChannel):
-// abre la carta, la cocina y el panel en pestañas distintas y todo se mueve solo. Si nadie atiende la cocina o el reparto,
-// el pedido avanza solo, acelerado, para que la demostración se vea completa.
-// PRODUCCIÓN: la misma interfaz (crear, cambiar, ubicar, escuchar) se conecta a una base en la nube para que el cliente,
-// la cocina y el repartidor estén en equipos distintos. Ver memoria/menu-pedidos.md (costos recurrentes marcados).
+// Reglas (las valida la base de datos, no solo la pantalla):
+//  · Un pedido nace "recibido" (Nuevo). Mientras esté así, el cliente lo puede modificar: se actualiza el MISMO pedido (mismo id),
+//    se guarda la versión anterior y se recalcula el total. Una vez aceptado ya no se puede tocar.
+//  · Estados: recibido → aceptado → preparación → listo → (entregado | en camino → entregado). Nadie puede saltarse pasos.
+//  · Cocina y dueño aceptan, preparan y entregan en mesa/retiro; el repartidor toma y entrega los delivery. Nada avanza solo.
+//  · Cada línea guarda el nombre y el precio con que se pidió: cambiar la carta después no cambia los pedidos ya hechos.
+//  · Un solo pedido Nuevo por sesión: lo que el cliente agregue mientras está pendiente se suma a ese pedido.
 (function () {
   'use strict';
-  var CLAVE = 'fogon-pedidos', CLAVE_VIS = 'fogon-visitas', CLAVE_VIVO = 'fogon-vivo-';
+  var R = window.RESTAURANTE || { negocio: 'fogon', nombre: 'Restaurante', pistas: {} };
+  var NEG = R.negocio, COL = 'pedidos';
   var CONFIG = {
-    negocio: 'Fogón del Sur',
-    local: { lat: -36.8270, lng: -73.0503, dir: 'Barros Arana 123, Concepción' },   // dirección de ejemplo
-    mesas: 12,
-    minimoDelivery: 8000,
-    prepBase: 8, prepPorItem: 2, prepMax: 35,   // minutos
+    negocio: R.nombre,
+    local: { lat: -36.8270, lng: -73.0503, dir: '' },
+    mesas: 12, minimoDelivery: 8000,
+    prepBase: 8, prepPorItem: 2, prepMax: 45,   // minutos; si el plato trae su propio tiempo (prep), se usa ese
     kmh: 22,                                     // velocidad media del reparto en ciudad (supuesto)
-    // Costo de envío por comuna (ejemplo; lo define el local). Coordenadas aproximadas del centro de cada comuna.
-    comunas: {
-      'Concepción': { envio: 1500, lat: -36.8201, lng: -73.0444 }, 'Talcahuano': { envio: 2500, lat: -36.7249, lng: -73.1168 },
-      'Hualpén': { envio: 2200, lat: -36.7900, lng: -73.0950 }, 'San Pedro de la Paz': { envio: 2200, lat: -36.8430, lng: -73.1080 },
-      'Chiguayante': { envio: 2200, lat: -36.9050, lng: -73.0250 }, 'Penco': { envio: 3000, lat: -36.7400, lng: -72.9950 },
-      'Coronel': { envio: 3500, lat: -37.0300, lng: -73.1550 }, 'Hualqui': { envio: 3500, lat: -36.9750, lng: -72.9400 },
-      'Lota': { envio: 4000, lat: -37.0900, lng: -73.1570 }, 'Tomé': { envio: 4000, lat: -36.6170, lng: -72.9560 }
-    }
+    pistas: R.pistas || {},
+    comunas: {}
   };
-  // Estados con su color. El nombre cambia según cómo se pidió.
+  // Los datos del local (comunas y envíos, mesas, mínimo) vienen de la carta publicada por el dueño
+  function configurar(c) {
+    if (!c) return;
+    ['mesas', 'minimoDelivery', 'prepBase', 'prepPorItem', 'prepMax', 'kmh'].forEach(function (k) { if (c[k] != null) CONFIG[k] = c[k]; });
+    if (c.local) CONFIG.local = Object.assign({}, CONFIG.local, c.local);
+    if (c.comunas) CONFIG.comunas = c.comunas;
+  }
+  // Estados con su color. El nombre y el texto cambian según cómo se pidió: en la mesa, para retirar o con delivery.
   var ESTADOS = {
-    recibido: { color: '#3b82f6', nombre: 'Recibido', desc: 'La cocina ya tiene tu pedido.' },
+    recibido: { color: '#3b82f6', nombre: 'Recibido', desc: 'Esperando que el local lo acepte. Mientras tanto puedes modificar tu pedido.' },
+    aceptado: { color: '#14b8a6', nombre: 'Aceptado', desc: 'El local aceptó tu pedido: ya no se puede modificar. Pronto empieza a prepararse.' },
     preparacion: { color: '#f59e0b', nombre: 'En preparación', desc: 'Tu pedido está en el fuego.' },
-    listo: { color: '#22c55e', nombre: 'Listo', desc: { mesa: 'Va camino a tu mesa.', retiro: 'Ya puedes retirarlo en el mesón.', delivery: 'Esperando al repartidor.' } },
+    listo: { color: '#22c55e', nombre: { mesa: 'Listo: va a tu mesa', retiro: 'Listo para retirar', delivery: 'Listo, esperando al repartidor' }, desc: { mesa: 'Un garzón te lo lleva a la mesa ahora.', retiro: 'Ya puedes retirarlo en el mesón. Muestra tu número de pedido.', delivery: 'El repartidor lo toma en unos minutos.' } },
     camino: { color: '#a855f7', nombre: 'En camino', desc: 'El repartidor va hacia tu dirección.' },
     entregado: { color: '#cf9b4a', nombre: { mesa: 'Servido', retiro: 'Retirado', delivery: 'Entregado' }, desc: '¡Buen provecho!' },
-    cancelado: { color: '#ef4444', nombre: 'Cancelado', desc: 'El local canceló el pedido. Te contactarán.' }
+    cancelado: { color: '#ef4444', nombre: 'Cancelado', desc: 'El local no pudo aceptar tu pedido.' }
   };
-  var FLUJO = { mesa: ['recibido', 'preparacion', 'listo', 'entregado'], retiro: ['recibido', 'preparacion', 'listo', 'entregado'], delivery: ['recibido', 'preparacion', 'listo', 'camino', 'entregado'] };
-
-  function leer(k, def) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? def : v; } catch (e) { return def; } }
-  function escribir(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  var canal = null; try { canal = new BroadcastChannel('fogon'); } catch (e) {}
-  var oyentes = [];
-  function avisar(tipo, id) {
-    var m = { tipo: tipo, id: id, t: Date.now() };
-    if (canal) canal.postMessage(m);
-    oyentes.forEach(function (f) { f(m); });
+  var FLUJO = {
+    mesa: ['recibido', 'aceptado', 'preparacion', 'listo', 'entregado'],
+    retiro: ['recibido', 'aceptado', 'preparacion', 'listo', 'entregado'],
+    delivery: ['recibido', 'aceptado', 'preparacion', 'listo', 'camino', 'entregado']
+  };
+  var ACTIVOS = ['recibido', 'aceptado', 'preparacion', 'listo', 'camino'];
+  // Mensajes claros para los errores que devuelve la base
+  var MENSAJES = {
+    no_modificable: 'El local ya aceptó tu pedido: ya no se puede modificar.',
+    terminal: 'Este pedido ya terminó y no se puede modificar.',
+    conflicto: 'Tu pedido cambió mientras lo editabas. Ábrelo de nuevo para ver la última versión.',
+    pedido_activo: 'Ya tienes un pedido pendiente. Agrega tus productos a ese pedido con "Modificar mi pedido".',
+    plato_inexistente: 'Un producto de tu pedido ya no está en la carta. Quítalo para continuar.',
+    items_invalidos: 'Tu pedido no tiene productos válidos.',
+    cantidad_invalida: 'Una cantidad no es válida (de 1 a 30).',
+    tipo_invalido: 'Elige cómo quieres tu pedido.',
+    asignado_a_otro: 'Otro repartidor ya tomó este pedido.',
+    'sin permiso': 'No tienes permiso para este cambio.',
+    opinion_invalida: 'Elige de 1 a 5 estrellas.'
+  };
+  function parseError(e) {
+    var raw = (e && (e.codigo || e.message)) || String(e || ''), partes = raw.split(':'), cod = partes[0], arg = partes.slice(1).join(':');
+    var msg = MENSAJES[cod];
+    if (!msg) {
+      if (cod === 'precio_cambio') msg = 'El precio de "' + arg + '" cambió en la carta. Revisa tu pedido y vuelve a intentar.';
+      else if (cod === 'plato_agotado') msg = '"' + arg + '" se agotó. Quítalo del pedido para continuar.';
+      else if (cod === 'opcion_invalida') msg = 'Elige las opciones de "' + arg + '".';
+      else if (cod === 'minimo_delivery') msg = 'El pedido mínimo para delivery es $' + Math.round(+arg || 0).toLocaleString('es-CL') + '.';
+      else if (cod === 'falta') msg = { nombre: 'Escribe tu nombre.', telefono: 'Escribe un celular válido: 9 y 8 dígitos.', mesa: 'Elige el número de tu mesa.', direccion: 'Escribe la dirección de entrega.', comuna: 'Elige tu comuna.' }[arg] || 'Falta un dato obligatorio.';
+      else if (cod === 'transicion_invalida') msg = 'Ese paso ya no es posible: el pedido cambió de estado. Se actualizó la pantalla.';
+      else msg = 'No se pudo guardar. Revisa tu conexión e intenta de nuevo.';
+    }
+    return { codigo: cod, arg: arg, mensaje: msg };
   }
-  if (canal) canal.onmessage = function (e) { oyentes.forEach(function (f) { f(e.data); }); };
-  // Si el navegador no tiene BroadcastChannel, el evento storage cumple la misma función.
-  window.addEventListener('storage', function (e) { if (!canal && e.key && e.key.indexOf('fogon') === 0) oyentes.forEach(function (f) { f({ tipo: 'cambio' }); }); });
+  function fallo(e) { var x = parseError(e), er = new Error(x.mensaje); er.codigo = x.codigo; er.arg = x.arg; return er; }
 
-  function todos() { return leer(CLAVE, []); }
-  function guardarTodos(l) { escribir(CLAVE, l.slice(-400)); }
-  function obtener(id) { return todos().filter(function (p) { return p.id === id; })[0] || null; }
+  // ---------- Estado en memoria (espejo de la nube) ----------
+  var cache = {}, oyentes = [], vis = [], escribiendo = {}, promesas = {}, conectado = true, listoPrimera = false, esperaPrimera = [];
+  function loc(k, def) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? def : v; } catch (e) { return def; } }
+  function guardarLoc(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var mis = loc('fogon-mis-' + NEG, loc('fogon-mis', []));   // pedidos hechos desde este equipo (para volver a verlos)
+  function avisar(tipo, id, extra) { var m = { tipo: tipo, id: id, t: Date.now() }; if (extra) Object.keys(extra).forEach(function (k) { m[k] = extra[k]; }); oyentes.forEach(function (f) { try { f(m); } catch (e) {} }); }
+  function pinEquipo() { return Nube.pin(NEG); }
+  // Una "sesión de compra" por equipo: mientras tenga un pedido Nuevo, lo que agregue se suma a ese pedido
+  function sesionId() { var s = loc('fogon-sesion-' + NEG, ''); if (!s) { s = Nube.idNuevo(); guardarLoc('fogon-sesion-' + NEG, s); } return s; }
+
+  function todos() { return Object.keys(cache).map(function (k) { return cache[k]; }).sort(function (a, b) { return a.creado - b.creado; }); }
+  function obtener(id) { return cache[id] || null; }
+  function copia(x) { return JSON.parse(JSON.stringify(x)); }
+
+  function fusionar(filas) {
+    var cambio = null;
+    filas.forEach(function (f) {
+      if (escribiendo[f.id] && escribiendo[f.id] > Date.now()) return;   // acabo de escribir: no piso mi cambio con una lectura vieja
+      var d = f.data; if (!d) return; d.id = f.id;
+      if (!cache[f.id] || Nube.canon(cache[f.id]) !== Nube.canon(d)) { cache[f.id] = d; cambio = cambio || f.id; }
+    });
+    if (cambio) avisar('cambio', cambio);
+  }
+  var poll = null, pollVis = null, extras = [];
+  function conectar() {
+    if (poll) return;
+    var avisoConexion = function (ok) { if (ok !== conectado) { conectado = ok; avisar('conexion', null, { ok: ok }); } if (ok && !listoPrimera) { listoPrimera = true; esperaPrimera.forEach(function (f) { f(); }); esperaPrimera = []; } };
+    poll = Nube.sondear(NEG, COL, { pin: pinEquipo, ids: function () { return mis.concat(extras); }, soloSiHayIds: true, cada: 2500, alConectar: avisoConexion }, function (r) { fusionar(r.filas); });
+    pollVis = Nube.sondear(NEG, 'visitas', { pin: function () { return pinEquipo(); }, soloSiHayIds: true, cada: 6000 }, function (r) {
+      if (!r.staff) return;
+      r.filas.forEach(function (f) { if (f.data && !vis.some(function (v) { return v.id === f.id; })) { f.data.id = f.id; vis.push(f.data); } });
+      avisar('visita');
+    });
+  }
+  function seguir(id) { if (id && extras.indexOf(id) < 0) extras.push(id); if (poll) poll.ya(); }
+  // Promesa que se cumple cuando ya se leyó la nube por primera vez (o falla a los 9 s: sin conexión)
+  function esperar() { return new Promise(function (ok, mal) { if (listoPrimera) return ok(); esperaPrimera.push(ok); setTimeout(function () { if (!listoPrimera) mal(new Error('sin conexión')); }, 9000); }); }
+  // Al entrar el equipo con su PIN, se vuelve a leer todo desde cero
+  function entrarEquipo() { if (poll) poll.reiniciar(); if (pollVis) pollVis.reiniciar(); }
+
+  // Lee un pedido propio (por su código secreto) y adopta la versión que dejó el servidor
+  function traer(id) {
+    return Nube.leer(NEG, COL, { ids: [id] }).then(function (r) {
+      var f = (r.mios || []).filter(function (x) { return x.id === id; })[0];
+      if (f && f.data) { f.data.id = id; delete escribiendo[id]; cache[id] = f.data; avisar('cambio', id); }
+      return cache[id] || null;
+    });
+  }
+  function enviar(id, parche, modo) {
+    if (cache[id] && cache[id].soloLocal) return Promise.resolve();
+    escribiendo[id] = Date.now() + 3500;
+    var pin = pinEquipo();
+    var pr = Nube.cola(COL + id, function () { return Nube.escribir(NEG, COL, id, parche, { pin: pin, modo: modo || 'parchar' }); }).then(function () { escribiendo[id] = Date.now() + 1500; if (poll) poll.ya(); })
+      .catch(function (e) {
+        delete escribiendo[id];
+        var x = parseError(e);
+        avisar('error', id, { mensaje: x.mensaje, codigo: x.codigo });
+        if (pin) entrarEquipo(); else traer(id).catch(function () {});   // se vuelve a la versión real del servidor
+        throw e;
+      });
+    promesas[id] = pr.catch(function () {});
+    return pr;
+  }
+  // Se cumple cuando todos los cambios pendientes ya llegaron a la nube (antes de cambiar de página)
+  function guardado() { return Promise.all(Object.keys(promesas).map(function (k) { return promesas[k]; })); }
   function actualizar(id, fn) {
-    var l = todos(), p = null;
-    l.forEach(function (x) { if (x.id === id) { fn(x); p = x; } });
-    if (p) { guardarTodos(l); avisar('cambio', id); }
+    var p = cache[id]; if (!p) return null;
+    var antes = copia(p); fn(p);
+    var parche = {}; Object.keys(p).forEach(function (k) { if (Nube.canon(p[k]) !== Nube.canon(antes[k])) parche[k] = p[k]; });
+    if (!Object.keys(parche).length) return p;
+    avisar('cambio', id); enviar(id, parche).catch(function () {});
     return p;
   }
-  function nuevoId() {
-    var a = new Uint8Array(8); (window.crypto || window.msCrypto).getRandomValues(a);
-    return [].map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
-  }
-  function codigo(l) { var n; do { n = String(100 + Math.floor(Math.random() * 900)); } while (l.some(function (p) { return p.codigo === n && p.estado !== 'entregado'; })); return n; }
+  function nuevoId() { return Nube.idNuevo(); }
+  function codigo() { return String(100 + Math.floor(Math.random() * 900)); }
 
+  // Crea el pedido y lo manda a la nube; devuelve una promesa con el pedido tal como lo dejó el servidor (totales y versión incluidos).
+  // Si el cliente toca "Enviar" dos veces, el id es el mismo (d.id): no se duplica.
   function crear(d) {
-    var l = todos(), cant = d.items.reduce(function (t, i) { return t + i.cant; }, 0);
+    var cant = d.items.reduce(function (t, i) { return t + i.cant; }, 0);
     var subtotal = d.items.reduce(function (t, i) { return t + i.precio * i.cant; }, 0);
     var com = d.tipo === 'delivery' ? CONFIG.comunas[d.cliente.comuna] : null;
+    var envio = com ? com.envio : 0;
+    var id = d.id || nuevoId();
     var p = {
-      id: nuevoId(), codigo: codigo(l), creado: Date.now(), tipo: d.tipo, mesa: d.mesa || null,
-      cliente: d.cliente, items: d.items, nota: d.nota || '', subtotal: subtotal, envio: com ? com.envio : 0,
-      total: subtotal + (com ? com.envio : 0), pago: d.pago, referencia: d.referencia || '', invitadoPor: d.invitadoPor || '',
-      estado: 'recibido', historial: [{ estado: 'recibido', t: Date.now() }],
-      prepMin: Math.min(CONFIG.prepMax, CONFIG.prepBase + CONFIG.prepPorItem * cant), escala: auto().activo ? auto().velocidad : 1, demo: !!d.demo, simulado: !!d.simulado
+      id: id, codigo: codigo(), creado: Date.now(), tipo: d.tipo, mesa: d.mesa || null,
+      cliente: d.cliente, items: d.items, nota: d.nota || '', subtotal: subtotal, envio: envio,
+      total: subtotal + envio, pago: d.pago, referencia: d.referencia || '', invitadoPor: d.invitadoPor || '',
+      estado: 'recibido', historial: [{ estado: 'recibido', t: Date.now() }], prepMin: prepEstimado(d.items, cant), escala: 1, sesion: d.soloLocal ? '' : sesionId(), rev: 1, ediciones: []
     };
     if (p.tipo === 'delivery') {
       var dest = d.cliente.lat ? { lat: d.cliente.lat, lng: d.cliente.lng } : cerca(com, d.cliente.direccion);
       p.destino = dest; p.km = +distancia(CONFIG.local, dest).toFixed(1);
     }
-    l.push(p); guardarTodos(l); avisar('nuevo', p.id);
-    return p;
+    if (d.soloLocal) { p.soloLocal = true; cache[p.id] = p; avisar('nuevo', p.id); return Promise.resolve(p); }
+    cache[p.id] = p; if (mis.indexOf(p.id) < 0) mis.push(p.id); mis = mis.slice(-30); guardarLoc('fogon-mis-' + NEG, mis); escribiendo[p.id] = Date.now() + 5000;
+    avisar('nuevo', p.id);
+    return Nube.cola(COL + p.id, function () { return Nube.escribir(NEG, COL, p.id, p, { modo: 'poner' }); })
+      .then(function () { if (poll) poll.ya(); return traer(p.id); })
+      .catch(function (e) {
+        delete cache[p.id]; delete escribiendo[p.id]; mis = mis.filter(function (x) { return x !== p.id; }); guardarLoc('fogon-mis-' + NEG, mis); avisar('cambio', p.id);
+        throw fallo(e);
+      });
+  }
+  // Modificar el pedido original (solo mientras está "Nuevo"): cambios = { items, nota, cliente, mesa, tipo }. Devuelve el pedido actualizado.
+  function modificar(id, cambios) {
+    var p = cache[id]; if (!p) return Promise.reject(fallo('terminal'));
+    if (p.estado !== 'recibido') return Promise.reject(fallo(p.estado === 'cancelado' || p.estado === 'entregado' ? 'terminal' : 'no_modificable'));
+    var parche = { baseRev: p.rev || 1 };
+    ['items', 'nota', 'cliente', 'mesa', 'tipo'].forEach(function (k) { if (cambios[k] !== undefined) parche[k] = cambios[k]; });
+    var tipo = parche.tipo || p.tipo, cli = parche.cliente || p.cliente;
+    if (tipo === 'delivery') {
+      var com = CONFIG.comunas[cli.comuna], dest = cli.lat ? { lat: cli.lat, lng: cli.lng } : (com ? cerca(com, cli.direccion) : p.destino);
+      if (dest) { parche.destino = dest; parche.km = +distancia(CONFIG.local, dest).toFixed(1); }
+    }
+    escribiendo[id] = Date.now() + 5000;
+    return Nube.cola(COL + id, function () { return Nube.escribir(NEG, COL, id, parche, {}); }).then(function () { return traer(id); }).catch(function (e) { delete escribiendo[id]; traer(id).catch(function () {}); throw fallo(e); });
+  }
+  // El cliente avisa que está modificando (el dueño y la cocina lo ven). Se apaga solo al guardar, cancelar o cerrar la página.
+  function marcarModificando(id, v) {
+    var p = cache[id]; if (!p || p.estado !== 'recibido' || p.soloLocal) return Promise.resolve();
+    if (p.modificando === !!v && v !== true) return Promise.resolve();
+    p.modificando = !!v; if (v) p.modificandoDesde = Date.now();
+    escribiendo[id] = Date.now() + 2500;
+    return Nube.cola(COL + id, function () { return Nube.escribir(NEG, COL, id, { modificando: !!v }, {}); }).catch(function () {});
+  }
+  function soltarModificacion(id) { var p = cache[id]; if (p && p.modificando) Nube.escribirRapido(NEG, COL, id, { modificando: false }, {}); }
+  function modificandoAhora(p) { return !!(p && p.estado === 'recibido' && p.modificando && Date.now() - (p.modificandoDesde || 0) < 3 * 60 * 1000); }
+  function puedeModificar(p) { return !!p && p.estado === 'recibido'; }
+  // El pedido Nuevo de este equipo (si lo hay): lo que el cliente agregue se suma a ese pedido
+  function pedidoPendiente() {
+    var l = mis.map(function (id) { return cache[id]; }).filter(function (p) { return p && p.estado === 'recibido' && !p.soloLocal; });
+    return l.sort(function (a, b) { return b.creado - a.creado; })[0] || null;
+  }
+  function misPedidos() { return mis.map(function (id) { return cache[id]; }).filter(Boolean).sort(function (a, b) { return b.creado - a.creado; }); }
+
+  // Tiempo estimado de preparación: el del plato que más demora, más 2 min por cada otro plato; la cocina lo puede ajustar
+  function prepEstimado(items, cant) {
+    var mayor = Math.max.apply(null, items.map(function (i) { return i.prep || 0; }).concat([0]));
+    if (!mayor) return Math.min(CONFIG.prepMax, CONFIG.prepBase + CONFIG.prepPorItem * cant);
+    return Math.min(CONFIG.prepMax, mayor + CONFIG.prepPorItem * Math.max(0, cant - 1));
   }
   // Sin la ubicación exacta, se toma un punto cerca del centro de la comuna (la dirección escrita se usa solo para variarlo).
   function cerca(com, dir) {
+    if (!com) return { lat: CONFIG.local.lat, lng: CONFIG.local.lng };
     var h = 0; String(dir || '').split('').forEach(function (c) { h = (h * 31 + c.charCodeAt(0)) | 0; });
     return { lat: com.lat + ((h % 100) / 100) * 0.008, lng: com.lng + (((h >> 8) % 100) / 100) * 0.008 };
   }
   function cambiar(id, estado, extra) {
     return actualizar(id, function (p) {
       if (p.estado === estado) return;
-      p.estado = estado; p.historial.push({ estado: estado, t: Date.now() });
+      p.estado = estado; p.historial = (p.historial || []).concat([{ estado: estado, t: Date.now() }]);
       if (extra) Object.keys(extra).forEach(function (k) { p[k] = extra[k]; });
     });
   }
   function siguiente(p) { var f = FLUJO[p.tipo], i = f.indexOf(p.estado); return i > -1 && i < f.length - 1 ? f[i + 1] : null; }
-  function ubicar(id, lat, lng) { return actualizar(id, function (p) { p.repartidor = p.repartidor || {}; p.repartidor.lat = lat; p.repartidor.lng = lng; p.repartidor.t = Date.now(); }); }
+  function ubicar(id, lat, lng) { return actualizar(id, function (p) { p.repartidor = Object.assign({}, p.repartidor, { lat: lat, lng: lng, t: Date.now() }); }); }
   function opinar(id, op) { return actualizar(id, function (p) { op.t = Date.now(); p.opinion = op; }); }
-  function marcarPagado(id, v) { return actualizar(id, function (p) { p.pago.pagado = v !== false; }); }
+  function marcarPagado(id, v, metodo) { return actualizar(id, function (p) { p.pago = Object.assign({}, p.pago, { pagado: v !== false }); if (metodo) p.pago.metodo = metodo; if (v !== false) p.pago.cuando = Date.now(); }); }
+  // Acciones del equipo
+  function aceptar(id, prepMin) { return cambiar(id, 'aceptado', prepMin ? { prepMin: prepMin } : null); }
+  function rechazar(id, motivo) { return cambiar(id, 'cancelado', { motivo: String(motivo || '').slice(0, 120) }); }
+  function asignar(id, nombre) { return actualizar(id, function (p) { p.asignadoA = nombre || null; }); }
+  function responderOpinion(id, texto) { return actualizar(id, function (p) { if (p.opinion) p.opinion = Object.assign({}, p.opinion, { respuesta: { texto: String(texto || '').slice(0, 300) } }); }); }
+  // El repartidor toma un delivery listo: la base lo asigna a él solo si está libre (dos repartidores a la vez: gana uno)
+  function tomarEntrega(id) {
+    var p = cache[id]; if (!p) return Promise.reject(fallo('transicion_invalida'));
+    escribiendo[id] = Date.now() + 3500;
+    var pin = pinEquipo();
+    return Nube.cola(COL + id, function () { return Nube.escribir(NEG, COL, id, { estado: 'camino', tomar: true, salida: Date.now() }, { pin: pin }); })
+      .then(function () { escribiendo[id] = Date.now() + 1500; if (poll) poll.ya(); })
+      .catch(function (e) { delete escribiendo[id]; entrarEquipo(); throw fallo(e); });
+  }
 
-  function cuando(p, estado) { var h = p.historial.filter(function (x) { return x.estado === estado; }).pop(); return h ? h.t : null; }
+  function cuando(p, estado) { var h = (p.historial || []).filter(function (x) { return x.estado === estado; }).pop(); return h ? h.t : null; }
   function viajeMin(p) { return p.km ? Math.round(p.km / CONFIG.kmh * 60 + 4) : 0; }
-  // Hora estimada de "listo" y de llegada, recalculadas con lo que ya pasó. En la demo acelerada, los minutos duran menos.
+  // Hora estimada de "listo" y de llegada, recalculadas con lo que ya pasó. Antes de que el local acepte no hay estimación.
   function eta(p) {
-    var min = 60000 / (p.escala || 1);
-    var inicioPrep = cuando(p, 'preparacion') || cuando(p, 'recibido');
+    var min = 60000;
+    var inicioPrep = cuando(p, 'preparacion') || cuando(p, 'aceptado') || cuando(p, 'recibido');
     var listo = cuando(p, 'listo') || Math.max(Date.now(), inicioPrep + p.prepMin * min);
     var fin = listo;
     if (p.tipo === 'delivery') {
@@ -119,9 +269,9 @@
     return { listo: listo, llega: entregado || fin, minutos: entregado ? 0 : Math.max(0, Math.round((fin - Date.now()) / min)) };
   }
   function distancia(a, b) {
-    var R = 6371, r = Math.PI / 180, dLa = (b.lat - a.lat) * r, dLo = (b.lng - a.lng) * r;
+    var Rt = 6371, r = Math.PI / 180, dLa = (b.lat - a.lat) * r, dLo = (b.lng - a.lng) * r;
     var x = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLo / 2) * Math.sin(dLo / 2);
-    return 2 * R * Math.asin(Math.sqrt(x));
+    return 2 * Rt * Math.asin(Math.sqrt(x));
   }
   // Ruta por calles (servicio público de demostración de OSRM). Si no responde, línea recta con puntos intermedios.
   function ruta(a, b) {
@@ -134,7 +284,13 @@
       return c && c.length > 1 ? c.map(function (x) { return [x[1], x[0]]; }) : recta();
     }).catch(recta);
   }
-  // Recorre una ruta (lista de [lat, lng]) a velocidad de ciudad, publicando la posición. Devuelve una función para detenerlo.
+  function largoRuta(r) { var t = 0; for (var i = 1; i < r.length; i++) t += distancia({ lat: r[i - 1][0], lng: r[i - 1][1] }, { lat: r[i][0], lng: r[i][1] }); return t; }
+  // Guarda la ruta por calles en el pedido (la dibuja el mapa del cliente y del repartidor)
+  function fijarRuta(id) {
+    var p = cache[id]; if (!p || p.ruta || !p.destino) return Promise.resolve();
+    return ruta(CONFIG.local, p.destino).then(function (r) { actualizar(id, function (z) { if (z.ruta) return; z.ruta = r; z.rutaKm = +largoRuta(r).toFixed(2); z.km = z.rutaKm; }); });
+  }
+  // Prueba sin moto: recorre la ruta a velocidad de ciudad (por `escala`), publicando la posición cada 3 s. Devuelve cómo detenerlo.
   function recorrer(id, puntos, escala) {
     var tramos = [], total = 0;
     for (var i = 1; i < puntos.length; i++) { var d = distancia({ lat: puntos[i - 1][0], lng: puntos[i - 1][1] }, { lat: puntos[i][0], lng: puntos[i][1] }); tramos.push(d); total += d; }
@@ -144,155 +300,44 @@
       while (k < tramos.length && acc + tramos[k] < hecho) { acc += tramos[k]; k++; }
       var f = k < tramos.length && tramos[k] ? (hecho - acc) / tramos[k] : 1, a = puntos[Math.min(k, puntos.length - 1)], b = puntos[Math.min(k + 1, puntos.length - 1)];
       ubicar(id, a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f);
-      if (hecho >= total) { clearInterval(timer); cambiar(id, 'entregado'); }
-    }, 1500);
+      if (hecho >= total) clearInterval(timer);
+    }, 3000);
     return function () { clearInterval(timer); };
   }
-
-  // ---------- Modo automático ----------
-  // Con el modo automático encendido, el servicio avanza solo: la cocina acepta el pedido, lo marca listo cuando se cumple
-  // su tiempo de preparación, se sirve o se entrega en el mesón, y en delivery se asigna un repartidor que recorre la ruta
-  // por calles; al entregar se registra el pago si era en caja o al recibir. Cualquier persona puede intervenir a mano en
-  // cualquier momento (la cocina, el repartidor con su GPS real): el motor sigue desde el estado en que quede el pedido.
-  // Lo ejecuta UNA sola pestaña a la vez (la "líder"), sea la carta, el seguimiento, la cocina, el repartidor o el panel.
-  var CLAVE_AUTO = 'fogon-auto', CLAVE_LIDER = 'fogon-lider', yo = Math.random().toString(36).slice(2);
-  var TIEMPOS = { aceptar: 1, servir: 3, retirar: 6, asignar: 2, opinar: 3 };   // minutos del servicio (en la demo, acelerados)
-  function auto() { return leer(CLAVE_AUTO, { activo: true, velocidad: 20 }); }
-  function fijarAuto(c) { escribir(CLAVE_AUTO, Object.assign(auto(), c)); avisar('auto'); }
-  function soyLider() { var l = leer(CLAVE_LIDER, null), ahora = Date.now(); if (!l || ahora - l.t > 3500 || l.yo === yo) { escribir(CLAVE_LIDER, { yo: yo, t: ahora }); return true; } return false; }
-  function largoRuta(r) { var t = 0; for (var i = 1; i < r.length; i++) t += distancia({ lat: r[i - 1][0], lng: r[i - 1][1] }, { lat: r[i][0], lng: r[i][1] }); return t; }
-  // Posición del repartidor según el tiempo desde que salió: la misma en cualquier pestaña, aunque cambie la líder
-  function enRuta(p, ahora) {
-    var r = p.ruta, total = p.rutaKm || largoRuta(r), hecho = Math.min(total, (ahora - p.salida) / 3600000 * CONFIG.kmh * (p.escala || 1)), acc = 0;
-    for (var i = 1; i < r.length; i++) {
-      var d = distancia({ lat: r[i - 1][0], lng: r[i - 1][1] }, { lat: r[i][0], lng: r[i][1] });
-      if (acc + d >= hecho && hecho < total) { var f = d ? (hecho - acc) / d : 1; return { lat: r[i - 1][0] + (r[i][0] - r[i - 1][0]) * f, lng: r[i - 1][1] + (r[i][1] - r[i - 1][1]) * f, fin: false }; }
-      acc += d;
-    }
-    return { lat: p.destino.lat, lng: p.destino.lng, fin: true };   // el último tramo, de la calle a la puerta
-  }
-  var pidiendoRuta = {};
-  function tick() {
-    var a = auto(); if (!a.activo || !soyLider()) return;
-    var ahora = Date.now();
-    todos().forEach(function (p) {
-      if (p.semilla || p.estado === 'cancelado') return;
-      var min = 60000 / (p.escala || 1), desde = cuando(p, p.estado) || p.creado, e = p.estado;
-      if (e === 'entregado') {   // los clientes simulados dejan nota (solo estrellas); los reales opinan ellos
-        if (p.simulado && !p.opinion && !p.sinOpinion && ahora - desde >= TIEMPOS.opinar * min) {
-          if (Math.random() < .65) { var x = Math.random(); opinar(p.id, { estrellas: x < .55 ? 5 : x < .85 ? 4 : x < .95 ? 3 : 2, recomendaria: x < .82, texto: '', simulada: true }); }
-          else actualizar(p.id, function (z) { z.sinOpinion = true; });
-        }
-        return;
-      }
-      var pagar = { pago: { metodo: p.pago.metodo, pagado: true } };   // en caja o al recibir: se paga al entregar
-      if (e === 'recibido' && ahora - desde >= TIEMPOS.aceptar * min) cambiar(p.id, 'preparacion', { auto: true });
-      else if (e === 'preparacion' && ahora >= desde + p.prepMin * min) cambiar(p.id, 'listo');   // se cumplió el tiempo de preparación
-      else if (e === 'listo' && p.tipo !== 'delivery' && ahora - desde >= (p.tipo === 'mesa' ? TIEMPOS.servir : TIEMPOS.retirar) * min) cambiar(p.id, 'entregado', pagar);
-      else if (e === 'listo' && p.tipo === 'delivery') {
-        if (!p.ruta) pedirRuta(p);
-        else if (ahora - desde >= TIEMPOS.asignar * min) cambiar(p.id, 'camino', { repartidor: { nombre: 'Repartidor de turno', auto: true }, salida: ahora });
-      }
-      else if (e === 'camino') {
-        var rep = p.repartidor || {};
-        if (rep.gps) { if (rep.lat && distancia(rep, p.destino) < .06) cambiar(p.id, 'entregado', pagar); return; }   // GPS real: se entrega al llegar
-        if (!p.ruta) { pedirRuta(p); return; }
-        if (!p.salida) { actualizar(p.id, function (z) { z.salida = ahora; }); return; }
-        var pos = enRuta(p, ahora);
-        ubicar(p.id, pos.lat, pos.lng);
-        if (pos.fin) cambiar(p.id, 'entregado', pagar);
-      }
-    });
-  }
-  function pedirRuta(p) {
-    if (pidiendoRuta[p.id]) return; pidiendoRuta[p.id] = 1;
-    ruta(CONFIG.local, p.destino).then(function (r) { actualizar(p.id, function (z) { z.ruta = r; z.rutaKm = +largoRuta(r).toFixed(2); z.km = z.rutaKm; }); });
-  }
-  setInterval(tick, 1000);
-  // Simulador de un servicio: llegan clientes (algunos solo miran la carta) y piden en la mesa, para retirar o con delivery.
-  var simulando = null;
-  function simular(o) {
-    o = o || {}; if (simulando) clearInterval(simulando);
-    var n = 0, total = o.pedidos || 10, cada = (o.cadaSeg || 6) * 1000, platos = o.platos || [], comunas = Object.keys(CONFIG.comunas);
-    var calles = ['Colo Colo', 'Lincoyán', 'Ongolmo', 'Caupolicán', 'Rengo', 'Tucapel', 'Orompello', 'Castellón', 'Aníbal Pinto', 'Freire'];
-    var uno = function () {
-      if (n >= total) { clearInterval(simulando); simulando = null; avisar('simulacion'); return; }
-      n++;
-      var lv = leer(CLAVE_VIS, []), tipo = o.tipos ? o.tipos[(n - 1) % o.tipos.length] : ['mesa', 'mesa', 'retiro', 'delivery', 'delivery'][Math.floor(Math.random() * 5)];
-      for (var v = 0; v < 2; v++) lv.push({ t: Date.now(), origen: tipo === 'mesa' ? 'QR de mesa' : ['Directo', 'Instagram', 'Invitación de un cliente'][Math.floor(Math.random() * 3)], simulado: true });
-      escribir(CLAVE_VIS, lv.slice(-3000));
-      var items = [], k = 1 + Math.floor(Math.random() * 3);
-      for (var i = 0; i < k; i++) { var pl = platos[Math.floor(Math.random() * platos.length)]; items.push({ id: pl.id, nombre: pl.nombre, precio: pl.precio, cant: 1 + Math.floor(Math.random() * 2) }); }
-      while (tipo === 'delivery' && items.reduce(function (t, x) { return t + x.precio * x.cant; }, 0) < CONFIG.minimoDelivery) items[0].cant += 1;
-      crear({ tipo: tipo, mesa: tipo === 'mesa' ? 1 + Math.floor(Math.random() * CONFIG.mesas) : null, cliente: { nombre: 'Cliente simulado ' + n, telefono: '', direccion: calles[Math.floor(Math.random() * calles.length)] + ' ' + (100 + Math.floor(Math.random() * 1400)), comuna: tipo === 'delivery' ? comunas[Math.floor(Math.random() * 3)] : '' },
-        items: items, pago: Math.random() < .6 ? { metodo: 'linea', pagado: true } : { metodo: 'caja', pagado: false }, referencia: ['Instagram', 'Google Maps', 'Me lo recomendaron', 'Pasaba por fuera', ''][Math.floor(Math.random() * 5)], demo: true, simulado: true });
-    };
-    uno(); simulando = setInterval(uno, cada);
-    return { detener: function () { clearInterval(simulando); simulando = null; } };
-  }
-
-  // Quién está atendiendo: la cocina y el repartidor marcan "vivo" cada pocos segundos.
-  function latido(rol) { escribir(CLAVE_VIVO + rol, Date.now()); }
-  function atendido(rol) { return Date.now() - leer(CLAVE_VIVO + rol, 0) < 12000; }
 
   // Visitas a la carta (una por sesión), con su origen: QR de mesa, enlace de un amigo o directo.
   function visita() {
     try { if (sessionStorage.getItem('fogon-visto')) return; sessionStorage.setItem('fogon-visto', '1'); } catch (e) { return; }
-    var q = new URLSearchParams(location.search), l = leer(CLAVE_VIS, []);
-    l.push({ t: Date.now(), origen: q.get('mesa') ? 'QR de mesa' : q.get('ref') ? 'Invitación de un cliente' : document.referrer ? 'Otro sitio' : 'Directo' });
-    escribir(CLAVE_VIS, l.slice(-3000)); avisar('visita');
+    var q = new URLSearchParams(location.search);
+    var origen = q.get('mesa') ? 'QR de mesa' : q.get('ref') ? 'Invitación de un cliente' : document.referrer ? 'Otro sitio' : 'Directo';
+    Nube.escribir(NEG, 'visitas', nuevoId(), { t: Date.now(), origen: origen }, { modo: 'poner' }).catch(function () {});
   }
-  function visitas() { return leer(CLAVE_VIS, []); }
-
-  // Datos de demostración para el panel: 7 días de visitas y pedidos generados al azar, marcados como demo.
-  // Solo notas con estrellas: no se inventan comentarios de clientes.
-  function sembrar(platos) {
-    var l = todos().filter(function (p) { return !p.semilla; }), v = visitas().filter(function (x) { return !x.semilla; });
-    var origenes = ['QR de mesa', 'QR de mesa', 'Directo', 'Instagram', 'Invitación de un cliente', 'Google Maps'], refs = ['Instagram', 'Pasaba por fuera', 'Me lo recomendaron', 'Google Maps', 'TikTok'];
-    var tipos = ['mesa', 'mesa', 'retiro', 'delivery', 'delivery'], comunas = Object.keys(CONFIG.comunas);
-    var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-    for (var d = 6; d >= 0; d--) {
-      var nVis = 40 + Math.floor(Math.random() * 50);
-      for (var i = 0; i < nVis; i++) {
-        var hora = Math.random() < .5 ? 13 + Math.random() * 2.5 : 20 + Math.random() * 3;
-        var t = hoy.getTime() - d * 864e5 + hora * 36e5;
-        if (t > Date.now()) continue;
-        v.push({ t: t, origen: origenes[Math.floor(Math.random() * origenes.length)], semilla: true });
-        if (Math.random() < .32) {
-          var tipo = tipos[Math.floor(Math.random() * tipos.length)], items = [], n = 1 + Math.floor(Math.random() * 3);
-          for (var k = 0; k < n; k++) { var pl = platos[Math.floor(Math.random() * platos.length)]; items.push({ id: pl.id, nombre: pl.nombre, precio: pl.precio, cant: 1 + Math.floor(Math.random() * 2) }); }
-          var sub = items.reduce(function (s, x) { return s + x.precio * x.cant; }, 0), com = comunas[Math.floor(Math.random() * 4)];
-          var envio = tipo === 'delivery' ? CONFIG.comunas[com].envio : 0, prep = 10 + Math.floor(Math.random() * 15);
-          var hist = [{ estado: 'recibido', t: t + 6e4 }, { estado: 'preparacion', t: t + 2e5 }, { estado: 'listo', t: t + 2e5 + prep * 6e4 }];
-          if (tipo === 'delivery') hist.push({ estado: 'camino', t: t + 3e5 + prep * 6e4 });
-          hist.push({ estado: 'entregado', t: t + (tipo === 'delivery' ? 15e5 : 4e5) + prep * 6e4 });
-          var cancel = Math.random() < .04;
-          var p = { id: nuevoId(), codigo: String(100 + Math.floor(Math.random() * 900)), creado: t + 6e4, tipo: tipo, mesa: tipo === 'mesa' ? 1 + Math.floor(Math.random() * CONFIG.mesas) : null,
-            cliente: { nombre: 'Cliente de demostración', comuna: tipo === 'delivery' ? com : '' }, items: items, subtotal: sub, envio: envio, total: sub + envio,
-            pago: { metodo: Math.random() < .55 ? 'linea' : 'caja', pagado: !cancel }, referencia: refs[Math.floor(Math.random() * refs.length)],
-            estado: cancel ? 'cancelado' : 'entregado', historial: cancel ? hist.slice(0, 1).concat([{ estado: 'cancelado', t: t + 3e5 }]) : hist, prepMin: prep, escala: 1, semilla: true };
-          if (!cancel && Math.random() < .45) { var r = Math.random(); p.opinion = { estrellas: r < .55 ? 5 : r < .85 ? 4 : r < .95 ? 3 : 2, recomendaria: r < .8, texto: '', t: p.historial[p.historial.length - 1].t + 6e5 }; }
-          l.push(p);
-        }
-      }
-    }
-    l.sort(function (a, b) { return a.creado - b.creado; });
-    guardarTodos(l); escribir(CLAVE_VIS, v.sort(function (a, b) { return a.t - b.t; })); avisar('cambio');
+  function visitas() { return vis.slice(); }
+  // Solo el dueño: empezar de cero (borra los pedidos y visitas)
+  function vaciar() {
+    var pin = pinEquipo();
+    return Promise.all([Nube.vaciar(NEG, COL, pin), Nube.vaciar(NEG, 'visitas', pin)]).then(function () { cache = {}; vis = []; mis = []; guardarLoc('fogon-mis-' + NEG, []); avisar('cambio'); });
   }
-  function borrarDemo() { escribir(CLAVE, []); escribir(CLAVE_VIS, []); avisar('cambio'); }
 
   var clp = function (n) { return '$' + Math.round(n).toLocaleString('es-CL'); };
   var hora = function (t) { return new Date(t).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }); };
+  var fecha = function (t) { return new Date(t).toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }); };
   function nombreEstado(p, e) { var x = ESTADOS[e || p.estado].nombre; return typeof x === 'string' ? x : x[p.tipo]; }
   function descEstado(p) { var x = ESTADOS[p.estado].desc; return typeof x === 'string' ? x : x[p.tipo]; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function tipoTxt(p) { return p.tipo === 'mesa' ? 'Mesa ' + p.mesa : p.tipo === 'retiro' ? 'Retiro en local' : 'Delivery'; }
+  // Una línea del pedido con sus opciones y su nota, lista para mostrar
+  function lineaTxt(i) { return i.cant + '× ' + i.nombre + ((i.opciones || []).length ? ' (' + i.opciones.map(function (o) { return o.opcion; }).join(', ') + ')' : ''); }
+  function lineaHtml(i) { return '<b>' + i.cant + '×</b> ' + esc(i.nombre) + ((i.opciones || []).length ? ' <small>(' + i.opciones.map(function (o) { return esc(o.opcion); }).join(', ') + ')</small>' : '') + (i.nota ? '<br><small class="sis-nota">“' + esc(i.nota) + '”</small>' : ''); }
 
+  conectar();
   window.Pedidos = {
-    CONFIG: CONFIG, ESTADOS: ESTADOS, FLUJO: FLUJO, todos: todos, obtener: obtener, crear: crear, cambiar: cambiar, siguiente: siguiente,
-    ubicar: ubicar, opinar: opinar, marcarPagado: marcarPagado, actualizar: actualizar, eta: eta, viajeMin: viajeMin, cuando: cuando,
-    distancia: distancia, ruta: ruta, recorrer: recorrer, latido: latido, atendido: atendido, visita: visita, visitas: visitas,
-    sembrar: sembrar, borrarDemo: borrarDemo, escuchar: function (f) { oyentes.push(f); }, auto: auto, fijarAuto: fijarAuto, simular: simular, tick: tick, enRuta: enRuta, TIEMPOS: TIEMPOS,
-    clp: clp, hora: hora, nombreEstado: nombreEstado, descEstado: descEstado, esc: esc, tipoTxt: tipoTxt
+    CONFIG: CONFIG, ESTADOS: ESTADOS, FLUJO: FLUJO, ACTIVOS: ACTIVOS, configurar: configurar, todos: todos, obtener: obtener, crear: crear, modificar: modificar, cambiar: cambiar, siguiente: siguiente,
+    marcarModificando: marcarModificando, soltarModificacion: soltarModificacion, modificandoAhora: modificandoAhora, puedeModificar: puedeModificar, pedidoPendiente: pedidoPendiente,
+    ubicar: ubicar, opinar: opinar, marcarPagado: marcarPagado, actualizar: actualizar, aceptar: aceptar, rechazar: rechazar, asignar: asignar, responderOpinion: responderOpinion, tomarEntrega: tomarEntrega,
+    eta: eta, viajeMin: viajeMin, cuando: cuando, distancia: distancia, ruta: ruta, fijarRuta: fijarRuta, recorrer: recorrer, visita: visita, visitas: visitas, vaciar: vaciar,
+    escuchar: function (f) { oyentes.push(f); }, seguir: seguir, esperar: esperar, guardado: guardado, entrarEquipo: entrarEquipo, misPedidos: misPedidos, misIds: function () { return mis.slice(); }, enLinea: function () { return conectado; },
+    sesion: sesionId, parseError: parseError, refrescar: function () { if (poll) poll.ya(); },
+    clp: clp, hora: hora, fecha: fecha, nombreEstado: nombreEstado, descEstado: descEstado, esc: esc, tipoTxt: tipoTxt, largoRuta: largoRuta, lineaTxt: lineaTxt, lineaHtml: lineaHtml
   };
 })();

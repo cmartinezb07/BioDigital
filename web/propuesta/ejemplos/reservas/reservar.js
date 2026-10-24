@@ -47,7 +47,7 @@
   }
   app.addEventListener('click', function (e) {
     var b = e.target.closest('[data-neg]'); if (!b) return;
-    soltar(); st.neg = b.dataset.neg; guard('bdres-neg', st.neg); st.paso = 1; st.sel = {}; st.codigo = ''; st.vista = null; st.res = null; pintar();
+    soltar(); st.neg = b.dataset.neg; R.conectar(st.neg); guard('bdres-neg', st.neg); st.paso = 1; st.sel = {}; st.codigo = ''; st.vista = null; st.res = null; pintar();
   });
 
   function pintar() {
@@ -143,9 +143,9 @@
   function paso4(p, D) {
     var r = st.res, c = D.config, cu = R.fechaHora(D, r), nombre = r.servicio ? (R.servicio(D, r.servicio) || {}).nombre : (R.recurso(D, r.recurso) || {}).nombre;
     var g = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(c.nombre + ' · ' + nombre) + '&dates=' + gfecha(r.desde) + '/' + gfecha(r.hasta) + '&details=' + encodeURIComponent('Código ' + r.codigo) + '&location=' + encodeURIComponent(c.direccion);
-    var gest = location.origin + location.pathname + '?negocio=' + st.neg + '&gestion=' + r.codigo;
+    var gest = location.origin + location.pathname + '?negocio=' + st.neg + '&gestion=' + r.codigo + '&rid=' + r.id;
     p.innerHTML = '<section class="caja ok-hero"><span class="ico" aria-hidden="true">✓</span><h2 style="font-size:24px">' + t('ok') + '</h2><p>' + esc(nombre) + ' · ' + esc(cu) + '</p><p class="nota">' + t('cod') + '</p><p class="codigo">' + r.codigo + '</p>' +
-      '<p class="nota">Te enviamos la confirmación por correo y WhatsApp (en esta demo quedan registradas en el panel, no salen).</p>' +
+      '<p class="nota">Te enviamos la confirmación por correo y WhatsApp (en esta demostración quedan registradas en el panel del negocio; no salen mensajes reales).</p>' +
       '<div class="acciones-r" style="justify-content:center"><button class="btn" type="button" data-ics>' + t('cal') + '</button><a class="btn" href="' + g + '" target="_blank" rel="noopener">' + t('gcal') + '</a><a class="btn" href="https://wa.me/?text=' + encodeURIComponent(c.nombre + ': reserva ' + r.codigo + ', ' + cu + '. ' + gest) + '" target="_blank" rel="noopener">' + t('compartir') + '</a></div>' +
       '<p><a href="' + esc(gest) + '">' + t('gestionar') + '</a></p><p><button class="btn chico" type="button" data-nueva>Hacer otra reserva</button></p></section>';
   }
@@ -153,7 +153,7 @@
   // Ver o cancelar una reserva con su código
   function gestion(p) {
     var D = d(), cod = String(q.get('gestion')).toUpperCase(), r = D.reservas.filter(function (x) { return x.codigo === cod; })[0];
-    if (!r) { p.innerHTML = '<section class="caja"><p>No encontramos la reserva ' + esc(cod) + ' en este equipo.</p><p style="margin-top:10px"><a class="btn" href="./?negocio=' + st.neg + '">Volver</a></p></section>'; return; }
+    if (!r) { p.innerHTML = '<section class="caja"><p>No encontramos la reserva ' + esc(cod) + '. Revisa el enlace.</p><p style="margin-top:10px"><a class="btn" href="./?negocio=' + st.neg + '">Volver</a></p></section>'; return; }
     var e = R.ESTADOS[r.estado], rb = R.reembolso(D, r), puede = ['retenida', 'confirmada', 'pagada'].indexOf(r.estado) > -1 && r.desde > Date.now();
     p.innerHTML = '<section class="caja"><h2>Reserva ' + r.codigo + '</h2><p><span class="chip" style="--ec:' + e[1] + '">' + e[0] + '</span></p><p style="margin-top:8px">' + esc(R.fechaHora(D, r)) + ' · ' + clp(r.precio.total) + ' · pagado ' + clp(r.pagado) + '</p>' +
       (puede ? '<p class="nota" style="margin-top:10px">Si cancelas ahora (' + rb.horas + ' h antes) te devolvemos el ' + rb.porcentaje + ' % de lo pagado: ' + clp(rb.monto) + '.</p><p style="margin-top:12px"><button class="btn peligro" type="button" data-cancelar="' + r.id + '">Cancelar mi reserva</button></p>' : r.reembolso ? '<p class="nota" style="margin-top:10px">Devolución: ' + clp(r.reembolso.monto) + '.</p>' : '') +
@@ -238,8 +238,13 @@
   // Disponibilidad en vivo: si otra pestaña o persona reserva, se recalcula
   R.escuchar(function (m) {
     if (m.id !== st.neg) return;
+    if (m.tipo === 'rechazo') { toast('Alguien reservó eso justo antes que tú. Elige otra fecha u hora.'); if (st.res && st.res.id === m.rid) { st.res = null; st.paso = 2; st.sel.min = null; } pintar(); return; }
+    if (m.tipo === 'error') { toast(m.mensaje); return; }
+    if (m.tipo === 'conexion') return;
     if (st.paso === 2) { var antes = st.sel.min, D = d(); if (selCompleta(D) && R.validar(D, st.sel)) { st.sel.min = null; if (D.config.modo === 'noches') st.sel.salida = null; toast(t('actualizada')); } pintar(); if (antes !== st.sel.min) {} }
     else if (st.paso === 1) pintar();
   });
-  pintar();
+  R.seguir(st.neg, q.get('rid'));
+  var lista = R.conectar(st.neg);
+  if (q.get('gestion')) lista.then(pintar); else pintar();
 })();

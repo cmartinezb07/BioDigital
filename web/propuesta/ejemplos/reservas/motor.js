@@ -3,9 +3,10 @@
 // Cuatro modos cubren los rubros: "noches" (cabañas, hotel), "horas" (centro médico, salón), "cupos" (tours) y
 // "bloques" (arriendo de espacios por hora).
 //
-// DEMO: los datos viven en el navegador y se sincronizan entre pestañas (BroadcastChannel): reserva en una pestaña y el
-// calendario de la otra y el panel cambian al instante. PRODUCCIÓN: la misma interfaz se conecta a una base en la nube
-// (ver memoria/reservas-sistema.md, con los costos recurrentes marcados).
+// CONECTADO: con Reservas.conectar(negocio) los datos se comparten por una base en la nube (_compartido/nube.js): el cliente reserva en
+// su celular y la reserva aparece en el panel de administración; lo que el panel cambia (confirmar, cancelar, precios, bloqueos) lo ve el cliente.
+// El cliente ve solo lo suyo y qué fechas están ocupadas; el equipo entra con PIN. Sin conectar, funciona solo en este navegador
+// (los ejemplos de rubro de la galería). Ver memoria/conexion-nube.md.
 (function () {
   'use strict';
   var V = 'bdres-v1-';
@@ -86,7 +87,7 @@
     if (!d) d = { config: JSON.parse(JSON.stringify(base)), reservas: [], bloqueos: [], avisos: [] };
     return d;
   }
-  function guardar(id, d) { try { localStorage.setItem(V + id, JSON.stringify(d)); } catch (e) {} avisar(id); }
+  function guardar(id, d, sinNube) { try { localStorage.setItem(V + id, JSON.stringify(d)); } catch (e) {} avisar(id); if (!sinNube && nubes[id]) sincronizar(id, d); }
   var canal = null; try { canal = new BroadcastChannel('bd-reservas'); } catch (e) {}
   var oyentes = [];
   function avisar(id) { var m = { id: id, t: Date.now() }; if (canal) canal.postMessage(m); oyentes.forEach(function (f) { f(m); }); }
@@ -98,7 +99,7 @@
   var ACTIVAS = { retenida: 1, confirmada: 1, pagada: 1, checkin: 1, completada: 1, noshow: 1 };
   function ocupan(d, recurso, desde, hasta, salvo) {
     var n = 0;
-    d.reservas.forEach(function (r) { if (r.id !== salvo && ACTIVAS[r.estado] && r.recurso === recurso && r.desde < hasta && r.hasta > desde) n += r.unidades || 1; });
+    d.reservas.forEach(function (r) { if (r.estado === 'retenida' && r.expira && r.expira < Date.now()) return; if (r.id !== salvo && ACTIVAS[r.estado] && r.recurso === recurso && r.desde < hasta && r.hasta > desde) n += r.unidades || 1; });
     d.bloqueos.forEach(function (b) { if (b.recurso === recurso && b.desde < hasta && b.hasta > desde) n += b.unidades || 1; });
     return n;
   }
@@ -235,7 +236,7 @@
         estado: conDep ? 'retenida' : 'confirmada', expira: conDep ? Date.now() + (c.politicas.retencionMin || 10) * 6e4 : null,
         canal: opc.canal || 'Sitio web', idioma: cliente.idioma || 'es', historial: [{ estado: conDep ? 'retenida' : 'confirmada', t: Date.now() }], semilla: !!opc.semilla };
       if (pr.promo && pr.promo.codigo && pr.motivo.indexOf(pr.promo.codigo) > -1) c.promos.forEach(function (p) { if (p.codigo === pr.promo.codigo) p.usos++; });
-      d.reservas.push(r);
+      d.reservas.push(r); if (nubes[id]) recordarMia(id, r.id);
       if (!opc.semilla) programarAvisos(d, r, conDep ? 'pago' : 'confirmacion');
       return { reserva: r };
     });
@@ -293,13 +294,14 @@
   }
   // Tareas automáticas: vencer retenciones sin pago, enviar avisos programados, cerrar reservas pasadas
   function automatico(id) {
-    var d = leer(id), cambio = false, ahora = Date.now();
+    var d = leer(id), cambio = false, ahora = Date.now(), equipo = !nubes[id] || !!pinEquipo();   // en la nube, check-in y cierre los hace el equipo; el cliente solo ve vencer sus propias retenciones
     d.reservas.forEach(function (r) {
+      if (r._pub) return;
       if (r.estado === 'retenida' && r.expira && r.expira < ahora) { r.estado = 'cancelada'; r.canceladaPor = 'sistema: no se pagó a tiempo'; r.historial.push({ estado: 'cancelada', t: ahora }); avisarEspera(d, r); cambio = true; }
-      if ((r.estado === 'confirmada' || r.estado === 'pagada') && r.desde <= ahora && r.hasta > ahora && !r.semilla) { r.estado = 'checkin'; r.historial.push({ estado: 'checkin', t: ahora, auto: true }); cambio = true; }   // llegó la hora: queda "En curso"
-      if ((r.estado === 'confirmada' || r.estado === 'pagada' || r.estado === 'checkin') && r.hasta < ahora && !r.semilla) { r.estado = 'completada'; r.historial.push({ estado: 'completada', t: ahora }); cambio = true; }
+      if (equipo && (r.estado === 'confirmada' || r.estado === 'pagada') && r.desde <= ahora && r.hasta > ahora && !r.semilla) { r.estado = 'checkin'; r.historial.push({ estado: 'checkin', t: ahora, auto: true }); cambio = true; }   // llegó la hora: queda "En curso"
+      if (equipo && (r.estado === 'confirmada' || r.estado === 'pagada' || r.estado === 'checkin') && r.hasta < ahora && !r.semilla) { r.estado = 'completada'; r.historial.push({ estado: 'completada', t: ahora }); cambio = true; }
     });
-    d.avisos.forEach(function (a) { if (a.estado === 'programado' && a.cuando <= ahora) { a.estado = 'enviado (demo)'; a.enviado = ahora; cambio = true; } });
+    if (equipo) d.avisos.forEach(function (a) { if (a.estado === 'programado' && a.cuando <= ahora) { a.estado = nubes[id] ? 'enviado (simulado)' : 'enviado (demo)'; a.enviado = ahora; cambio = true; } });
     if (cambio) guardar(id, d);
   }
 
@@ -365,7 +367,16 @@
     }
     guardar(id, d);
   }
-  function restablecer(id) { try { localStorage.removeItem(V + id); } catch (e) {} avisar(id); }
+  function restablecer(id) {
+    if (nubes[id]) {   // en la nube solo el dueño puede vaciar; se vuelve a leer todo desde cero
+      var pin = pinEquipo();
+      return Promise.all(['reservas', 'avisos', 'espera'].map(function (c) { return Nube.vaciar(NUBE, c, pin); })).then(function (r) {
+        if (r[0] && r[0].error) throw new Error('sin permiso');
+        try { localStorage.removeItem(V + id); } catch (e) {} nubes[id].ultimo = { reservas: {}, avisos: {}, espera: {}, config: null }; nubes[id].sondeos.forEach(function (x) { x.reiniciar(); }); avisar(id);
+      });
+    }
+    try { localStorage.removeItem(V + id); } catch (e) {} avisar(id); return Promise.resolve();
+  }
   function guardarConfig(id, fn) { return cambiar(id, function (d) { fn(d.config); }); }
 
   var clp = function (n) { return '$' + Math.round(n).toLocaleString('es-CL'); };
@@ -376,11 +387,124 @@
   }
   var ESTADOS = { retenida: ['Retenida (falta pago)', '#f59e0b'], confirmada: ['Confirmada', '#3b82f6'], pagada: ['Pagada', '#22c55e'], checkin: ['En curso', '#a855f7'], completada: ['Completada', '#94a3b8'], cancelada: ['Cancelada', '#ef4444'], noshow: ['No llegó', '#b91c1c'] };
 
+
+  // ---------- Nube: espejo de este negocio en la base compartida ----------
+  var NUBE = 'reservas', nubes = {};
+  function pinEquipo() { return window.Nube ? Nube.pin(NUBE) : ''; }
+  function mias(id) { try { return JSON.parse(localStorage.getItem('bdres-mis-' + id)) || []; } catch (e) { return []; } }
+  function recordarMia(id, rid) { var l = mias(id); if (l.indexOf(rid) < 0) { l.push(rid); try { localStorage.setItem('bdres-mis-' + id, JSON.stringify(l.slice(-40))); } catch (e) {} } }
+  // Lo único que se publica de cada reserva para calcular fechas libres: sin nombre ni contacto
+  function pubDe(d, r) {
+    var c = d.config, m = c.modo === 'noches' ? 'n' : c.modo === 'cupos' ? 'c' : c.modo === 'horas' ? 'h' : 'b';
+    return { n: c.id, m: m, r: c.id + ':' + r.recurso + (m === 'c' ? ':' + r.desde : ''), d: r.desde, h: r.hasta, u: m === 'c' ? (r.personas || 1) : (r.unidades || 1), e: r.estado, x: r.expira || 0 };
+  }
+  function cupoDe(d, r) {
+    var c = d.config, p = pubDe(d, r), mx = c.modo === 'cupos' ? (servicio(d, r.servicio) || {}).capacidad : (recurso(d, r.recurso) || {}).unidades;
+    return { r: p.r, d: r.desde, h: r.hasta, u: p.u, max: mx || 1, paso: c.modo === 'noches' ? 864e5 : 0 };
+  }
+  function sincronizar(id, d) {
+    var n = nubes[id]; if (!n) return;
+    var pin = pinEquipo();
+    ['reservas', 'avisos', 'espera'].forEach(function (col) {
+      (d[col] || []).forEach(function (it) {
+        if (it._pub) return;
+        it.neg = id;
+        var js = Nube.canon(it); if (n.ultimo[col][it.id] === js) return;
+        n.ultimo[col][it.id] = js;
+        var o = { pin: pin, modo: 'poner' }, nuevo = !n.subidas[it.id];
+        if (col === 'reservas') { o.pub = pubDe(d, it); if (nuevo && it.estado !== 'cancelada') o.cupo = cupoDe(d, it); }
+        n.subidas[it.id] = 1;
+        var copia = JSON.parse(JSON.stringify(it));
+        Nube.cola(col + it.id, function () {
+          if (n.rechazadas[it.id]) return Promise.resolve();   // ya se anuló: no se vuelve a publicar un estado viejo
+          return Nube.escribir(NUBE, col, it.id, copia, o).then(function () { n.enLinea = true; }).catch(function (e) {
+          if (col === 'reservas' && e.codigo === 'ocupado') {
+            n.rechazadas[it.id] = true;   // alguien reservó lo mismo un instante antes: se anula y se avisa
+            var dd = leer(id), r = dd.reservas.filter(function (x) { return x.id === it.id; })[0];
+            if (r) {
+              r.estado = 'cancelada'; r.canceladaPor = 'sistema: la fecha se ocupó justo antes'; r.historial.push({ estado: 'cancelada', t: Date.now() });
+              n.ultimo.reservas[it.id] = Nube.canon(r); guardar(id, dd, true);
+              oyentes.forEach(function (f) { f({ id: id, tipo: 'rechazo', rid: it.id }); });
+              return Nube.escribir(NUBE, 'reservas', it.id, r, { pin: pin, modo: 'poner', pub: pubDe(dd, r) }).catch(function () {});
+            }
+            oyentes.forEach(function (f) { f({ id: id, tipo: 'rechazo', rid: it.id }); });
+          } else {
+            delete n.ultimo[col][it.id]; delete n.subidas[it.id];
+            oyentes.forEach(function (f) { f({ id: id, tipo: 'error', mensaje: 'No se pudo guardar. Revisa tu conexión.' }); });
+          }
+          });
+        });
+      });
+    });
+    if (pin) {   // el equipo publica la configuración (precios, políticas, bloqueos) para que el cliente la vea
+      var cf = Nube.canon({ config: d.config, bloqueos: d.bloqueos });
+      if (n.ultimo.config !== cf) { n.ultimo.config = cf; Nube.escribir(NUBE, 'config', 'cfg-' + id, { config: d.config, bloqueos: d.bloqueos }, { pin: pin, modo: 'poner' }).catch(function () { n.ultimo.config = null; }); }
+    }
+  }
+  function fusionar(id, col, filas) {
+    var n = nubes[id], d = leer(id), cambio = false, lista = d[col] = d[col] || [];
+    filas.forEach(function (f) {
+      var x = f.data; if (!x || x.neg !== id) return; x.id = f.id;
+      var js = Nube.canon(x), i = -1; lista.forEach(function (y, k) { if (y.id === x.id) i = k; });
+      if (i < 0) { lista.push(x); cambio = true; }
+      else {
+        var loc = Nube.canon(lista[i]);
+        if (loc === js) { n.ultimo[col][x.id] = js; return; }
+        if (n.ultimo[col][x.id] !== loc) return;   // hay un cambio local sin enviar: gana lo local
+        lista[i] = x; cambio = true;
+      }
+      n.ultimo[col][x.id] = js; n.subidas[x.id] = 1;
+    });
+    if (cambio) { d[col] = lista; guardar(id, d, true); }
+  }
+  function fusionarPub(id, pubs) {
+    var d = leer(id);
+    var stubs = pubs.filter(function (p) { return p && p.n === id; }).map(function (p, i) {
+      var k = String(p.r).split(':');
+      return { id: 'pub-' + i, _pub: true, neg: id, recurso: k[1], servicio: p.m === 'c' ? k[1] : null, desde: p.d, hasta: p.h, personas: p.u, unidades: p.m === 'c' ? 1 : p.u, estado: p.e, expira: p.x || null };
+    });
+    var actuales = d.reservas.filter(function (r) { return r._pub; });
+    if (Nube.canon(actuales) === Nube.canon(stubs)) return;
+    d.reservas = d.reservas.filter(function (r) { return !r._pub; }).concat(stubs); guardar(id, d, true);
+  }
+  function conectar(id) {
+    if (nubes[id]) return nubes[id].listo;
+    var n = nubes[id] = { ultimo: { reservas: {}, avisos: {}, espera: {}, config: null }, subidas: {}, rechazadas: {}, sondeos: [], enLinea: true, vistoConfig: false };
+    var pend = 2, fin, primera = {};
+    n.listo = new Promise(function (ok) { fin = ok; setTimeout(ok, 9000); });
+    var listo1 = function () { if (--pend === 0) fin(); };
+    var base = function (ids) { return { pin: pinEquipo, ids: ids, cada: 3000, alConectar: function (ok) { if (ok !== n.enLinea) { n.enLinea = ok; oyentes.forEach(function (f) { f({ id: id, tipo: 'conexion', ok: ok }); }); } } }; };
+    n.sondeos.push(Nube.sondear(NUBE, 'config', base(function () { return ['cfg-' + id]; }), function (r) {
+      var fila = r.filas.filter(function (f) { return f.id === 'cfg-' + id; })[0];
+      if (fila && fila.data && fila.data.config) {
+        var d = leer(id), js = Nube.canon(fila.data), local = Nube.canon({ config: d.config, bloqueos: d.bloqueos });
+        if (n.ultimo.config !== js && local !== js && (n.ultimo.config === null || n.ultimo.config === local)) { d.config = fila.data.config; d.bloqueos = fila.data.bloqueos || []; n.ultimo.config = js; guardar(id, d, true); }
+        else n.ultimo.config = js;
+      } else if (r.staff && !n.vistoConfig) { n.ultimo.config = null; sincronizar(id, leer(id)); }   // la nube aún no tiene la configuración: la publica el primer panel que entra
+      n.vistoConfig = true; if (!primera.c) { primera.c = 1; listo1(); }
+    }));
+    n.sondeos.push(Nube.sondear(NUBE, 'reservas', base(function () { return mias(id); }), function (r) {
+      fusionar(id, 'reservas', r.filas); if (!r.staff) fusionarPub(id, r.pub);
+      if (!primera.r) { primera.r = 1; listo1(); }
+    }));
+    n.sondeos.push(Nube.sondear(NUBE, 'avisos', { pin: pinEquipo, soloSiHayIds: true, cada: 5000 }, function (r) { if (r.staff) fusionar(id, 'avisos', r.filas); }));
+    n.sondeos.push(Nube.sondear(NUBE, 'espera', { pin: pinEquipo, soloSiHayIds: true, cada: 6000 }, function (r) { if (r.staff) fusionar(id, 'espera', r.filas); }));
+    return n.listo;
+  }
+  // Al entrar el equipo con su PIN se vuelve a leer todo
+  function entrarEquipo(id) { var n = nubes[id]; if (!n) return; n.ultimo.config = null; n.vistoConfig = false; n.sondeos.forEach(function (x) { x.reiniciar(); }); }
+  // Un cliente que abre el enlace de su reserva en otro equipo: se agrega a las que sigue
+  function seguir(id, rid) { if (rid && /^[a-z0-9]{6,40}$/.test(rid)) { recordarMia(id, rid); if (nubes[id]) nubes[id].sondeos.forEach(function (x) { x.ya(); }); } }
+  // Solo para las pruebas automáticas: deja el negocio trabajando solo en este navegador
+  function desconectar(id) { var n = nubes[id]; if (!n) return; n.sondeos.forEach(function (x) { x.parar(); }); delete nubes[id]; }
+  function enLinea(id) { return !nubes[id] || nubes[id].enLinea; }
+  function listo(id) { return nubes[id] ? nubes[id].listo : Promise.resolve(); }
+
   window.Reservas = {
     NEGOCIOS: NEGOCIOS, ESTADOS: ESTADOS, icono: icono, logo: logo, leer: leer, guardarConfig: guardarConfig, escuchar: function (f) { oyentes.push(f); },
     mes: mes, horas: horas, salidas: salidas, libresNoche: libresNoche, precio: precio, validar: validar, crear: crear, estado: estado, pagar: pagar,
     cancelar: cancelar, reembolso: reembolso, esperar: esperar, automatico: automatico, exportarIcal: exportarIcal, importarIcal: importarIcal, bloquear: bloquear,
-    sembrar: sembrar, restablecer: restablecer, recurso: recurso, servicio: servicio, enTemporada: enTemporada, fechaHora: fechaHora,
+    sembrar: sembrar, restablecer: restablecer, conectar: conectar, desconectar: desconectar, entrarEquipo: entrarEquipo, seguir: seguir, enLinea: enLinea, listo: listo, recurso: recurso, servicio: servicio, enTemporada: enTemporada, fechaHora: fechaHora,
     util: { fstr: fstr, fdate: fdate, hoy: hoy, sumaDias: sumaDias, difDias: difDias, diaSem: diaSem, hMin: hMin, minH: minH, clp: clp, pad: pad }
   };
 })();

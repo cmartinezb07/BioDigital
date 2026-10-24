@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EJEMPLOS } from '../propuesta/fuentes/maquetas.mjs';
+import { SEMILLAS } from './semillas-captura.mjs';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const destino = resolve(aqui, '../propuesta/ejemplos');
@@ -28,6 +29,20 @@ let id = 0; const pend = new Map();
 ws.onmessage = (ev) => { const m = JSON.parse(ev.data); if (m.id && pend.has(m.id)) { const { ok, mal } = pend.get(m.id); pend.delete(m.id); m.error ? mal(new Error(m.error.message)) : ok(m.result); } };
 const cdp = (method, params = {}, sessionId) => new Promise((ok, mal) => { const n = ++id; pend.set(n, { ok, mal }); ws.send(JSON.stringify({ id: n, method, params, ...(sessionId ? { sessionId } : {}) })); });
 
+// Las pantallas del equipo leen de la nube: antes de capturarlas se siembran datos de ejemplo y al terminar se borran
+const enPagina = async (ruta, fn) => {
+  const { targetId } = await cdp('Target.createTarget', { url: 'about:blank' });
+  const { sessionId: s } = await cdp('Target.attachToTarget', { targetId, flatten: true });
+  await cdp('Page.enable', {}, s); await cdp('Runtime.enable', {}, s);
+  await cdp('Page.navigate', { url: base + ruta }, s); await dormir(3500);
+  const r = await cdp('Runtime.evaluate', { expression: '(' + fn.toString() + ')()', awaitPromise: true, returnByValue: true }, s);
+  await cdp('Target.closeTarget', { targetId }).catch(() => {});
+  if (r.exceptionDetails) throw new Error((r.exceptionDetails.exception && r.exceptionDetails.exception.description) || 'falló el sembrado');
+  return r.result.value;
+};
+const usadas = Object.entries(SEMILLAS).filter(([, v]) => lista.some((e) => v.para.includes(e.id)));
+try {
+  for (const [k, v] of usadas) console.log('sembrando', k, '→', await enPagina(v.ruta, v.sembrar));
 for (const e of lista) {
   const { targetId } = await cdp('Target.createTarget', { url: 'about:blank' });
   const { sessionId: s } = await cdp('Target.attachToTarget', { targetId, flatten: true });
@@ -49,6 +64,9 @@ for (const e of lista) {
   execFileSync('python', ['-I', '-c', 'import sys;from PIL import Image;im=Image.open(sys.argv[1]).convert("RGB").resize((1200,750),Image.LANCZOS);im.save(sys.argv[2],"WEBP",quality=78,method=6);im.resize((720,450),Image.LANCZOS).save(sys.argv[2][:-5]+"-chica.webp","WEBP",quality=74,method=6)', png, webp]);
   console.log(e.id, '→', webp);
   await cdp('Target.closeTarget', { targetId });
+}
+} finally {
+  for (const [k, v] of usadas) { try { console.log('limpiando', k, '→', await enPagina(v.ruta, v.limpiar)); } catch (e) { console.log('NO se pudo limpiar', k, e.message); } }
 }
 ws.close(); chrome.kill();
 try { rmSync(perfil, { recursive: true, force: true }); } catch {}

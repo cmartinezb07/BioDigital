@@ -1,31 +1,35 @@
 ---
 name: contexto_biodigital
-description: Contexto completo de Bío Digital (startup de 5 estudiantes UdeC en el Gran Concepción) para retomar el trabajo en un chat nuevo sin releer todo: sitio web, tienda y carrito, panel interno con login y caja, formularios para clientes, menú digital con plato en vivo, las skills crear-sitio-web y crear-menu-digital, publicación en Cloudflare, Supabase, catálogo y precios, decisiones, pendientes y lecciones. Úsala cuando pidan editar, regenerar, publicar o ampliar cualquier cosa de Bío Digital (página web, gato mascota, paleta, logo, precios, promociones, panel, formularios, menú digital, demos, skills) o preguntan en qué quedó el proyecto.
+description: Contexto completo de Bío Digital (startup de 5 estudiantes UdeC en el Gran Concepción) para retomar el trabajo en un chat nuevo sin releer todo: sitio web, tienda y carrito, panel interno con login y caja, formularios para clientes, menú digital con pedidos, reservas y fidelización conectados en la nube, las skills crear-sitio-web y crear-menu-digital, publicación en Cloudflare, Supabase, catálogo y precios, decisiones, pendientes y lecciones. Úsala cuando pidan editar, regenerar, publicar o ampliar cualquier cosa de Bío Digital (página web, gato mascota, paleta, logo, precios, promociones, panel, formularios, menú digital, demos, skills) o preguntan en qué quedó el proyecto.
 ---
 
 # Contexto: Bío Digital (todo el proyecto)
 
 **Responder siempre en español.** Proyecto: `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` · Repo privado: https://github.com/cmartinezb07/BioDigital · Antes de nada lee `MEMORY.md`, `memoria/estado-actual.md` y el final de `memoria/decisiones.md` (bitácora; la más reciente está al final).
 
-## PRÓXIMO CHAT — leer primero (estado al 23-oct-2026, noche)
+## PRÓXIMO CHAT — leer primero (estado al 24-oct-2026)
 
-**Hecho y en GitHub:** todo el encargo del 23-oct (sección "ENCARGO" más abajo, ya cumplida) más el modo automático y el caso base. Detalle técnico en `memoria/menu-pedidos.md`, `memoria/reservas-sistema.md` y el final de `memoria/decisiones.md`.
+**Hecho el 24-oct (pedido del usuario: "que todo esté interconectado, no una demo"):**
+- **Conexión en la nube** de pedidos (Fogón del Sur), reservas y fidelización: base Supabase propia `biodigital-demos` (id `xoetybrsbuxcdoamcaeb`), roles por PIN, el cliente ve solo lo suyo. **Leer `memoria/conexion-nube.md`** (arquitectura, PIN de la demo, flujo, delivery con GPS paso a paso, costos, límites).
+- Fogón del Sur: el pedido llega a la cocina al instante; pago en línea (de prueba) → `pagar/`; efectivo → directo al seguimiento; el seguimiento cambia según mesa, retiro o delivery (mapa solo en delivery); **nada automático** (la cocina presiona cada paso, tiempos por plato); el repartidor comparte GPS; el dueño ve todo.
+- **Juegos nuevos** (`fogon-del-sur/juego.js`): Zip, Queens, Tango y Sudoku mini. El usuario pidió "Went": no es un juego conocido de LinkedIn, se dejó Sudoku mini; **preguntarle cuál era**.
+- **Menú 3D y realidad aumentada quitados** de la página, la carta, los formularios y el catálogo (el usuario lo posterga: "un desafío más adelante"). La skill crear-menu-digital conserva la técnica 3D como referencia futura.
+- Pruebas: `check.mjs` (páginas + caso base conectado + `nube-e2e.mjs`), todo sumado. Publicado en la vista previa y en GitHub.
+**Sistema de menú digital como plantilla (24-oct noche, pedido del usuario "implementa los cambios posibles"):**
+- Reglas de pedidos **en el servidor** (Supabase `biodigital-demos`): precios contra la carta publicada, opciones, estados por rol (cliente/cocina/reparto/dueño), un pedido "Nuevo" por sesión, **modificar el MISMO pedido solo en "recibido"** (versión `rev`, versiones anteriores en `ediciones`), repartidor único. Probado: `web/herramientas/pedidos-reglas-e2e.mjs` (62) y `nube-e2e.mjs` (25).
+- Páginas de Fogón: carta (datos desde `carta.js`, no HTML fijo), `mis-pedidos/`, `pedido/` (seguimiento + modificar), `cocina/`, `repartidor/`, `panel/` (dueño: Pedidos en vivo, Carta, Estadísticas, Opiniones, Negocio y equipo). Config por local: `restaurante.config.js`.
+- **Plantilla:** `node web/herramientas/nuevo-restaurante.mjs --id x --nombre "X"` (ver `memoria/plantilla-restaurante.md`). Los SQL con PIN quedan en `web/herramientas/restaurantes/` (fuera de git).
+- **Precios propuestos (no aprobados, sitio sin cambios):** `memoria/precios-menu-digital.md` (instalación $149.000 / $249.000 / $349.000 + mensualidad $14.900 / $24.900 / $34.900, netos; cifras de terceros aproximadas).
+- Pruebas nuevas en `check.mjs`: `mis-pedidos.js`, `fogon-servicio.js` (reescrito), `panel-dueno.js`. Pendiente: guardar en el repo el SQL final de las migraciones 003-005, Supabase Pro antes del primer cliente real, `web/menu/` antiguo aún tiene 3D.
 
-**Últimos pedidos del usuario, en orden:**
-1. *"Verifica que todo funcione, haz una simulación real y que sea todo automático (con opción de meter mano); revisa las fallas de scroll en todas las páginas; haz un caso base con Fogón del Sur."* → **Hecho:**
-   - Motor automático en `ejemplos/fogon-del-sur/pedidos.js`: una sola pestaña "líder" mueve el servicio (acepta, cocina según el tiempo de preparación, sirve, entrega, repartidor por la ruta real hasta la puerta, cobra lo pendiente al entregar, opiniones de clientes simulados). Interruptor "Automático" y velocidad (tiempo real, ×20, ×60) en la cocina; el repartidor puede usar su GPS real (entrega sola a 60 m); botón "Simular un servicio" en el panel.
-   - Caso base `web/herramientas/pruebas/fogon-servicio.js` (en el panel): 9 clientes sin tocar nada, 14/14. Encontró y se corrigió una falla real: "listo" se marcaba tarde y cada vez peor.
-   - Reservas: check-in y cierre automáticos (`motor.js` → `automatico`), prueba 16/16.
-   - Herramienta nueva `web/herramientas/scroll.mjs`: scroll real con el dedo (390) y la rueda (1440), detecta retrocesos, saltos al soltar, páginas pegadas o que no cargan. En paralelo: `node web/herramientas/scroll.mjs 1/4` … `4/4`. Resultado: 44 de 46 recorridos bien; la carta de la pastelería (`casa-dulce/carta/menu.js`) tenía el mismo bug de Fogón y quedó arreglada.
-2. *"Gasta todo, haz todo lo necesario y pásame la página final publicada."* → **PENDIENTE (hacer en este orden):**
-   a. **HECHO (23-oct noche 2, ver decisiones.md):** scroll de cabañas y barbería arreglado (lecturas antes de escrituras, sin blur en celular, capas propias); 2 de 3 rondas 4/4. Texto original: **Scroll en celular de cabañas y barbería** (los 2 únicos que fallan): cerca del final, al soltar el dedo la página sigue moviéndose 50 a 130 px (cabañas 4570 → 4698; barbería 5687 → 5740). Medido: no hay saltos de diseño (layout shift) ni cambio de alto. Sospecha: el trabajo por cuadro de los efectos de scroll (`cuadro()` en `ejemplos/cabanas/sitio.js` ~l.70 y `ejemplos/barberia/barberia.js` ~l.57) atrasa el hilo principal. Investigar con una traza de rendimiento, aliviar ese trabajo y verificar con `node web/herramientas/scroll.mjs ejemplos/cabanas/ ejemplos/barberia/`.
-   b. **Auditoría relanzada el 23-oct noche 2 (run wf_67573c7e-01e), cortada por el límite: retomar con Workflow({scriptPath, resumeFromRunId: "wf_67573c7e-01e"}) — los agentes ya terminados vuelven de la caché.** Texto original: La auditoría con varios agentes no alcanzó a correr (se acabó el límite de sesión). Relanzarla con Workflow y `scriptPath` = `C:\Users\criss\.claude\projects\C--Users-criss-OneDrive-Escritorio-Proyecto-DCP\5d9893e0-a37b-4dd6-b25d-821ab54a93cf\workflows\scripts\auditoria-sistemas-biodigital-wf_efb7dee6-743.js` (6 frentes: motor de pedidos, pantallas de pedidos, motor de reservas, pantallas de reservas, fidelización y páginas nuevas, scroll y diseño; 3 verificadores por hallazgo). Si el archivo no existe, rearmarla igual. Corregir lo confirmado.
-   c. Correr el check completo: `node web/herramientas/check.mjs http://localhost:4321` (ya incluye el caso base y la carta de la pastelería).
-   d. **Publicar la versión final en la vista previa** (lo pidió el usuario; **Production NO** hasta los datos de pagos de Benjamín): desde la raíz, `node web/propuesta/fuentes/generar.mjs --publico 8`, luego `npx wrangler pages deploy --branch=ejemplos --commit-dirty=true` → https://ejemplos.biodigital-propuesta.pages.dev ; revisar en línea (portada, galería, Fogón y sus pantallas, reservas, fidelización) y después `node web/propuesta/fuentes/generar.mjs 8` para volver a la versión de trabajo. Pasar los links (regla: links en cada avance).
-   e. Commit y push.
+**Pendiente (en este orden):**
+1. Auditoría con varios agentes (script en `C:\Users\criss\.claude\projects\C--Users-criss-OneDrive-Escritorio-Proyecto-DCP\5d9893e0-a37b-4dd6-b25d-821ab54a93cf\workflows\scripts\auditoria-sistemas-biodigital-wf_efb7dee6-743.js`; corrida parcial el 23-oct, solo el primer hallazgo estaba verificado y ya se corrigió). Conviene relanzarla sobre el código conectado nuevo.
+2. Decidir con el equipo: precio de las versiones completas (a cotizar; separar costo único de la base de datos, mapas y avisos recurrentes), PIN reales por local, y si cada cliente tiene su propio proyecto Supabase.
+3. Production sigue sin tocarse hasta los datos de pagos de Benjamín. Vista previa: `node web/propuesta/fuentes/generar.mjs --publico 8` y `npx wrangler pages deploy --branch=ejemplos --commit-dirty=true` → https://ejemplos.biodigital-propuesta.pages.dev. Espejo con otro nombre: `--project-name=biodigital --branch=main` → https://biodigital-bgw.pages.dev (después `node web/propuesta/fuentes/generar.mjs 8`).
+4. Los otros ejemplos de rubro (cabañas, barbería, etc.) usan el módulo de reservas **solo local** (demo); si se quiere que sean reales, llamar a `Reservas.conectar(negocio)` como hace `ejemplos/reservas/`.
 
-**Notas técnicas:** en Git Bash las rutas que empiezan con "/" se convierten en rutas de Windows: a `scroll.mjs` pasarle rutas sin barra inicial. El servidor local (preview `maquetas`, puerto 4321) se apaga al reiniciar la sesión: encenderlo con preview_start. OneDrive a veces bloquea un archivo al generar: reintentar. Las capturas del carrusel se rehacen con `node web/herramientas/capturar-ejemplos.mjs <id>` (los sistemas usan `ruta` y `preparar`).
-**Uso:** el 23-oct (noche) el usuario autorizó gastar todo el límite; la semana ya se reinició.
+**Notas técnicas:** en Git Bash las rutas que empiezan con "/" se convierten en rutas de Windows: a `scroll.mjs` pasarle rutas sin barra inicial. El servidor local (preview `maquetas`, puerto 4321) se apaga al reiniciar la sesión: encenderlo con preview_start. Los proyectos gratis de Supabase se pausan tras 1 semana sin uso: si las demos fallan, despertar `biodigital-demos`. Las pruebas escriben en la base real y borran lo suyo; si queda algo, `nube_vaciar` con el PIN del dueño.
+**Uso:** el usuario autorizó gastar el límite completo del plan en esta etapa.
 
 ## Qué es
 Startup de curso (Dirección y Control de Proyectos, UdeC): activación de presencia digital para micro y pequeñas empresas del Gran Concepción. 5 personas; jefe de proyecto: Christhoper. Meta: 3 a 5 clientes cerrados, pagados y transferidos en el semestre. Capital semilla: $80.000 CLP. **Solo operamos en el Gran Concepción** (Concepción, Talcahuano, Hualpén, San Pedro de la Paz, Chiguayante, Coronel, Lota, Penco, Tomé, Hualqui). El brief está en `contexto.md`.
@@ -41,7 +45,7 @@ WhatsApp **+56 9 4694 1640** (`56946941640`) · Instagram **@biodigital.cl** · 
 
 ## Catálogo vigente (desde 11-oct-2026; costo único, sin mensualidad)
 Página web desde $49.990 · Videos para redes desde $9.990 · Menú digital desde $27.990 · Registro fotográfico $4.990 · Reservas desde $24.990 · Tarjeta de fidelización $9.990 → suma $127.940. **Pack completo $79.990** (ahorro $47.950). Dominio y hosting no incluidos. Los demás servicios están en stand by (`servicios-futuros/`).
-- **Versión interactiva del menú digital** ("plato en vivo", 3D + cámara): "cuesta más", **precio a cotizar** (base + por plato por definir). Se agrega al carrito como "A cotizar".
+- **Menú 3D / realidad aumentada: postergado** por decisión del usuario (24-oct); no se ofrece ni se muestra en el sitio hasta tener la información para hacerlo.
 - **Promociones:** primeros 5 clientes: pack a $69.990, o 10 % sobre compras desde $30.000. Fugaces: 2 videos $17.990 · 3 videos $24.990 · fidelización $7.990 · menú+fotos $29.990 · reservas+fidelización $29.990.
 - **Diagnóstico gratis** en el primer contacto (ya no es una sección con puntaje en la página).
 
@@ -65,7 +69,7 @@ Página web desde $49.990 · Videos para redes desde $9.990 · Menú digital des
 ## Menú digital (`web/menu/`)
 - Subrama de crear-sitio-web: carta estilo restaurante (café y dorado, Playfair + DM Sans) con 5 categorías (Entradas, Ensaladas, Platos de fondo, Postres, Bebestibles), favoritos, buscador, "Ver en tu mesa" (3D y AR con model-viewer 3.5.0 + SRI).
 - Demo ficticia "Fogón del Sur": https://main.menu-demo.pages.dev (noindex). `node generar-menu.mjs --opciones` genera 5 estilos. Fotos de prueba que mandó el usuario; los discos planos (empanadas 26 cm, carne asada 28 cm) y la brocheta (modelo de muestra) tienen botón AR.
-- **Estado de la AR:** probada en un iPhone 15 Pro con un plato plano desde foto (se apoya en la mesa a tamaño real). **Falta** probar con un escaneo 3D real (Polycam instalado; plan gratis puede llevar marca de agua y tiene tope en el modo fotos: probar exportación; alternativas Scaniverse y RealityScan) y en Android.
+- **(Postergado, ya no está en el sitio)** Estado de la AR: probada en un iPhone 15 Pro con un plato plano desde foto (se apoya en la mesa a tamaño real). **Falta** probar con un escaneo 3D real (Polycam instalado; plan gratis puede llevar marca de agua y tiene tope en el modo fotos: probar exportación; alternativas Scaniverse y RealityScan) y en Android.
 - Herramienta de fotos: `foto-a-modelo.py` (tarjetas, discos y `og`) con Pillow.
 
 ## Skills y cómo se relacionan

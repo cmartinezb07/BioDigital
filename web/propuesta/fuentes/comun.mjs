@@ -75,16 +75,12 @@ const COMO = {
   reservations: ['Definimos tus horarios y servicios', 'Configuramos la agenda en línea', 'Tus clientes reservan solos, a cualquier hora'],
   'loyalty-card': ['Defines el premio y cuántos sellos lleva', 'Armamos la tarjeta con tu marca', 'Tus clientes la guardan en el celular y tú sumas sellos'],
 };
-// Versión con más trabajo de un producto: se agrega aparte y se cotiza (sin precio fijo todavía).
-const EXTRA = {
-  'interactive-menu': { id: 'interactive-menu-ar', nombre: 'Menú digital interactivo (plato en vivo)', titulo: 'Versión interactiva: plato en vivo', cuesta: 'Cuesta más',
-    texto: 'El cliente elige un plato en el menú, se abre la cámara de su celular y ve el plato sobre su mesa, como si estuviera ahí. Un menú interactivo de verdad, para que decida mirando.',
-    precio: 'Precio a cotizar según cuántos platos quieras mostrar' },
-};
+// Versión con más trabajo de un producto: se agrega aparte y se cotiza (hoy ninguna).
+const EXTRA = {};
 // Demos completas (páginas aparte) y su versión con más funciones: a cotizar, porque usan servicios con costo mensual o por uso.
 const DEMO = {
-  'interactive-menu': ['ejemplos/fogon-del-sur/', 'Ver la demo con pedidos y delivery', 'Versión para restaurantes con pedidos en la mesa, retiro y delivery, seguimiento con mapa, pantalla de cocina y panel: a cotizar. Puede tener costos mensuales de terceros (base de datos, mapas, pagos) si el local supera sus planes gratis.'],
-  'loyalty-card': ['ejemplos/fidelizacion/', 'Ver la tarjeta de ejemplo', 'Pruébala: crea tu tarjeta y suma sellos desde la caja del local en otra pestaña.'],
+  'interactive-menu': ['ejemplos/fogon-del-sur/', 'Ver la demo con pedidos y delivery', 'Versión para restaurantes con pedidos en la mesa, retiro y delivery, seguimiento con mapa y GPS del repartidor, pantalla de cocina y panel del dueño, todo conectado entre sí: a cotizar. Puede tener costos mensuales de terceros (base de datos, mapas, pagos) si el local supera sus planes gratis.'],
+  'loyalty-card': ['ejemplos/fidelizacion/', 'Ver la tarjeta de ejemplo', 'Pruébala: crea tu tarjeta en tu celular y suma sellos desde la caja del local (con el PIN de demostración) en otro equipo.'],
   reservations: ['ejemplos/reservas/', 'Ver la demo de reservas', 'Versión completa con depósito, políticas de cancelación, idiomas, calendario sincronizado (iCal) y panel: a cotizar. Los avisos por WhatsApp y las pasarelas de pago cobran por uso.'],
 };
 const NOTA = { web: `Dominio .cl no incluido (${'$' + DOMINIO_ANUAL.toLocaleString('es-CL')} al año en NIC Chile). El hosting no tiene costo.` };
@@ -303,7 +299,7 @@ ${o.hero.trim()}
           <label>Comuna<select name="comuna" required aria-describedby="e-comuna"><option value="" selected disabled>Elige tu comuna</option>${COMUNAS_GC.map((c) => `<option>${c}</option>`).join('')}</select><span class="err" id="e-comuna" data-err="comuna" role="alert"></span></label>
           <label>Correo<input name="correo" type="email" autocomplete="email" placeholder="tu@correo.cl" maxlength="80" required aria-describedby="e-correo"><span class="err" id="e-correo" data-err="correo" role="alert"></span></label>
           <label><span>Celular <small>(opcional)</small></span><input name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678" maxlength="16" inputmode="tel" aria-describedby="e-telefono"><span class="err" id="e-telefono" data-err="telefono" role="alert"></span></label>
-          <label class="full" data-interes><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes" aria-describedby="e-interes"><option value="" selected>Todavía no lo sé</option>${SERVICIOS.map((s) => `<option>${s[2]}</option>`).join('')}<option>Menú digital interactivo (plato en vivo)</option><option>El pack completo</option></select><span class="err" id="e-interes" data-err="interes" role="alert"></span></label>
+          <label class="full" data-interes><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes" aria-describedby="e-interes"><option value="" selected>Todavía no lo sé</option>${SERVICIOS.map((s) => `<option>${s[2]}</option>`).join('')}<option>El pack completo</option></select><span class="err" id="e-interes" data-err="interes" role="alert"></span></label>
           <label class="check-row"><input type="checkbox" name="beneficio" data-benefit-check>Me interesa el precio de lanzamiento para los primeros 5 clientes.</label>
           <label class="check-row"><input type="checkbox" name="acepto" required aria-describedby="e-acepto"><span>Acepto la <a href="${b}privacidad/" target="_blank" rel="noopener">política de privacidad</a> y que me contacten por este pedido.</span></label>
           <span class="err full" id="e-acepto" data-err="acepto" role="alert"></span>
@@ -380,7 +376,7 @@ ${o.hero.trim()}
     <button class="cart-link" type="button" data-cart-vaciar>Vaciar carrito</button>
   </div>
 </aside>
-<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })), { id: 'full-pack', nombre: 'Pack completo', precio: PACK, desde: false, promocion: false }, { id: 'interactive-menu-ar', nombre: EXTRA['interactive-menu'].nombre, precio: null, desde: false, promocion: false }, ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: false, promocion: true }))])}</script>
+<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })), { id: 'full-pack', nombre: 'Pack completo', precio: PACK, desde: false, promocion: false }, ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: false, promocion: true }))])}</script>
 <script src="${b}secciones.js"></script>
 <script src="${b}tienda.js"></script>
 <script src="${b}carrusel.js"></script>

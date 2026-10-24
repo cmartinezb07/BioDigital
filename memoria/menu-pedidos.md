@@ -1,5 +1,7 @@
 # Menú digital con pedidos (restaurante) · 23-oct-2026
 
+> **Actualización 24-oct-2026:** el sistema ya no es una demo local: está conectado en la nube y nada avanza solo. El modo automático, el simulador, el plato en 3D y la realidad aumentada **se eliminaron**. Lo vigente está en [conexion-nube.md](conexion-nube.md); lo de abajo es el historial del 23-oct.
+
 Encargo del usuario (23-oct): menú digital completo, "centrados full en el restaurante", al nivel de los mejores del mercado. Demo en `web/propuesta/ejemplos/fogon-del-sur/` (vista previa: `/ejemplos/fogon-del-sur/`).
 
 ## Qué hace (todo probado en el navegador)
@@ -57,3 +59,9 @@ Capa de datos común: `pedidos.js` (estados, tiempos, ruta, simulación, visitas
 - **Lo que nadie revisado tiene:** el plato en 3D y realidad aumentada, y el juego mientras espera.
 
 Fuentes: [Meniu sobre Fudo](https://meniuapp.com/en/blog/alternativa-gratuita-fudo-software-restaurantes) · [Qamarero KDS](https://qamarero.com/kds) · [Menu Tiger KDS](https://www.menutiger.com/es/features/kitchen-display-system) · [Owner.com, seguimiento](https://help.owner.com/en/articles/15485357-how-do-i-track-a-third-party-delivery-on-the-owner-app) · [Walmart GoLocal, seguimiento](https://developer.walmart.com/transportation-carriers/docs/live-order-tracking) · [Restaurant Technology News](https://restauranttechnologynews.com/2026/08/why-restaurant-qr-menus-have-an-execution-problem-not-a-concept-problem/)
+
+## Actualización 24-oct (noche): sistema completo y plantilla
+
+- Reglas de negocio en el servidor, panel del dueño con carta editable, "Modificar mi pedido" sobre el mismo pedido, historial del cliente (`mis-pedidos/`), cocina y reparto separados, fotos con licencia para los 24 platos: ver [decisiones.md](decisiones.md) (entrada "Menú digital como sistema completo") y [plantilla-restaurante.md](plantilla-restaurante.md).
+- Precios propuestos y comparables: [precios-menu-digital.md](precios-menu-digital.md). La tabla de costos de arriba sigue vigente (única vs recurrente).
+- Cómo probar cada flujo (a mano): ver la sección final de la respuesta del 24-oct o ejecutar `node web/herramientas/check.mjs http://localhost:4321` (incluye `mis-pedidos.js`, `fogon-servicio.js`, `panel-dueno.js`).

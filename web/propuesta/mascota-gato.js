@@ -64,7 +64,6 @@ window.MascotaConfig = {
           'Abre un producto y mira qué incluye. Yo abrí todos.',
           'Psst… el pack completo. Yo sé de estas cosas.',
           'Seis productos por $79.990. Hice la cuenta dos veces.',
-          'El menú digital tiene versión con plato en vivo. Con cámara y todo.',
         ]],
         beneficio: ['lentes', [
           'Cupos limitados. Yo que tú, me apuro.',

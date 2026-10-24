@@ -7,7 +7,6 @@ const entries = [
   ['loyalty-card', 'Tarjeta de fidelización', 9990, false],
   ['full-pack', 'Pack completo', 79990, false],
   ['launch-pack', 'Pack completo — lanzamiento', 69990, false],
-  ['interactive-menu-ar', 'Menú digital interactivo', null, true],
   ['social-video-2', '2 videos para redes', 17990, false],
   ['social-video-3', '3 videos para redes', 24990, false],
   ['launch-loyalty-card', 'Tarjeta de fidelización — lanzamiento', 7990, false],

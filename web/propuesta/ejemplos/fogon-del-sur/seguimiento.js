@@ -4,6 +4,7 @@
   'use strict';
   var P = window.Pedidos, $ = function (s, r) { return (r || document).querySelector(s); };
   var esc = P.esc, clp = P.clp, raiz = $('#seguimiento');
+  if (window.Carta) Carta.iniciar();   // trae el local, las comunas y los envíos que configuró el dueño
   var id = new URLSearchParams(location.search).get('id') || '';
   var ICONOS = {
     recibido: '<path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21Z"/><path d="M10 8h4M10 12h4"/>',
@@ -14,35 +15,59 @@
     cancelado: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>'
   };
   var svg = function (e) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONOS[e] + '</svg>'; };
-  var p = P.obtener(id), ultimoEstado = p && p.estado, mapa = null, capas = {}, juegoListo = false;
+  var p = null, ultimoEstado = null, mapa = null, capas = {}, juegoListo = false, esDemo = new URLSearchParams(location.search).has('demo');
 
-  // pedido/?demo: crea un pedido de delivery de demostración y lo sigue (lo usa el carrusel de la portada)
-  if (!p && new URLSearchParams(location.search).has('demo')) {
-    var nuevo = P.crear({ tipo: 'delivery', cliente: { nombre: 'Cliente de demostración', telefono: '', direccion: 'Lincoyán 300', comuna: 'Concepción' }, items: [{ id: 'lomo', nombre: 'Lomo a la parrilla con papas y arroz', precio: 13900, cant: 1 }, { id: 'empanadas', nombre: 'Empanadas de horno', precio: 5900, cant: 1 }, { id: 'limonada', nombre: 'Limonada menta jengibre', precio: 3500, cant: 2 }], pago: { metodo: 'linea', pagado: true }, demo: true });
-    location.replace('./?id=' + nuevo.id); return;
+  // pedido/?demo: un pedido de delivery de ejemplo que existe solo en esta pantalla (no se guarda en la nube); lo usa el carrusel de la portada
+  P.seguir(id);
+  if (esDemo) iniciar(); else P.esperar().then(iniciar, function () { raiz.innerHTML = '<div class="vacio-s"><p>No pudimos conectarnos. Revisa tu internet y recarga la página.</p></div>'; });
+  function iniciar() {
+    p = P.obtener(id);
+    if (!p && esDemo) {
+      P.crear({ soloLocal: true, tipo: 'delivery', cliente: { nombre: 'Cliente de ejemplo', telefono: '', direccion: 'Lincoyán 300', comuna: 'Concepción' }, items: [{ id: 'lomo', nombre: 'Lomo a la parrilla con papas y arroz', precio: 13900, cant: 1 }, { id: 'empanadas', nombre: 'Empanadas de horno', precio: 5900, cant: 1 }], pago: { metodo: 'linea', pagado: true } }).then(function (n) {
+        id = n.id; P.cambiar(id, 'preparacion'); P.cambiar(id, 'listo'); P.cambiar(id, 'camino', { repartidor: { nombre: 'Repartidor de ejemplo' }, salida: Date.now() });
+        P.ruta(P.CONFIG.local, n.destino).then(function (r) { P.actualizar(id, function (z) { z.ruta = r; z.rutaKm = +P.largoRuta(r).toFixed(2); z.km = z.rutaKm; }); P.recorrer(id, r, 10); });
+        p = P.obtener(id); ultimoEstado = p.estado; arrancar();
+      });
+      return;
+    }
+    if (!p) { raiz.innerHTML = '<div class="vacio-s"><p>No encontramos ese pedido. Revisa el enlace o vuelve a la carta.</p><p style="margin-top:12px"><a class="btn-s prim" href="../">Volver a la carta</a></p></div>'; return; }
+    ultimoEstado = p.estado; arrancar();
   }
-  if (!p) { raiz.innerHTML = '<div class="vacio-s"><p>No encontramos ese pedido en este equipo.</p><p style="margin-top:12px"><a class="btn-s prim" href="../">Volver a la carta</a></p></div>'; return; }
-  document.title = 'Pedido #' + p.codigo + ' · Fogón del Sur';
+  function arrancar() {
+  document.title = 'Pedido #' + p.codigo + ' · ' + P.CONFIG.negocio;
 
-  var mapaHtml = p.tipo === 'delivery' ? '<section class="caja" aria-labelledby="h-mapa"><h2 id="h-mapa" style="font-size:18px;margin-bottom:10px">Dónde va tu pedido</h2><div class="mapa" id="mapa" role="img" aria-label="Mapa con el local, tu dirección y el repartidor"></div><p class="mapa-nota" data-rep>El mapa se activa cuando el repartidor sale con tu pedido.</p></section>' : '';
+  var mapaHtml = p.tipo === 'delivery' ? '<section class="caja" aria-labelledby="h-mapa" data-mapa-caja hidden><h2 id="h-mapa" style="font-size:18px;margin-bottom:10px">Dónde viene tu pedido</h2><div class="mapa" id="mapa" role="img" aria-label="Mapa con el local, tu dirección y el repartidor"></div><p class="mapa-nota" data-rep>El mapa se activa cuando el repartidor sale con tu pedido.</p></section>' : '';
   raiz.innerHTML = '<div class="seg">' +
     '<div style="display:grid;gap:18px">' +
       '<section class="caja estado-hero" aria-labelledby="h-est"><p class="cod">Pedido #' + esc(p.codigo) + ' · ' + esc(P.tipoTxt(p)) + '</p><h1 id="h-est"></h1><p class="desc"></p><div class="icono-est" aria-hidden="true"></div>' +
         '<div class="eta"><b data-min></b><span data-eta></span></div><div class="barra-prog" aria-hidden="true"><i></i></div><ol class="pasos" aria-label="Avance del pedido"></ol>' +
-        '<p class="sis-nota" data-demo-nota style="margin-top:10px"></p><p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s" type="button" data-avisos>Avisarme en este celular</button><a class="btn-s" href="../">Pedir algo más</a></p></section>' +
+        '<p class="sis-nota" data-demo-nota style="margin-top:10px"></p><div data-mod style="margin-top:12px"></div><p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s" type="button" data-avisos>Avisarme en este celular</button><a class="btn-s" href="../">Volver a la carta</a><a class="btn-s" href="../mis-pedidos/">Mis pedidos</a></p></section>' +
       '<section class="caja" data-opinion hidden></section>' +
-      '<section class="caja detalle-ped" aria-labelledby="h-det"><h2 id="h-det" style="font-size:18px;margin-bottom:6px">Detalle</h2>' +
-        p.items.map(function (i) { return '<div class="fila"><span>' + i.cant + ' × ' + esc(i.nombre) + '</span><span>' + clp(i.precio * i.cant) + '</span></div>'; }).join('') +
-        (p.envio ? '<div class="fila"><span>Envío a ' + esc(p.cliente.comuna) + '</span><span>' + clp(p.envio) + '</span></div>' : '') +
-        '<div class="fila tot"><span>Total</span><span>' + clp(p.total) + '</span></div><div class="fila"><span>Pago</span><span data-pago></span></div>' +
-        (p.nota ? '<p class="sis-nota">Nota: ' + esc(p.nota) + '</p>' : '') + '</section>' +
+      '<section class="caja detalle-ped" aria-labelledby="h-det"><h2 id="h-det" style="font-size:18px;margin-bottom:6px">Detalle</h2><div data-detalle></div></section>' +
     '</div>' +
     '<div style="display:grid;gap:18px;align-content:start">' + mapaHtml +
-      '<section class="caja" aria-labelledby="h-juego" data-juego-caja><h2 id="h-juego" style="font-size:18px">Mientras esperas: atrapa los ingredientes</h2><p class="sis-nota">Mueve el plato con el dedo, el mouse o las flechas. Evita el fuego.</p><div id="juego"></div></section>' +
+      '<section class="caja" aria-labelledby="h-juego" data-juego-caja><h2 id="h-juego" style="font-size:18px">Mientras esperas, juega</h2><div id="juego"></div></section>' +
     '</div></div>';
 
   if (window.JuegoEspera) { window.JuegoEspera($('#juego')); juegoListo = true; }
 
+  // Detalle con opciones y notas, total, versión del pedido y su historial (nada se borra: cada cambio queda anotado)
+  function pintarDetalle() {
+    var hist = (p.historial || []).map(function (h) { return '<li>' + esc(P.ESTADOS[h.estado] ? P.nombreEstado(p, h.estado) : h.estado) + ' · ' + P.hora(h.t) + '</li>'; }).join('');
+    var eds = (p.ediciones || []).map(function (e, k) { return '<li>Versión ' + e.rev + ' (antes de modificar a las ' + P.hora(e.t) + '): ' + e.items.map(function (i) { return i.cant + '× ' + esc(i.nombre); }).join(', ') + ' · ' + clp(e.total) + '</li>'; }).join('');
+    $('[data-detalle]').innerHTML = p.items.map(function (i) { return '<div class="fila"><span>' + P.lineaHtml(i) + '</span><span>' + clp(i.precio * i.cant) + '</span></div>'; }).join('') +
+      (p.envio ? '<div class="fila"><span>Envío a ' + esc(p.cliente.comuna) + '</span><span>' + clp(p.envio) + '</span></div>' : '') +
+      '<div class="fila tot"><span>Total</span><span>' + clp(p.total) + '</span></div><div class="fila"><span>Pago</span><span data-pago></span></div>' +
+      (p.nota ? '<p class="sis-nota">Nota: ' + esc(p.nota) + '</p>' : '') + ((p.rev || 1) > 1 ? '<p class="sis-nota">Pedido modificado: versión ' + p.rev + '.</p>' : '') +
+      '<details style="margin-top:10px"><summary>Historial del pedido</summary><ol class="sis-nota" style="margin:6px 0 0 18px">' + hist + '</ol>' + (eds ? '<p class="sis-nota" style="margin-top:8px">Versiones anteriores</p><ol class="sis-nota" style="margin:4px 0 0 18px">' + eds + '</ol>' : '') + '</details>';
+  }
+  function pintarMod() {
+    var m = $('[data-mod]'), e = p.estado;
+    if (e === 'recibido') m.innerHTML = '<a class="btn-s prim" href="../?editar=' + encodeURIComponent(id) + '">Modificar mi pedido</a><p class="sis-nota" style="margin-top:6px">Puedes agregar o quitar productos mientras el local no lo acepte. Sigue siendo este mismo pedido.</p>';
+    else if (P.ACTIVOS.indexOf(e) > -1) m.innerHTML = '<p class="sis-nota">El local ya aceptó tu pedido: ya no se puede modificar. Si quieres algo más, haz un pedido nuevo desde la carta.</p>';
+    else if (e === 'cancelado') m.innerHTML = '<p class="sis-nota">' + (p.motivo ? 'Motivo: ' + esc(p.motivo) + '. ' : '') + 'Este pedido no se puede modificar. Puedes hacer uno nuevo desde la carta.</p>';
+    else m.innerHTML = '';
+  }
   function pintar() {
     p = P.obtener(id); if (!p) return;
     var e = p.estado, col = P.ESTADOS[e].color, hero = $('.estado-hero');
@@ -55,16 +80,20 @@
       var t = P.cuando(p, x), cls = e === 'cancelado' ? '' : k < idx || e === 'entregado' ? 'hecho' : k === idx ? 'actual' : '';
       return '<li class="' + cls + '" style="--ec:' + P.ESTADOS[x].color + '"' + (k === idx ? ' aria-current="step"' : '') + '><span class="punto"></span><span>' + esc(P.nombreEstado(p, x)) + '</span><time>' + (t ? P.hora(t) : '') + '</time></li>';
     }).join('');
+    pintarDetalle(); pintarMod();
     $('[data-pago]').textContent = p.pago.pagado ? 'Pagado' + (p.pago.metodo === 'linea' ? ' en línea' : '') : p.tipo === 'delivery' ? 'Al recibir' : 'En caja';
-    $('[data-demo-nota]').textContent = p.escala > 1 ? 'Demostración acelerada: el servicio avanza solo y cada minuto dura ' + (Math.round(600 / p.escala) / 10) + ' s. La cocina y el repartidor pueden intervenir cuando quieran.' : '';
+    if (e === 'cancelado' && p.motivo) $('.desc', hero).textContent = 'El local no pudo aceptar tu pedido. Motivo: ' + p.motivo + '.';
+    $('[data-demo-nota]').textContent = P.enLinea() ? '' : 'Sin conexión: reintentando… tu pedido sigue en marcha en el local.';
     reloj();
-    if (p.tipo === 'delivery') pintarMapa();
+    var cajaMapa = $('[data-mapa-caja]');
+    if (cajaMapa) { cajaMapa.hidden = e !== 'camino'; if (e === 'camino') { pintarMapa(); if (mapa) setTimeout(function () { mapa.invalidateSize(); }, 50); } }
     if (e === 'entregado') opinion();
   }
   function reloj() {
     var e = p.estado, et = P.eta(p), m = $('[data-min]'), t = $('[data-eta]');
     if (e === 'entregado') { m.textContent = '✓'; t.textContent = P.nombreEstado(p) + ' a las ' + P.hora(P.cuando(p, 'entregado')); return; }
     if (e === 'cancelado') { m.textContent = ''; t.textContent = ''; return; }
+    if (e === 'recibido') { m.textContent = 'Por confirmar'; t.textContent = 'La cocina te dirá cuánto demora cuando acepte tu pedido.'; return; }
     m.textContent = et.minutos + ' min';
     var real = function (ms) { return P.hora(Date.now() + (ms - Date.now()) * (p.escala || 1)); };   // en la demo acelerada, la hora mostrada es la real equivalente
     t.textContent = p.tipo === 'delivery' ? 'llega cerca de las ' + real(et.llega) : e === 'listo' ? 'listo desde las ' + P.hora(P.cuando(p, 'listo')) : 'listo cerca de las ' + real(et.listo);
@@ -88,16 +117,18 @@
   function pintarMapa() {
     leaflet().then(function (L) {
       if (!mapa) {
-        mapa = L.map('mapa', { zoomControl: true, attributionControl: true, scrollWheelZoom: false });
+        // En celular el mapa no atrapa el dedo: con uno se sigue bajando la página, con dos se mueve y se acerca el mapa
+        mapa = L.map('mapa', { zoomControl: true, attributionControl: true, scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false });
+        if (L.Browser.mobile) { var nota = document.createElement('p'); nota.className = 'mapa-nota'; nota.textContent = 'Con dos dedos mueves y acercas el mapa.'; document.getElementById('mapa').after(nota); }
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(mapa);
-        capas.local = L.marker([P.CONFIG.local.lat, P.CONFIG.local.lng], { icon: pin('local', '#cf9b4a'), title: 'Fogón del Sur' }).addTo(mapa);
-        capas.casa = L.marker([p.destino.lat, p.destino.lng], { icon: pin('casa', '#3b82f6'), title: 'Tu dirección' }).addTo(mapa);
+        capas.local = L.marker([P.CONFIG.local.lat, P.CONFIG.local.lng], { icon: pin('local', '#cf9b4a'), title: P.CONFIG.negocio, interactive: false, keyboard: false }).addTo(mapa);
+        capas.casa = L.marker([p.destino.lat, p.destino.lng], { icon: pin('casa', '#3b82f6'), title: 'Tu dirección', interactive: false, keyboard: false }).addTo(mapa);
         mapa.fitBounds(L.latLngBounds([[P.CONFIG.local.lat, P.CONFIG.local.lng], [p.destino.lat, p.destino.lng]]).pad(.3));
       }
       if (p.ruta && !capas.ruta) capas.ruta = L.polyline(p.ruta, { color: '#a855f7', weight: 5, opacity: .75 }).addTo(mapa);
       var r = p.repartidor;
       if (r && r.lat) {
-        if (!capas.moto) capas.moto = L.marker([r.lat, r.lng], { icon: pin('moto', '#a855f7'), title: 'Repartidor', zIndexOffset: 500 }).addTo(mapa);
+        if (!capas.moto) capas.moto = L.marker([r.lat, r.lng], { icon: pin('moto', '#a855f7'), title: 'Repartidor', zIndexOffset: 500, interactive: false, keyboard: false }).addTo(mapa);
         else capas.moto.setLatLng([r.lat, r.lng]);
         var km = P.distancia(r, p.destino);
         $('[data-rep]').textContent = (r.nombre || 'El repartidor') + (p.estado === 'entregado' ? ' entregó tu pedido.' : ' está a ' + (km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km') + ' de tu dirección · ubicación actualizada a las ' + P.hora(r.t));
@@ -111,9 +142,9 @@
     var cj = $('[data-juego-caja]'); if (cj) cj.hidden = true;
     if (p.opinion) {
       var ref = location.origin + location.pathname.replace(/pedido\/?$/, '') + '?ref=' + p.codigo + p.id.slice(0, 4);
-      s.innerHTML = '<h2 style="font-size:18px">¡Gracias por tu opinión!</h2><p class="sis-sub">Si te gustó, invita a un amigo con tu enlace. El local ve en su panel cuántos llegan por recomendación.</p><p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s prim" type="button" data-invitar>Invitar a un amigo</button><a class="btn-s" href="../">Volver a la carta</a></p>';
+      s.innerHTML = '<h2 style="font-size:18px">¡Gracias por tu opinión!</h2>' + (p.opinion.respuesta ? '<p class="banda" style="margin-top:8px"><b>Respuesta del local:</b> ' + esc(p.opinion.respuesta.texto) + '</p>' : '') + '<p class="sis-sub">Si te gustó, invita a un amigo con tu enlace. El local ve en su panel cuántos llegan por recomendación.</p><p style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s prim" type="button" data-invitar>Invitar a un amigo</button><a class="btn-s" href="../">Volver a la carta</a></p>';
       $('[data-invitar]', s).addEventListener('click', function () {
-        var d = { title: 'Fogón del Sur', text: 'Te recomiendo Fogón del Sur', url: ref };
+        var d = { title: P.CONFIG.negocio, text: 'Te recomiendo ' + P.CONFIG.negocio, url: ref };
         if (navigator.share) navigator.share(d).catch(function () {}); else if (navigator.clipboard) navigator.clipboard.writeText(ref).then(function () { toast('Enlace copiado'); });
       });
       return;
@@ -139,7 +170,7 @@
     var txt = 'Pedido #' + p.codigo + ': ' + P.nombreEstado(p);
     toast(txt); sonar();
     if (navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive) navigator.vibrate([60, 40, 60]);
-    if (window.Notification && Notification.permission === 'granted' && document.hidden) { try { new Notification('Fogón del Sur', { body: txt + '. ' + P.descEstado(p), tag: p.id }); } catch (e) {} }
+    if (window.Notification && Notification.permission === 'granted' && document.hidden) { try { new Notification(P.CONFIG.negocio, { body: txt + '. ' + P.descEstado(p), tag: p.id }); } catch (e) {} }
     document.title = '(' + P.nombreEstado(p) + ') Pedido #' + p.codigo;
   }
   var bAv = $('[data-avisos]');
@@ -153,4 +184,6 @@
   });
   setInterval(function () { if (p) reloj(); }, 1000);
   pintar();
+  if (new URLSearchParams(location.search).has('modificado')) { toast('Listo: se actualizó tu pedido #' + p.codigo + ' (es el mismo pedido)'); try { history.replaceState(null, '', location.pathname + '?id=' + id); } catch (e) {} }
+  }
 })();

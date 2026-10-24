@@ -28,15 +28,19 @@ const PAGINAS = [
   { nombre: 'Ejemplo · Técnico (Kyntra)', ruta: '/ejemplos/tecnico/', prueba: 'tecnico.js' },
   { nombre: 'Ejemplo · Barbería (DBC)', ruta: '/ejemplos/barberia/', prueba: 'barberia.js', mov: true },
   { nombre: 'Ejemplo · Pastelería (Boolka)', ruta: '/ejemplos/casa-dulce/', prueba: 'casa-dulce.js', mov: true },
-  { nombre: 'Ejemplo · Restaurante (menú 3D y pedidos)', ruta: '/ejemplos/fogon-del-sur/', prueba: 'fogon-del-sur.js' },
-  { nombre: 'Restaurante · Cocina', ruta: '/ejemplos/fogon-del-sur/cocina/' },
-  { nombre: 'Restaurante · Repartidor', ruta: '/ejemplos/fogon-del-sur/repartidor/' },
-  { nombre: 'Restaurante · Panel del dueño (caso base: servicio automático)', ruta: '/ejemplos/fogon-del-sur/panel/', prueba: 'fogon-servicio.js' },
+  { nombre: 'Ejemplo · Restaurante (menú con pedidos)', ruta: '/ejemplos/fogon-del-sur/', prueba: 'fogon-del-sur.js' },
+  { nombre: 'Restaurante · Pago del pedido', ruta: '/ejemplos/fogon-del-sur/pagar/' },
+  { nombre: 'Restaurante · Tu pedido (ejemplo) y juegos de espera', ruta: '/ejemplos/fogon-del-sur/pedido/?demo', prueba: 'juegos.js' },
+  { nombre: 'Restaurante · Cocina (pide PIN)', ruta: '/ejemplos/fogon-del-sur/cocina/' },
+  { nombre: 'Restaurante · Repartidor (pide PIN)', ruta: '/ejemplos/fogon-del-sur/repartidor/' },
+  { nombre: 'Restaurante · Mis pedidos (cliente)', ruta: '/ejemplos/fogon-del-sur/mis-pedidos/', prueba: 'mis-pedidos.js' },
+  { nombre: 'Restaurante · Servicio completo (cliente, cocina, reparto y dueño)', ruta: '/ejemplos/fogon-del-sur/panel/', prueba: 'fogon-servicio.js' },
+  { nombre: 'Restaurante · Panel del dueño (pedidos en vivo, carta, estadísticas)', ruta: '/ejemplos/fogon-del-sur/panel/', prueba: 'panel-dueno.js' },
   { nombre: 'Pastelería · Carta', ruta: '/ejemplos/casa-dulce/carta/' },
   { nombre: 'Sistema de reservas (cliente)', ruta: '/ejemplos/reservas/', prueba: 'reservas-sistema.js' },
-  { nombre: 'Sistema de reservas (panel)', ruta: '/ejemplos/reservas/admin/' },
+  { nombre: 'Sistema de reservas (panel, pide PIN)', ruta: '/ejemplos/reservas/admin/' },
   { nombre: 'Fidelización (cliente)', ruta: '/ejemplos/fidelizacion/', prueba: 'fidelizacion.js' },
-  { nombre: 'Fidelización (caja del local)', ruta: '/ejemplos/fidelizacion/local/' },
+  { nombre: 'Fidelización (caja del local, pide PIN)', ruta: '/ejemplos/fidelizacion/local/' },
   { nombre: 'Cómo trabajamos', ruta: '/como-trabajamos/' },
   { nombre: 'Módulo de reservas (demo)', ruta: '/ejemplos/_compartido/reservas-demo.html', prueba: 'reservas.js' },
 ];
@@ -82,12 +86,23 @@ for (const p of PAGINAS.filter((x) => !solo.length || solo.some((t) => x.ruta.in
   console.log(f.ok ? 'ok' : 'revisar');
 }
 
+// Conexión en la nube: permisos por PIN, privacidad, cupos y reglas contra trampas (prueba directa contra la base)
+const nube = { vals: [], fallo: '' };
+if (!solo.length) {
+  process.stdout.write('Conexión en la nube … ');
+  let out = '';
+  try { out = execFileSync('node', ['web/herramientas/nube-e2e.mjs'], { cwd: raiz, encoding: 'utf8', timeout: 240000, stdio: ['ignore', 'pipe', 'ignore'] }); } catch (e) { out = e.stdout || ''; nube.fallo = out ? '' : String(e.message || e).split('\n')[0]; }
+  try { nube.vals = Object.entries(JSON.parse(out)); } catch (e) { nube.fallo = nube.fallo || 'no se pudo leer el resultado'; }
+  console.log(nube.vals.length && nube.vals.every(([, v]) => v === 'ok') ? 'ok' : 'revisar');
+}
+const nubeOk = nube.vals.filter(([, v]) => v === 'ok').length;
+
 const si = (v) => (v ? '❌ ' + v : '✅');
 const fecha = new Date().toLocaleString('es-CL', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Santiago' });
 const total = filas.filter((f) => f.ok).length;
 let md = `# Check del sitio · ${fecha}
 
-Revisado en: ${base} · ${total} de ${filas.length} páginas sin observaciones.
+Revisado en: ${base} · ${total} de ${filas.length} páginas sin observaciones${nube.vals.length ? ` · ${nubeOk} de ${nube.vals.length} pruebas de la conexión en la nube sin fallas` : ''}.
 Para repetirlo: \`node web/herramientas/check.mjs\` (vista previa) o \`node web/herramientas/check.mjs http://localhost:4321\` (local).
 
 ## 1. Revisión automática (celular 390 px y escritorio 1440 px)
@@ -100,6 +115,11 @@ Criterios (de la skill crear-sitio-web): sin desborde horizontal, textos de 12 p
 for (const f of filas) {
   if (f.fallo) { md += `| [${f.nombre}](${f.url}) | ❌ | — | — | — | — | ${f.fallo.replace(/\|/g, '/')} | — | — |\n`; continue; }
   md += `| [${f.nombre}](${f.url}) | ${f.ok ? '✅' : '❌'} | ${si(f.desborde)} | ${si(f.textos)} | ${si(f.tactiles)} | ${si(f.alt)} | ${si(f.errores.length)} | ${si(f.fallidos.length)} | ${f.prueba ? (f.pruebaOk === f.pruebaTotal && f.pruebaTotal ? '✅ ' : '❌ ') + f.pruebaOk + '/' + f.pruebaTotal : '—'} |\n`;
+}
+if (nube.vals.length || nube.fallo) {
+  md += '\n## 1b. Conexión en la nube (reservas, fidelización y pedidos)\n\nPermisos por PIN, privacidad del cliente, cupos que no se venden dos veces y reglas contra trampas, probados directo contra la base (`node web/herramientas/nube-e2e.mjs`). Lo que crea la prueba se borra al terminar.\n\n| Prueba | Resultado |\n|---|---|\n';
+  if (nube.fallo) md += `| No se pudo correr | ❌ ${nube.fallo.replace(/\|/g, '/')} |\n`;
+  for (const [k, v] of nube.vals) md += `| ${k.replace(/\|/g, '/')} | ${v === 'ok' ? '✅' : '❌ ' + v.replace(/\|/g, '/')} |\n`;
 }
 const obs = filas.filter((f) => !f.ok && !f.fallo);
 if (obs.length) {
@@ -116,7 +136,7 @@ md += `
 - [ ] **Políticas** ([privacidad](${base}/privacidad/), [términos](${base}/terminos/)): el equipo leyó los plazos y el retracto propuestos.
 - [ ] **Galería** ([abrir](${base}/ejemplos/)): cada ejemplo muestra su segmento y su matriz CREA.
 - [ ] **Cada ejemplo frente a su plantilla** (tabla en \`memoria/ejemplos-matriz.md\`): la estructura y el movimiento se parecen y los colores no se repiten entre ejemplos.
-- [ ] **En un celular real** (no solo en el emulador): portada, un ejemplo con reservas y el menú 3D.
+- [ ] **En un celular real** (no solo en el emulador): portada, un ejemplo con reservas y el menú con pedidos.
 - [ ] **Sistemas en dos pestañas**: un pedido en Fogón del Sur aparece en la cocina y el seguimiento avanza; una reserva en una pestaña baja la disponibilidad en la otra; un sello sumado en la caja aparece en la tarjeta.
 
 ## 3. Decisiones pendientes del equipo

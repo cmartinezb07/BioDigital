@@ -21,9 +21,6 @@
   function pintar() {
     R.automatico(neg);
     var D = R.leer(neg);
-    // Primera vez que se abre el panel de un negocio: se cargan datos de prueba para que no se vea vacío (marcados como prueba)
-    var marca = 'bdres-sembrado-' + neg, ya = true; try { ya = !!localStorage.getItem(marca); if (!ya) localStorage.setItem(marca, '1'); } catch (e) {}
-    if (!ya && !D.reservas.length) { R.sembrar(neg); return; }
     app.querySelector('.negocios').innerHTML = R.NEGOCIOS.map(function (n) { return '<button type="button" data-neg="' + n.id + '" aria-pressed="' + (n.id === neg) + '">' + R.icono(n.icono, 18) + esc(n.nombre) + '</button>'; }).join('');
     app.querySelector('.menu-adm').innerHTML = TABS.map(function (t) { return '<button type="button" data-tab="' + t[0] + '"' + (t[0] === tab ? ' aria-current="page"' : '') + '>' + t[1] + '</button>'; }).join('');
     var v = app.querySelector('[data-vista]');
@@ -64,7 +61,7 @@
         '<div class="grid2"><section class="caja"><h2>Hoy</h2>' + (deHoy.length ? '<ul class="lista-b">' + deHoy.map(function (r) { return '<li><span>' + (c.modo === 'noches' ? '' : hora(r.desde) + ' · ') + esc(nombreDe(D, r)) + ' · ' + esc(r.cliente.nombre) + '</span>' + chip(r.estado) + '</li>'; }).join('') + '</ul>' : '<p class="nota">Nada para hoy.</p>') + '</section>' +
         '<section class="caja"><h2>Alertas</h2><ul class="lista-b">' + (ret.length ? ret.map(function (r) { return '<li><span>Retención ' + r.codigo + ' vence a las ' + hora(r.expira) + ' si no paga</span>' + chip('retenida') + '</li>'; }).join('') : '<li class="nota">Sin retenciones por vencer.</li>') +
         '<li><span>Lista de espera</span><b>' + esp.length + '</b></li><li><span>Avisos programados</span><b>' + D.avisos.filter(function (a) { return a.estado === 'programado'; }).length + '</b></li></ul>' +
-        '<div class="acciones-r"><button class="btn chico" type="button" data-semilla>Cargar 60 días de prueba</button><button class="btn chico peligro" type="button" data-reset>Restablecer demo</button></div><p class="nota">Los datos de prueba se marcan como "Cliente de prueba".</p></section></div>';
+        '<div class="acciones-r"><button class="btn chico peligro" type="button" data-reset>Borrar las reservas de prueba</button></div><p class="nota">Solo el dueño puede borrar. Las reservas que llegan desde el sitio son reales para esta demostración.</p></section></div>';
     },
     calendario: function (D) {
       var c = D.config, n = 14, dias = []; for (var i = 0; i < n; i++) dias.push(U.sumaDias(desdeCal, i));
@@ -103,7 +100,7 @@
           if (r.estado === 'checkin') acc.push('<button class="btn chico" type="button" data-acc="completada" data-id="' + r.id + '">' + (c.modo === 'noches' ? 'Check-out' : 'Terminar') + '</button>');
           if (ACTIVAS.indexOf(r.estado) > -1) acc.push('<button class="btn chico peligro" type="button" data-acc="cancelar" data-id="' + r.id + '">Cancelar</button>');
           return '<tr><td><b>' + r.codigo + '</b></td><td>' + dia(r.desde) + (c.modo === 'noches' ? ' → ' + dia(r.hasta) : ' ' + hora(r.desde)) + '</td><td>' + esc(nombreDe(D, r)) + (r.personas > 1 ? ' · ' + r.personas + ' pers.' : '') + '</td><td>' + esc(r.cliente.nombre) + '<br><small class="nota">' + esc(r.cliente.pais || '') + '</small></td><td>' + esc(r.canal) + '</td><td>' + clp(r.precio.total) + '</td><td>' + clp(r.pagado || 0) + '</td><td>' + chip(r.estado) + '</td><td style="display:flex;gap:4px;flex-wrap:wrap">' + acc.join('') + '</td></tr>';
-        }).join('') || '<tr><td colspan="9" class="nota">Sin reservas con ese filtro. Prueba "Cargar 60 días de prueba" en Resumen.</td></tr>') + '</tbody></table></div><p class="nota" style="margin-top:6px">Se muestran las 80 más recientes de ' + l.length + '.</p>';
+        }).join('') || '<tr><td colspan="9" class="nota">Sin reservas con ese filtro. Todavía no hay reservas: aparecen aquí apenas un cliente reserva desde el sitio.</td></tr>') + '</tbody></table></div><p class="nota" style="margin-top:6px">Se muestran las 80 más recientes de ' + l.length + '.</p>';
     },
     inventario: function (D) {
       var c = D.config, lista = c.modo === 'cupos' ? c.servicios : c.recursos;
@@ -182,10 +179,9 @@
   // ---------- Eventos ----------
   app.addEventListener('click', function (e) {
     var x, D = R.leer(neg);
-    if ((x = e.target.closest('[data-neg]'))) { neg = x.dataset.neg; history.replaceState(null, '', '?negocio=' + neg); pintar(); return; }
+    if ((x = e.target.closest('[data-neg]'))) { neg = x.dataset.neg; history.replaceState(null, '', '?negocio=' + neg); R.conectar(neg); R.entrarEquipo(neg); pintar(); return; }
     if ((x = e.target.closest('[data-tab]'))) { tab = x.dataset.tab; pintar(); return; }
-    if (e.target.closest('[data-semilla]')) { R.sembrar(neg); toast('Se cargaron 60 días de reservas de prueba.'); return; }
-    if (e.target.closest('[data-reset]') && confirm('¿Borrar todas las reservas y cambios de este negocio en la demo?')) { R.restablecer(neg); return; }
+    if (e.target.closest('[data-reset]') && confirm('¿Borrar todas las reservas de este negocio? No se puede deshacer.')) { R.restablecer(neg).then(function () { toast('Listo: se borraron las reservas.'); }, function () { toast('Solo el dueño puede borrar las reservas.'); }); return; }
     if ((x = e.target.closest('[data-cal]'))) { desdeCal = +x.dataset.cal === 0 ? U.hoy() : U.sumaDias(desdeCal, +x.dataset.cal); pintar(); return; }
     if ((x = e.target.closest('[data-rango]'))) { rango = +x.dataset.rango; pintar(); return; }
     if ((x = e.target.closest('[data-acc]'))) {
@@ -224,7 +220,11 @@
       toast('Políticas guardadas. El sitio ya las aplica.');
     }
   });
-  R.escuchar(function (m) { if (m.id !== neg) return; var a = document.activeElement; if (a && a.matches && a.matches('input, select, textarea')) return; pintar(); });
-  setInterval(function () { R.automatico(neg); }, 5000);
-  pintar();
+  Nube.acceso({ negocio: 'reservas', titulo: 'Panel de reservas', aceptan: ['dueno', 'recepcion'], pistas: [{ rol: 'Recepción', pin: '358241' }, { rol: 'Dueño', pin: '482916' }] }).then(function () {
+    R.conectar(neg); R.entrarEquipo(neg);
+    var sal = document.createElement('button'); sal.type = 'button'; sal.className = 'btn chico'; sal.textContent = 'Salir'; sal.style.cssText = 'position:fixed;right:12px;bottom:12px;z-index:50'; sal.addEventListener('click', function () { Nube.salir('reservas'); }); document.body.appendChild(sal);
+    R.escuchar(function (m) { if (m.id !== neg) return; if (m.tipo === 'error') { toast(m.mensaje); return; } var a = document.activeElement; if (a && a.matches && a.matches('input, select, textarea')) return; pintar(); });
+    setInterval(function () { R.automatico(neg); }, 5000);
+    pintar();
+  });
 })();

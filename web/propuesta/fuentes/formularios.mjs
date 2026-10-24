@@ -1,6 +1,6 @@
 // Genera los dos formularios para clientes de Bío Digital a partir de las skills (copias en respaldo-skills/):
 //   formulario.html       → página web (59 preguntas)
-//   formulario-menu.html  → menú digital con plato en vivo
+//   formulario-menu.html  → menú digital
 // Ambos envían las respuestas al panel (Supabase) y ofrecen copiar / WhatsApp como respaldo.
 // Uso (desde la raíz del proyecto):  node web/propuesta/fuentes/formularios.mjs
 import { readFileSync, writeFileSync } from 'node:fs';

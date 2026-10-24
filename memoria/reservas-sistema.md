@@ -1,5 +1,7 @@
 # Sistema de reservas completo · 23-oct-2026
 
+> **Actualización 24-oct-2026:** `ejemplos/reservas/` y su panel están conectados en la nube (PIN por rol, cupos que no se venden dos veces, el cliente ve solo lo suyo). Se quitaron los datos de prueba automáticos. Lo vigente está en [conexion-nube.md](conexion-nube.md); lo de abajo es el historial del 23-oct.
+
 Encargo del usuario (23-oct): sistema de reservas completo y "todo automático" para hotel o cabañas, agencia de tours, centro médico, arriendo de espacios y salones. Demo en `web/propuesta/ejemplos/reservas/` (cliente) y `ejemplos/reservas/admin/` (panel). El módulo anterior (`_compartido/reservas.js`, nivel 1 por WhatsApp) sigue en los sitios de ejemplo y no se tocó.
 
 ## Archivos

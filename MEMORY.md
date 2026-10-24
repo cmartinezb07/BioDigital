@@ -1,5 +1,8 @@
 # Índice — memoria del proyecto Bío Digital
 
+- [Menú digital: plantilla de restaurante](memoria/plantilla-restaurante.md) — estructura vs datos, aislamiento por negocio y cómo crear un restaurante nuevo con nuevo-restaurante.mjs
+- [Precios del menú digital](memoria/precios-menu-digital.md) — comparables (Fudo, MenuTiger, apps de delivery), costos únicos vs recurrentes y 3 tramos propuestos (pendiente de aprobación)
+- [Conexión en la nube](memoria/conexion-nube.md) — pedidos, reservas y fidelización conectados entre equipos (Supabase `biodigital-demos`): roles por PIN, flujo del restaurante, GPS del delivery paso a paso, costos y límites.
 - [EMPEZAR-AQUI.md](EMPEZAR-AQUI.md) — para quien llega nuevo o va a trabajar el proyecto con otra IA: qué leer, en qué orden y el prompt listo para copiar.
 
 - [contexto.md](contexto.md) — brief fijo del proyecto: equipo, propósito, alcance, presupuesto original, stakeholders, fechas.

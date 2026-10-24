@@ -42,9 +42,13 @@ for (const ruta of rutas) {
     if (movil) await cdp('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 }, s);
     const resp = await fetch(base + ruta).catch(() => null);
     if (!resp || !resp.ok) throw new Error('la página no responde (' + (resp ? resp.status : 'servidor apagado') + ')');
+    await resp.arrayBuffer().catch(() => {});   // se lee el cuerpo completo: si no, con páginas grandes el cliente HTTP falla
     await cdp('Page.navigate', { url: base + ruta }, s);
     await dormir(3500);
-    if (await valor(s, 'document.documentElement.scrollHeight - innerHeight') < 50) throw new Error('la página cargó sin contenido para hacer scroll');
+    if (await valor(s, 'document.documentElement.scrollHeight - innerHeight') < 50) {   // cabe en una pantalla: sirve si tiene contenido (una página en blanco es un error)
+      if ((await valor(s, 'document.body.innerText.trim().length')) < 80) throw new Error('la página cargó sin contenido');
+      filas.push({ ruta, ancho, pasos: 0, llego: true, problemas: [] }); console.log('OK  ' + ancho + ' ' + ruta + ' · cabe en una pantalla, no necesita scroll'); await cdp('Target.closeTarget', { targetId }).catch(() => {}); continue;
+    }
     const problemas = []; let pasos = 0, y = await valor(s, 'scrollY'), llego = false, atascos = 0;
     for (; pasos < 80; pasos++) {
       const max = await valor(s, 'document.documentElement.scrollHeight - innerHeight');
@@ -58,10 +62,12 @@ for (const ruta of rutas) {
       else { for (let k = 0; k < 4; k++) { await cdp('Input.dispatchMouseEvent', { type: 'mouseWheel', x: ancho / 2, y: alto / 2, deltaX: 0, deltaY: 120 }, s); await dormir(40); } }
       await dormir(450);
       const y1 = await valor(s, 'scrollY');
-      await dormir(700);   // sin tocar nada: el scroll no debería moverse solo
-      const y2 = await valor(s, 'scrollY');
+      const m = [y1]; for (let k = 0; k < 3; k++) { await dormir(230); m.push(await valor(s, 'scrollY')); }   // sin tocar nada: el scroll no debería saltar ni volver
+      const y2 = m[3], d = [m[1] - m[0], m[2] - m[1], m[3] - m[2]];
+      // El impulso del dedo que se va frenando es normal; un salto brusco o un retroceso, no
+      const inercia = d.every((x) => x >= -2) && d[0] <= 80 && d[0] + 15 >= d[1] && d[1] + 15 >= d[2];
       if (y1 < y - 5) problemas.push(`retrocede de ${Math.round(y)} a ${Math.round(y1)}`);
-      if (Math.abs(y2 - y1) > 40) problemas.push(`se mueve solo después de soltar: ${Math.round(y1)} → ${Math.round(y2)}`);
+      if (Math.abs(y2 - y1) > 40 && !inercia) problemas.push(`se mueve solo después de soltar: ${Math.round(y1)} → ${Math.round(y2)}`);
       if (y2 <= y + 2) { atascos++; if (atascos >= 3) { problemas.push(`se queda pegado en ${Math.round(y2)} de ${Math.round(max)}`); break; } } else atascos = 0;
       y = y2;
     }

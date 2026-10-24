@@ -10,9 +10,9 @@ import { dirname, join } from 'node:path';
 import { WHATSAPP } from './config.mjs';
 
 export const EJEMPLOS = [
-  { id: 'fogon-del-sur', rubro: 'Restaurantes', nombre: 'Fogón del Sur', comuna: 'Concepción', que: 'Menú digital con 3D, pedidos y delivery', ref: 'Diseño propio (skill crear-menu-digital)',
+  { id: 'fogon-del-sur', rubro: 'Restaurantes', nombre: 'Fogón del Sur', comuna: 'Concepción', que: 'Menú digital con pedidos y delivery', ref: 'Diseño propio (skill crear-menu-digital)',
     seg: 'Comensal que no conoce el local y duda qué pedir.',
-    crea: { C: 'Ver el plato en 3D sobre tu mesa y seguir el delivery en el mapa', A: 'Pedidos desde la mesa, para retirar o a domicilio', R: 'Preguntas al garzón y llamadas para pedir', E: 'La carta en PDF que no se lee en el celular' } },
+    crea: { C: 'Pedir desde el celular y seguir el delivery en el mapa', A: 'Pedidos desde la mesa, para retirar o a domicilio', R: 'Preguntas al garzón y llamadas para pedir', E: 'La carta en PDF que no se lee en el celular' } },
   { id: 'estetica', rubro: 'Estética y bienestar', nombre: 'Centro Aurora', comuna: 'Chiguayante', que: 'Reservas por hora', ref: '21st.dev · Forma pilates studio',
     seg: 'Persona que trabaja todo el día y quiere una pausa sin coordinar por mensajes.',
     crea: { C: 'Agenda de la semana con las horas libres a la vista', A: 'Privacidad: una persona por sala', R: 'Dudas de precio y duración', E: 'Llamar para pedir hora' } },
@@ -37,23 +37,26 @@ export const EJEMPLOS = [
   // Sistemas completos (no son páginas de un rubro): `ruta` es la pantalla que se muestra y `preparar` deja datos de prueba
   // antes de capturarla (capturar-ejemplos.mjs). No salen en "Mira tu página".
   { id: 'restaurante-seguimiento', sistema: true, ruta: 'fogon-del-sur/pedido/?demo', rubro: 'Seguimiento del pedido', nombre: 'Fogón del Sur · Tu pedido', comuna: 'Concepción', que: 'Estado con color, tiempo estimado y repartidor en el mapa', ref: 'Diseño propio', espera: 9000,
-    preparar: "await new Promise((r) => setTimeout(r, 1500)); const id = new URLSearchParams(location.search).get('id'); Pedidos.cambiar(id, 'preparacion'); Pedidos.cambiar(id, 'listo'); Pedidos.actualizar(id, (x) => { x.escala = 20; }); Pedidos.cambiar(id, 'camino', { repartidor: { nombre: 'Repartidor de prueba' } });",
     seg: 'Cliente que pidió delivery y quiere saber cuánto falta.',
     crea: { C: 'Ver al repartidor en el mapa y jugar mientras espera', A: 'Certeza: estado con color y tiempo estimado', R: 'Llamadas al local preguntando por el pedido', E: 'La espera a ciegas' } },
-  { id: 'restaurante-cocina', sistema: true, ruta: 'fogon-del-sur/cocina/', rubro: 'Pantalla de cocina', nombre: 'Fogón del Sur · Cocina', comuna: 'Concepción', que: 'Pedidos en vivo por estado, con reloj', ref: 'Diseño propio',
+  { id: 'restaurante-cocina', sistema: true, ruta: 'fogon-del-sur/cocina/', rubro: 'Pantalla de cocina', nombre: 'Fogón del Sur · Cocina', comuna: 'Concepción', que: 'Pedidos en vivo por estado, con reloj', ref: 'Diseño propio', espera: 7000,
+    preparar: "sessionStorage.setItem('nube-pin-fogon', '247135'); location.reload();",
     seg: 'Cocina que recibe pedidos de la mesa, del mesón y del delivery al mismo tiempo.',
     crea: { C: 'Comandas que llegan solas y avisan al cliente al marcarlas', A: 'Orden: reloj por pedido en verde, amarillo y rojo', R: 'Comandas de papel perdidas', E: 'Gritar los pedidos a la cocina' } },
-  { id: 'restaurante-panel', sistema: true, ruta: 'fogon-del-sur/panel/', rubro: 'Panel del restaurante', nombre: 'Fogón del Sur · Panel', comuna: 'Concepción', que: 'Visitas, pedidos, ventas y opiniones', ref: 'Diseño propio', espera: 6000,
+  { id: 'restaurante-panel', sistema: true, ruta: 'fogon-del-sur/panel/', rubro: 'Panel del restaurante', nombre: 'Fogón del Sur · Panel', comuna: 'Concepción', que: 'Visitas, pedidos, ventas y opiniones', ref: 'Diseño propio', espera: 8000,
+    preparar: "sessionStorage.setItem('nube-pin-fogon', '482916'); location.reload();",
     seg: 'Dueño que quiere saber cuánto vende la carta digital sin revisar cuadernos.',
     crea: { C: 'Ver cuántos abren la carta, cuántos piden y cuántos pagan', A: 'Opiniones y recomendaciones de clientes', R: 'Cálculos a mano al cierre', E: 'Decidir sin datos' } },
   { id: 'reservas', sistema: true, ruta: 'reservas/', rubro: 'Sistema de reservas', nombre: 'Reservas en línea', comuna: 'Gran Concepción', que: 'Cabañas, tours, centro médico, espacios y salones', ref: 'Diseño propio',
     seg: 'Negocio que hoy coordina reservas por WhatsApp y pierde clientes fuera de horario.',
     crea: { C: 'Calendario con disponibilidad en vivo, depósito y código de reserva', A: 'Idiomas, monedas y promociones', R: 'Mensajes de ida y vuelta', E: 'Las reservas dobles' } },
-  { id: 'reservas-panel', sistema: true, ruta: 'reservas/admin/', rubro: 'Panel de reservas', nombre: 'Panel del negocio', comuna: 'Gran Concepción', que: 'Ocupación, calendario, políticas y reportes', ref: 'Diseño propio', espera: 6000,
+  { id: 'reservas-panel', sistema: true, ruta: 'reservas/admin/', rubro: 'Panel de reservas', nombre: 'Panel del negocio', comuna: 'Gran Concepción', que: 'Ocupación, calendario, políticas y reportes', ref: 'Diseño propio', espera: 8000,
+    preparar: "sessionStorage.setItem('nube-pin-reservas', '482916'); location.reload();",
     seg: 'Dueño que quiere ver su ocupación y sus ingresos sin planillas.',
     crea: { C: 'Avisos automáticos y calendario sincronizado con Airbnb y Booking', A: 'Control: depósitos, cancelaciones y capacidad', R: 'Planillas y cuadernos', E: 'Pagar comisión por cada reserva' } },
   { id: 'fidelizacion', sistema: true, ruta: 'fidelizacion/', rubro: 'Tarjeta de fidelización', nombre: 'Café Mirador', comuna: 'Concepción', que: 'Sellos con QR en el celular, sin mensualidad', ref: 'Diseño propio',
-    preparar: "localStorage.setItem('bdfid-v1', JSON.stringify({ tarjetas: [{ codigo: 'K7M2QX9A', nombre: 'Camila', telefono: '', sellos: 5, creada: Date.now(), visitas: 5, premios: 1 }], eventos: [] })); localStorage.setItem('bdfid-mi', 'K7M2QX9A'); location.reload();",
+    espera: 6000,
+    preparar: "localStorage.setItem('bdfid-mi', 'ZZCAP001'); location.reload();",
     seg: 'Cliente frecuente que pierde la tarjeta de papel.',
     crea: { C: 'La tarjeta de sellos en el celular, con QR', A: 'Ver cuántos clientes vuelven', R: 'Tarjetas de papel impresas', E: 'La mensualidad de las apps de fidelización' } },
 ].map((e) => ({ ...e, url: `ejemplos/${e.ruta || e.id + '/'}`, img: `ejemplos/${e.id}-chica.webp`, grande: `ejemplos/${e.id}.webp` }));
@@ -152,7 +155,7 @@ footer a { display:inline-flex; align-items:center; min-height:44px; color:var(-
   </div>
   <div class="lista">${tarjetas}
   </div>
-  <section class="sis" aria-labelledby="t-sis"><h2 id="t-sis">Sistemas completos para probar</h2><p>Ábrelos en pestañas distintas del mismo navegador: lo que haces en una aparece al instante en la otra.</p>
+  <section class="sis" aria-labelledby="t-sis"><h2 id="t-sis">Sistemas completos, conectados</h2><p>Funcionan de verdad: haz un pedido, una reserva o abre una tarjeta desde tu celular y mira cómo llega a la pantalla del local en otro equipo. Cada pantalla del equipo (cocina, reparto, panel, caja) pide un PIN de demostración, que se muestra al entrar. Es un local de ejemplo: no escribas datos personales reales.</p>
     <div class="sis-l">
       <div><h3>Restaurante: pedidos, cocina y delivery</h3><p>Pedir en la mesa, para retirar o a domicilio; estado del pedido con su color, tiempo estimado, repartidor en el mapa y un juego mientras esperas. Pantalla de cocina y panel del dueño.</p><p class="sis-a"><a href="fogon-del-sur/">Carta</a><a href="fogon-del-sur/cocina/">Cocina</a><a href="fogon-del-sur/repartidor/">Repartidor</a><a href="fogon-del-sur/panel/">Panel</a></p></div>
       <div><h3>Reservas: cabañas, tours, centro médico, espacios y salones</h3><p>Calendario con disponibilidad en vivo, depósito y política de cancelación, promociones, idiomas y monedas. Panel con inventario, avisos automáticos, iCal y reportes.</p><p class="sis-a"><a href="reservas/">Reservar</a><a href="reservas/admin/">Panel del negocio</a></p></div>

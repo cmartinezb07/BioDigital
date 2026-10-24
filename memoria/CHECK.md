@@ -1,6 +1,6 @@
-# Check del sitio · 24 de octubre de 2026 a las 2:08 p. m.
+# Check del sitio · 24 de octubre de 2026 a las 8:01 p. m.
 
-Revisado en: http://localhost:4321 · 24 de 24 páginas sin observaciones.
+Revisado en: http://localhost:4321 · 28 de 28 páginas sin observaciones · 25 de 25 pruebas de la conexión en la nube sin fallas.
 Para repetirlo: `node web/herramientas/check.mjs` (vista previa) o `node web/herramientas/check.mjs http://localhost:4321` (local).
 
 ## 1. Revisión automática (celular 390 px y escritorio 1440 px)
@@ -22,17 +22,53 @@ Criterios (de la skill crear-sitio-web): sin desborde horizontal, textos de 12 p
 | [Ejemplo · Técnico (Kyntra)](http://localhost:4321/ejemplos/tecnico/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 8/8 |
 | [Ejemplo · Barbería (DBC)](http://localhost:4321/ejemplos/barberia/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 5/5 |
 | [Ejemplo · Pastelería (Boolka)](http://localhost:4321/ejemplos/casa-dulce/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 7/7 |
-| [Ejemplo · Restaurante (menú 3D y pedidos)](http://localhost:4321/ejemplos/fogon-del-sur/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 11/11 |
-| [Restaurante · Cocina](http://localhost:4321/ejemplos/fogon-del-sur/cocina/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| [Restaurante · Repartidor](http://localhost:4321/ejemplos/fogon-del-sur/repartidor/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| [Restaurante · Panel del dueño (caso base: servicio automático)](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 13/13 |
+| [Ejemplo · Restaurante (menú con pedidos)](http://localhost:4321/ejemplos/fogon-del-sur/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 23/23 |
+| [Restaurante · Pago del pedido](http://localhost:4321/ejemplos/fogon-del-sur/pagar/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Restaurante · Tu pedido (ejemplo) y juegos de espera](http://localhost:4321/ejemplos/fogon-del-sur/pedido/?demo) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 12/12 |
+| [Restaurante · Cocina (pide PIN)](http://localhost:4321/ejemplos/fogon-del-sur/cocina/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Restaurante · Repartidor (pide PIN)](http://localhost:4321/ejemplos/fogon-del-sur/repartidor/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Restaurante · Mis pedidos (cliente)](http://localhost:4321/ejemplos/fogon-del-sur/mis-pedidos/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 6/6 |
+| [Restaurante · Servicio completo (cliente, cocina, reparto y dueño)](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 20/20 |
+| [Restaurante · Panel del dueño (pedidos en vivo, carta, estadísticas)](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 23/23 |
 | [Pastelería · Carta](http://localhost:4321/ejemplos/casa-dulce/carta/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Sistema de reservas (cliente)](http://localhost:4321/ejemplos/reservas/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 16/16 |
-| [Sistema de reservas (panel)](http://localhost:4321/ejemplos/reservas/admin/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Sistema de reservas (panel, pide PIN)](http://localhost:4321/ejemplos/reservas/admin/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Fidelización (cliente)](http://localhost:4321/ejemplos/fidelizacion/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 6/6 |
-| [Fidelización (caja del local)](http://localhost:4321/ejemplos/fidelizacion/local/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Fidelización (caja del local, pide PIN)](http://localhost:4321/ejemplos/fidelizacion/local/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Cómo trabajamos](http://localhost:4321/como-trabajamos/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Módulo de reservas (demo)](http://localhost:4321/ejemplos/_compartido/reservas-demo.html) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 60/60 |
+
+## 1b. Conexión en la nube (reservas, fidelización y pedidos)
+
+Permisos por PIN, privacidad del cliente, cupos que no se venden dos veces y reglas contra trampas, probados directo contra la base (`node web/herramientas/nube-e2e.mjs`). Lo que crea la prueba se borra al terminar.
+
+| Prueba | Resultado |
+|---|---|
+| R1 de 4 reservas simultáneas a una cabaña con 2 unidades entran solo 2 | ✅ |
+| R2 una estadía larga cabe entre dos cortas (2 unidades) y la siguiente ya no | ✅ |
+| R3 una retención vencida libera la fecha | ✅ |
+| R4 una reserva cancelada libera la fecha | ✅ |
+| R5 sin código, el cliente ve las fechas ocupadas pero ninguna reserva ni dato personal | ✅ |
+| R5b con su código ve solo su reserva completa | ✅ |
+| R6 recepción ve todas las reservas con sus datos | ✅ |
+| R6b recepción no puede vaciar las reservas | ✅ |
+| R6c la configuración no se cambia sin PIN, y con PIN sí | ✅ |
+| R6d el cliente lee la configuración que publicó el equipo | ✅ |
+| R6e el PIN de otro negocio o uno inventado no sirve para la configuración | ✅ |
+| F1 el cliente abre su tarjeta en cero | ✅ |
+| F2 no puede abrir una tarjeta con sellos | ✅ |
+| F3 no puede sumarse sellos a sí mismo | ✅ |
+| F4 la caja suma el sello y el cliente lo ve | ✅ |
+| F5 el cliente solo registra su alta, no sellos | ✅ |
+| F6 la caja ve todas las tarjetas; un cliente sin código ve ninguna | ✅ |
+| F7 el PIN de la caja no abre las reservas | ✅ |
+| P1 otro cliente no ve el pedido ajeno | ✅ |
+| P2 el cliente no puede cambiar el estado de su pedido (ni reemplazarlo); solo agregar su pago | ✅ |
+| P2b un pedido nuevo no puede nacer ya entregado | ✅ |
+| P3 la cocina ve los pedidos con sus datos | ✅ |
+| P4 el repartidor no ve las visitas (solo el dueño) | ✅ |
+| P5 las visitas se registran sin PIN | ✅ |
+| Z limpieza: no queda nada de la prueba | ✅ |
 
 ## 2. Revisión a ojo (marca cada casilla al verla)
 
@@ -43,7 +79,7 @@ Criterios (de la skill crear-sitio-web): sin desborde horizontal, textos de 12 p
 - [ ] **Políticas** ([privacidad](http://localhost:4321/privacidad/), [términos](http://localhost:4321/terminos/)): el equipo leyó los plazos y el retracto propuestos.
 - [ ] **Galería** ([abrir](http://localhost:4321/ejemplos/)): cada ejemplo muestra su segmento y su matriz CREA.
 - [ ] **Cada ejemplo frente a su plantilla** (tabla en `memoria/ejemplos-matriz.md`): la estructura y el movimiento se parecen y los colores no se repiten entre ejemplos.
-- [ ] **En un celular real** (no solo en el emulador): portada, un ejemplo con reservas y el menú 3D.
+- [ ] **En un celular real** (no solo en el emulador): portada, un ejemplo con reservas y el menú con pedidos.
 - [ ] **Sistemas en dos pestañas**: un pedido en Fogón del Sur aparece en la cocina y el seguimiento avanza; una reserva en una pestaña baja la disponibilidad en la otra; un sello sumado en la caja aparece en la tarjeta.
 
 ## 3. Decisiones pendientes del equipo

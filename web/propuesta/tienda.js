@@ -9,7 +9,7 @@
   var LEGACY_IDS = {
     videos: 'social-video', menu: 'interactive-menu', fotos: 'photography',
     reservas: 'reservations', fidelizacion: 'loyalty-card', pack: 'full-pack',
-    'menu-ar': 'interactive-menu-ar', 'promo-0': 'social-video-2',
+    'promo-0': 'social-video-2',
     'promo-1': 'social-video-3', 'promo-2': 'launch-loyalty-card',
     'promo-3': 'menu-photography', 'promo-4': 'reservations-loyalty'
   };

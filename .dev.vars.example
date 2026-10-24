@@ -6,7 +6,6 @@ MP_APPLICATION_ID=replace-with-application-id
 MP_USER_ID=replace-with-seller-user-id
 MP_TEST_PAYER_EMAIL=replace-with-test-buyer-email
 MP_LIVE_MODE=false
-MP_COUNTRY_CODE=CHL
 ORDER_TOKEN_SECRET=replace-with-at-least-32-random-characters
 CHECKOUT_SITE_URL=https://example.test
 # Opcionales; si se omiten se usan /pago/exitoso, /pago/pendiente y /pago/error.

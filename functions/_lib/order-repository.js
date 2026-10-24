@@ -1,7 +1,7 @@
 const SELECT_COLUMNS = `
   id, access_token_hash, idempotency_key, request_fingerprint, sku, title,
   amount, currency, purpose, project_reference, parent_order_id, status,
-  external_reference, mp_order_id, mp_status, checkout_url,
+  external_reference, mp_order_id, mp_preference_id, mp_status, checkout_url,
   mp_status_detail, verified_paid_amount, mp_last_updated_at, last_verified_at,
   verification_version, creation_attempts, last_error_code, created_at, updated_at
 `;
@@ -34,10 +34,10 @@ export class D1OrderRepository {
     return this.withItems(order);
   }
 
-  async findByMercadoPagoId(id) {
+  async findByExternalReference(reference) {
     const order = await this.database.prepare(
-      `SELECT ${SELECT_COLUMNS} FROM orders WHERE mp_order_id = ? LIMIT 1`
-    ).bind(id).first();
+      `SELECT ${SELECT_COLUMNS} FROM orders WHERE external_reference = ? LIMIT 1`
+    ).bind(reference).first();
     return this.withItems(order);
   }
 
@@ -73,18 +73,19 @@ export class D1OrderRepository {
   }
 
   async markCreating(id, updatedAt) {
-    await this.database.prepare(`
+    const result = await this.database.prepare(`
       UPDATE orders
       SET status = 'creating', creation_attempts = creation_attempts + 1,
           last_error_code = NULL, updated_at = ?
-      WHERE id = ?
+      WHERE id = ? AND status IN ('pending_creation', 'creation_failed')
     `).bind(updatedAt, id).run();
+    return Number(result.meta?.changes || 0) === 1;
   }
 
   async markCreated(id, mpOrder, updatedAt) {
     await this.database.prepare(`
       UPDATE orders
-      SET status = 'created', mp_order_id = ?, mp_status = ?, checkout_url = ?,
+      SET status = 'created', mp_preference_id = ?, mp_status = ?, checkout_url = ?,
           last_error_code = NULL, updated_at = ?
       WHERE id = ?
     `).bind(mpOrder.id, mpOrder.status, mpOrder.checkoutUrl, updatedAt, id).run();
@@ -105,27 +106,33 @@ export class D1OrderRepository {
     const results = await this.database.batch([
       this.database.prepare(`
         UPDATE orders SET
-          status = ?, mp_status = ?, mp_status_detail = ?, verified_paid_amount = ?,
+          mp_order_id = ?, status = ?, mp_status = ?, mp_status_detail = ?, verified_paid_amount = ?,
           mp_last_updated_at = ?, last_verified_at = ?, updated_at = ?,
           verification_version = verification_version + 1, last_error_code = NULL
-        WHERE id = ? AND mp_order_id = ?
+        WHERE id = ? AND mp_preference_id = ?
+          AND (mp_order_id IS NULL OR mp_order_id = ?)
           AND status IN (${placeholders})
           AND (mp_last_updated_at IS NULL OR ? >= mp_last_updated_at)
-          AND NOT EXISTS (SELECT 1 FROM payment_events WHERE event_key = ?)
+          AND NOT EXISTS (SELECT 1 FROM payment_events WHERE event_key = ? AND outcome = 'verified')
       `).bind(
-        verification.state, verification.mpStatus, verification.statusDetail,
+        verification.merchantOrderId, verification.state, verification.mpStatus, verification.statusDetail,
         verification.netPaidAmount, verification.lastUpdatedAt, now, now,
-        order.id, order.mp_order_id, ...allowedFrom,
+        order.id, order.mp_preference_id, verification.merchantOrderId, ...allowedFrom,
         verification.lastUpdatedAt, event.eventKey
       ),
       this.database.prepare(`
-        INSERT OR IGNORE INTO payment_events (
+        INSERT INTO payment_events (
           event_key, event_id, request_id, resource_id, action, source,
           outcome, observed_status, observed_status_detail, normalized_status,
           error_code, received_at
         ) VALUES (?, ?, ?, ?, ?, ?, 'verified', ?, ?, ?, NULL, ?)
+        ON CONFLICT(event_key) DO UPDATE SET
+          outcome = 'verified', observed_status = excluded.observed_status,
+          observed_status_detail = excluded.observed_status_detail,
+          normalized_status = excluded.normalized_status, error_code = NULL
+        WHERE payment_events.outcome = 'rejected'
       `).bind(
-        event.eventKey, event.eventId, event.requestId, order.mp_order_id,
+        event.eventKey, event.eventId, event.requestId, event.resourceId || verification.merchantOrderId,
         event.action, event.source, verification.mpStatus,
         verification.statusDetail, verification.state, now
       )
@@ -141,12 +148,20 @@ export class D1OrderRepository {
         error_code, received_at
       ) VALUES (?, ?, ?, ?, ?, ?, 'rejected', 'unverified', 'unverified', NULL, ?, ?)
     `).bind(
-      event.eventKey, event.eventId, event.requestId, order.mp_order_id,
+      event.eventKey, event.eventId, event.requestId, event.resourceId || order.mp_preference_id,
       event.action, event.source, errorCode, now
     ).run();
+  }
+
+  async claimReconciliation(id, bucket) {
+    const result = await this.database.prepare(`
+      UPDATE orders SET reconciliation_bucket = ?
+      WHERE id = ? AND (reconciliation_bucket IS NULL OR reconciliation_bucket < ?)
+    `).bind(bucket, id, bucket).run();
+    return Number(result.meta?.changes || 0) === 1;
   }
 }
 
 export function isUniqueConstraintError(error) {
-  return /unique|constraint/i.test(String(error?.message || error));
+  return /unique constraint|primary key/i.test(String(error?.message || error));
 }

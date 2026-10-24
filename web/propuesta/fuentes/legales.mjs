@@ -3,7 +3,7 @@
 // Lo que depende de una decisión del equipo (razón social, plazos) está marcado en memoria/decisiones.md.
 import { MAIL, WHATSAPP_VISIBLE, INSTAGRAM, DOMINIO_ANUAL } from './config.mjs';
 
-const VIGENCIA = '22 de octubre de 2026';
+const VIGENCIA = '24 de octubre de 2026';
 const clp = (n) => '$' + n.toLocaleString('es-CL');
 
 const PRIVACIDAD = {
@@ -75,7 +75,8 @@ const TERMINOS = {
       <li>Te hacemos el diagnóstico gratis y te mandamos una propuesta con lo que incluye, el precio final y el plazo.</li>
       <li>El contrato queda cerrado cuando aceptas la propuesta por escrito (correo o WhatsApp) y se registra el pago acordado.</li>
     </ol>`],
-    ['Pagos', `<p>El pago en línea con Mercado Pago está en preparación. Mientras tanto, la forma y las fechas de pago se acuerdan en la propuesta. Cuando el pago en línea esté activo, Mercado Pago procesará la tarjeta: Bío Digital no recibe ni guarda sus datos. Una orden se considera pagada solo cuando Mercado Pago la confirma.</p>`],
+    ['Pagos', `<p>Los productos con precio cerrado pueden ofrecer un enlace de Mercado Pago por el importe publicado. Los servicios con precio "desde" o "a cotizar", y los pedidos con varios productos, se confirman antes de enviar el enlace por el total acordado. La forma y las fechas de pago quedan en la propuesta.</p>
+      <p>El enlace abre Mercado Pago, que recibe los datos de la tarjeta; Bío Digital no los recibe ni guarda. El equipo comprueba la operación en la cuenta receptora antes de comenzar el trabajo. Un pago pendiente o en revisión todavía no está confirmado. El sitio no actualiza automáticamente el estado de los pagos realizados por enlace.</p>`],
     ['Lo que nos toca a cada uno', `<p><strong>Bío Digital</strong> hace lo acordado en la propuesta, en el plazo acordado, y te mantiene al tanto del avance.</p>
     <p><strong>El cliente</strong> entrega a tiempo la información, los textos, las fotos y los logos, y confirma que tiene derecho a usarlos. Si el material llega tarde, el plazo se corre en la misma medida.</p>`],
     ['Revisiones y cambios', `<p>Cada trabajo incluye revisiones antes de la entrega para ajustar textos, colores y detalles. Lo que cambie el alcance (más secciones, más productos o un servicio nuevo) se cotiza aparte. Después de la entrega, los cambios los hace Bío Digital, no el cliente.</p>`],

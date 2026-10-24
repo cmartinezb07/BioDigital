@@ -1,8 +1,8 @@
-# Estado actual (punto de retorno) — actualizado 2026-10-14
+# Estado actual (punto de retorno) — actualizado 2026-10-24
 
 > Resumen vigente y completo: skill `contexto_biodigital` (`~/.claude/skills/` y `respaldo-skills/`). Lo de abajo es el detalle del sitio hasta septiembre; las decisiones recientes están al final de `decisiones.md`.
 
-**Estado al 14-oct-2026:** sitio con carrusel de ejemplos, tienda y carrito; panel interno con login y segundo factor en producción (Cloudflare + Supabase); formularios de página web y de menú que llegan al panel; menú digital con plato en vivo (demo publicada; AR probada en un iPhone con un plato plano; falta escaneo 3D real); skills `crear-sitio-web`, `crear-menu-digital` y `contexto_biodigital`. El Preview aislado de pagos está publicado con D1 de prueba y cobros deshabilitados.
+**Estado al 24-oct-2026:** preparación comercial en `feat/pagos-comerciales-por-enlace`, sincronizada con origin/main 9b43f8f. Catálogo completo de 14 productos, sin la opción de $100, y configuración de enlaces por producto. El usuario confirmó cotización previa para los servicios “desde”. Faltan los 9 enlaces de precio cerrado y un cobro aprobado; la guía es `PUBLICACION-COMERCIAL.md`. Preview actualizado, despliegue `cd511377`; 37 pruebas pasan. La API automática sigue apagada. No se fusionó ni publicó main.
 
 Leer esto primero al empezar una sesión nueva.
 
@@ -11,7 +11,7 @@ Quien llegue nuevo parte por [EMPEZAR-AQUI.md](../EMPEZAR-AQUI.md).
 
 ## Sitio web (web/propuesta/)
 - **El sitio es la opción 8** (mezcla de la 6 y la 7) y se genera como `web/propuesta/index.html`. Logo aplicado y paleta de marca (`#0da5ff` / `#00e5d0`), con rueda de colores para probar otras.
-- **Pagos, Preview seguro:** Mercado Pago está integrado dentro del carrito; una compra de servicios con precio cerrado crea una sola orden con sus líneas, mientras los productos “desde” o “a cotizar” conservan el flujo de diagnóstico/WhatsApp. Pages Functions están publicadas solo en `payments-test`; D1 `biodigital-payments-test` está enlazada solo como `DB` de Preview y tiene aplicadas `0001_orders.sql` y `0002_order_items.sql`. `PAYMENTS_ENABLED=false`, los 14 SKU siguen bloqueados y D1 tiene cero órdenes/eventos/líneas. El Preview actual es https://payments-test.biodigital-propuesta.pages.dev. Siguen pendientes las credenciales de prueba `APP_USR-` (ticket WCS-54274) y las pruebas reales/webhooks. Contrato y operación en `PAGOS.md`.
+- **Pagos:** versión comercial por enlaces en https://payments-test.biodigital-propuesta.pages.dev; faltan 9 enlaces fijos en `web/propuesta/fuentes/enlaces-pago.mjs`. Un producto con enlace correcto abre su cobro; pedidos combinados y servicios variables se confirman por WhatsApp y reciben un enlace por el total. Verificación manual del estado aprobado en el portal, sin actualización automática del sitio/panel. El ensayo previo de $100 fue rechazado por seguridad y su producto/enlace se retiraron del sitio. La API Preferences y su D1 de prueba quedan separadas y deshabilitadas. Detalle en `PAGOS.md` y `PUBLICACION-COMERCIAL.md`.
 - Las siete anteriores son **plantillas ya hechas**: `web/propuesta/plantillas/`, con galería propia.
 - Servir: preview "maquetas" (`.claude/launch.json`, puerto 4321) con `web/servir.py`, sin caché.
 - Páginas 3–8 se generan: `node web/propuesta/fuentes/generar.mjs [3 4 … 8]`. No editar los HTML generados; textos comunes en `fuentes/comun.mjs`, estética en `fuentes/opcion-N.mjs`.

@@ -7,6 +7,9 @@ import { CATALOG } from '../functions/_lib/catalog.js';
 import { sha256Base64Url } from '../functions/_lib/crypto.js';
 import { handleCreateOrder, handleGetOrder } from '../functions/_lib/order-service.js';
 import { handlePaymentConfig } from '../functions/_lib/payment-config.js';
+import { checkoutOnlineConfig } from '../functions/_lib/mercadopago.js';
+import { databaseRepository } from './fixtures.mjs';
+import { PAYMENT_LINKS, fixedPaymentUrl } from '../web/propuesta/fuentes/enlaces-pago.mjs';
 import { createIdempotencyAttempt, createOrder, evaluateCart, getStoredOrder, readStoredOrder, storeOrder } from '../web/propuesta/fuentes/pagos.mjs';
 
 const SECRET = 'test-only-order-token-secret-32-characters-minimum';
@@ -47,18 +50,20 @@ class MemoryOrderRepository {
 
   async markCreating(id, updatedAt) {
     const order = this.orders.get(id);
+    if (!['pending_creation', 'creation_failed'].includes(order.status)) return false;
     Object.assign(order, {
       status: 'creating',
       creation_attempts: order.creation_attempts + 1,
       last_error_code: null,
       updated_at: updatedAt
     });
+    return true;
   }
 
   async markCreated(id, mpOrder, updatedAt) {
     Object.assign(this.orders.get(id), {
       status: 'created',
-      mp_order_id: mpOrder.id,
+      mp_preference_id: mpOrder.id,
       mp_status: mpOrder.status,
       checkout_url: mpOrder.checkoutUrl,
       last_error_code: null,
@@ -85,25 +90,18 @@ function request(body, { key = IDEMPOTENCY_KEY } = {}) {
 
 function mpSuccess(amount = 79990, overrides = {}) {
   return new Response(JSON.stringify({
-    id: 'ORD01TEST123',
-    type: 'online',
-    processing_mode: 'manual',
-    status: 'created',
-    status_detail: 'created',
+    id: '456-test-preference',
     external_reference: '123e4567-e89b-42d3-a456-426614174001',
-    user_id: 'seller-456',
-    country_code: 'CHL',
-    currency: 'CLP',
-    total_amount: String(amount),
-    checkout_url: 'https://www.mercadopago.cl/checkout/v1/redirect?order_id=test',
-    integration_data: { application_id: 'app-123' },
+    collector_id: 'seller-456', client_id: 'app-123',
+    items: [{ id: 'full-pack', unit_price: amount, quantity: 1, currency_id: 'CLP' }],
+    init_point: 'https://www.mercadopago.cl/checkout/v1/redirect?pref_id=test',
     ...overrides
   }), { status: 201, headers: { 'content-type': 'application/json' } });
 }
 
 function mpSuccessForRequest(init, amount = 79990, overrides = {}) {
-  const requestPayload = JSON.parse(init.body);
-  return mpSuccess(amount, { external_reference: requestPayload.external_reference, ...overrides });
+  const payload = JSON.parse(init.body);
+  return mpSuccess(amount, { external_reference: payload.external_reference, items: payload.items, ...overrides });
 }
 
 function dependencies(overrides = {}) {
@@ -140,7 +138,7 @@ test('el catálogo real contiene solo CLP, montos enteros y cobros deshabilitado
 
 test('la migración crea el esquema y aplica restricciones críticas', () => {
   const database = new DatabaseSync(':memory:');
-  for (const name of ['0001_orders.sql', '0002_order_items.sql']) {
+  for (const name of ['0001_orders.sql', '0002_order_items.sql', '0003_checkout_preferences.sql']) {
     database.exec(readFileSync(new URL(`../migrations/${name}`, import.meta.url), 'utf8'));
   }
 
@@ -211,7 +209,7 @@ test('el interruptor global impide crear órdenes', async () => {
   assert.equal((await response.json()).error.code, 'payments_disabled');
 });
 
-test('crea y persiste una orden usando Orders API con precio del servidor', async () => {
+test('crea y persiste una orden usando Preferences API con precio del servidor', async () => {
   const repo = new MemoryOrderRepository();
   let upstreamRequest;
   const deps = dependencies({
@@ -232,27 +230,27 @@ test('crea y persiste una orden usando Orders API con precio del servidor', asyn
   assert.equal(body.currency, 'CLP');
   assert.equal(body.status, 'created');
   assert.match(body.access_token, /^[A-Za-z0-9_-]{43}$/);
-  assert.equal(upstreamRequest.url, 'https://api.mercadopago.com/v1/orders');
+  assert.equal(upstreamRequest.url, 'https://api.mercadopago.com/checkout/preferences');
   assert.equal(upstreamRequest.init.headers['x-idempotency-key'], IDEMPOTENCY_KEY);
   assert.equal(upstreamRequest.init.headers.authorization, 'Bearer TEST_ACCESS_TOKEN_NOT_REAL');
 
   const payload = JSON.parse(upstreamRequest.init.body);
-  assert.equal(payload.type, 'online');
-  assert.equal(payload.processing_mode, 'manual');
-  assert.equal(payload.total_amount, '79990');
+  assert.equal('type' in payload, false);
+  assert.equal('processing_mode' in payload, false);
   assert.deepEqual(payload.payer, { email: 'buyer-test@example.test' });
-  assert.equal(payload.items[0].unit_price, '79990');
+  assert.equal(payload.items[0].unit_price, 79990);
   assert.equal(payload.external_reference, body.id);
-  assert.deepEqual(payload.config.online, {
-    auto_return: 'all',
-    success_url: 'https://pagos.example.test/pago/exitoso',
-    pending_url: 'https://pagos.example.test/pago/pendiente',
-    failure_url: 'https://pagos.example.test/pago/error'
+  assert.deepEqual(payload.back_urls, {
+    success: 'https://pagos.example.test/pago/exitoso',
+    pending: 'https://pagos.example.test/pago/pendiente',
+    failure: 'https://pagos.example.test/pago/error'
   });
 
   const stored = [...repo.orders.values()][0];
   assert.equal(stored.status, 'created');
-  assert.equal(stored.mp_order_id, 'ORD01TEST123');
+  assert.equal(stored.mp_preference_id, '456-test-preference');
+  assert.equal(payload.auto_return, 'approved');
+  assert.equal(payload.notification_url, 'https://pagos.example.test/api/webhooks/mercadopago');
   assert.equal(stored.creation_attempts, 1);
   assert.notEqual(stored.access_token_hash, body.access_token);
 });
@@ -277,7 +275,7 @@ test('crea una sola orden para varios productos del carrito y suma precios del s
   assert.equal(response.status, 201);
   assert.equal(body.amount, 44980);
   assert.deepEqual(body.items.map((item) => item.sku), ['loyalty-card', 'photography']);
-  assert.equal(payload.total_amount, '44980');
+  assert.equal(payload.items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0), 44980);
   assert.deepEqual(payload.items.map((item) => item.id), ['loyalty-card', 'photography']);
 });
 
@@ -312,14 +310,14 @@ test('una clave idempotente no puede reutilizarse con otra compra', async () => 
   assert.equal((await response.json()).error.code, 'idempotency_conflict');
 });
 
-test('un fallo upstream se puede reintentar con la misma clave sin otra orden local', async () => {
+test('un rechazo definitivo permite corregir y reintentar sin otra orden local', async () => {
   const repo = new MemoryOrderRepository();
   let calls = 0;
   const deps = dependencies({
     repo,
     fetchImpl: async (_url, init) => {
       calls++;
-      return calls === 1 ? new Response('{}', { status: 503 }) : mpSuccessForRequest(init);
+      return calls === 1 ? new Response('{}', { status: 400 }) : mpSuccessForRequest(init);
     }
   });
   const first = await handleCreateOrder({ request: request({ sku: 'full-pack', purpose: 'full' }), ...deps });
@@ -329,6 +327,68 @@ test('un fallo upstream se puede reintentar con la misma clave sin otra orden lo
   assert.equal(second.status, 201);
   assert.equal(repo.orders.size, 1);
   assert.equal([...repo.orders.values()][0].creation_attempts, 2);
+});
+
+test('un fallo ambiguo no crea otra preferencia automáticamente', async () => {
+  for (const failure of ['timeout', 'persistence', '503']) {
+    const repo = new MemoryOrderRepository();
+    let calls = 0;
+    if (failure === 'persistence') repo.markCreated = async () => { throw new Error('D1 unavailable after response'); };
+    const deps = dependencies({ repo, fetchImpl: async (_url, init) => {
+      calls++;
+      if (failure === 'timeout') throw Object.assign(new Error('timeout'), { name: 'AbortError' });
+      return failure === '503' ? new Response('{}', { status: 503 }) : mpSuccessForRequest(init);
+    } });
+    const first = await handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+    const retry = await handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+    assert.equal(first.status, 502);
+    assert.equal(retry.status, 409);
+    assert.equal((await retry.json()).error.code, 'creation_needs_review');
+    assert.equal(calls, 1);
+  }
+});
+
+test('dos clics simultáneos usan una sola preferencia y un bloqueo atómico D1', async (t) => {
+  const { repo, sqlite } = databaseRepository();
+  t.after(() => sqlite.close());
+  let release, started;
+  const gate = new Promise((resolve) => { release = resolve; });
+  const ready = new Promise((resolve) => { started = resolve; });
+  let calls = 0;
+  const deps = dependencies({ repo, fetchImpl: async (_url, init) => {
+    calls++; started(); await gate; return mpSuccessForRequest(init);
+  } });
+  const first = handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+  await ready;
+  const second = await handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+  assert.equal(second.status, 409);
+  release();
+  const created = await first;
+  assert.equal(created.status, 201);
+  const reused = await handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+  assert.equal(reused.status, 200);
+  assert.equal(calls, 1);
+  assert.equal(sqlite.prepare('SELECT count(*) AS n FROM orders').get().n, 1);
+  assert.equal(sqlite.prepare('SELECT mp_preference_id FROM orders').get().mp_preference_id, '456-test-preference');
+});
+
+test('una orden ya acreditada no vuelve a abrir el checkout', async () => {
+  const repo = new MemoryOrderRepository();
+  const deps = dependencies({ repo });
+  await handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+  [...repo.orders.values()][0].status = 'accredited';
+  const response = await handleCreateOrder({ request: request({ sku: 'full-pack' }), ...deps });
+  assert.equal(response.status, 409);
+  assert.equal((await response.json()).error.code, 'order_already_paid');
+});
+
+test('retornos públicos HTTPS excluyen localhost y rutas que cambian de origen', () => {
+  for (const origin of ['http://localhost:8788', 'https://localhost', 'https://127.0.0.1', 'https://0.0.0.0', 'https://[::1]']) {
+    assert.throws(() => checkoutOnlineConfig({ CHECKOUT_SITE_URL: origin }));
+  }
+  for (const path of ['//attacker.test', '/\\attacker.test', 'https://attacker.test']) {
+    assert.throws(() => checkoutOnlineConfig({ CHECKOUT_SITE_URL: 'https://example.test', CHECKOUT_SUCCESS_PATH: path }));
+  }
 });
 
 test('rechaza una respuesta upstream con moneda o monto inesperados', async () => {
@@ -356,9 +416,9 @@ test('exige comprador de prueba y rechaza identidad o ambiente inesperados al cr
   assert.equal(missingPayer.status, 502);
 
   const mismatches = [
-    { user_id: 'other-seller' },
-    { country_code: 'ARG' },
-    { integration_data: { application_id: 'other-app' } },
+    { collector_id: 'other-seller' },
+    { init_point: 'https://mercadopago.cl.attacker.test/pay' },
+    { client_id: 'other-app' },
     { external_reference: 'other-order' }
   ];
   for (const [index, changes] of mismatches.entries()) {
@@ -426,11 +486,10 @@ test('las rutas de retorno se pueden configurar sin aceptar un dominio inseguro'
     })
   });
   assert.equal(response.status, 201);
-  assert.deepEqual(payload.config.online, {
-    auto_return: 'all',
-    success_url: 'https://preview.example.test/ok',
-    pending_url: 'https://preview.example.test/waiting',
-    failure_url: 'https://preview.example.test/failed'
+  assert.deepEqual(payload.back_urls, {
+    success: 'https://preview.example.test/ok',
+    pending: 'https://preview.example.test/waiting',
+    failure: 'https://preview.example.test/failed'
   });
 
   let calls = 0;
@@ -510,6 +569,18 @@ test('el carrito distingue pago directo, cotización y pagos deshabilitados', ()
   });
   assert.equal(evaluateCart({ payments_enabled: true, products }, ['interactive-menu-ar']).kind, 'quote');
   assert.equal(evaluateCart({ payments_enabled: false, products }, ['photography']).kind, 'disabled');
+  const packProducts = Object.values(enabledCatalog([
+    ['full-pack', 'Pack completo', 79990], ['loyalty-card', 'Fidelización', 9990],
+    ['launch-pack', 'Pack de lanzamiento', 69990]
+  ]));
+  const manual = evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack']);
+  assert.equal(manual.kind, 'disabled');
+  assert.equal(manual.checkoutUrl, undefined); // El enlace abierto real no se ofrece como pago fijo ni simulación.
+  assert.equal(manual.allowed, false); // No crea órdenes automáticas.
+  assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack', 'loyalty-card']).kind, 'disabled');
+  assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['launch-pack']).kind, 'disabled');
+  packProducts.find((p) => p.sku === 'full-pack').purposes.full.amount = 80000;
+  assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack']).kind, 'disabled');
 });
 
 test('los retornos generados no acreditan un pago desde parámetros de URL', () => {
@@ -521,6 +592,8 @@ test('los retornos generados no acreditan un pago desde parámetros de URL', () 
   assert.match(styles, /@media\s*\(max-width:\s*760px\)/);
   assert.match(styles, /\.cart-payment-state/);
   const landing = readFileSync(new URL('../web/propuesta/index.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(landing, /href="https:\/\/link\.mercadopago\.cl\/biodigital"/);
+  assert.doesNotMatch(landing, /payment-test-100|t-payment-test|https:\/\/mpago\.la\/2JmNHED/);
   assert.doesNotMatch(landing, /data-checkout-root/);
   assert.match(landing, /data-cart-pay/);
   for (const route of ['exitoso', 'pendiente', 'error']) {
@@ -529,4 +602,29 @@ test('los retornos generados no acreditan un pago desde parámetros de URL', () 
     assert.match(html, /La URL de retorno no se usa como comprobante de pago/);
     assert.doesNotMatch(html, /pago (fue|está) aprobado/i);
   }
+});
+
+test('los enlaces comerciales cobran solo el producto y precio correctos sin activar la API', async () => {
+  const config = await handlePaymentConfig({ env: { PAYMENTS_ENABLED: 'false' } }).json();
+  assert.equal(config.products.length, 14);
+  const links = {
+    'full-pack': { amount: 79990, url: 'https://mpago.la/pack-demo' },
+    photography: { amount: 4990, url: 'https://mpago.la/foto-demo' },
+    web: { amount: 49990, url: 'https://mpago.la/web-demo' }
+  };
+  const pack = evaluateCart(config, ['full-pack'], links);
+  assert.equal(pack.kind, 'manual');
+  assert.equal(pack.amount, 79990);
+  assert.equal(pack.checkoutUrl, links['full-pack'].url);
+  assert.equal(pack.allowed, false);
+  assert.equal(evaluateCart(config, ['photography'], links).checkoutUrl, links.photography.url);
+  assert.equal(evaluateCart(config, ['full-pack', 'photography'], links).kind, 'disabled');
+  assert.equal(evaluateCart(config, ['web'], links).kind, 'quote');
+  assert.equal(evaluateCart(config, ['payment-test-100'], links).kind, 'unavailable');
+  assert.equal(evaluateCart(config, ['loyalty-card'], links).kind, 'disabled');
+  assert.equal(evaluateCart(config, ['full-pack'], { 'full-pack': { ...links['full-pack'], amount: 100 } }).kind, 'disabled');
+  for (const url of ['https://mpago.la/2JmNHED', 'https://link.mercadopago.cl/biodigital', 'https://mercadopago.cl.attacker.test/pay', 'http://mpago.la/demo']) {
+    assert.equal(fixedPaymentUrl({ amount: 79990, url }, 79990), null);
+  }
+  assert.deepEqual(Object.keys(PAYMENT_LINKS).sort(), Object.keys(CATALOG).sort());
 });

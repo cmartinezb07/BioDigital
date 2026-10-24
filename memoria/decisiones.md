@@ -2,6 +2,150 @@
 
 Bitácora cronológica. Cada entrada: fecha, decisión, por qué, qué queda pendiente.
 
+## 2026-10-24 — Preparar publicación comercial con catálogo completo y enlaces
+
+El usuario pidió retirar el producto de $100 y preparar el catálogo completo
+para publicar en main con enlaces de Mercado Pago. Confirmó mantener cotización
+previa en los servicios “desde”. Aún no tiene los enlaces; se preparó una guía
+con los 9 enlaces fijos necesarios y sus importes en `PUBLICACION-COMERCIAL.md`.
+El ensayo de $100 terminó rechazado y no se considera validación exitosa.
+
+Se retiraron producto, URL y controles de ensayo del sitio y catálogo API.
+Se añadió configuración por SKU en `fuentes/enlaces-pago.mjs` y comprobación
+`scripts/verificar-enlaces-pago.mjs --exigir-completos`. El pago directo solo se
+ofrece para un producto de precio cerrado con enlace y monto coincidentes.
+Carritos combinados y servicios variables pasan por confirmar/cotizar y recibir
+un enlace por el total acordado. No se confirma automáticamente en el sitio.
+Se incorporó el pack de lanzamiento al catálogo del carrito y se actualizaron
+los términos para describir el flujo manual. Los 14 SKU API siguen apagados.
+
+Se creó la rama `feat/pagos-comerciales-por-enlace`. Al hacer fetch, origin/main
+tenía 4 commits nuevos; se incorporaron por fast-forward hasta 9b43f8f y se
+reaplicaron los cambios locales sin conflictos. Se conservaron los ejemplos,
+reservas y páginas de información nuevos. Hay respaldo de los cambios previos
+en el stash `cbfb5a7fb7c020664eb81f543fecfee3c9e73114`.
+
+37 casos locales pasan y el catálogo generado coincide con los 14 productos.
+La comprobación estricta falla como corresponde por los 9 enlaces faltantes.
+Publicado solo Preview `payments-test`, despliegue `cd511377`.
+La preparación se guarda en un commit local; no se hizo push, fusión en main
+ni publicación de Production.
+Pendiente: crear/configurar/verificar enlaces y validar un cobro aprobado;
+después revisión, PR a main y despliegue del commit aprobado.
+
+## 2026-10-24 — Operación real de $100 finalmente rechazada
+
+La nueva captura del usuario confirma rechazo de la operación 185920933158
+por $100 CLP: “Biodigital no recibió tu pago”. Es la misma operación antes
+en revisión/en proceso. No se acreditó el ensayo ni se considera validado
+el cobro real. La captura no informa el motivo técnico del rechazo; no atribuirlo
+a CuentaRUT, al monto ni a la página sin el detalle de Mercado Pago.
+Pendiente: consultar detalle/motivo de la operación y comprobar si hubo un
+débito o retención en el banco del comprador antes de otro intento.
+No se realizó otro cobro ni se habilitaron productos adicionales.
+
+## 2026-10-24 — Venta de $100 visible en cuenta receptora, aún en proceso
+
+El usuario indicó que pagó usando CuentaRUT de BancoEstado y compartió la
+actividad de la cuenta receptora: venta “Biodigitalprueba”, operación
+185920933158, +$100, estado **En proceso**. Se confirma la recepción del intento
+por el vendedor; no se confirma aprobación ni disponibilidad del dinero.
+No repetir el pago ni registrar el ensayo como acreditado hasta ver aprobado.
+
+El usuario consulta extender los enlaces al catálogo. Es viable por producto
+de precio cerrado con un enlace fijo por importe. Los servicios “desde” y
+las compras combinadas requieren cotizar/confirmar el total y generar un enlace
+por pedido, o terminar la integración API. No se habilitaron otros cobros.
+
+## 2026-10-24 — Intento de cobro real queda en revisión
+
+El usuario compartió el resultado de Mercado Pago: “Estamos revisando tu pago”
+y aviso de respuesta por correo dentro de las próximas 24 horas. El intento
+no está acreditado ni se considera una prueba exitosa todavía. La captura no
+incluye importe ni ID de operación; deben comprobarse en Actividad del comprador
+y del receptor. Se indicó no repetir el pago mientras siga en revisión para
+evitar duplicados. No se inició otro cobro ni se modificó el estado en D1/panel.
+
+## 2026-10-24 — Prueba de cobro real por $100 con enlace nuevo
+
+El usuario pidió probar con dinero real por **$100 CLP** al no poder acceder
+a credenciales de prueba. Autorizó agregar un producto al catálogo y entregó
+el enlace `https://mpago.la/2JmNHED`, generado para ese cobro fijo.
+La consulta automática recibió 403; no se verificó el monto externo ni se pagó.
+Se indica comprobar $100 en Mercado Pago antes de confirmar.
+
+Se añadió `payment-test-100` como producto separado, fuera de los seis servicios
+y del cálculo del pack. Se paga solo, mediante el enlace; si se mezcla con otro
+producto, se bloquea la salida a pago y se pide quitar los demás.
+Los 15 SKU de la API (14 anteriores y este producto) y `PAYMENTS_ENABLED`
+siguen apagados: este ensayo usa el enlace real, sin credenciales ni cobros API.
+37 pruebas locales pasan, incluidas exclusiones de monto/enlace/carrito.
+
+Resultado esperado: Mercado Pago muestra $100, el comprador autoriza un cobro
+real y ve el resultado/ID de operación; el receptor verifica el pago y su neto
+tras comisiones en el portal. No hay conciliación automática en D1 ni cambio
+automático del panel o retorno garantizado al sitio por este enlace manual.
+El usuario realizará la compra; no se ejecutó una transacción desde las herramientas.
+
+## 2026-10-24 — Captura corrige el tipo de enlace: monto abierto y pago real
+
+La captura aportada por el usuario muestra “Ingresa el monto a pagar” y $0.
+El enlace `link.mercadopago.cl/biodigital` es de monto abierto; no fija $79.990
+y no es una simulación. Esto corrige la confirmación textual anterior y la
+interpretación usada al incorporarlo. Se explicó que abrir el enlace no cobra,
+pero completar un pago sí mueve dinero real. El entorno Preview del sitio no
+convierte un enlace externo de cobro en un entorno de pruebas.
+
+Se deshabilitó `PACK_PAYMENT.enabled` y se retiró el enlace del HTML generado.
+El carrito vuelve a la solicitud/cotización sin permitir pagar el pack mediante
+ese enlace. El checkout automático y los 14 SKU permanecen apagados.
+36 pruebas pasan, incluyendo ausencia del enlace del carrito. Falta configurar
+usuarios/credenciales de prueba para ensayar sin dinero real. Un futuro enlace
+de monto fijo servirá para cobros reales, no para una simulación.
+
+## 2026-10-24 — Enlace del Pack completo recibido
+
+El usuario entregó `https://link.mercadopago.cl/biodigital` y confirmó que
+muestra **$79.990 fijos**. La consulta automática de Mercado Pago recibió 403;
+el monto fijo se toma de esa confirmación del usuario, no de una inspección propia.
+Se conectó el enlace al carrito exclusivamente para `full-pack`, sin otros
+productos, y solo mientras el catálogo conserva $79.990. No se usa para el pack
+de lanzamiento ni combinaciones. Abre otra pestaña y la verificación del pago
+se hace en el portal del vendedor; no crea órdenes D1 ni activa Checkout Pro.
+Se mantuvieron 36 pruebas pasando, con casos del enlace y sus exclusiones.
+No se realizó un pago ni se envió el enlace a ningún cliente.
+
+## 2026-10-24 — Cobro por enlace y corrección de Checkout Pro
+
+El usuario autorizó preparar cobros por enlace para las primeras ventas y
+corregir Checkout Pro en paralelo. Eligió como primer enlace el **Pack completo
+de $79.990 CLP**. Los datos y mensaje están en `COBROS-POR-ENLACE.md`.
+No se creó todavía el enlace real: debe generarse desde la cuenta receptora.
+No se envió ningún mensaje al cliente ni se inició un cobro.
+
+La documentación oficial consultada confirma Preferences API para Checkout Pro.
+El código local pasa de `/v1/orders` a `/checkout/preferences` e `init_point`;
+los webhooks pasan al evento `payment`. La conciliación verifica la orden
+comercial, su preferencia y todos sus pagos antes de acreditar el total.
+La migración `0003_checkout_preferences.sql` añade el ID de preferencia y un
+límite atómico de conciliación. Bloqueo D1 para crear una preferencia por pedido;
+fallos ambiguos requieren revisión para evitar crear otra por accidente.
+
+Validación local: 36 pruebas pasan (incluyen SQL real en SQLite para el
+repositorio D1, pagos combinados, reembolsos, fallos ambiguos y doble clic),
+y pasa el validador de Checkout Pro del plugin. Son pruebas con API simulada;
+no prueban credenciales ni una transacción contra Mercado Pago.
+
+`PAYMENTS_ENABLED=false` y los 14 SKU siguen apagados. No se cambiaron secretos.
+Se aplicó 0003 a D1 de prueba y se publicó Preview `payments-test`
+(despliegue `b4dd7812`). Verificado: portada/retornos 200, todos los SKU apagados,
+pedido bloqueado 403 y webhook sin firma 400. D1 sigue vacía tras la comprobación.
+El registro anterior del 14 de octubre describe el despliegue previo. La respuesta del ticket
+WCS-54274 aportada por el usuario es del 6 de octubre y dice que sigue en revisión.
+No se presupone que haya que esperar habilitación de Orders API para probar
+Preferences; falta verificar la configuración y credenciales de este producto.
+Detalle y pendientes en `PAGOS.md`; revisión local en `REVISION-PAGOS.md`.
+
 ## 2026-10-14 — Mercado Pago pasa al flujo natural del carrito
 
 Se eliminó el bloque independiente de contratación situado bajo el catálogo.

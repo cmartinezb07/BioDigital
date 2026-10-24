@@ -1,3 +1,5 @@
+import { PAYMENT_LINKS, fixedPaymentUrl } from './enlaces-pago.mjs';
+
 export const ORDER_STORAGE_KEY = 'bd.checkout.order.v1';
 
 export function formatClp(amount) {
@@ -75,11 +77,13 @@ export async function getStoredOrder(order, fetchImpl = fetch) {
 function isMercadoPagoUrl(value) {
   try {
     const url = new URL(value);
-    return url.protocol === 'https:' && (url.hostname === 'mercadopago.cl' || url.hostname.endsWith('.mercadopago.cl'));
+    return url.protocol === 'https:' && !url.username && !url.password && (
+      url.hostname === 'mercadopago.cl' || url.hostname.endsWith('.mercadopago.cl') || url.hostname === 'mpago.la'
+    );
   } catch { return false; }
 }
 
-export function evaluateCart(config, items) {
+export function evaluateCart(config, items, paymentLinks = PAYMENT_LINKS) {
   const products = new Map((config?.products || []).map((product) => [product.sku, product]));
   const uniqueItems = [...new Set(Array.isArray(items) ? items : [])].sort();
   if (!uniqueItems.length) return { kind: 'empty', items: [], amount: 0, allowed: false };
@@ -90,6 +94,9 @@ export function evaluateCart(config, items) {
   if (selected.some((product) => product.quote_only)) {
     return { kind: 'quote', items: uniqueItems, amount: 0, allowed: false };
   }
+  if (selected.some((product) => !Number.isSafeInteger(product.purposes?.full?.amount) || product.purposes.full.amount <= 0)) {
+    return { kind: 'unavailable', items: uniqueItems, amount: 0, allowed: false };
+  }
   const amount = selected.reduce((total, product) => {
     const itemAmount = product.purposes?.full?.amount;
     return total + (Number.isSafeInteger(itemAmount) ? itemAmount : 0);
@@ -97,6 +104,10 @@ export function evaluateCart(config, items) {
   const allowed = Boolean(config.payments_enabled && selected.every((product) => (
     product.enabled && product.purposes?.full?.enabled && Number.isSafeInteger(product.purposes.full.amount)
   )));
+  if (!allowed && uniqueItems.length === 1) {
+    const checkoutUrl = fixedPaymentUrl(paymentLinks[uniqueItems[0]], amount);
+    if (checkoutUrl) return { kind: 'manual', items: uniqueItems, amount, allowed: false, checkoutUrl };
+  }
   return { kind: allowed ? 'payable' : 'disabled', items: uniqueItems, amount, allowed };
 }
 
@@ -106,6 +117,7 @@ export function initCartCheckout(root, dependencies = {}) {
   const navigate = dependencies.navigate || ((url) => location.assign(url));
   const getItems = dependencies.getItems || (() => window.BioDigitalCart?.items() || []);
   const pay = root.querySelector('[data-cart-pay]');
+  const manualPay = root.querySelector('[data-cart-manual-pay]');
   const quote = root.querySelector('[data-cart-pedir]');
   const state = root.querySelector('[data-cart-payment-state]');
   const label = pay.querySelector('.btn-label');
@@ -126,8 +138,17 @@ export function initCartCheckout(root, dependencies = {}) {
       attempt.reset();
       lastFingerprint = fingerprint;
     }
-    pay.hidden = ['empty', 'quote', 'unavailable'].includes(evaluation.kind);
-    quote.textContent = evaluation.kind === 'quote' ? 'Continuar para cotizar' : 'Prefiero cotizar por WhatsApp';
+    pay.hidden = evaluation.kind !== 'payable';
+    if (manualPay) {
+      manualPay.hidden = evaluation.kind !== 'manual';
+      if (evaluation.kind === 'manual') {
+        manualPay.href = evaluation.checkoutUrl;
+        manualPay.textContent = `Pagar ${formatClp(evaluation.amount)} con Mercado Pago ↗`;
+      } else manualPay.removeAttribute('href');
+    }
+    quote.hidden = false;
+    quote.textContent = evaluation.kind === 'quote' ? 'Continuar para cotizar'
+      : evaluation.kind === 'manual' ? 'Consultar antes de pagar' : 'Confirmar pedido por WhatsApp';
 
     if (evaluation.kind === 'empty') {
       setState('Agrega servicios para ver las opciones de contratación.');
@@ -135,16 +156,17 @@ export function initCartCheckout(root, dependencies = {}) {
       setState('Uno o más servicios necesitan diagnóstico y cotización previa.');
     } else if (evaluation.kind === 'unavailable') {
       setState('Este carrito contiene una selección que ya no está disponible.', 'error');
+    } else if (evaluation.kind === 'manual') {
+      setState(`Pagarás ${formatClp(evaluation.amount)} en Mercado Pago. Confirmaremos la operación antes de coordinar el servicio.`, 'ok');
     } else if (evaluation.kind === 'disabled') {
-      pay.hidden = false;
+      pay.hidden = true;
       pay.disabled = true;
-      label.textContent = 'Pago en línea próximamente';
-      setState(`Total del carrito: ${formatClp(evaluation.amount)}. Los cobros siguen deshabilitados.`);
+      setState(`Total del carrito: ${formatClp(evaluation.amount)}. Confirma el pedido y te enviaremos un enlace de pago por el importe acordado.`);
     } else {
       pay.hidden = false;
       pay.disabled = false;
       label.textContent = `Pagar ${formatClp(evaluation.amount)} con Mercado Pago`;
-      setState('El monto será validado nuevamente por el servidor antes de abrir Mercado Pago.', 'ok');
+      setState('Pagarás en Mercado Pago y luego volverás a este sitio.', 'ok');
     }
   }
 

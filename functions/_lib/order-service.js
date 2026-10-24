@@ -1,7 +1,7 @@
 import { CATALOG, resolveCartPayment } from './catalog.js';
 import { deriveOrderAccessToken, sha256Base64Url } from './crypto.js';
 import { apiError, json, readSmallJson } from './http.js';
-import { checkoutOnlineConfig, createMercadoPagoOrder, MercadoPagoError } from './mercadopago.js';
+import { checkoutOnlineConfig, createMercadoPagoPreference, MercadoPagoError } from './mercadopago.js';
 import { D1OrderRepository, isUniqueConstraintError } from './order-repository.js';
 import { PaymentVerificationError, reconcileOrder } from './payment-verification.js';
 
@@ -40,15 +40,27 @@ async function getExisting(repo, idempotencyKey, expectedFingerprint, secret) {
 }
 
 async function processOrder({ order, accessToken, repo, env, fetchImpl, now }) {
-  if (order.checkout_url && order.status === 'created') {
+  if (order.checkout_url) {
+    if (['accredited', 'partially_refunded', 'refunded', 'charged_back'].includes(order.status)) {
+      return apiError('order_already_paid', 409, 'Esta orden ya registra un pago. Contáctanos para revisar su estado.');
+    }
     return json(publicOrder(order, accessToken, true));
   }
 
+  // Preferences no documenta una garantía de idempotencia del POST. Si la
+  // respuesta se perdió, no crear otra preferencia automáticamente.
+  if (order.status === 'creating' || (order.status === 'creation_failed' &&
+      /^(mp_timeout|mp_unavailable|mp_invalid_response|mp_contract_mismatch|mp_persistence_uncertain|mp_http_5|mp_http_429)/.test(order.last_error_code || ''))) {
+    return apiError('creation_needs_review', 409, 'Estamos comprobando el intento anterior. Contáctanos antes de volver a pagar.');
+  }
+
   const updatedAt = now().toISOString();
-  await repo.markCreating(order.id, updatedAt);
+  if (!await repo.markCreating(order.id, updatedAt)) {
+    return apiError('creation_in_progress', 409, 'El pago ya se está preparando. Espera unos momentos.');
+  }
 
   try {
-    const mpOrder = await createMercadoPagoOrder({
+    const mpOrder = await createMercadoPagoPreference({
       payment: order,
       externalReference: order.external_reference,
       idempotencyKey: order.idempotency_key,
@@ -60,14 +72,14 @@ async function processOrder({ order, accessToken, repo, env, fetchImpl, now }) {
     return json(publicOrder({
       ...order,
       status: 'created',
-      mp_order_id: mpOrder.id,
+      mp_preference_id: mpOrder.id,
       mp_status: mpOrder.status,
       checkout_url: mpOrder.checkoutUrl
     }, accessToken), 201);
   } catch (error) {
-    const code = error instanceof MercadoPagoError ? error.code : 'internal_error';
+    const code = error instanceof MercadoPagoError ? error.code : 'mp_persistence_uncertain';
     await repo.markCreationFailed(order.id, code, now().toISOString());
-    return apiError('order_creation_failed', 502, 'No fue posible crear la orden de pago. Reintenta con la misma clave de idempotencia.');
+    return apiError('order_creation_failed', 502, 'No pudimos confirmar la preparación del pago. Conserva este pedido y contáctanos si el problema continúa.');
   }
 }
 
@@ -172,11 +184,10 @@ export async function handleGetOrder({
   let reconciliation = 'not_requested';
   const requested = new URL(request.url).searchParams.get('reconcile') === '1';
   const terminal = order.status === 'refunded';
-  if (requested && order.mp_order_id && !terminal) {
+  if (requested && order.mp_preference_id && !terminal) {
     const bucket = Math.floor(now().valueOf() / 60000);
-    const eventKey = `reconcile:${order.mp_order_id}:${bucket}`;
-    const duplicate = await repo.findWebhookEvent(eventKey);
-    if (duplicate) {
+    const eventKey = `reconcile:${order.mp_preference_id}:${bucket}`;
+    if (!await repo.claimReconciliation(order.id, bucket)) {
       reconciliation = 'rate_limited';
     } else {
       try {

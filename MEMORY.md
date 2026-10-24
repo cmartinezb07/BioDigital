@@ -13,6 +13,8 @@
 - [PRODUCT.md](PRODUCT.md) — contexto de producto para diseño (Impeccable): usuarios, posicionamiento, restricciones, evidencia disponible.
 - [Propuesta del sitio web](web/propuesta/) — textos (`textos.md`) y el sitio es la opción 8 (`index.html`, generado con `node fuentes/generar.mjs 8`), con carrusel de 8 sitios de ejemplo, galería `ejemplos/` y políticas en `privacidad/` y `terminos/`.
 - [Estado actual](memoria/estado-actual.md) — punto de retorno para sesiones nuevas: qué está listo, qué falta, cómo retomar.
+- [Publicación comercial](PUBLICACION-COMERCIAL.md) — guía para crear los 9 enlaces fijos, revisar y publicar en main. Catálogo sin el producto de $100, servicios “desde” por cotización; enlaces comerciales pendientes.
+- [Pagos](PAGOS.md) — estado vigente del flujo manual y API deshabilitada. [Ensayo de $100](PRUEBA-COBRO-100.md): histórico, rechazado por seguridad; producto retirado.
 - [Decisiones](memoria/decisiones.md) — bitácora cronológica de decisiones tomadas y su justificación.
 - Skill `crear-sitio-web` (en `~/.claude/skills/`, respaldo en `respaldo-skills/`) — flujo reutilizable para sitios de clientes: preguntas, maquetas con 5 estéticas, requisitos SEO/seguridad, recursos evaluados.
 - Skills (en `~/.claude/skills/`, respaldo en `respaldo-skills/`): `crear-sitio-web` (base), `crear-menu-digital` (subrama para menús con QR y plato en vivo; usa el mismo motor de formularios) y `contexto_biodigital` (contexto completo del proyecto; reemplaza a `contexto_pagina_web`).

@@ -1,128 +1,124 @@
-import { getMercadoPagoOrder, MercadoPagoError } from './mercadopago.js';
+import {
+  getMercadoPagoPayment, getMercadoPagoMerchantOrder,
+  searchMercadoPagoMerchantOrder, MercadoPagoError
+} from './mercadopago.js';
 
+const OPEN = ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled'];
 const TRANSITIONS = Object.freeze({
-  created: ['pending_creation', 'creating', 'created', 'creation_failed'],
-  pending: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled'],
-  accredited: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled', 'accredited'],
-  rejected: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected'],
-  cancelled: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled'],
-  partially_refunded: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled', 'accredited', 'partially_refunded'],
-  refunded: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled', 'accredited', 'partially_refunded', 'refunded', 'charged_back'],
-  charged_back: ['pending_creation', 'creating', 'created', 'creation_failed', 'pending', 'rejected', 'cancelled', 'accredited', 'partially_refunded', 'charged_back']
+  created: OPEN, pending: OPEN, rejected: OPEN, cancelled: OPEN,
+  accredited: [...OPEN, 'accredited'],
+  partially_refunded: [...OPEN, 'accredited', 'partially_refunded'],
+  refunded: [...OPEN, 'accredited', 'partially_refunded', 'refunded', 'charged_back'],
+  charged_back: [...OPEN, 'accredited', 'partially_refunded', 'charged_back']
 });
 
 export class PaymentVerificationError extends Error {
   constructor(code, retryable = false) {
-    super(code);
-    this.name = 'PaymentVerificationError';
-    this.code = code;
-    this.retryable = retryable;
+    super(code); this.name = 'PaymentVerificationError'; this.code = code; this.retryable = retryable;
   }
 }
 
-function clpAmount(value) {
-  if (typeof value === 'number') value = String(value);
-  if (typeof value !== 'string' || !/^\d+(?:\.0+)?$/.test(value)) return null;
-  const integer = Number(value.split('.')[0]);
-  return Number.isSafeInteger(integer) ? integer : null;
-}
-
-function stateFor(status, detail) {
-  if (status === 'created' && detail === 'created') return 'created';
-  if (status === 'processed' && detail === 'accredited') return 'accredited';
-  if (detail === 'partially_refunded') return 'partially_refunded';
-  if (status === 'refunded' || detail === 'refunded') return 'refunded';
-  if (status === 'failed') return 'rejected';
-  if (status === 'canceled' || status === 'expired') return 'cancelled';
-  if (status === 'charged_back') return 'charged_back';
-  if (['processing', 'action_required'].includes(status)) return 'pending';
-  return null;
-}
-
-function sumAmounts(entries, predicate, field = 'paid_amount') {
-  if (!Array.isArray(entries)) return null;
-  let total = 0;
-  for (const entry of entries) {
-    if (!predicate(entry)) continue;
-    const amount = clpAmount(entry?.[field] ?? entry?.amount);
-    if (amount === null) return null;
-    total += amount;
-    if (!Number.isSafeInteger(total)) return null;
+function amount(value) {
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) {
+    throw new PaymentVerificationError('amount_mismatch');
   }
-  return total;
+  return value;
 }
 
-function equalConfigured(actual, expected) {
+function configured(actual, expected) {
   return expected !== undefined && expected !== null && String(actual) === String(expected);
 }
 
-export function verifyMercadoPagoOrder(remote, local, env) {
-  if (!remote || typeof remote !== 'object') throw new PaymentVerificationError('mp_invalid_response', true);
-  if (remote.id !== local.mp_order_id || remote.external_reference !== local.external_reference) {
+// La orden comercial enlaza la preferencia del servidor con TODOS sus pagos.
+// Nunca se acredita por parámetros de retorno ni por el contenido del webhook.
+export function verifyMercadoPagoOrder(remote, payments, local, env) {
+  if (!remote || !/^[1-9]\d*$/.test(String(remote.id)) ||
+      (local.mp_order_id && String(remote.id) !== local.mp_order_id) ||
+      remote.external_reference !== local.external_reference ||
+      remote.preference_id !== local.mp_preference_id) {
     throw new PaymentVerificationError('order_identity_mismatch');
   }
-  if (remote.type !== 'online' || remote.processing_mode !== 'manual') {
-    throw new PaymentVerificationError('order_contract_mismatch');
+  if (!configured(remote.collector?.id, env.MP_USER_ID)) throw new PaymentVerificationError('recipient_mismatch');
+  if (!configured(remote.client_id, env.MP_APPLICATION_ID)) throw new PaymentVerificationError('application_mismatch');
+  if (remote.site_id !== 'MLC') throw new PaymentVerificationError('environment_mismatch');
+  if (local.currency !== 'CLP' || amount(remote.total_amount) !== local.amount) throw new PaymentVerificationError('amount_mismatch');
+  if (!Array.isArray(remote.payments) || remote.payments.length !== payments.length ||
+      new Set(remote.payments.map((p) => String(p.id))).size !== payments.length) {
+    throw new PaymentVerificationError('payment_set_mismatch', true);
   }
-  if (!equalConfigured(remote.user_id, env.MP_USER_ID)) {
-    throw new PaymentVerificationError('recipient_mismatch');
+  let credited = 0, refunded = 0, pending = false, rejected = false, cancelled = false, chargedBack = false;
+  const dates = [Date.parse(remote.last_updated)];
+  for (const payment of payments) {
+    if (!remote.payments.some((entry) => String(entry.id) === String(payment.id)) ||
+        payment.external_reference !== local.external_reference ||
+        String(payment.order?.id) !== String(remote.id) || payment.order?.type !== 'mercadopago') {
+      throw new PaymentVerificationError('payment_identity_mismatch');
+    }
+    if (!configured(payment.collector_id, env.MP_USER_ID)) throw new PaymentVerificationError('recipient_mismatch');
+    if (payment.live_mode !== (env.MP_LIVE_MODE === 'true')) throw new PaymentVerificationError('environment_mismatch');
+    if (payment.currency_id !== 'CLP') throw new PaymentVerificationError('currency_mismatch');
+    const total = amount(payment.transaction_amount);
+    const refund = amount(payment.transaction_amount_refunded);
+    if (!total || total > local.amount || refund > total) throw new PaymentVerificationError('amount_mismatch');
+    dates.push(Date.parse(payment.date_last_updated));
+    switch (payment.status) {
+      case 'approved':
+        if (payment.status_detail !== 'accredited') throw new PaymentVerificationError('accreditation_mismatch');
+        credited += total; refunded += refund; break;
+      case 'refunded':
+        if (refund !== total) throw new PaymentVerificationError('refund_mismatch');
+        credited += total; refunded += refund; break;
+      case 'charged_back': chargedBack = true; break;
+      case 'pending': case 'in_process': case 'authorized': case 'in_mediation': pending = true; break;
+      case 'rejected': rejected = true; break;
+      case 'cancelled': cancelled = true; break;
+      default: throw new PaymentVerificationError('unsupported_payment_status');
+    }
   }
-  if (!equalConfigured(remote.integration_data?.application_id, env.MP_APPLICATION_ID)) {
-    throw new PaymentVerificationError('application_mismatch');
-  }
-  if (remote.country_code !== (env.MP_COUNTRY_CODE || 'CHL')) {
-    throw new PaymentVerificationError('environment_mismatch');
-  }
-  if (remote.currency !== 'CLP' || local.currency !== 'CLP') {
-    throw new PaymentVerificationError('currency_mismatch');
-  }
-  const total = clpAmount(remote.total_amount);
-  const totalPaid = clpAmount(remote.total_paid_amount);
-  if (total !== local.amount || totalPaid === null || totalPaid < 0 || totalPaid > local.amount) {
-    throw new PaymentVerificationError('amount_mismatch');
-  }
-
-  const state = stateFor(remote.status, remote.status_detail);
-  if (!state) throw new PaymentVerificationError('unsupported_payment_status');
-  const payments = remote.transactions?.payments;
-  const refunds = remote.transactions?.refunds;
-  const credited = sumAmounts(payments, (payment) => payment?.status === 'processed' && payment?.status_detail === 'accredited');
-  const refunded = sumAmounts(refunds, (refund) => refund?.status === 'processed', 'amount');
-
-  if (state === 'accredited' && (totalPaid !== local.amount || credited !== local.amount || (refunded ?? 0) !== 0)) {
-    throw new PaymentVerificationError('accreditation_mismatch');
-  }
-  if (state === 'partially_refunded' && (
-    totalPaid !== local.amount || credited !== local.amount || refunded === null || refunded <= 0 || refunded >= local.amount
-  )) throw new PaymentVerificationError('refund_mismatch');
-  if (state === 'refunded' && (
-    credited !== local.amount || refunded === null || refunded < local.amount
-  )) throw new PaymentVerificationError('refund_mismatch');
-
-  const lastUpdated = new Date(remote.last_updated_date);
-  if (!remote.last_updated_date || Number.isNaN(lastUpdated.valueOf())) {
-    throw new PaymentVerificationError('mp_invalid_response', true);
-  }
+  if (dates.some((date) => !Number.isFinite(date))) throw new PaymentVerificationError('mp_invalid_response', true);
+  if (credited > local.amount || refunded > credited) throw new PaymentVerificationError('overpayment_requires_review');
+  let state = 'created';
+  if (chargedBack) state = 'charged_back';
+  else if (credited === local.amount && refunded === credited) state = 'refunded';
+  else if (credited === local.amount && refunded > 0) state = 'partially_refunded';
+  else if (credited === local.amount) state = 'accredited';
+  else if (credited > 0 || pending) state = 'pending';
+  else if (rejected) state = 'rejected';
+  else if (cancelled) state = 'cancelled';
   return {
-    state,
-    mpStatus: remote.status,
-    statusDetail: remote.status_detail,
-    netPaidAmount: Math.max(0, totalPaid - (refunded ?? 0)),
-    lastUpdatedAt: lastUpdated.toISOString(),
-    allowedFrom: TRANSITIONS[state]
+    state, mpStatus: remote.status, statusDetail: state,
+    merchantOrderId: String(remote.id), netPaidAmount: chargedBack ? 0 : credited - refunded,
+    lastUpdatedAt: new Date(Math.max(...dates)).toISOString(), allowedFrom: TRANSITIONS[state]
   };
 }
 
-export async function reconcileOrder({ order, env, repo, event, fetchImpl = fetch, now = () => new Date() }) {
-  let remote;
+export async function reconcileOrder({ order, env, repo, event, payment, fetchImpl = fetch, now = () => new Date() }) {
   try {
-    remote = await getMercadoPagoOrder({ orderId: order.mp_order_id, accessToken: env.MP_ACCESS_TOKEN, fetchImpl });
+    let merchant;
+    if (payment) {
+      merchant = await getMercadoPagoMerchantOrder({ orderId: payment.order?.id, env, fetchImpl });
+    } else if (order.mp_order_id) {
+      merchant = await getMercadoPagoMerchantOrder({ orderId: order.mp_order_id, env, fetchImpl });
+    } else {
+      const found = await searchMercadoPagoMerchantOrder({ order, env, fetchImpl });
+      if (!found) throw new PaymentVerificationError('payment_not_found', true);
+      merchant = await getMercadoPagoMerchantOrder({ orderId: found.id, env, fetchImpl });
+    }
+    if (!Array.isArray(merchant.payments) || merchant.payments.length > 20) {
+      throw new PaymentVerificationError('payment_set_mismatch', true);
+    }
+    // También valida la pertenencia del pago que originó la notificación.
+    if (payment && !merchant.payments.some((p) => String(p.id) === String(payment.id))) {
+      throw new PaymentVerificationError('payment_identity_mismatch');
+    }
+    const payments = await Promise.all(merchant.payments.map((entry) =>
+      getMercadoPagoPayment({ paymentId: entry.id, env, fetchImpl })
+    ));
+    const verification = verifyMercadoPagoOrder(merchant, payments, order, env);
+    const applied = await repo.applyVerification(order, event, verification, now().toISOString());
+    return { verification, applied };
   } catch (error) {
     if (error instanceof MercadoPagoError) throw new PaymentVerificationError(error.code, true);
     throw error;
   }
-  const verification = verifyMercadoPagoOrder(remote, order, env);
-  const timestamp = now().toISOString();
-  const applied = await repo.applyVerification(order, event, verification, timestamp);
-  return { verification, applied };
 }

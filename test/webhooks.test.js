@@ -1,284 +1,235 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
-
 import { sha256Base64Url } from '../functions/_lib/crypto.js';
 import { handleGetOrder } from '../functions/_lib/order-service.js';
 import { handleMercadoPagoWebhook } from '../functions/_lib/webhook-service.js';
-
-const NOW = new Date('2026-10-11T12:00:00.000Z');
-const WEBHOOK_SECRET = 'test-only-webhook-secret';
-const ORDER_TOKEN = 'a'.repeat(43);
-const LOCAL_ID = '123e4567-e89b-42d3-a456-426614174001';
-const MP_ID = 'ORD01TEST123';
-
-const ENV = Object.freeze({
-  MP_ACCESS_TOKEN: 'TEST_ACCESS_TOKEN_NOT_REAL',
-  MP_WEBHOOK_SECRET: WEBHOOK_SECRET,
-  MP_APPLICATION_ID: 'app-123',
-  MP_USER_ID: 'seller-456',
-  MP_LIVE_MODE: 'false',
-  MP_COUNTRY_CODE: 'CHL'
-});
-
-class VerificationRepository {
-  constructor(order = {}) {
-    this.order = {
-      id: LOCAL_ID,
-      access_token_hash: null,
-      sku: 'full-pack', purpose: 'full', amount: 79990, currency: 'CLP',
-      status: 'created', external_reference: LOCAL_ID, mp_order_id: MP_ID,
-      mp_status: 'created', mp_status_detail: null, verified_paid_amount: null,
-      mp_last_updated_at: null, last_verified_at: null, verification_version: 0,
-      checkout_url: 'https://www.mercadopago.cl/checkout/test',
-      created_at: NOW.toISOString(), updated_at: NOW.toISOString(),
-      ...order
-    };
-    this.events = new Map();
-  }
-  async findWebhookEvent(key) { return this.events.get(key) || null; }
-  async findByMercadoPagoId(id) { return id === this.order.mp_order_id ? { ...this.order } : null; }
-  async findByPublicAccess(id, hash) {
-    return id === this.order.id && hash === this.order.access_token_hash ? { ...this.order } : null;
-  }
-  async applyVerification(order, event, verification, now) {
-    if (this.events.has(event.eventKey)) return false;
-    const currentDate = this.order.mp_last_updated_at;
-    const allowed = verification.allowedFrom.includes(this.order.status);
-    const currentEnough = !currentDate || verification.lastUpdatedAt >= currentDate;
-    let applied = false;
-    if (order.id === this.order.id && allowed && currentEnough) {
-      Object.assign(this.order, {
-        status: verification.state,
-        mp_status: verification.mpStatus,
-        mp_status_detail: verification.statusDetail,
-        verified_paid_amount: verification.netPaidAmount,
-        mp_last_updated_at: verification.lastUpdatedAt,
-        last_verified_at: now,
-        updated_at: now,
-        verification_version: this.order.verification_version + 1
-      });
-      applied = true;
-    }
-    this.events.set(event.eventKey, { event_key: event.eventKey, outcome: 'verified' });
-    return applied;
-  }
-  async recordRejectedEvent(order, event, errorCode, now) {
-    if (!this.events.has(event.eventKey)) {
-      this.events.set(event.eventKey, {
-        event_key: event.eventKey, outcome: 'rejected', error_code: errorCode,
-        resource_id: order.mp_order_id, received_at: now
-      });
-    }
-  }
-}
-
-function remoteOrder(overrides = {}) {
-  return {
-    id: MP_ID,
-    type: 'online',
-    processing_mode: 'manual',
-    status: 'processed',
-    status_detail: 'accredited',
-    external_reference: LOCAL_ID,
-    total_amount: '79990',
-    total_paid_amount: '79990',
-    currency: 'CLP',
-    country_code: 'CHL',
-    user_id: 'seller-456',
-    integration_data: { application_id: 'app-123' },
-    last_updated_date: '2026-10-11T11:59:00.000Z',
-    transactions: {
-      payments: [{ id: 'PAY01', status: 'processed', status_detail: 'accredited', paid_amount: '79990' }],
-      refunds: []
-    },
-    ...overrides
-  };
-}
-
-function mpResponse(value = remoteOrder(), status = 200) {
-  return new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } });
-}
+import { ENV, NOW, LOCAL_ID, MP_ID, PAYMENT_ID, merchant, payment, seededRepository, upstream } from './fixtures.mjs';
 
 function webhookRequest({
-  resourceId = MP_ID, bodyResourceId = resourceId, eventId = 'evt-1',
+  resourceId = PAYMENT_ID, bodyResourceId = resourceId, eventId = 123456,
   requestId = 'request-1', timestamp = NOW.valueOf(), signature, body = {}
 } = {}) {
-  const manifest = `id:${resourceId.toLowerCase()};request-id:${requestId};ts:${timestamp};`;
-  const digest = signature ?? createHmac('sha256', WEBHOOK_SECRET).update(manifest).digest('hex');
-  return new Request(`https://example.test/api/webhooks/mercadopago?data.id=${encodeURIComponent(resourceId)}&type=order`, {
+  const manifest = 'id:' + resourceId + ';request-id:' + requestId + ';ts:' + timestamp + ';';
+  const digest = signature ?? createHmac('sha256', ENV.MP_WEBHOOK_SECRET).update(manifest).digest('hex');
+  return new Request('https://example.test/api/webhooks/mercadopago?data.id=' + resourceId + '&type=payment', {
     method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-request-id': requestId,
-      'x-signature': `ts=${timestamp},v1=${digest}`
-    },
+    headers: { 'content-type': 'application/json', 'x-request-id': requestId, 'x-signature': 'ts=' + timestamp + ',v1=' + digest },
     body: JSON.stringify({
-      action: 'order.processed', api_version: 'v1', application_id: 'app-123',
-      date_created: NOW.toISOString(), id: eventId, live_mode: false,
-      type: 'order', user_id: 'seller-456', data: { id: bodyResourceId }, ...body
+      action: 'payment.updated', api_version: 'v1', date_created: NOW.toISOString(),
+      id: eventId, live_mode: false, type: 'payment', user_id: ENV.MP_USER_ID,
+      data: { id: bodyResourceId }, ...body
     })
   });
 }
 
-function deps(repo, fetchImpl = async () => mpResponse()) {
+function deps(repo, fetchImpl = upstream()) {
   return { env: ENV, repo, fetchImpl, now: () => NOW };
 }
 
-test('firma HMAC válida consulta Orders API y acredita solo la respuesta oficial completa', async () => {
-  const repo = new VerificationRepository();
-  let upstream;
+async function local(repo) { return repo.findByExternalReference(LOCAL_ID); }
+
+test('webhook payment firmado verifica pago y preferencia antes de acreditar; SQL D1 real', async (t) => {
+  const { repo, sqlite } = await seededRepository();
+  t.after(() => sqlite.close());
+  const calls = [];
+  const remote = upstream();
   const response = await handleMercadoPagoWebhook({
-    request: webhookRequest(),
-    ...deps(repo, async (url, init) => { upstream = { url, init }; return mpResponse(); })
+    request: webhookRequest(), ...deps(repo, async (url, init) => {
+      calls.push(url);
+      assert.equal(init.headers.authorization, 'Bearer ' + ENV.MP_ACCESS_TOKEN);
+      return remote(url);
+    })
   });
   assert.equal(response.status, 200);
-  assert.equal(repo.order.status, 'accredited');
-  assert.equal(repo.order.verified_paid_amount, 79990);
-  assert.equal(upstream.url, `https://api.mercadopago.com/v1/orders/${MP_ID}`);
-  assert.equal(upstream.init.headers.authorization, `Bearer ${ENV.MP_ACCESS_TOKEN}`);
+  const order = await local(repo);
+  assert.equal(order.status, 'accredited');
+  assert.equal(order.mp_order_id, MP_ID);
+  assert.equal(order.verified_paid_amount, 79990);
+  assert.ok(calls.includes('https://api.mercadopago.com/v1/payments/' + PAYMENT_ID));
+  assert.ok(calls.includes('https://api.mercadopago.com/merchant_orders/' + MP_ID));
 });
 
-test('rechaza firma inválida, ausente, timestamp vencido y payload manipulado sin consultar API', async () => {
+test('rechaza firma inválida, ausente, timestamp vencido y payload manipulado antes de consultar', async (t) => {
+  const { repo, sqlite } = await seededRepository();
+  t.after(() => sqlite.close());
   let calls = 0;
-  const run = (request) => handleMercadoPagoWebhook({
-    request, ...deps(new VerificationRepository(), async () => { calls++; return mpResponse(); })
-  });
-  const invalid = await run(webhookRequest({ signature: '0'.repeat(64) }));
-  const absentRequest = webhookRequest();
-  absentRequest.headers.delete('x-signature');
-  const absent = await run(absentRequest);
-  const stale = await run(webhookRequest({ timestamp: NOW.valueOf() - 301000 }));
-  const manipulated = await run(webhookRequest({ bodyResourceId: 'ORD01OTHER' }));
-  assert.deepEqual([invalid.status, absent.status, stale.status, manipulated.status], [401, 400, 401, 400]);
+  const options = deps(repo, async () => { calls++; throw new Error('Unexpected API call'); });
+  const absent = webhookRequest(); absent.headers.delete('x-signature');
+  const requests = [
+    [webhookRequest({ signature: '0'.repeat(64) }), 401], [absent, 400],
+    [webhookRequest({ timestamp: NOW.valueOf() - 301000 }), 401],
+    [webhookRequest({ bodyResourceId: '999999' }), 400],
+    [webhookRequest({ body: { user_id: 'another-seller' } }), 400],
+    [webhookRequest({ body: { live_mode: true } }), 400]
+  ];
+  for (const [request, status] of requests) {
+    assert.equal((await handleMercadoPagoWebhook({ request, ...options })).status, status);
+  }
   assert.equal(calls, 0);
 });
 
-test('webhook duplicado y reintentos son idempotentes', async () => {
-  const repo = new VerificationRepository();
-  let calls = 0;
-  const options = deps(repo, async () => { calls++; return mpResponse(); });
-  const first = await handleMercadoPagoWebhook({ request: webhookRequest(), ...options });
-  const duplicate = await handleMercadoPagoWebhook({ request: webhookRequest(), ...options });
-  assert.equal(first.status, 200);
-  assert.equal(duplicate.status, 200);
-  assert.equal((await duplicate.json()).duplicate, true);
-  assert.equal(calls, 1);
-  assert.equal(repo.events.size, 1);
-});
-
-test('eventos desordenados y simultáneos no hacen regresar un estado terminal', async () => {
-  const repo = new VerificationRepository();
-  const refunded = remoteOrder({
-    status: 'refunded', status_detail: 'refunded', last_updated_date: '2026-10-11T12:00:00.000Z',
-    transactions: {
-      payments: [{ status: 'processed', status_detail: 'accredited', paid_amount: '79990' }],
-      refunds: [{ status: 'processed', amount: '79990' }]
-    }
-  });
-  await handleMercadoPagoWebhook({ request: webhookRequest({ eventId: 'evt-new' }), ...deps(repo, async () => mpResponse(refunded)) });
-  await Promise.all([
-    handleMercadoPagoWebhook({ request: webhookRequest({ eventId: 'evt-old-1', requestId: 'req-old-1' }), ...deps(repo, async () => mpResponse()) }),
-    handleMercadoPagoWebhook({ request: webhookRequest({ eventId: 'evt-old-2', requestId: 'req-old-2' }), ...deps(repo, async () => mpResponse()) })
-  ]);
-  assert.equal(repo.order.status, 'refunded');
-  assert.equal(repo.order.verified_paid_amount, 0);
-});
-
-test('rechaza orden inexistente antes de consultar Mercado Pago', async () => {
-  const repo = new VerificationRepository({ mp_order_id: 'ORD01LOCAL' });
-  let calls = 0;
+test('acepta timestamp en segundos conservando el valor firmado original', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
   const response = await handleMercadoPagoWebhook({
-    request: webhookRequest(), ...deps(repo, async () => { calls++; return mpResponse(); })
+    request: webhookRequest({ timestamp: NOW.valueOf() / 1000 }), ...deps(repo)
+  });
+  assert.equal(response.status, 200);
+});
+
+test('webhook repetido no duplica eventos ni verificación', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
+  let calls = 0; const mock = upstream();
+  const options = deps(repo, async (url) => { calls++; return mock(url); });
+  await handleMercadoPagoWebhook({ request: webhookRequest(), ...options });
+  const before = calls;
+  const response = await handleMercadoPagoWebhook({ request: webhookRequest(), ...options });
+  assert.equal((await response.json()).duplicate, true);
+  assert.equal(calls, before);
+  assert.equal((await local(repo)).verification_version, 1);
+  assert.equal(sqlite.prepare('SELECT count(*) AS n FROM payment_events').get().n, 1);
+});
+
+test('evento atrasado y notificaciones duplicadas no revierten un reembolso', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
+  const refunded = upstream({ payments: [payment({ status: 'refunded', status_detail: 'refunded', transaction_amount_refunded: 79990 })] });
+  await handleMercadoPagoWebhook({ request: webhookRequest({ eventId: 'refund' }), ...deps(repo, refunded) });
+  const old = upstream({
+    remote: merchant({ last_updated: '2026-10-24T14:59:00.000Z' }),
+    payments: [payment({ date_last_updated: '2026-10-24T14:59:00.000Z' })]
+  });
+  // Las llamadas comparten una conexión SQLite; cada batch se ejecuta íntegro.
+  await handleMercadoPagoWebhook({ request: webhookRequest({ eventId: 'older' }), ...deps(repo, old) });
+  await handleMercadoPagoWebhook({ request: webhookRequest({ eventId: 'older' }), ...deps(repo, old) });
+  assert.equal((await local(repo)).status, 'refunded');
+  assert.equal((await local(repo)).verified_paid_amount, 0);
+});
+
+test('pago sin orden local no se acredita', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
+  const response = await handleMercadoPagoWebhook({
+    request: webhookRequest(), ...deps(repo, upstream({ payments: [payment({ external_reference: 'unknown' })] }))
   });
   assert.equal(response.status, 404);
-  assert.equal(calls, 0);
+  assert.equal((await local(repo)).status, 'created');
 });
 
-test('no actualiza ante monto, moneda, cuenta o referencia incorrectos', async () => {
+test('rechaza monto, moneda, cuenta, aplicación, preferencia, ambiente e identidad incorrectos', async (t) => {
   const cases = [
-    { id: 'ORD01OTHER' }, { total_amount: '1' }, { total_paid_amount: '1' },
-    { currency: 'USD' }, { user_id: 'other-seller' }, { country_code: 'ARG' },
-    { integration_data: { application_id: 'other-app' } },
-    { external_reference: 'other-reference' }
+    { payments: [payment({ transaction_amount: 80000 })] },
+    { payments: [payment({ currency_id: 'USD' })] },
+    { payments: [payment({ collector_id: 'other' })] },
+    { payments: [payment({ live_mode: true })] },
+    { payments: [payment({ id: 444 })] },
+    { remote: merchant({ client_id: 'other' }) },
+    { remote: merchant({ collector: { id: 'other' } }) },
+    { remote: merchant({ preference_id: 'other' }) },
+    { remote: merchant({ site_id: 'MLA' }) },
+    { remote: merchant({ external_reference: 'other' }) },
+    { remote: merchant({ total_amount: 1 }) }
   ];
-  for (const [index, changes] of cases.entries()) {
-    const repo = new VerificationRepository();
-    const response = await handleMercadoPagoWebhook({
-      request: webhookRequest({ eventId: `evt-mismatch-${index}`, requestId: `req-mismatch-${index}` }),
-      ...deps(repo, async () => mpResponse(remoteOrder(changes)))
-    });
-    assert.equal(response.status, 422);
-    assert.equal(repo.order.status, 'created');
-    assert.equal(repo.events.size, 1);
+  for (const changes of cases) {
+    const { repo, sqlite } = await seededRepository();
+    try {
+      const response = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo, upstream(changes)) });
+      assert.ok([422, 503].includes(response.status), JSON.stringify(changes));
+      assert.equal((await local(repo)).status, 'created');
+    } finally { sqlite.close(); }
   }
 });
 
-test('processed/refunded nunca acredita y queda como reembolsado', async () => {
-  const repo = new VerificationRepository({ status: 'accredited' });
-  const response = await handleMercadoPagoWebhook({
-    request: webhookRequest(),
-    ...deps(repo, async () => mpResponse(remoteOrder({
-      status: 'processed', status_detail: 'refunded',
-      transactions: {
-        payments: [{ status: 'processed', status_detail: 'accredited', paid_amount: '79990' }],
-        refunds: [{ status: 'processed', amount: '79990' }]
-      }
-    })))
+test('mapea pendiente, rechazado, cancelado, reembolso parcial y contracargo', async () => {
+  for (const [changes, expected, amount] of [
+    [{ status: 'pending', status_detail: 'pending_waiting_payment' }, 'pending', 0],
+    [{ status: 'rejected', status_detail: 'cc_rejected_other_reason' }, 'rejected', 0],
+    [{ status: 'cancelled', status_detail: 'by_collector' }, 'cancelled', 0],
+    [{ transaction_amount_refunded: 10000 }, 'partially_refunded', 69990],
+    [{ status: 'charged_back', status_detail: 'settled' }, 'charged_back', 0]
+  ]) {
+    const { repo, sqlite } = await seededRepository();
+    try {
+      const response = await handleMercadoPagoWebhook({
+        request: webhookRequest(), ...deps(repo, upstream({ payments: [payment(changes)] }))
+      });
+      assert.equal(response.status, 200);
+      assert.equal((await local(repo)).status, expected);
+      assert.equal((await local(repo)).verified_paid_amount, amount);
+    } finally { sqlite.close(); }
+  }
+});
+
+test('suma dos medios de pago y no entrega si solo está acreditada una parte', async () => {
+  for (const pending of [true, false]) {
+    const { repo, sqlite } = await seededRepository();
+    try {
+      const mock = upstream({
+        remote: merchant({ payments: [{ id: Number(PAYMENT_ID) }, { id: 222222 }] }),
+        payments: [
+          payment({ transaction_amount: 30000 }),
+          payment({ id: 222222, transaction_amount: 49990, status: pending ? 'pending' : 'approved' })
+        ]
+      });
+      const response = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo, mock) });
+      assert.equal(response.status, 200);
+      assert.equal((await local(repo)).status, pending ? 'pending' : 'accredited');
+      assert.equal((await local(repo)).verified_paid_amount, pending ? 30000 : 79990);
+    } finally { sqlite.close(); }
+  }
+});
+
+test('un intento rechazado no borra la acreditación de otro pago', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
+  const mock = upstream({
+    remote: merchant({ payments: [{ id: Number(PAYMENT_ID) }, { id: 222222 }] }),
+    payments: [payment(), payment({ id: 222222, status: 'rejected' })]
   });
+  const response = await handleMercadoPagoWebhook({ request: webhookRequest({ resourceId: '222222' }), ...deps(repo, mock) });
   assert.equal(response.status, 200);
-  assert.equal(repo.order.status, 'refunded');
-  assert.notEqual(repo.order.status, 'accredited');
+  assert.equal((await local(repo)).status, 'accredited');
 });
 
-test('mapea pagos pendiente, rechazado y parcialmente reembolsado', async () => {
-  const scenarios = [
-    [remoteOrder({ status: 'processing', status_detail: 'in_process', total_paid_amount: '0', transactions: { payments: [], refunds: [] } }), 'pending', 'created'],
-    [remoteOrder({ status: 'failed', status_detail: 'cc_rejected_other_reason', total_paid_amount: '0', transactions: { payments: [], refunds: [] } }), 'rejected', 'created'],
-    [remoteOrder({ status: 'processed', status_detail: 'partially_refunded', transactions: {
-      payments: [{ status: 'processed', status_detail: 'accredited', paid_amount: '79990' }],
-      refunds: [{ status: 'processed', amount: '10000' }]
-    } }), 'partially_refunded', 'accredited']
-  ];
-  for (const [remote, expected, initial] of scenarios) {
-    const repo = new VerificationRepository({ status: initial });
-    const response = await handleMercadoPagoWebhook({
-      request: webhookRequest({ eventId: `evt-${expected}`, requestId: `req-${expected}` }),
-      ...deps(repo, async () => mpResponse(remote))
-    });
-    assert.equal(response.status, 200);
-    assert.equal(repo.order.status, expected);
-  }
-});
-
-test('API no disponible responde 503 y permite reintentar el mismo evento', async () => {
-  const repo = new VerificationRepository();
-  let calls = 0;
-  const fetchImpl = async () => {
-    calls++;
-    return calls === 1 ? new Response('{}', { status: 503 }) : mpResponse();
-  };
-  const first = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo, fetchImpl) });
-  const retry = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo, fetchImpl) });
+test('API no disponible permite reintentar la notificación sin perderla', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
+  const first = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo, upstream({ fail: 503 })) });
+  const retry = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo) });
   assert.equal(first.status, 503);
   assert.equal(retry.status, 200);
-  assert.equal(repo.order.status, 'accredited');
-  assert.equal(calls, 2);
+  assert.equal((await local(repo)).status, 'accredited');
 });
 
-test('GET autenticado concilia y expone solo el estado verificado', async () => {
-  const hash = await sha256Base64Url(ORDER_TOKEN);
-  const repo = new VerificationRepository({ access_token_hash: hash });
-  const request = new Request(`https://example.test/api/orders/${LOCAL_ID}?reconcile=1`, {
-    headers: { authorization: `Bearer ${ORDER_TOKEN}` }
+test('un recurso aún no consistente puede verificarse después de un rechazo', async (t) => {
+  const { repo, sqlite } = await seededRepository(); t.after(() => sqlite.close());
+  const first = await handleMercadoPagoWebhook({
+    request: webhookRequest(), ...deps(repo, upstream({ remote: merchant({ preference_id: 'not-yet-consistent' }) }))
   });
-  const response = await handleGetOrder({ request, id: LOCAL_ID, ...deps(repo) });
-  const body = await response.json();
-  assert.equal(response.status, 200);
-  assert.equal(body.status, 'accredited');
-  assert.equal(body.status_detail, 'accredited');
-  assert.equal(body.payment_verified, true);
-  assert.equal(body.verified_paid_amount, 79990);
-  assert.equal(body.reconciliation, 'completed');
-  assert.equal('mp_order_id' in body, false);
+  assert.equal(first.status, 422);
+  const retry = await handleMercadoPagoWebhook({ request: webhookRequest(), ...deps(repo) });
+  assert.equal(retry.status, 200);
+  assert.equal((await local(repo)).status, 'accredited');
+  assert.equal(sqlite.prepare('SELECT outcome FROM payment_events').get().outcome, 'verified');
+});
+
+test('GET autenticado busca por preferencia, concilia y limita incluso los intentos sin pago', async () => {
+  const token = 'a'.repeat(43);
+  const hash = await sha256Base64Url(token);
+  for (const hasPayment of [true, false]) {
+    const { repo, sqlite } = await seededRepository({ access_token_hash: hash });
+    try {
+      let calls = 0; const mock = upstream(hasPayment ? {} : { search: [] });
+      const options = deps(repo, async (url) => { calls++; return mock(url); });
+      const makeRequest = () => new Request('https://example.test/api/orders/' + LOCAL_ID + '?reconcile=1', {
+        headers: { authorization: 'Bearer ' + token }
+      });
+      const response = await handleGetOrder({ request: makeRequest(), id: LOCAL_ID, ...options });
+      const body = await response.json();
+      assert.equal(body.payment_verified, hasPayment);
+      assert.equal(body.reconciliation, hasPayment ? 'completed' : 'deferred');
+      assert.equal('mp_preference_id' in body, false);
+      assert.equal('mp_order_id' in body, false);
+      const before = calls;
+      const again = await handleGetOrder({ request: makeRequest(), id: LOCAL_ID, ...options });
+      assert.equal((await again.json()).reconciliation, 'rate_limited');
+      assert.equal(calls, before);
+    } finally { sqlite.close(); }
+  }
 });

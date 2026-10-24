@@ -1,172 +1,120 @@
-const ORDERS_URL = 'https://api.mercadopago.com/v1/orders';
+const API = 'https://api.mercadopago.com';
 
 export class MercadoPagoError extends Error {
-  constructor(code) {
-    super(code);
-    this.name = 'MercadoPagoError';
-    this.code = code;
-  }
+  constructor(code) { super(code); this.name = 'MercadoPagoError'; this.code = code; }
 }
 
-function isCheckoutUrl(value) {
+export function isCheckoutUrl(value) {
   try {
     const url = new URL(value);
-    return url.protocol === 'https:' && (
-      url.hostname === 'mercadopago.cl' || url.hostname.endsWith('.mercadopago.cl')
-    );
-  } catch {
-    return false;
-  }
+    return url.protocol === 'https:' && !url.username && !url.password &&
+      (url.hostname === 'mercadopago.cl' || url.hostname.endsWith('.mercadopago.cl'));
+  } catch { return false; }
 }
-
-const RETURN_PATHS = Object.freeze({
-  success_url: ['CHECKOUT_SUCCESS_PATH', '/pago/exitoso'],
-  pending_url: ['CHECKOUT_PENDING_PATH', '/pago/pendiente'],
-  failure_url: ['CHECKOUT_FAILURE_PATH', '/pago/error']
-});
 
 export function checkoutOnlineConfig(env) {
   let site;
-  try {
-    site = new URL(env.CHECKOUT_SITE_URL);
-  } catch {
+  try { site = new URL(env.CHECKOUT_SITE_URL); }
+  catch { throw new MercadoPagoError('return_url_not_configured'); }
+  const publicAppUrl = /^https:\/\//i.test(site.href) &&
+    !['localhost', '127.0.0.1', '0.0.0.0', '[::1]'].includes(site.hostname);
+  if (!publicAppUrl || site.username || site.password || site.search || site.hash) {
     throw new MercadoPagoError('return_url_not_configured');
   }
-  if (site.protocol !== 'https:' || site.username || site.password || site.search || site.hash) {
-    throw new MercadoPagoError('return_url_not_configured');
-  }
-
-  const online = { auto_return: 'all' };
-  for (const [field, [variable, fallback]] of Object.entries(RETURN_PATHS)) {
+  const back_urls = {};
+  for (const [key, variable, fallback] of [
+    ['success', 'CHECKOUT_SUCCESS_PATH', '/pago/exitoso'],
+    ['pending', 'CHECKOUT_PENDING_PATH', '/pago/pendiente'],
+    ['failure', 'CHECKOUT_FAILURE_PATH', '/pago/error']
+  ]) {
     const path = env[variable] || fallback;
-    if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//')) {
+    const target = new URL(path, site);
+    if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || target.origin !== site.origin) {
       throw new MercadoPagoError('return_url_not_configured');
     }
-    online[field] = new URL(path, site).href;
+    back_urls[key] = target.href;
   }
-  return online;
+  return {
+    back_urls,
+    ...(publicAppUrl ? { auto_return: 'approved' } : {}),
+    notification_url: new URL('/api/webhooks/mercadopago', site).href
+  };
 }
 
-function sameConfigured(actual, expected) {
-  return expected !== undefined && expected !== null && String(actual) === String(expected);
-}
-
-function testPayer(env) {
-  if (env.MP_LIVE_MODE === 'true') return undefined;
-  const email = env.MP_TEST_PAYER_EMAIL;
-  if (typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new MercadoPagoError('test_payer_not_configured');
-  }
-  return { email };
-}
-
-export async function createMercadoPagoOrder({ payment, externalReference, idempotencyKey, env, onlineConfig, fetchImpl = fetch }) {
-  const accessToken = env.MP_ACCESS_TOKEN;
-  if (typeof accessToken !== 'string' || accessToken.length < 8) {
+async function apiRequest(path, { env, fetchImpl = fetch, method = 'GET', body, idempotencyKey }) {
+  if (typeof env.MP_ACCESS_TOKEN !== 'string' || env.MP_ACCESS_TOKEN.length < 8) {
     throw new MercadoPagoError('mp_not_configured');
   }
-
-  const payer = testPayer(env);
-  const payload = {
-    type: 'online',
-    processing_mode: 'manual',
-    total_amount: String(payment.amount),
-    external_reference: externalReference,
-    config: { online: onlineConfig },
-    items: (payment.items?.length ? payment.items : [{
-      sku: payment.sku, title: payment.title, amount: payment.amount, quantity: 1
-    }]).map((item) => ({
-      id: item.sku,
-      title: item.title,
-      unit_price: String(item.amount),
-      quantity: item.quantity || 1,
-      unit_measure: 'unit',
-      total_amount: String(item.amount * (item.quantity || 1))
-    }))
-  };
-  if (payer) payload.payer = payer;
-
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
-  let response;
   try {
-    response = await fetchImpl(ORDERS_URL, {
-      method: 'POST',
+    const response = await fetchImpl(API + path, {
+      method,
       headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        authorization: `Bearer ${accessToken}`,
-        'x-idempotency-key': idempotencyKey
+        accept: 'application/json', authorization: 'Bearer ' + env.MP_ACCESS_TOKEN,
+        ...(body ? { 'content-type': 'application/json' } : {}),
+        ...(idempotencyKey ? { 'x-idempotency-key': idempotencyKey } : {})
       },
-      body: JSON.stringify(payload),
-      signal: controller.signal
+      ...(body ? { body: JSON.stringify(body) } : {}), signal: controller.signal
     });
+    if (!response.ok) throw new MercadoPagoError('mp_http_' + response.status);
+    try { return await response.json(); }
+    catch { throw new MercadoPagoError('mp_invalid_response'); }
   } catch (error) {
+    if (error instanceof MercadoPagoError) throw error;
     throw new MercadoPagoError(error?.name === 'AbortError' ? 'mp_timeout' : 'mp_unavailable');
-  } finally {
-    clearTimeout(timeout);
+  } finally { clearTimeout(timeout); }
+}
+
+export async function createMercadoPagoPreference({ payment, externalReference, idempotencyKey, env, onlineConfig, fetchImpl = fetch }) {
+  const items = payment.items.map((item) => ({
+    id: item.sku, title: item.title, unit_price: item.amount,
+    quantity: item.quantity, currency_id: 'CLP'
+  }));
+  const body = { items, external_reference: externalReference, ...onlineConfig };
+  if (env.MP_LIVE_MODE !== 'true') {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env.MP_TEST_PAYER_EMAIL || '')) {
+      throw new MercadoPagoError('test_payer_not_configured');
+    }
+    body.payer = { email: env.MP_TEST_PAYER_EMAIL };
   }
-
-  if (!response.ok) throw new MercadoPagoError(`mp_http_${response.status}`);
-
-  let data;
-  try {
-    data = await response.json();
-  } catch {
-    throw new MercadoPagoError('mp_invalid_response');
-  }
-
-  if (
-    typeof data.id !== 'string' || !/^ORD[A-Z0-9]+$/i.test(data.id) ||
-    data.type !== 'online' ||
-    data.processing_mode !== 'manual' ||
-    data.status !== 'created' ||
-    data.status_detail !== 'created' ||
-    data.external_reference !== externalReference ||
-    !sameConfigured(data.user_id, env.MP_USER_ID) ||
-    !sameConfigured(data.integration_data?.application_id, env.MP_APPLICATION_ID) ||
-    data.country_code !== (env.MP_COUNTRY_CODE || 'CHL') ||
-    data.currency !== 'CLP' ||
-    !Number.isSafeInteger(Number(data.total_amount)) ||
-    Number(data.total_amount) !== payment.amount ||
-    !isCheckoutUrl(data.checkout_url)
-  ) {
+  const data = await apiRequest('/checkout/preferences', { env, fetchImpl, method: 'POST', body, idempotencyKey });
+  const expectedItems = new Map(items.map((item) => [item.id, item]));
+  const received = Array.isArray(data.items) ? data.items : [];
+  const validItems = received.length === items.length && new Set(received.map((item) => item.id)).size === items.length &&
+    received.every((item) => {
+      const expected = expectedItems.get(item.id);
+      return expected && item.currency_id === 'CLP' && item.quantity === expected.quantity && item.unit_price === expected.unit_price;
+    });
+  if (typeof data.id !== 'string' || !/^[A-Za-z0-9-]{5,128}$/.test(data.id) ||
+      data.external_reference !== externalReference ||
+      !env.MP_USER_ID || String(data.collector_id) !== String(env.MP_USER_ID) ||
+      !env.MP_APPLICATION_ID || String(data.client_id) !== String(env.MP_APPLICATION_ID) ||
+      !validItems || !isCheckoutUrl(data.init_point)) {
     throw new MercadoPagoError('mp_contract_mismatch');
   }
-
-  return {
-    id: data.id,
-    status: data.status,
-    checkoutUrl: data.checkout_url
-  };
+  return { id: data.id, status: 'created', checkoutUrl: data.init_point };
 }
 
-export async function getMercadoPagoOrder({ orderId, accessToken, fetchImpl = fetch }) {
-  if (typeof accessToken !== 'string' || accessToken.length < 8) {
-    throw new MercadoPagoError('mp_not_configured');
-  }
-  if (typeof orderId !== 'string' || !/^ORD[A-Z0-9]+$/i.test(orderId)) {
-    throw new MercadoPagoError('mp_invalid_order_id');
-  }
+function numericId(id) {
+  if (!/^[1-9]\d{0,24}$/.test(String(id))) throw new MercadoPagoError('mp_invalid_resource_id');
+  return String(id);
+}
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-  let response;
-  try {
-    response = await fetchImpl(`${ORDERS_URL}/${encodeURIComponent(orderId)}`, {
-      method: 'GET',
-      headers: { accept: 'application/json', authorization: `Bearer ${accessToken}` },
-      signal: controller.signal
-    });
-  } catch (error) {
-    throw new MercadoPagoError(error?.name === 'AbortError' ? 'mp_timeout' : 'mp_unavailable');
-  } finally {
-    clearTimeout(timeout);
+export function getMercadoPagoPayment({ paymentId, ...options }) {
+  return apiRequest('/v1/payments/' + numericId(paymentId), options);
+}
+
+export function getMercadoPagoMerchantOrder({ orderId, ...options }) {
+  return apiRequest('/merchant_orders/' + numericId(orderId), options);
+}
+
+export async function searchMercadoPagoMerchantOrder({ order, ...options }) {
+  const query = new URLSearchParams({ preference_id: order.mp_preference_id, external_reference: order.external_reference });
+  const data = await apiRequest('/merchant_orders/search?' + query, options);
+  if (!Array.isArray(data.elements) || data.elements.length > 1 ||
+      (data.total !== undefined && Number(data.total) !== data.elements.length)) {
+    throw new MercadoPagoError('mp_ambiguous_merchant_order');
   }
-  if (!response.ok) throw new MercadoPagoError(`mp_http_${response.status}`);
-  try {
-    return await response.json();
-  } catch {
-    throw new MercadoPagoError('mp_invalid_response');
-  }
+  return data.elements[0] || null;
 }

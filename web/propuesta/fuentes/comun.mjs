@@ -258,7 +258,7 @@ ${o.hero.trim()}
             <p>El pack completo queda en <b class="num">${clp(PACK_5)}</b> en vez de ${clp(PACK)}. Y si prefieres armar tu propia combinación, te hacemos un 10&nbsp;% de descuento sobre cualquier compra desde ${clp(30000)}. Cupos limitados a los primeros 5 clientes.</p>
           </div>
         </div>
-        <a class="btn btn-main" href="#diagnostico" data-benefit>Quiero participar ${arrow}</a>
+        ${agregar('launch-pack', 'Agregar pack de lanzamiento')}
       </div>
 
       <div class="sec-head reveal promo-head">
@@ -307,7 +307,7 @@ ${o.hero.trim()}
             <button class="btn btn-main" type="button" data-enviar="correo"><svg width="18" height="18" aria-hidden="true"><use href="#i-mail"/></svg>Enviar por correo</button>
             <button class="btn btn-wa btn-solo" type="button" data-enviar="whatsapp" aria-label="Enviar por WhatsApp" title="Enviar por WhatsApp"><svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg></button>
           </div>
-          <p class="pedido-aviso">Se abre tu correo o WhatsApp con el pedido ya escrito; solo falta que presiones enviar. Puedes usar los dos canales.</p>
+          <p class="pedido-aviso">Se abre tu correo o WhatsApp con el pedido ya escrito; solo falta que presiones enviar. Confirmaremos el servicio y el monto antes de enviarte un enlace de pago.</p>
           <p class="form-status" role="status"></p>
         </form>
       </div>
@@ -370,13 +370,14 @@ ${o.hero.trim()}
     <p class="cart-tip" data-cart-tip hidden></p>
     <p class="cart-nota">Los precios "desde" se confirman en el diagnóstico gratis. Dominio .cl no incluido ($10.000 al año en NIC Chile).</p>
     <p class="cart-payment-state" data-cart-payment-state role="status" aria-live="polite"></p>
-    <button class="btn btn-main cart-pay" type="button" data-cart-pay hidden disabled><span class="btn-label">Pagar con Mercado Pago</span></button>
+    <button class="btn btn-main cart-pay" type="button" data-cart-pay data-mp-checkout-cta="checkout-pro" hidden disabled><span class="btn-label">Pagar con Mercado Pago</span></button>
+    <a class="btn btn-main cart-pay" data-cart-manual-pay target="_blank" rel="noopener noreferrer" hidden>Abrir pago en Mercado Pago ↗</a>
     <button class="btn cart-quote" type="button" data-cart-pedir>Continuar para cotizar</button>
     <button class="cart-link" type="button" data-cart-seguir>Seguir mirando</button>
     <button class="cart-link" type="button" data-cart-vaciar>Vaciar carrito</button>
   </div>
 </aside>
-<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })), { id: 'full-pack', nombre: 'Pack completo', precio: PACK, desde: false, promocion: false }, ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: false, promocion: true }))])}</script>
+<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })), { id: 'full-pack', nombre: 'Pack completo', precio: PACK, desde: false, promocion: false }, { id: 'launch-pack', nombre: 'Pack completo de lanzamiento', precio: PACK_5, desde: false, promocion: true }, ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: false, promocion: true }))])}</script>
 <script src="${b}secciones.js"></script>
 <script src="${b}tienda.js"></script>
 <script src="${b}carrusel.js"></script>

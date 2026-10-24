@@ -189,6 +189,7 @@
       l.push('Mi pedido:');
       cart.forEach(function (id) { l.push('- ' + cat[id].nombre + ': ' + clp(cat[id].precio) + (cat[id].desde ? ' (desde)' : '')); });
       l.push('Total: ' + clp(total()) + (porCotizar() ? ' + lo que se cotice' : ''), '');
+      l.push('Quiero confirmar el servicio y el monto para recibir un enlace de pago.', '');
     }
     if (d.interes) l.push('Me interesa: ' + d.interes);
     if (d.primeros) l.push('Me interesa el precio de lanzamiento para los primeros 5 clientes.');

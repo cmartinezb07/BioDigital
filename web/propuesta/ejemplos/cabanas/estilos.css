@@ -202,6 +202,9 @@ html.bloq { overflow: hidden; }
   .adentro-tabs { top: 80px; right: 16px; }
   .adentro-barra { display: none; }
   .llegada-ventana { clip-path: inset(calc(var(--c, 1) * 30%) calc(var(--c, 1) * 22%) round calc(var(--c, 1) * 160px)); }
+  /* En celular el vidrio esmerilado se vuelve a pintar en cada cuadro del scroll y lo frena: fondo casi opaco */
+  .nav.solida { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--crema) 97%, transparent); }
+  .adentro-tabs, .adentro-ficha { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(30, 20, 14, .82); }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

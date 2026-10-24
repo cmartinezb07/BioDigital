@@ -51,20 +51,23 @@
     fichas.forEach(function (f, i) { f.classList.toggle('activo', i === n); });
     tabs.forEach(function (t, i) { t.setAttribute('aria-selected', String(i === n)); });
   };
+  // Primero se mide todo y después se escribe, y solo lo que cambió: mezclar lecturas y escrituras obliga al
+  // navegador a recalcular el diseño varias veces por cuadro, y en celulares eso frena el scroll después de soltar.
+  var previo = {};
+  var poner = function (el, prop, v, clave) { clave = clave || prop; if (previo[clave] === v) return; previo[clave] = v; el.style.setProperty(prop, v); };
   var cuadro = function () {
-    nav.classList.toggle('solida', !sobreOscuro());
-    if (reduce) return;
-    var p = avance(llegada);
-    ventana.style.setProperty('--p', p.toFixed(3));
-    ventana.style.setProperty('--c', (1 - Math.min(1, p * 1.25)).toFixed(3));
-    var q = avance(adentro);
-    barra.style.setProperty('--p', q.toFixed(3));
+    var solida = !sobreOscuro();
+    if (reduce) { nav.classList.toggle('solida', solida); return; }
+    var p = avance(llegada), q = avance(adentro), sy = window.scrollY, h = innerHeight;
+    var rf = foto.getBoundingClientRect(), rg = gigante.getBoundingClientRect();
+    nav.classList.toggle('solida', solida);
+    poner(ventana, '--p', p.toFixed(3));
+    poner(ventana, '--c', (1 - Math.min(1, p * 1.25)).toFixed(3));
+    poner(barra, '--p', q.toFixed(3), 'barra');
     verCuarto(Math.min(2, Math.floor(q * 3)));
-    if (window.scrollY < innerHeight) heroImg.style.transform = 'translate3d(0,' + (window.scrollY * 0.3) + 'px,0)';
-    var rf = foto.getBoundingClientRect();
-    if (rf.bottom > 0 && rf.top < innerHeight) foto.style.setProperty('--py', (((rf.top + rf.height / 2) / innerHeight - 0.5) * -60).toFixed(1) + 'px');
-    var rg = gigante.getBoundingClientRect();
-    if (rg.top < innerHeight) { var k = Math.min(1, (innerHeight - rg.top) / (rg.height + 160)); gigante.style.setProperty('--gy', ((1 - k) * 60).toFixed(1) + 'px'); gigante.style.setProperty('--go', (0.2 + k * 0.8).toFixed(2)); }
+    if (sy < h || previo.hero !== 'fin') { previo.hero = sy < h ? '' : 'fin'; heroImg.style.transform = 'translate3d(0,' + (Math.min(sy, h) * 0.3) + 'px,0)'; }
+    if (rf.bottom > 0 && rf.top < h) poner(foto, '--py', (((rf.top + rf.height / 2) / h - 0.5) * -60).toFixed(1) + 'px');
+    if (rg.top < h) { var k = Math.min(1, (h - rg.top) / (rg.height + 160)); poner(gigante, '--gy', ((1 - k) * 60).toFixed(1) + 'px'); poner(gigante, '--go', (0.2 + k * 0.8).toFixed(2)); }
   };
   var pedido = false;
   window.addEventListener('scroll', function () { if (!pedido) { pedido = true; requestAnimationFrame(function () { pedido = false; cuadro(); }); } }, { passive: true });

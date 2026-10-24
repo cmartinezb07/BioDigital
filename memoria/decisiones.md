@@ -809,3 +809,10 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 - **Reservas:** check-in y cierre automáticos; prueba 16/16.
 - **Scroll:** herramienta `web/herramientas/scroll.mjs` con gestos reales. 44 de 46 recorridos bien. Arreglada la carta de la pastelería (mismo bug que Fogón). **Pendiente:** cabañas y barbería en celular siguen moviéndose 50 a 130 px después de soltar cerca del final (sin saltos de diseño; sospecha: trabajo por cuadro de sus efectos de scroll).
 - **No alcanzó a correr** la auditoría con varios agentes (límite de sesión) ni la publicación final en la vista previa. Quedan como primeras tareas del próximo chat (skill `contexto_biodigital`, sección "PRÓXIMO CHAT").
+
+## 2026-10-23 (noche, 2) · Scroll de cabañas y barbería en celular
+
+- **Causa medida** (curva de `scrollY` cada 100 ms después de soltar + duración de cada cuadro): no eran saltos de diseño sino **cuadros de 300 a 600 ms** en `#adentro` y `#equipamiento` de cabañas. Durante esos cuadros el impulso del dedo queda retenido y se aplica de golpe después (ej.: 4917 → 5168 px). No hay tareas largas de JS: el costo era de pintura y de diseño forzado.
+- **Arreglo en cabañas:** `cuadro()` de `sitio.js` ahora mide todo antes de escribir y solo escribe lo que cambió (antes forzaba 3 recálculos de diseño por cuadro); en celular (≤ 900 px) la barra fija y las dos cajas de vidrio de `#adentro` pasan de `backdrop-filter: blur()` a un fondo casi opaco (se ve igual y no se re-desenfoca en cada cuadro).
+- **Arreglo en barbería:** mismo orden lectura → escritura en `barberia.js`; las polaroids heredan `--py` del collage (una escritura en vez de seis); las fotos con parallax y las polaroids (gris, sombra, filtro) van en capa propia (`will-change: transform`, solo con movimiento activado).
+- **Resultado:** `scroll.mjs` sobre los dos, 3 rondas: 4/4, 4/4 y 3/4 (la falla, 47 px con umbral 40, fue con la auditoría de 6 agentes corriendo en paralelo; la máquina estaba cargada). Antes: cabañas fallaba siempre.

@@ -209,6 +209,8 @@ html.bloq { overflow: hidden; }
   .fila { grid-template-columns: 30px 1.6fr 1fr 24px; }
   .pie-polas img { width: 96px; }
 }
+/* Lo que se mueve con el scroll va en su propia capa: así el gris, la sombra y el filtro no se vuelven a pintar en cada cuadro */
+@media (prefers-reduced-motion: no-preference) { .hero-foto img, .banda img, .pola { will-change: transform; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .intro { display: none; }

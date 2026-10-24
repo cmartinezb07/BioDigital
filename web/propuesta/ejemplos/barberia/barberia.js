@@ -43,15 +43,17 @@
   });
 
   /* Scroll: fotos lentas y polaroids */
-  var heroImg = $('[data-hero-img]'), banda = $('[data-banda-img]'), collage = $('[data-collage]'), polas = $$('.pola');
+  var heroImg = $('[data-hero-img]'), banda = $('[data-banda-img]'), collage = $('[data-collage]');
+  // Se mide todo antes de escribir y solo se escribe lo que cambió (mezclar lecturas y escrituras recalcula el diseño
+  // varias veces por cuadro y en celulares frena el scroll después de soltar). Las polaroids heredan --py del collage.
+  var previo = {};
+  var poner = function (el, prop, v) { if (previo[prop] === v) return; previo[prop] = v; el.style.setProperty(prop, v); };
   var cuadro = function () {
     if (reduce) return;
-    var y = window.scrollY;
-    if (y < innerHeight * 1.2) heroImg.style.setProperty('--hy', (y * 0.18).toFixed(1) + 'px');
-    var rb = banda.parentNode.getBoundingClientRect();
-    if (rb.bottom > 0 && rb.top < innerHeight) banda.style.setProperty('--by', (rb.top / innerHeight * -60).toFixed(1) + 'px');
-    var rc = collage.getBoundingClientRect();
-    if (rc.bottom > 0 && rc.top < innerHeight) polas.forEach(function (p) { p.style.setProperty('--py', (rc.top * 0.35).toFixed(1) + 'px'); });
+    var y = window.scrollY, h = innerHeight, rb = banda.parentNode.getBoundingClientRect(), rc = collage.getBoundingClientRect();
+    if (y < h * 1.2) poner(heroImg, '--hy', (y * 0.18).toFixed(1) + 'px');
+    if (rb.bottom > 0 && rb.top < h) poner(banda, '--by', (rb.top / h * -60).toFixed(1) + 'px');
+    if (rc.bottom > 0 && rc.top < h) poner(collage, '--py', (rc.top * 0.35).toFixed(1) + 'px');
   };
   var pedido = false;
   window.addEventListener('scroll', function () { if (!pedido) { pedido = true; requestAnimationFrame(function () { pedido = false; cuadro(); }); } }, { passive: true });

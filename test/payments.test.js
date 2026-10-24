@@ -573,12 +573,12 @@ test('el carrito distingue pago directo, cotización y pagos deshabilitados', ()
     ['full-pack', 'Pack completo', 79990], ['loyalty-card', 'Fidelización', 9990],
     ['launch-pack', 'Pack de lanzamiento', 69990]
   ]));
-  const manual = evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack']);
+  const manual = evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack'], {});
   assert.equal(manual.kind, 'disabled');
-  assert.equal(manual.checkoutUrl, undefined); // El enlace abierto real no se ofrece como pago fijo ni simulación.
+  assert.equal(manual.checkoutUrl, undefined); // Sin enlace configurado no se ofrece un cobro.
   assert.equal(manual.allowed, false); // No crea órdenes automáticas.
   assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack', 'loyalty-card']).kind, 'disabled');
-  assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['launch-pack']).kind, 'disabled');
+  assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['launch-pack'], {}).kind, 'disabled');
   packProducts.find((p) => p.sku === 'full-pack').purposes.full.amount = 80000;
   assert.equal(evaluateCart({ payments_enabled: false, products: packProducts }, ['full-pack']).kind, 'disabled');
 });

@@ -3,7 +3,8 @@
 La configuración y guía vigente están en
 [PUBLICACION-COMERCIAL.md](PUBLICACION-COMERCIAL.md).
 
-Se requieren 9 enlaces fijos para los productos y promociones de precio cerrado.
+Los 9 enlaces fijos para productos y promociones de precio cerrado están configurados.
+Falta revisar sus importes y receptor en Mercado Pago y comprobar un cobro aprobado.
 El usuario confirmó mantener cotización previa para página web, video, menú
 digital y reservas con precio “desde”, y para el menú interactivo a cotizar.
 

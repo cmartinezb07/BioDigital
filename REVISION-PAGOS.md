@@ -10,8 +10,8 @@ webhook-service.js, wrangler.toml, migraciones y pruebas.
 
 ## CRITICAL
 
-- Faltan los 9 enlaces comerciales. La comprobación estricta de publicación falla
-  hasta configurarlos y revisar nombre, receptor e importe en Mercado Pago.
+- Los 9 enlaces comerciales están configurados y la comprobación estricta pasa.
+  La consulta web automática no pudo abrirlos: falta revisar nombre, receptor e importe en Mercado Pago.
 - El único ensayo real de esta sesión terminó rechazado por seguridad. Falta
   comprobar un cobro aprobado antes de considerar validado el lanzamiento.
 - No activar la API automática ni mover credenciales/D1 de prueba a Production
@@ -65,7 +65,7 @@ certifica la calidad de la integración API.
 
 ## Recommendations
 
-1. Crear los 9 enlaces de PUBLICACION-COMERCIAL.md y revisar sus destinos.
+1. Revisar los destinos de los 9 enlaces configurados de PUBLICACION-COMERCIAL.md.
 2. Validar un cobro aprobado y el procedimiento de confirmación del equipo.
 3. Ejecutar el verificador estricto, revisar Preview y aprobar PR a main.
 4. Mantener la API deshabilitada hasta completar su configuración y ensayos.
@@ -78,25 +78,25 @@ certifica la calidad de la integración API.
 - [x] Catálogo completo y servicios “desde” bajo cotización por decisión del usuario.
 - [x] Preparación de enlace individual, cotización y pedido combinado.
 - [x] 37 pruebas locales y comprobación de coherencia.
-- [x] Verificador estricto detecta los 9 enlaces faltantes.
+- [x] Verificador estricto pasa con los 9 enlaces proporcionados por el usuario.
 - [x] Sincronización con los 4 commits nuevos de origin/main.
 - [x] Preview actualizado: https://payments-test.biodigital-propuesta.pages.dev.
 
 ### Needs attention
 
-- [ ] Configurar URLs públicas de los 9 enlaces.
+- [x] Configurar URLs públicas de los 9 enlaces; tarjeta de lanzamiento confirmada por el usuario.
 - [ ] Abrirlos y confirmar producto, receptor e importe.
 - [ ] Revisar en celular/escritorio el flujo final con los enlaces reales.
 - [ ] Documentar y ejecutar confirmación manual, cupos y descuentos.
 
 ### Blockers (must fix before production)
 
-- [ ] Enlaces comerciales todavía ausentes.
+- [ ] Revisar importe, receptor y producto de cada enlace en Mercado Pago.
 - [ ] Falta validar un cobro aprobado; el ensayo anterior fue rechazado.
 
 ### Next steps
 
-1. Seguir PUBLICACION-COMERCIAL.md y entregar los 9 enlaces.
+1. Seguir PUBLICACION-COMERCIAL.md y revisar los 9 enlaces incorporados.
 2. Ejecutar node scripts/verificar-enlaces-pago.mjs --exigir-completos.
 3. Revisar la entrega, crear PR a main y publicar el commit aprobado.
 

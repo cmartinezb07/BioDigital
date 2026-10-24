@@ -3,7 +3,9 @@
 Estado: preparación en la rama `feat/pagos-comerciales-por-enlace`, basada en
 `origin/main` 9b43f8f. Se retiró el producto de $100 y se conservan los cambios
 recientes de ejemplos, reservas y páginas de información.
-Faltan los enlaces comerciales y una comprobación de cobro aprobado.
+Los nueve enlaces comerciales están configurados según lo enviado por el usuario.
+Falta revisar nombre, receptor e importe en sus destinos y comprobar un cobro aprobado.
+El usuario confirmó que `12kjBMo` corresponde a la tarjeta de lanzamiento de $7.990.
 
 ## Lo que debes hacer en Mercado Pago
 

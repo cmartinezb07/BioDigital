@@ -7,7 +7,9 @@ según confirmó el usuario. El pack de lanzamiento ya aparece en el carrito.
 
 ## Qué falta para publicar los pagos
 
-Faltan **9 enlaces comerciales**. La lista con nombres, importes y pasos está
+Los **9 enlaces comerciales están configurados**, recibidos del usuario el 24 de octubre.
+El usuario confirmó que `12kjBMo` es la tarjeta de lanzamiento de $7.990.
+La lista con nombres, importes y pasos está
 en [PUBLICACION-COMERCIAL.md](PUBLICACION-COMERCIAL.md).
 Se configuran en [enlaces-pago.mjs](web/propuesta/fuentes/enlaces-pago.mjs).
 Los campos vacíos conservan el flujo de confirmar pedido por WhatsApp.
@@ -37,10 +39,11 @@ Rama de preparación: `feat/pagos-comerciales-por-enlace`, sincronizada con
 `origin/main` 9b43f8f, conservando los ejemplos, reservas y páginas nuevas.
 
 Preview actualizado: https://payments-test.biodigital-propuesta.pages.dev.
-Despliegue: https://cd511377.biodigital-propuesta.pages.dev.
+Despliegue: https://69bb6516.biodigital-propuesta.pages.dev.
 Production y la rama `main` no se publicaron con estos cambios.
-La entrega se guarda en un commit local de la rama de preparación; faltan
-los enlaces antes de completar la revisión, hacer push y abrir el PR.
+La preparación inicial se guardó en el commit local `0b0feea`.
+Los nueve enlaces ya están incorporados; falta revisar sus destinos y un cobro aprobado
+antes de completar la revisión, hacer push y abrir el PR.
 
 ## Integración API separada, deshabilitada
 
@@ -65,8 +68,8 @@ node --test test/payments.test.js test/webhooks.test.js
 node scripts/verificar-enlaces-pago.mjs --exigir-completos
 ```
 
-La última orden falla mientras falten enlaces; actualmente faltan nueve.
-No se considera listo para pagos comerciales hasta configurarlos, revisar sus
+La comprobación estricta pasa con los nueve enlaces configurados.
+No se considera listo para pagos comerciales hasta revisar sus
 destinos y comprobar un cobro aprobado. El ensayo previo de $100 (operación
 185920933158) terminó rechazado por seguridad; no fue una validación exitosa.
 

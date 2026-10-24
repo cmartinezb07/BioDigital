@@ -2,7 +2,7 @@
 
 > Resumen vigente y completo: skill `contexto_biodigital` (`~/.claude/skills/` y `respaldo-skills/`). Lo de abajo es el detalle del sitio hasta septiembre; las decisiones recientes están al final de `decisiones.md`.
 
-**Estado al 24-oct-2026:** preparación comercial en `feat/pagos-comerciales-por-enlace`, sincronizada con origin/main 9b43f8f. Catálogo completo de 14 productos, sin la opción de $100, y configuración de enlaces por producto. El usuario confirmó cotización previa para los servicios “desde”. Faltan los 9 enlaces de precio cerrado y un cobro aprobado; la guía es `PUBLICACION-COMERCIAL.md`. Preview actualizado, despliegue `cd511377`; 37 pruebas pasan. La API automática sigue apagada. No se fusionó ni publicó main.
+**Estado al 24-oct-2026:** preparación comercial en `feat/pagos-comerciales-por-enlace`, sincronizada con origin/main 9b43f8f. Catálogo completo de 14 productos, sin la opción de $100. Los 9 enlaces comerciales enviados por el usuario están configurados; confirmó tarjeta de lanzamiento de $7.990. Falta revisar destinos externos y un cobro aprobado; guía `PUBLICACION-COMERCIAL.md`. Preview actualizado, despliegue `69bb6516`; 37 pruebas y verificador estricto pasan. La API automática sigue apagada. No se fusionó ni publicó main.
 
 Leer esto primero al empezar una sesión nueva.
 
@@ -11,7 +11,7 @@ Quien llegue nuevo parte por [EMPEZAR-AQUI.md](../EMPEZAR-AQUI.md).
 
 ## Sitio web (web/propuesta/)
 - **El sitio es la opción 8** (mezcla de la 6 y la 7) y se genera como `web/propuesta/index.html`. Logo aplicado y paleta de marca (`#0da5ff` / `#00e5d0`), con rueda de colores para probar otras.
-- **Pagos:** versión comercial por enlaces en https://payments-test.biodigital-propuesta.pages.dev; faltan 9 enlaces fijos en `web/propuesta/fuentes/enlaces-pago.mjs`. Un producto con enlace correcto abre su cobro; pedidos combinados y servicios variables se confirman por WhatsApp y reciben un enlace por el total. Verificación manual del estado aprobado en el portal, sin actualización automática del sitio/panel. El ensayo previo de $100 fue rechazado por seguridad y su producto/enlace se retiraron del sitio. La API Preferences y su D1 de prueba quedan separadas y deshabilitadas. Detalle en `PAGOS.md` y `PUBLICACION-COMERCIAL.md`.
+- **Pagos:** versión comercial por enlaces en https://payments-test.biodigital-propuesta.pages.dev; 9 enlaces fijos configurados en `web/propuesta/fuentes/enlaces-pago.mjs`. Un producto con enlace correcto abre su cobro; pedidos combinados y servicios variables se confirman por WhatsApp y reciben un enlace por el total. Verificación manual del estado aprobado en el portal, sin actualización automática del sitio/panel. El ensayo previo de $100 fue rechazado por seguridad y su producto/enlace se retiraron del sitio. La API Preferences y su D1 de prueba quedan separadas y deshabilitadas. Detalle en `PAGOS.md` y `PUBLICACION-COMERCIAL.md`.
 - Las siete anteriores son **plantillas ya hechas**: `web/propuesta/plantillas/`, con galería propia.
 - Servir: preview "maquetas" (`.claude/launch.json`, puerto 4321) con `web/servir.py`, sin caché.
 - Páginas 3–8 se generan: `node web/propuesta/fuentes/generar.mjs [3 4 … 8]`. No editar los HTML generados; textos comunes en `fuentes/comun.mjs`, estética en `fuentes/opcion-N.mjs`.

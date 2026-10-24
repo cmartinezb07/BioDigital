@@ -6,17 +6,17 @@ export const PAYMENT_LINKS = Object.freeze({
   'web': { amount: 49990, url: '' },
   'social-video': { amount: 9990, url: '' },
   'interactive-menu': { amount: 27990, url: '' },
-  'photography': { amount: 4990, url: '' },
+  'photography': { amount: 4990, url: 'https://mpago.la/2WXuyew' },
   'reservations': { amount: 24990, url: '' },
-  'loyalty-card': { amount: 9990, url: '' },
-  'full-pack': { amount: 79990, url: '' },
-  'launch-pack': { amount: 69990, url: '' },
+  'loyalty-card': { amount: 9990, url: 'https://mpago.la/1YgPBi2' },
+  'full-pack': { amount: 79990, url: 'https://mpago.la/1VSZrje' },
+  'launch-pack': { amount: 69990, url: 'https://mpago.la/1V8qXPv' },
   'interactive-menu-ar': { amount: null, url: '' },
-  'social-video-2': { amount: 17990, url: '' },
-  'social-video-3': { amount: 24990, url: '' },
-  'launch-loyalty-card': { amount: 7990, url: '' },
-  'menu-photography': { amount: 29990, url: '' },
-  'reservations-loyalty': { amount: 29990, url: '' }
+  'social-video-2': { amount: 17990, url: 'https://mpago.la/326EtXb' },
+  'social-video-3': { amount: 24990, url: 'https://mpago.la/2qcCph5' },
+  'launch-loyalty-card': { amount: 7990, url: 'https://mpago.la/12kjBMo' },
+  'menu-photography': { amount: 29990, url: 'https://mpago.la/16Sz4uM' },
+  'reservations-loyalty': { amount: 29990, url: 'https://mpago.la/287sNEn' }
 });
 
 export function fixedPaymentUrl(link, amount) {

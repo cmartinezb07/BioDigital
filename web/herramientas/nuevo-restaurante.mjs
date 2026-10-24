@@ -50,10 +50,8 @@ window.RESTAURANTE = {
   // ${demo ? 'Demostración: los PIN se muestran en la pantalla de entrada.' : 'Local real: los PIN NO se muestran. Entrégaselos al dueño por un canal privado.'}
   demo: ${demo},
   pistas: ${demo ? `{
-    cocina: [{ rol: 'Cocina', pin: '${pins.cocina}' }, { rol: 'Dueño', pin: '${pins.dueno}' }],
-    reparto: [{ rol: 'Repartidor', pin: '${pins.reparto}' }, { rol: 'Dueño', pin: '${pins.dueno}' }],
-    panel: [{ rol: 'Dueño', pin: '${pins.dueno}' }]
-  }` : '{ cocina: [], reparto: [], panel: [] }'}
+    equipo: [{ rol: 'Cocinero', pin: '${pins.cocina}' }, { rol: 'Repartidor', pin: '${pins.reparto}' }, { rol: 'Jefe (dueño)', pin: '${pins.dueno}' }]
+  }` : '{ equipo: [] }'}
 };
 `);
 

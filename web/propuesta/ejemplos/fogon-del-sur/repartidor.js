@@ -8,11 +8,12 @@
   var activo = null, vigilar = null, detener = null, ultimoEnvio = 0, yo = '', pantalla = null, tomando = {};
   try { activo = sessionStorage.getItem('fogon-rep-activo'); } catch (e) {}
   if (window.Carta) Carta.iniciar();
+  if (!Nube.pin(R.negocio)) { location.replace('../panel/'); return; }   // sin código se entra por el panel del restaurante
   // Con el GPS compartido la pantalla no debe apagarse: los navegadores pausan el GPS de una pestaña dormida
   function mantenerPantalla() { try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { pantalla = l; }).catch(function () {}); } catch (e) {} }
   document.addEventListener('visibilitychange', function () { if (vigilar != null && document.visibilityState === 'visible') mantenerPantalla(); });
 
-  Nube.acceso({ negocio: R.negocio, titulo: 'Repartidor · ' + R.nombre, aceptan: ['reparto', 'dueno'], pistas: P.CONFIG.pistas.reparto }).then(function (q) {
+  Nube.acceso({ negocio: R.negocio, titulo: 'Repartidor · ' + R.nombre, aceptan: ['reparto', 'dueno'], pistas: P.CONFIG.pistas.equipo }).then(function (q) {
     yo = q.nombre || ''; P.entrarEquipo();
     app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between"><div><h1 class="sis-h">Repartidor</h1><p class="sis-sub">Sesión: <b>' + esc(yo || 'repartidor') + '</b>. Toma un pedido listo, comparte tu GPS y el cliente te sigue en su mapa. Al llegar, marca la entrega.</p></div><button class="btn-s" type="button" data-salir>Salir</button></div>' +
       '<div class="grid-p"><section class="caja"><h2>Listos para llevar</h2><div data-listos style="display:grid;gap:10px"></div><p class="sis-nota" data-otros style="margin-top:8px"></p></section><section class="caja" data-mio><h2>Mi entrega en curso</h2><div data-act></div></section></div>' +

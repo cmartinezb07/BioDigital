@@ -76,7 +76,6 @@ export const limpiarFidelizacion = async () => JSON.stringify(await Nube.borrar(
 
 // Qué se siembra para cada tarjeta de la portada, y en qué página se corre
 export const SEMILLAS = {
-  fogon: { ruta: 'fogon-del-sur/', sembrar: sembrarFogon, limpiar: limpiarFogon, para: ['restaurante-cocina', 'restaurante-panel'] },
   reservas: { ruta: 'reservas/', sembrar: sembrarReservas, limpiar: limpiarReservas, para: ['reservas-panel'] },
   fidelizacion: { ruta: 'fidelizacion/', sembrar: sembrarFidelizacion, limpiar: limpiarFidelizacion, para: ['fidelizacion'] }
 };

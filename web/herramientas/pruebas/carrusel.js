@@ -3,6 +3,10 @@ const r = {};
 const ok = (k, v, extra) => { r[k] = v ? 'ok' : 'FALLÓ' + (extra ? ' → ' + extra : ''); };
 const datos = JSON.parse($('[data-tilt]').dataset.images);
 ok('1 el carrusel trae los 14 ejemplos (8 rubros y 6 sistemas) con captura y enlace', datos.length === 14 && datos.every((d) => /\.webp$/.test(d.src) && /^ejemplos\//.test(d.url)));
+// El restaurante: cuatro imágenes seguidas (menú, pedidos, cocina, panel) que llevan a solo DOS páginas (menú y panel del restaurante)
+const rest = datos.slice(0, 4);
+ok('1b las cuatro primeras son el restaurante (menú, pedidos, cocina y panel)', rest.map((d) => d.src.replace('ejemplos/', '').replace('-chica.webp', '')).join() === 'fogon-del-sur,restaurante-seguimiento,restaurante-cocina,restaurante-panel', rest.map((d) => d.src).join());
+ok('1c y llevan solo a dos páginas: el menú y el panel del restaurante', JSON.stringify([...new Set(rest.map((d) => d.url))]) === JSON.stringify(['ejemplos/fogon-del-sur/', 'ejemplos/fogon-del-sur/panel/']) && rest[1].url === rest[0].url && rest[2].url === rest[3].url, rest.map((d) => d.url).join());
 $('[data-tilt-open]').click(); await dormir(2500);
 const lb = $('.tg-lb'), fr = $('.tg-lb iframe');
 ok('2 el visor abre con la página en vivo', lb && !lb.hidden && /ejemplos\//.test(fr.src), fr && fr.src);

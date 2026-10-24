@@ -11,6 +11,7 @@
 .sis-top nav { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
 .sis-top nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 99px; color: var(--fg-2); text-decoration: none; font-size: 14px; }
 .sis-top nav a[aria-current="page"], .sis-top nav a:hover { color: var(--fg); background: var(--card); }
+.sis-main:has(.kds) { width: min(100% - 32px, 1400px); }
 .sis-main { width: min(100% - 32px, 1200px); margin: 0 auto; padding: 24px 0 96px; }
 .sis-h { font-family: var(--serif); font-size: clamp(28px, 5vw, 40px); font-weight: 600; letter-spacing: -.01em; }
 .sis-sub { color: var(--fg-2); margin-top: 6px !important; }
@@ -129,8 +130,8 @@ dialog.carrito[open] { animation: desde-der .35s cubic-bezier(.23, 1, .32, 1); }
 .juego-tapa[hidden] { display: none; }
 
 /* ---------- Cocina (KDS) ---------- */
-.kds { display: grid; grid-template-columns: repeat(5, minmax(240px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 8px; }
-@media (max-width: 1100px) { .kds { grid-template-columns: repeat(4, minmax(260px, 82vw)); scroll-snap-type: x mandatory; } .kds > section { scroll-snap-align: start; } }
+.kds { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+@media (max-width: 1100px) { .kds { grid-template-columns: repeat(5, minmax(260px, 82vw)); scroll-snap-type: x mandatory; } .kds > section { scroll-snap-align: start; } }
 .kds > section { display: grid; gap: 10px; align-content: start; min-height: 60vh; padding: 12px; border-radius: var(--r); background: var(--bg-2); border-top: 4px solid var(--ec); }
 .kds h2 { display: flex; justify-content: space-between; align-items: center; font-size: 16px; }
 .kds h2 span { padding: 2px 10px; border-radius: 99px; background: color-mix(in srgb, var(--ec) 22%, transparent); color: var(--ec); }
@@ -262,3 +263,4 @@ dialog.editor .ed-pie { display: flex; gap: 8px; flex-wrap: wrap; justify-conten
 
 .ed-resumen[hidden], .alerta-nuevo[hidden] { display: none; }
 .linea-c .editar-l { justify-self: end; min-height: 44px; padding: 0 16px; }
+body:has(.kds) .sis-top { padding-inline: max(16px, calc(50% - 700px)); }

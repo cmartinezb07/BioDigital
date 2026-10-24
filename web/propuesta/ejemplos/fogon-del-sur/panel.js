@@ -1,4 +1,4 @@
-// Panel del dueño: todo el restaurante en un solo lugar. Este archivo trae el marco (PIN, pestañas, avisos de pedidos nuevos) y tres pestañas:
+// Panel del restaurante (vista del jefe): todo el restaurante en un solo lugar. Este archivo trae el marco (PIN, pestañas, avisos de pedidos nuevos) y tres pestañas:
 //  · Pedidos: los pedidos en vivo, aceptar o rechazar, asignar repartidor, ver quién está modificando y el historial de cada pedido.
 //  · Estadísticas: ventas, productos más y menos pedidos, estados, historial de ventas (siempre con datos reales, nunca de relleno).
 //  · Opiniones: lo que dicen los clientes y la respuesta del local.
@@ -24,10 +24,12 @@
   }
   if (C) C.iniciar();
 
-  Nube.acceso({ negocio: R.negocio, titulo: 'Panel del dueño · ' + R.nombre, aceptan: ['dueno'], pistas: P.CONFIG.pistas.panel }).then(function (q) {
+  Nube.acceso({ negocio: R.negocio, titulo: 'Panel del restaurante · ' + R.nombre, texto: 'Escribe tu código. Según tu rol entras a la cocina, al reparto o a la administración del local.', aceptan: ['dueno', 'cocina', 'reparto'], pistas: P.CONFIG.pistas.equipo }).then(function (q) {
+    if (q.rol === 'cocina') { location.replace('../cocina/'); return; }
+    if (q.rol === 'reparto') { location.replace('../repartidor/'); return; }
     Panel.dueno = q.nombre || 'Dueño'; P.entrarEquipo(); desde = Date.now() + 4500;
     Nube.personalListar(R.negocio, Nube.pin(R.negocio)).then(function (r) { if (r && r.ok) { Panel.personal = r.personal; Panel.repartidores = r.personal.filter(function (x) { return x.rol === 'reparto' && x.activo; }).map(function (x) { return x.nombre; }); } });
-    app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between"><div><h1 class="sis-h">Panel del dueño</h1><p class="sis-sub">Pedidos, carta, ventas y opiniones de ' + esc(R.nombre) + ', en vivo y sin recargar.</p></div>' +
+    app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between"><div><h1 class="sis-h">Panel del restaurante</h1><p class="sis-sub">Pedidos, carta, ventas y opiniones de ' + esc(R.nombre) + ', en vivo y sin recargar.</p></div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="sis-nota" data-conexion role="status"></span><button class="btn-s" type="button" data-sonido></button><a class="btn-s" href="../" target="_blank" rel="noopener">Ver la carta</a><a class="btn-s" href="../cocina/">Cocina</a><a class="btn-s" href="../repartidor/">Reparto</a><button class="btn-s" type="button" data-salir>Salir</button></div></div>' +
       '<aside class="alerta-nuevo" data-alerta hidden role="status"></aside>' +
       '<div class="ed-resumen" data-publicar-barra hidden style="margin-top:12px"><span>Tienes cambios sin publicar en la carta o en los datos del local.</span><button class="btn-s prim" type="button" data-publicar>Publicar cambios</button><button class="btn-s" type="button" data-descartar>Descartar</button></div>' +

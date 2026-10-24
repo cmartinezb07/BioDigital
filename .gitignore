@@ -43,3 +43,6 @@ web/herramientas/capturas/
 
 # PIN de restaurantes reales generados por nuevo-restaurante.mjs
 web/herramientas/restaurantes/
+
+# Copia temporal del restaurante para capturas (se crea y se borra sola)
+web/propuesta/ejemplos/captura-fogon/

@@ -9,8 +9,9 @@
   var anunciados = {}, audio = null, primera = true, kds = null, yo = '';
   function sonidoOn() { try { return localStorage.getItem('sonido-cocina-' + R.negocio) !== '0'; } catch (e) { return true; } }
   if (window.Carta) Carta.iniciar();
+  if (!Nube.pin(R.negocio)) { location.replace('../panel/'); return; }   // sin código se entra por el panel del restaurante
 
-  Nube.acceso({ negocio: R.negocio, titulo: 'Cocina · ' + R.nombre, aceptan: ['cocina', 'dueno'], pistas: P.CONFIG.pistas.cocina }).then(function (q) {
+  Nube.acceso({ negocio: R.negocio, titulo: 'Cocina · ' + R.nombre, aceptan: ['cocina', 'dueno'], pistas: P.CONFIG.pistas.equipo }).then(function (q) {
     yo = q.nombre || ''; P.entrarEquipo();
     app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:16px"><div><h1 class="sis-h">Cocina</h1><p class="sis-sub">Los pedidos llegan solos desde la carta. Acepta o rechaza los nuevos y marca cada paso con un toque: el cliente lo ve al instante. Sesión: ' + esc(yo || 'cocina') + '.</p></div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="sis-nota" data-conexion role="status"></span><button class="btn-s" type="button" data-sonido aria-pressed="true"></button><button class="btn-s" type="button" data-salir>Salir</button></div></div>' +

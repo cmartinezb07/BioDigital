@@ -7,9 +7,8 @@ window.RESTAURANTE = {
   nombre: 'Fogón del Sur',
   // En la demostración los PIN se muestran en la pantalla de entrada para poder enseñar el sistema. En un local real: demo = false.
   demo: true,
+  // Un solo acceso para el equipo (panel/): según su código, cada persona entra a la cocina, al reparto o a la administración
   pistas: {
-    cocina: [{ rol: 'Cocina', pin: '247135' }, { rol: 'Dueño', pin: '482916' }],
-    reparto: [{ rol: 'Repartidor 1', pin: '913572' }, { rol: 'Repartidor 2', pin: '913573' }, { rol: 'Dueño', pin: '482916' }],
-    panel: [{ rol: 'Dueño', pin: '482916' }]
+    equipo: [{ rol: 'Cocinero', pin: '247135' }, { rol: 'Repartidor', pin: '913572' }, { rol: 'Jefe (dueño)', pin: '482916' }]
   }
 };

@@ -1,6 +1,6 @@
-# Check del sitio · 24 de octubre de 2026 a las 8:01 p. m.
+# Check del sitio · 24 de octubre de 2026 a las 8:44 p. m.
 
-Revisado en: http://localhost:4321 · 28 de 28 páginas sin observaciones · 25 de 25 pruebas de la conexión en la nube sin fallas.
+Revisado en: http://localhost:4321 · 27 de 27 páginas sin observaciones · 25 de 25 pruebas de la conexión en la nube sin fallas.
 Para repetirlo: `node web/herramientas/check.mjs` (vista previa) o `node web/herramientas/check.mjs http://localhost:4321` (local).
 
 ## 1. Revisión automática (celular 390 px y escritorio 1440 px)
@@ -9,7 +9,7 @@ Criterios (de la skill crear-sitio-web): sin desborde horizontal, textos de 12 p
 
 | Página | Resultado | Desborde | Textos < 12 px | Táctiles < 44 px | Img sin alt | Errores | Recursos fallidos | Prueba |
 |---|---|---|---|---|---|---|---|---|
-| [Portada (carrusel y visor)](http://localhost:4321/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 7/7 |
+| [Portada (carrusel y visor)](http://localhost:4321/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 9/9 |
 | [Portada · Mira tu página](http://localhost:4321/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 5/5 |
 | [Galería de ejemplos](http://localhost:4321/ejemplos/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Política de privacidad](http://localhost:4321/privacidad/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
@@ -25,8 +25,7 @@ Criterios (de la skill crear-sitio-web): sin desborde horizontal, textos de 12 p
 | [Ejemplo · Restaurante (menú con pedidos)](http://localhost:4321/ejemplos/fogon-del-sur/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 23/23 |
 | [Restaurante · Pago del pedido](http://localhost:4321/ejemplos/fogon-del-sur/pagar/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Restaurante · Tu pedido (ejemplo) y juegos de espera](http://localhost:4321/ejemplos/fogon-del-sur/pedido/?demo) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 12/12 |
-| [Restaurante · Cocina (pide PIN)](http://localhost:4321/ejemplos/fogon-del-sur/cocina/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| [Restaurante · Repartidor (pide PIN)](http://localhost:4321/ejemplos/fogon-del-sur/repartidor/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Restaurante · Panel del restaurante (acceso por código; cocina y reparto entran por aquí)](http://localhost:4321/ejemplos/fogon-del-sur/cocina/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Restaurante · Mis pedidos (cliente)](http://localhost:4321/ejemplos/fogon-del-sur/mis-pedidos/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 6/6 |
 | [Restaurante · Servicio completo (cliente, cocina, reparto y dueño)](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 20/20 |
 | [Restaurante · Panel del dueño (pedidos en vivo, carta, estadísticas)](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 23/23 |

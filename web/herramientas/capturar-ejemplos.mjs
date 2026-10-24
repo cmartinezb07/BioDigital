@@ -9,6 +9,7 @@ import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EJEMPLOS } from '../propuesta/fuentes/maquetas.mjs';
 import { SEMILLAS } from './semillas-captura.mjs';
+import { copiarCarpeta, sembrar as sembrarRestaurante, limpiar as limpiarRestaurante } from './semillas-restaurante.mjs';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const destino = resolve(aqui, '../propuesta/ejemplos');
@@ -40,6 +41,9 @@ const enPagina = async (ruta, fn) => {
   if (r.exceptionDetails) throw new Error((r.exceptionDetails.exception && r.exceptionDetails.exception.description) || 'falló el sembrado');
   return r.result.value;
 };
+// Cocina y panel del restaurante se capturan desde una copia de la plantilla con pedidos de muestra (no con los pedidos reales de la demo)
+const usaRestaurante = lista.some((e) => ['restaurante-cocina', 'restaurante-panel'].includes(e.id));
+if (usaRestaurante) { copiarCarpeta(); console.log('sembrando restaurante →', await sembrarRestaurante()); }
 const usadas = Object.entries(SEMILLAS).filter(([, v]) => lista.some((e) => v.para.includes(e.id)));
 try {
   for (const [k, v] of usadas) console.log('sembrando', k, '→', await enPagina(v.ruta, v.sembrar));
@@ -50,13 +54,14 @@ for (const e of lista) {
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false }, s);
   // La cinta "Ejemplo de Bío Digital" no sale en la captura (en la portada ya se sabe que es un ejemplo)
   await cdp('Page.addScriptToEvaluateOnNewDocument', { source: 'document.addEventListener("DOMContentLoaded",function(){var s=document.createElement("style");s.textContent=".bd-demo,.bd-toast{display:none!important}";document.head.appendChild(s)})' }, s);
-  await cdp('Page.navigate', { url: base + (e.ruta || e.id + '/') }, s);
+  await cdp('Page.navigate', { url: base + (e.capturaRuta || e.ruta || e.id + '/') }, s);
   await cdp('Runtime.enable', {}, s);
   if (e.preparar) {   // sistemas: datos de prueba antes de capturar (puede recargar la página)
     await dormir(2500);
     await cdp('Runtime.evaluate', { expression: '(async () => { ' + e.preparar + ' })()', awaitPromise: true }, s).catch(() => {});
   }
   await dormir(e.espera || 4500);   // deja terminar la entrada animada de la portada
+  if (e.despues) { await cdp('Runtime.evaluate', { expression: '(async () => { ' + e.despues + ' })()', awaitPromise: true }, s).catch(() => {}); await dormir(1800); }
   const shot = await cdp('Page.captureScreenshot', { format: 'png' }, s);
   const png = join(perfil, e.id + '.png');
   writeFileSync(png, Buffer.from(shot.data, 'base64'));
@@ -66,6 +71,7 @@ for (const e of lista) {
   await cdp('Target.closeTarget', { targetId });
 }
 } finally {
+  if (usaRestaurante) { try { console.log('limpiando restaurante →', await limpiarRestaurante()); } catch (e) { console.log('NO se pudo limpiar el restaurante', e.message); } }
   for (const [k, v] of usadas) { try { console.log('limpiando', k, '→', await enPagina(v.ruta, v.limpiar)); } catch (e) { console.log('NO se pudo limpiar', k, e.message); } }
 }
 ws.close(); chrome.kill();

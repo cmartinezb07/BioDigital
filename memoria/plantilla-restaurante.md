@@ -27,7 +27,7 @@ La carta de ejemplo trae **24 platos con fotos con licencia** (Wikimedia Commons
    - Copia la carpeta de la plantilla a `web/propuesta/ejemplos/mirador/`, cambia el nombre en todas las páginas y escribe `restaurante.config.js` con PIN al azar.
    - Escribe `web/herramientas/restaurantes/mirador-instalar.sql` con los accesos (dueño, cocina, repartidor). Esa carpeta **no se sube a git** (tiene los PIN).
 2. Ejecutar ese SQL en Supabase (proyecto `biodigital-demos`).
-3. Entrar a `.../mirador/panel/` con el PIN del dueño y: cargar la carta (o partir de la de ejemplo), subir fotos, definir comunas, horarios y mesas, crear los PIN de cocina y reparto, **publicar**.
+3. Entrar a `.../mirador/panel/` (acceso único del equipo: según el código, cada persona va a la cocina, al reparto o a la administración) con el PIN del dueño y: cargar la carta (o partir de la de ejemplo), subir fotos, definir comunas, horarios y mesas, crear los PIN de cocina y reparto, **publicar**.
 4. Cambiar los PIN provisorios y entregárselos al dueño por un canal privado.
 5. Generar el sitio (`node web/propuesta/fuentes/generar.mjs --publico 8`) y publicar. Para un cliente real se publica en **su** carpeta/dominio, no en la galería de ejemplos.
 

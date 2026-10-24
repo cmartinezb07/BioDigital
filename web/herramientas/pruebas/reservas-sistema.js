@@ -50,5 +50,14 @@ ok('6b importa 1 bloqueo de Airbnb y baja la disponibilidad', n === 1 && R.libre
 const idi = document.getElementById('idioma'); idi.value = 'en'; idi.dispatchEvent(new Event('change')); await dormir(100);
 ok('7 cambia a inglés', /What/.test(document.querySelector('.pasos-r').textContent));
 idi.value = 'es'; idi.dispatchEvent(new Event('change'));
+// 8. Automático: al llegar la hora queda "En curso" y al terminar "Completada", sin tocar nada
+R.restablecer('cabanas');
+const hoyR = R.crear('cabanas', { recurso: 'araucaria', llegada: U.hoy(), salida: U.sumaDias(U.hoy(), 2), personas: 2 }, { nombre: 'Auto', correo: 'auto@b.cl', telefono: '+56966666666' });
+R.pagar('cabanas', hoyR.reserva.id, hoyR.reserva.precio.deposito);
+R.automatico('cabanas');
+ok('8 al llegar el día queda "En curso" solo', R.leer('cabanas').reservas.find((x) => x.id === hoyR.reserva.id).estado === 'checkin');
+const d8 = R.leer('cabanas'); d8.reservas.find((x) => x.id === hoyR.reserva.id).hasta = Date.now() - 1000; localStorage.setItem('bdres-v1-cabanas', JSON.stringify(d8));
+R.automatico('cabanas');
+ok('8b al terminar queda "Completada" solo', R.leer('cabanas').reservas.find((x) => x.id === hoyR.reserva.id).estado === 'completada');
 ['cabanas', 'tours', 'medico'].forEach((x) => R.restablecer(x));
 return r;

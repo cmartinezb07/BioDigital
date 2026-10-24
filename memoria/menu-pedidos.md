@@ -18,6 +18,14 @@ Capa de datos común: `pedidos.js` (estados, tiempos, ruta, simulación, visitas
 
 **Arreglos de Fogón del Sur (tarea 1):** el scroll "no bajaba bien" porque la barra de categorías llamaba a `scrollIntoView` en cada cambio de sección, y eso movía también la página y le peleaba el scroll al dedo. Ahora se mueve solo la barra (`scrollLeft`). Se quitó `background-attachment: fixed` (repinta en cada scroll en celulares). El error de consola `navigator.vibrate` bloqueado (al abrir la página dentro del visor del carrusel) se evita vibrando solo con un toque real. Mismo arreglo en `web/menu/` (plantilla del menú).
 
+## Modo automático y caso base (23-oct-2026, tarde)
+
+- **Todo automático, con opción de intervenir:** `pedidos.js` tiene un motor que ejecuta una sola pestaña a la vez (la que esté abierta: carta, seguimiento, cocina, repartidor o panel). La cocina acepta el pedido al minuto, lo marca listo cuando se cumple su tiempo de preparación, la mesa se sirve a los 3 minutos y el retiro se entrega a los 6; en delivery se pide la ruta por calles, se asigna un repartidor a los 2 minutos y se mueve por la ruta hasta la puerta. Lo que se paga en caja o al recibir queda pagado al entregar. Cualquiera puede intervenir: la cocina cambia el tiempo o marca a mano, el repartidor puede usar su GPS real (la entrega se marca sola al llegar a 60 m). Interruptor "Automático" y velocidad (tiempo real, ×20, ×60) en la cocina.
+- **Simular un servicio:** botón en el panel del dueño: llegan 10 clientes, uno cada 6 s, con visitas, pedidos de los 3 tipos, pagos y opiniones (solo estrellas).
+- **Caso base verificado** (`web/herramientas/pruebas/fogon-servicio.js`, 14/14, sumado al check): 9 clientes (3 mesa, 3 retiro, 3 delivery) a ×240, sin tocar nada. Verifica estados en orden con horas crecientes, que "listo" se marque al cumplirse el tiempo de preparación, ruta por calles, repartidor en la puerta, duración del viaje según la ruta, todo pagado, opiniones sin comentarios inventados y que el panel muestre los mismos pedidos, ventas y visitas.
+- **Falla real encontrada por la simulación:** "listo" se marcaba tarde y cada vez peor (16 a 132 minutos en vez de 12 a 18), porque la condición comparaba con un tiempo estimado que usa la hora de un instante después. Corregido: se compara contra el inicio de la preparación más su tiempo.
+- **Límite que sigue:** todo funciona entre pestañas del mismo navegador. Para que la cocina, el repartidor y el cliente estén en equipos distintos hace falta la base en la nube (ver "Lo que falta para un local real").
+
 ## Lo que falta para un local real (no está en la demo)
 
 1. **Varios equipos a la vez:** cliente, cocina y repartidor en equipos distintos necesitan una base en la nube con tiempo real. Opción: Supabase (ya en uso). Se deja para el primer cliente real, porque la demo no lo necesita.

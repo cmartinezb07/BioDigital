@@ -32,12 +32,16 @@
   } else aparecer.forEach(function (el) { el.classList.add('in'); });
 
   // La categoría activa sigue el scroll
-  var links = $$('.cats a');
+  // Se mueve solo la barra de categorías (scrollLeft): scrollIntoView movía también la página y le peleaba el scroll al dedo.
+  var links = $$('.cats a'), barraCats = $('.cats');
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         if (!e.isIntersecting) return;
-        links.forEach(function (a) { a.setAttribute('aria-current', String(a.hash === '#' + e.target.id)); if (a.hash === '#' + e.target.id) a.scrollIntoView({ inline: 'center', block: 'nearest' }); });
+        links.forEach(function (a) {
+          var es = a.hash === '#' + e.target.id; a.setAttribute('aria-current', String(es));
+          if (es && barraCats && barraCats.scrollWidth > barraCats.clientWidth) barraCats.scrollLeft += a.getBoundingClientRect().left - barraCats.getBoundingClientRect().left - (barraCats.clientWidth - a.offsetWidth) / 2;
+        });
       });
     }, { rootMargin: '-30% 0px -60% 0px' });
     $$('.cat').forEach(function (c) { io.observe(c); });
@@ -61,7 +65,7 @@
   });
 
   // Vibración leve al tocar los botones principales (donde el teléfono lo permite)
-  document.addEventListener('click', function (e) { if (navigator.vibrate && e.target.closest('.boton, .btn-ar, .fav, .mini')) navigator.vibrate(10); });
+  document.addEventListener('click', function (e) { if (navigator.vibrate && navigator.userActivation && navigator.userActivation.isActive && e.isTrusted && e.target.closest('.boton, .btn-ar, .fav, .mini')) navigator.vibrate(10); });
 
   // Visor
   var dlg = $('#visor'); if (!dlg) return;

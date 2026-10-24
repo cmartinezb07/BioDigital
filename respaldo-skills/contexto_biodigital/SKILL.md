@@ -7,6 +7,26 @@ description: Contexto completo de Bío Digital (startup de 5 estudiantes UdeC en
 
 **Responder siempre en español.** Proyecto: `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` · Repo privado: https://github.com/cmartinezb07/BioDigital · Antes de nada lee `MEMORY.md`, `memoria/estado-actual.md` y el final de `memoria/decisiones.md` (bitácora; la más reciente está al final).
 
+## PRÓXIMO CHAT — leer primero (estado al 23-oct-2026, noche)
+
+**Hecho y en GitHub:** todo el encargo del 23-oct (sección "ENCARGO" más abajo, ya cumplida) más el modo automático y el caso base. Detalle técnico en `memoria/menu-pedidos.md`, `memoria/reservas-sistema.md` y el final de `memoria/decisiones.md`.
+
+**Últimos pedidos del usuario, en orden:**
+1. *"Verifica que todo funcione, haz una simulación real y que sea todo automático (con opción de meter mano); revisa las fallas de scroll en todas las páginas; haz un caso base con Fogón del Sur."* → **Hecho:**
+   - Motor automático en `ejemplos/fogon-del-sur/pedidos.js`: una sola pestaña "líder" mueve el servicio (acepta, cocina según el tiempo de preparación, sirve, entrega, repartidor por la ruta real hasta la puerta, cobra lo pendiente al entregar, opiniones de clientes simulados). Interruptor "Automático" y velocidad (tiempo real, ×20, ×60) en la cocina; el repartidor puede usar su GPS real (entrega sola a 60 m); botón "Simular un servicio" en el panel.
+   - Caso base `web/herramientas/pruebas/fogon-servicio.js` (en el panel): 9 clientes sin tocar nada, 14/14. Encontró y se corrigió una falla real: "listo" se marcaba tarde y cada vez peor.
+   - Reservas: check-in y cierre automáticos (`motor.js` → `automatico`), prueba 16/16.
+   - Herramienta nueva `web/herramientas/scroll.mjs`: scroll real con el dedo (390) y la rueda (1440), detecta retrocesos, saltos al soltar, páginas pegadas o que no cargan. En paralelo: `node web/herramientas/scroll.mjs 1/4` … `4/4`. Resultado: 44 de 46 recorridos bien; la carta de la pastelería (`casa-dulce/carta/menu.js`) tenía el mismo bug de Fogón y quedó arreglada.
+2. *"Gasta todo, haz todo lo necesario y pásame la página final publicada."* → **PENDIENTE (hacer en este orden):**
+   a. **Scroll en celular de cabañas y barbería** (los 2 únicos que fallan): cerca del final, al soltar el dedo la página sigue moviéndose 50 a 130 px (cabañas 4570 → 4698; barbería 5687 → 5740). Medido: no hay saltos de diseño (layout shift) ni cambio de alto. Sospecha: el trabajo por cuadro de los efectos de scroll (`cuadro()` en `ejemplos/cabanas/sitio.js` ~l.70 y `ejemplos/barberia/barberia.js` ~l.57) atrasa el hilo principal. Investigar con una traza de rendimiento, aliviar ese trabajo y verificar con `node web/herramientas/scroll.mjs ejemplos/cabanas/ ejemplos/barberia/`.
+   b. **La auditoría con varios agentes no alcanzó a correr** (se acabó el límite de sesión). Relanzarla con Workflow y `scriptPath` = `C:\Users\criss\.claude\projects\C--Users-criss-OneDrive-Escritorio-Proyecto-DCP\5d9893e0-a37b-4dd6-b25d-821ab54a93cf\workflows\scripts\auditoria-sistemas-biodigital-wf_efb7dee6-743.js` (6 frentes: motor de pedidos, pantallas de pedidos, motor de reservas, pantallas de reservas, fidelización y páginas nuevas, scroll y diseño; 3 verificadores por hallazgo). Si el archivo no existe, rearmarla igual. Corregir lo confirmado.
+   c. Correr el check completo: `node web/herramientas/check.mjs http://localhost:4321` (ya incluye el caso base y la carta de la pastelería).
+   d. **Publicar la versión final en la vista previa** (lo pidió el usuario; **Production NO** hasta los datos de pagos de Benjamín): desde la raíz, `node web/propuesta/fuentes/generar.mjs --publico 8`, luego `npx wrangler pages deploy --branch=ejemplos --commit-dirty=true` → https://ejemplos.biodigital-propuesta.pages.dev ; revisar en línea (portada, galería, Fogón y sus pantallas, reservas, fidelización) y después `node web/propuesta/fuentes/generar.mjs 8` para volver a la versión de trabajo. Pasar los links (regla: links en cada avance).
+   e. Commit y push.
+
+**Notas técnicas:** en Git Bash las rutas que empiezan con "/" se convierten en rutas de Windows: a `scroll.mjs` pasarle rutas sin barra inicial. El servidor local (preview `maquetas`, puerto 4321) se apaga al reiniciar la sesión: encenderlo con preview_start. OneDrive a veces bloquea un archivo al generar: reintentar. Las capturas del carrusel se rehacen con `node web/herramientas/capturar-ejemplos.mjs <id>` (los sistemas usan `ruta` y `preparar`).
+**Uso:** el 23-oct (noche) el usuario autorizó gastar todo el límite; la semana ya se reinició.
+
 ## Qué es
 Startup de curso (Dirección y Control de Proyectos, UdeC): activación de presencia digital para micro y pequeñas empresas del Gran Concepción. 5 personas; jefe de proyecto: Christhoper. Meta: 3 a 5 clientes cerrados, pagados y transferidos en el semestre. Capital semilla: $80.000 CLP. **Solo operamos en el Gran Concepción** (Concepción, Talcahuano, Hualpén, San Pedro de la Paz, Chiguayante, Coronel, Lota, Penco, Tomé, Hualqui). El brief está en `contexto.md`.
 
@@ -60,7 +80,7 @@ Proyectos: `biodigital-propuesta` (sitio), `biodigital-panel`, `menu-demo`. Coma
 - Panel: `npx wrangler pages deploy web/panel --project-name=biodigital-panel --branch=main --commit-dirty=true`
 - Menú demo: `npx wrangler pages deploy web/menu --project-name=menu-demo --branch=main --commit-dirty=true`
 - **Trampa conocida:** los proyectos creados por el primer deploy quedan con otra rama de producción: `proyecto.pages.dev` da 404 y `main.proyecto.pages.dev` abre. Arreglo: Cloudflare → proyecto → Settings → rama de producción = `main`.
-- Antes de pegar el link en Instagram y WhatsApp Business: publicar la **versión pública** del sitio. Hoy el link vigente es https://biodigital-propuesta.pages.dev.
+- Antes de pegar el link en Instagram y WhatsApp Business: publicar la **versión pública** del sitio. Hoy el link vigente es https://biodigital-propuesta.pages.dev (Production, sin los sistemas nuevos). Mientras dure la fase de pagos, publicar en la vista previa: `npx wrangler pages deploy --branch=ejemplos --commit-dirty=true` desde la raíz → https://ejemplos.biodigital-propuesta.pages.dev
 
 ## Pendiente (consolidado)
 - Probar la AR con un escaneo real (Polycam: exportar GLB y ver si trae marca de agua) y en Android; fijar el **precio de la versión interactiva** y quién cobra los cambios de carta.
@@ -68,12 +88,12 @@ Proyectos: `biodigital-propuesta` (sitio), `biodigital-panel`, `menu-demo`. Coma
 - Valor del hosting para reservas/menú/fidelización (si necesitan más que una página estática); capital semilla $80.000 en Caja como "Capital aportado".
 - Acortar la página principal (el usuario define criterios con un amigo); probar a ojo la burbuja del tema; confirmar variante de logo.
 - Preguntas viejas: Jornada de Terreno, plan de Claude y quién lo paga, piloto del bot de WhatsApp.
-- **Hay mucho trabajo sin commit** (panel, menú, formularios, skills): ofrecer commit y push cuando el usuario lo pida.
+- Todo está en GitHub (commits del 23-oct). Commit y push al cerrar cada tanda de trabajo, cuando el usuario lo pida.
 
 ## Cómo verificar
 Navegador integrado a 1440 y 390 px: sin desborde (`scrollWidth`), textos ≥ 12 px, áreas táctiles ≥ 44 px, consola sin errores, recursos sin 404. Los `.reveal` quedan en opacidad 0 hasta entrar en pantalla. **El panel del navegador se "congela" si la ventana está oculta**: un `screenshot` lo despierta (los temporizadores y la carga de modelos pueden quedar a medias). Previews: `maquetas` (4321, sitio), `panel` (4322), `menu` (4323), todos con `web/servir.py` sin caché (`.claude/launch.json`).
 
-## ENCARGO DEL USUARIO DEL 23-OCT-2026 (leer antes que todo; es la tarea del próximo chat)
+## ENCARGO DEL USUARIO DEL 23-OCT-2026 (HECHO; queda como referencia. Lo pendiente está en "PRÓXIMO CHAT")
 
 **Decisiones del usuario (23-oct):**
 - **Ficha de Google Business: NO por ahora.** No proponerla de nuevo salvo que el usuario lo pida.

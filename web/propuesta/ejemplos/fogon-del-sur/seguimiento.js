@@ -14,7 +14,7 @@
     cancelado: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>'
   };
   var svg = function (e) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONOS[e] + '</svg>'; };
-  var p = P.obtener(id), ultimoEstado = p && p.estado, mapa = null, capas = {}, simParar = null, juegoListo = false;
+  var p = P.obtener(id), ultimoEstado = p && p.estado, mapa = null, capas = {}, juegoListo = false;
 
   // pedido/?demo: crea un pedido de delivery de demostración y lo sigue (lo usa el carrusel de la portada)
   if (!p && new URLSearchParams(location.search).has('demo')) {
@@ -56,11 +56,10 @@
       return '<li class="' + cls + '" style="--ec:' + P.ESTADOS[x].color + '"' + (k === idx ? ' aria-current="step"' : '') + '><span class="punto"></span><span>' + esc(P.nombreEstado(p, x)) + '</span><time>' + (t ? P.hora(t) : '') + '</time></li>';
     }).join('');
     $('[data-pago]').textContent = p.pago.pagado ? 'Pagado' + (p.pago.metodo === 'linea' ? ' en línea' : '') : p.tipo === 'delivery' ? 'Al recibir' : 'En caja';
-    $('[data-demo-nota]').textContent = p.escala > 1 ? 'Demostración acelerada: como nadie atiende la cocina de prueba, el pedido avanza solo y cada minuto dura ' + Math.round(60 / p.escala) + ' segundos.' : '';
+    $('[data-demo-nota]').textContent = p.escala > 1 ? 'Demostración acelerada: el servicio avanza solo y cada minuto dura ' + (Math.round(600 / p.escala) / 10) + ' s. La cocina y el repartidor pueden intervenir cuando quieran.' : '';
     reloj();
     if (p.tipo === 'delivery') pintarMapa();
     if (e === 'entregado') opinion();
-    if ((e === 'entregado' || e === 'cancelado') && simParar) { simParar(); simParar = null; }
   }
   function reloj() {
     var e = p.estado, et = P.eta(p), m = $('[data-min]'), t = $('[data-eta]');
@@ -148,29 +147,10 @@
   else if (Notification.permission === 'granted') bAv.textContent = 'Avisos activados ✓';
   bAv.addEventListener('click', function () { if (window.Notification) Notification.requestPermission().then(function (r) { bAv.textContent = r === 'granted' ? 'Avisos activados ✓' : 'Avisos bloqueados en este navegador'; }); });
 
-  // Simulación de la demo: si nadie atiende la cocina o el reparto en otra pestaña, el pedido avanza solo (acelerado)
-  function simular() {
-    p = P.obtener(id); if (!p || !p.demo) return;
-    var edad = Date.now() - P.cuando(p, p.estado), e = p.estado;
-    if (e === 'entregado' || e === 'cancelado') return;
-    if ((e === 'recibido' || e === 'preparacion' || (e === 'listo' && p.tipo !== 'delivery')) && P.atendido('cocina')) return;
-    if ((e === 'listo' && p.tipo === 'delivery' || e === 'camino') && P.atendido('repartidor')) return;
-    if (e === 'recibido' && edad > 10000) { P.actualizar(id, function (x) { x.escala = 20; }); P.cambiar(id, 'preparacion'); }
-    else if (e === 'preparacion' && p.escala > 1 && Date.now() >= P.eta(p).listo) P.cambiar(id, 'listo');
-    else if (e === 'preparacion' && p.escala === 1 && edad > 15000) P.actualizar(id, function (x) { x.escala = 20; });
-    else if (e === 'listo' && p.tipo !== 'delivery' && edad > 15000) P.cambiar(id, 'entregado');
-    else if (e === 'listo' && p.tipo === 'delivery' && edad > 6000) { P.actualizar(id, function (x) { x.escala = Math.max(x.escala, 20); }); P.cambiar(id, 'camino', { repartidor: { nombre: 'Repartidor de prueba' } }); }
-    else if (e === 'camino' && !simParar && (!p.repartidor || !p.repartidor.t || Date.now() - p.repartidor.t > 8000)) {
-      var x2 = function (i) { return P.obtener(i).escala; }, arrancar = function (r) { P.actualizar(id, function (x) { x.escala = Math.max(x.escala || 1, 20); }); simParar = P.recorrer(id, r, x2(id)); };
-      if (p.ruta) arrancar(p.ruta); else P.ruta(P.CONFIG.local, p.destino).then(function (r) { P.actualizar(id, function (x) { x.ruta = r; }); arrancar(r); });
-    }
-  }
-  if (p.tipo === 'delivery' && !p.ruta) P.ruta(P.CONFIG.local, p.destino).then(function (r) { P.actualizar(id, function (x) { if (!x.ruta) x.ruta = r; }); });
-
   P.escuchar(function (m) {
     if (m.id && m.id !== id && m.tipo !== 'cambio') return;
     var antes = ultimoEstado; pintar(); if (p && p.estado !== antes) { ultimoEstado = p.estado; avisarCambio(); }
   });
-  setInterval(function () { if (p) reloj(); simular(); }, 1000);
+  setInterval(function () { if (p) reloj(); }, 1000);
   pintar();
 })();

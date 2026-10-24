@@ -73,7 +73,7 @@
       cliente: d.cliente, items: d.items, nota: d.nota || '', subtotal: subtotal, envio: com ? com.envio : 0,
       total: subtotal + (com ? com.envio : 0), pago: d.pago, referencia: d.referencia || '', invitadoPor: d.invitadoPor || '',
       estado: 'recibido', historial: [{ estado: 'recibido', t: Date.now() }],
-      prepMin: Math.min(CONFIG.prepMax, CONFIG.prepBase + CONFIG.prepPorItem * cant), escala: 1, demo: !!d.demo
+      prepMin: Math.min(CONFIG.prepMax, CONFIG.prepBase + CONFIG.prepPorItem * cant), escala: auto().activo ? auto().velocidad : 1, demo: !!d.demo, simulado: !!d.simulado
     };
     if (p.tipo === 'delivery') {
       var dest = d.cliente.lat ? { lat: d.cliente.lat, lng: d.cliente.lng } : cerca(com, d.cliente.direccion);
@@ -149,6 +149,88 @@
     return function () { clearInterval(timer); };
   }
 
+  // ---------- Modo automático ----------
+  // Con el modo automático encendido, el servicio avanza solo: la cocina acepta el pedido, lo marca listo cuando se cumple
+  // su tiempo de preparación, se sirve o se entrega en el mesón, y en delivery se asigna un repartidor que recorre la ruta
+  // por calles; al entregar se registra el pago si era en caja o al recibir. Cualquier persona puede intervenir a mano en
+  // cualquier momento (la cocina, el repartidor con su GPS real): el motor sigue desde el estado en que quede el pedido.
+  // Lo ejecuta UNA sola pestaña a la vez (la "líder"), sea la carta, el seguimiento, la cocina, el repartidor o el panel.
+  var CLAVE_AUTO = 'fogon-auto', CLAVE_LIDER = 'fogon-lider', yo = Math.random().toString(36).slice(2);
+  var TIEMPOS = { aceptar: 1, servir: 3, retirar: 6, asignar: 2, opinar: 3 };   // minutos del servicio (en la demo, acelerados)
+  function auto() { return leer(CLAVE_AUTO, { activo: true, velocidad: 20 }); }
+  function fijarAuto(c) { escribir(CLAVE_AUTO, Object.assign(auto(), c)); avisar('auto'); }
+  function soyLider() { var l = leer(CLAVE_LIDER, null), ahora = Date.now(); if (!l || ahora - l.t > 3500 || l.yo === yo) { escribir(CLAVE_LIDER, { yo: yo, t: ahora }); return true; } return false; }
+  function largoRuta(r) { var t = 0; for (var i = 1; i < r.length; i++) t += distancia({ lat: r[i - 1][0], lng: r[i - 1][1] }, { lat: r[i][0], lng: r[i][1] }); return t; }
+  // Posición del repartidor según el tiempo desde que salió: la misma en cualquier pestaña, aunque cambie la líder
+  function enRuta(p, ahora) {
+    var r = p.ruta, total = p.rutaKm || largoRuta(r), hecho = Math.min(total, (ahora - p.salida) / 3600000 * CONFIG.kmh * (p.escala || 1)), acc = 0;
+    for (var i = 1; i < r.length; i++) {
+      var d = distancia({ lat: r[i - 1][0], lng: r[i - 1][1] }, { lat: r[i][0], lng: r[i][1] });
+      if (acc + d >= hecho && hecho < total) { var f = d ? (hecho - acc) / d : 1; return { lat: r[i - 1][0] + (r[i][0] - r[i - 1][0]) * f, lng: r[i - 1][1] + (r[i][1] - r[i - 1][1]) * f, fin: false }; }
+      acc += d;
+    }
+    return { lat: p.destino.lat, lng: p.destino.lng, fin: true };   // el último tramo, de la calle a la puerta
+  }
+  var pidiendoRuta = {};
+  function tick() {
+    var a = auto(); if (!a.activo || !soyLider()) return;
+    var ahora = Date.now();
+    todos().forEach(function (p) {
+      if (p.semilla || p.estado === 'cancelado') return;
+      var min = 60000 / (p.escala || 1), desde = cuando(p, p.estado) || p.creado, e = p.estado;
+      if (e === 'entregado') {   // los clientes simulados dejan nota (solo estrellas); los reales opinan ellos
+        if (p.simulado && !p.opinion && !p.sinOpinion && ahora - desde >= TIEMPOS.opinar * min) {
+          if (Math.random() < .65) { var x = Math.random(); opinar(p.id, { estrellas: x < .55 ? 5 : x < .85 ? 4 : x < .95 ? 3 : 2, recomendaria: x < .82, texto: '', simulada: true }); }
+          else actualizar(p.id, function (z) { z.sinOpinion = true; });
+        }
+        return;
+      }
+      var pagar = { pago: { metodo: p.pago.metodo, pagado: true } };   // en caja o al recibir: se paga al entregar
+      if (e === 'recibido' && ahora - desde >= TIEMPOS.aceptar * min) cambiar(p.id, 'preparacion', { auto: true });
+      else if (e === 'preparacion' && ahora >= desde + p.prepMin * min) cambiar(p.id, 'listo');   // se cumplió el tiempo de preparación
+      else if (e === 'listo' && p.tipo !== 'delivery' && ahora - desde >= (p.tipo === 'mesa' ? TIEMPOS.servir : TIEMPOS.retirar) * min) cambiar(p.id, 'entregado', pagar);
+      else if (e === 'listo' && p.tipo === 'delivery') {
+        if (!p.ruta) pedirRuta(p);
+        else if (ahora - desde >= TIEMPOS.asignar * min) cambiar(p.id, 'camino', { repartidor: { nombre: 'Repartidor de turno', auto: true }, salida: ahora });
+      }
+      else if (e === 'camino') {
+        var rep = p.repartidor || {};
+        if (rep.gps) { if (rep.lat && distancia(rep, p.destino) < .06) cambiar(p.id, 'entregado', pagar); return; }   // GPS real: se entrega al llegar
+        if (!p.ruta) { pedirRuta(p); return; }
+        if (!p.salida) { actualizar(p.id, function (z) { z.salida = ahora; }); return; }
+        var pos = enRuta(p, ahora);
+        ubicar(p.id, pos.lat, pos.lng);
+        if (pos.fin) cambiar(p.id, 'entregado', pagar);
+      }
+    });
+  }
+  function pedirRuta(p) {
+    if (pidiendoRuta[p.id]) return; pidiendoRuta[p.id] = 1;
+    ruta(CONFIG.local, p.destino).then(function (r) { actualizar(p.id, function (z) { z.ruta = r; z.rutaKm = +largoRuta(r).toFixed(2); z.km = z.rutaKm; }); });
+  }
+  setInterval(tick, 1000);
+  // Simulador de un servicio: llegan clientes (algunos solo miran la carta) y piden en la mesa, para retirar o con delivery.
+  var simulando = null;
+  function simular(o) {
+    o = o || {}; if (simulando) clearInterval(simulando);
+    var n = 0, total = o.pedidos || 10, cada = (o.cadaSeg || 6) * 1000, platos = o.platos || [], comunas = Object.keys(CONFIG.comunas);
+    var calles = ['Colo Colo', 'Lincoyán', 'Ongolmo', 'Caupolicán', 'Rengo', 'Tucapel', 'Orompello', 'Castellón', 'Aníbal Pinto', 'Freire'];
+    var uno = function () {
+      if (n >= total) { clearInterval(simulando); simulando = null; avisar('simulacion'); return; }
+      n++;
+      var lv = leer(CLAVE_VIS, []), tipo = o.tipos ? o.tipos[(n - 1) % o.tipos.length] : ['mesa', 'mesa', 'retiro', 'delivery', 'delivery'][Math.floor(Math.random() * 5)];
+      for (var v = 0; v < 2; v++) lv.push({ t: Date.now(), origen: tipo === 'mesa' ? 'QR de mesa' : ['Directo', 'Instagram', 'Invitación de un cliente'][Math.floor(Math.random() * 3)], simulado: true });
+      escribir(CLAVE_VIS, lv.slice(-3000));
+      var items = [], k = 1 + Math.floor(Math.random() * 3);
+      for (var i = 0; i < k; i++) { var pl = platos[Math.floor(Math.random() * platos.length)]; items.push({ id: pl.id, nombre: pl.nombre, precio: pl.precio, cant: 1 + Math.floor(Math.random() * 2) }); }
+      while (tipo === 'delivery' && items.reduce(function (t, x) { return t + x.precio * x.cant; }, 0) < CONFIG.minimoDelivery) items[0].cant += 1;
+      crear({ tipo: tipo, mesa: tipo === 'mesa' ? 1 + Math.floor(Math.random() * CONFIG.mesas) : null, cliente: { nombre: 'Cliente simulado ' + n, telefono: '', direccion: calles[Math.floor(Math.random() * calles.length)] + ' ' + (100 + Math.floor(Math.random() * 1400)), comuna: tipo === 'delivery' ? comunas[Math.floor(Math.random() * 3)] : '' },
+        items: items, pago: Math.random() < .6 ? { metodo: 'linea', pagado: true } : { metodo: 'caja', pagado: false }, referencia: ['Instagram', 'Google Maps', 'Me lo recomendaron', 'Pasaba por fuera', ''][Math.floor(Math.random() * 5)], demo: true, simulado: true });
+    };
+    uno(); simulando = setInterval(uno, cada);
+    return { detener: function () { clearInterval(simulando); simulando = null; } };
+  }
+
   // Quién está atendiendo: la cocina y el repartidor marcan "vivo" cada pocos segundos.
   function latido(rol) { escribir(CLAVE_VIVO + rol, Date.now()); }
   function atendido(rol) { return Date.now() - leer(CLAVE_VIVO + rol, 0) < 12000; }
@@ -210,7 +292,7 @@
     CONFIG: CONFIG, ESTADOS: ESTADOS, FLUJO: FLUJO, todos: todos, obtener: obtener, crear: crear, cambiar: cambiar, siguiente: siguiente,
     ubicar: ubicar, opinar: opinar, marcarPagado: marcarPagado, actualizar: actualizar, eta: eta, viajeMin: viajeMin, cuando: cuando,
     distancia: distancia, ruta: ruta, recorrer: recorrer, latido: latido, atendido: atendido, visita: visita, visitas: visitas,
-    sembrar: sembrar, borrarDemo: borrarDemo, escuchar: function (f) { oyentes.push(f); },
+    sembrar: sembrar, borrarDemo: borrarDemo, escuchar: function (f) { oyentes.push(f); }, auto: auto, fijarAuto: fijarAuto, simular: simular, tick: tick, enRuta: enRuta, TIEMPOS: TIEMPOS,
     clp: clp, hora: hora, nombreEstado: nombreEstado, descEstado: descEstado, esc: esc, tipoTxt: tipoTxt
   };
 })();

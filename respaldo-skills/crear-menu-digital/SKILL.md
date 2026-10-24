@@ -74,6 +74,7 @@ Versión completa, a cotizar (no cabe en el precio del menú simple). Vive en `w
 - Páginas: `pedido/` (seguimiento con estados de color, tiempo estimado, mapa Leaflet 1.9.4 con SRI, juego `juego.js` y opinión), `cocina/` (KDS), `repartidor/` (GPS del celular) y `panel/` (visitas, pedidos, pagados, ventas, opiniones, referencias).
 - Configuración del local en `pedidos.js` → `CONFIG` (dirección y coordenadas, mesas, pedido mínimo, envío por comuna, tiempos).
 - La demo sincroniza pestañas del mismo navegador; un local real necesita base en la nube (Supabase). Costos recurrentes y competencia en `memoria/menu-pedidos.md`.
+- **Modo automático (23-oct-2026):** `pedidos.js` mueve el servicio solo desde una pestaña líder (acepta, cocina según el tiempo de preparación, sirve, entrega, repartidor por la ruta real, cobra al entregar). Interruptor y velocidad en la cocina; GPS real opcional del repartidor; "Simular un servicio" en el panel. Caso base: `web/herramientas/pruebas/fogon-servicio.js` (14/14). Tiempos del servicio en `TIEMPOS` dentro de `pedidos.js`.
 - Prueba: `web/herramientas/pruebas/fogon-del-sur.js`. Para reservas de mesa o eventos, usar el sistema de `ejemplos/reservas/` (modo horas o bloques).
 
 ## Mascota (opcional)

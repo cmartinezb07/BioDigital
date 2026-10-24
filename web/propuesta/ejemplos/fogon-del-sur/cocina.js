@@ -5,8 +5,8 @@
   var P = window.Pedidos, app = document.getElementById('app'), esc = P.esc, clp = P.clp;
   var COLS = [['recibido', 'Nuevos'], ['preparacion', 'En preparación'], ['listo', 'Listos'], ['camino', 'En reparto']];
   var vistos = {}, sonido = false, audio = null, primera = true;
-  app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:16px"><div><h1 class="sis-h">Cocina</h1><p class="sis-sub">Los pedidos de la carta llegan aquí solos. Al marcarlos, el cliente lo ve en su celular.</p></div>' +
-    '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s" type="button" data-sonido aria-pressed="false">Activar sonido</button><a class="btn-s" href="../" target="_blank" rel="noopener">Abrir la carta para pedir</a></div></div><div class="kds" aria-live="polite"></div>' +
+  app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:16px"><div><h1 class="sis-h">Cocina</h1><p class="sis-sub">Los pedidos llegan solos. En automático la cocina los acepta y los marca listos según su tiempo de preparación; puedes intervenir cuando quieras y el cliente lo ve al instante.</p></div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label class="btn-s" style="gap:10px"><input type="checkbox" data-auto style="width:20px;height:20px;accent-color:var(--c1)"> Automático</label><select class="btn-s" data-vel aria-label="Velocidad del servicio"><option value="1">Tiempo real</option><option value="20">Demo ×20</option><option value="60">Demo ×60</option></select><button class="btn-s" type="button" data-sonido aria-pressed="false">Activar sonido</button><a class="btn-s" href="../" target="_blank" rel="noopener">Abrir la carta para pedir</a></div></div><div class="kds" aria-live="polite"></div>' +
     '<h2 style="font-size:17px;margin:24px 0 10px">Entregados hoy</h2><div data-hechos class="sis-nota"></div>';
   var kds = app.querySelector('.kds');
 
@@ -51,8 +51,8 @@
     var id = card.dataset.id, p = P.obtener(id); if (!p) return;
     if (e.target.closest('[data-avanzar]')) {
       var sig = P.siguiente(p), extra = null;
-      if (p.estado === 'recibido') { var s = card.querySelector('[data-prep]'); extra = { prepMin: s ? +s.value : p.prepMin, escala: 1 }; }
-      if (sig === 'camino') extra = { repartidor: { nombre: 'Repartidor de turno' } };
+      if (p.estado === 'recibido') { var s = card.querySelector('[data-prep]'); extra = { prepMin: s ? +s.value : p.prepMin }; }
+      if (sig === 'camino') extra = { repartidor: { nombre: 'Repartidor de turno', auto: true }, salida: Date.now() };
       P.cambiar(id, sig, extra);
     }
     if (e.target.closest('[data-pagado]')) P.marcarPagado(id, true);
@@ -70,6 +70,11 @@
     P.crear({ tipo: 'mesa', mesa: 9, cliente: cli('Mesa 9'), items: [it('salmon', 'Salmón a la parrilla', 13900, 1), it('limonada', 'Limonada menta jengibre', 3500, 1)], pago: { metodo: 'caja', pagado: false } });
     P.cambiar(a.id, 'preparacion'); P.cambiar(b.id, 'preparacion'); P.cambiar(c.id, 'preparacion'); P.cambiar(c.id, 'listo');
   })();
+  var cAuto = app.querySelector('[data-auto]'), cVel = app.querySelector('[data-vel]');
+  function pintarAuto() { var a = P.auto(); cAuto.checked = a.activo; cVel.value = String(a.velocidad); cVel.disabled = !a.activo; }
+  cAuto.addEventListener('change', function () { P.fijarAuto({ activo: cAuto.checked }); });
+  cVel.addEventListener('change', function () { P.fijarAuto({ velocidad: +cVel.value }); });
+  pintarAuto(); P.escuchar(function (m) { if (m.tipo === 'auto') pintarAuto(); });
   P.escuchar(pintar);
   setInterval(function () { P.latido('cocina'); }, 4000); P.latido('cocina');
   setInterval(pintar, 30000);   // refresca los relojes

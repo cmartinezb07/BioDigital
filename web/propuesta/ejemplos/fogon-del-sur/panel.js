@@ -13,9 +13,9 @@
   }).catch(function () {});
 
   app.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between"><div><h1 class="sis-h">Panel del dueño</h1><p class="sis-sub">Cómo le va a tu carta digital, en vivo.</p></div>' +
-    '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s" type="button" data-semilla>Cargar 7 días de prueba</button><button class="btn-s" type="button" data-csv>Descargar CSV</button><button class="btn-s peligro" type="button" data-borrar>Borrar datos</button></div></div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-s prim" type="button" data-simular>Simular un servicio</button><button class="btn-s" type="button" data-semilla>Cargar 7 días de prueba</button><button class="btn-s" type="button" data-csv>Descargar CSV</button><button class="btn-s peligro" type="button" data-borrar>Borrar datos</button></div></div>' +
     '<div class="filtros" role="group" aria-label="Período">' + [[1, 'Hoy'], [7, '7 días'], [30, '30 días']].map(function (d) { return '<button class="btn-s" type="button" data-dias="' + d[0] + '" aria-pressed="' + (d[0] === dias) + '">' + d[1] + '</button>'; }).join('') + '</div>' +
-    '<p class="sis-nota" data-aviso style="margin-top:8px"></p><div class="kpis" data-kpis></div><div class="grid-p" data-graf></div>';
+    '<p class="sis-nota" data-sim style="margin-top:8px"></p><p class="sis-nota" data-aviso style="margin-top:8px"></p><div class="kpis" data-kpis></div><div class="grid-p" data-graf></div>';
 
   function desde() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() - (dias - 1) * 864e5; }
   function contar(arr, f) { var o = {}; arr.forEach(function (x) { var k = f(x); if (k) o[k] = (o[k] || 0) + (x._n || 1); }); return Object.keys(o).map(function (k) { return [k, o[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
@@ -69,6 +69,11 @@
   app.addEventListener('click', function (e) {
     var d = e.target.closest('[data-dias]');
     if (d) { dias = +d.dataset.dias; [].forEach.call(app.querySelectorAll('[data-dias]'), function (b) { b.setAttribute('aria-pressed', String(b === d)); }); pintar(); }
+    if (e.target.closest('[data-simular]')) {
+      if (!platos.length) return alert('No se pudo leer la carta. Recarga la página.');
+      P.fijarAuto({ activo: true }); P.simular({ pedidos: 10, cadaSeg: 6, platos: platos });
+      app.querySelector('[data-sim]').textContent = 'Simulación en curso: llegan 10 clientes, uno cada 6 segundos, y todo avanza solo (velocidad ×' + P.auto().velocidad + '). Abre la cocina o el seguimiento en otra pestaña para verlo.';
+    }
     if (e.target.closest('[data-semilla]')) { if (platos.length) P.sembrar(platos); else alert('No se pudo leer la carta. Recarga la página.'); }
     if (e.target.closest('[data-borrar]') && confirm('¿Borrar todos los pedidos y visitas de esta demostración?')) P.borrarDemo();
     if (e.target.closest('[data-csv]')) {

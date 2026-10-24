@@ -295,6 +295,7 @@
     var d = leer(id), cambio = false, ahora = Date.now();
     d.reservas.forEach(function (r) {
       if (r.estado === 'retenida' && r.expira && r.expira < ahora) { r.estado = 'cancelada'; r.canceladaPor = 'sistema: no se pagó a tiempo'; r.historial.push({ estado: 'cancelada', t: ahora }); avisarEspera(d, r); cambio = true; }
+      if ((r.estado === 'confirmada' || r.estado === 'pagada') && r.desde <= ahora && r.hasta > ahora && !r.semilla) { r.estado = 'checkin'; r.historial.push({ estado: 'checkin', t: ahora, auto: true }); cambio = true; }   // llegó la hora: queda "En curso"
       if ((r.estado === 'confirmada' || r.estado === 'pagada' || r.estado === 'checkin') && r.hasta < ahora && !r.semilla) { r.estado = 'completada'; r.historial.push({ estado: 'completada', t: ahora }); cambio = true; }
     });
     d.avisos.forEach(function (a) { if (a.estado === 'programado' && a.cuando <= ahora) { a.estado = 'enviado (demo)'; a.enviado = ahora; cambio = true; } });

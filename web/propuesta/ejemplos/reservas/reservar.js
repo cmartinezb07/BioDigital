@@ -198,7 +198,7 @@
     }
     else if (e.target.closest('[data-atras]')) { st.paso--; pintar(); }
     else if (e.target.closest('[data-cod]')) { st.codigo = app.querySelector('#r-cod').value.trim().toUpperCase(); var pr = R.precio(D, st.sel, st.codigo); app.querySelector('[data-cod-msj]').textContent = pr.promo ? (pr.promo.error || pr.promo.nota || 'Código aplicado: −' + clp(pr.promo.valor)) : ''; recordar(); resumen(D); }
-    else if (e.target.closest('[data-pagar]')) { R.pagar(st.neg, st.res.id, st.res.precio.deposito); st.res = R.leer(st.neg).reservas.filter(function (r) { return r.id === st.res.id; })[0]; st.paso = 4; pintar(); }
+    else if (e.target.closest('[data-pagar]')) { var pg = R.pagar(st.neg, st.res.id, st.res.precio.deposito); if (pg && pg.error) { alert(pg.error); st.res = null; st.paso = 2; pintar(); return; } st.res = R.leer(st.neg).reservas.filter(function (r) { return r.id === st.res.id; })[0]; st.paso = 4; pintar(); }
     else if (e.target.closest('[data-soltar]')) { soltar(); pintar(); }
     else if (e.target.closest('[data-ics]')) descargarIcs();
     else if (e.target.closest('[data-nueva]')) { st.paso = 1; st.sel = { personas: 2 }; st.res = null; st.codigo = ''; pintar(); }

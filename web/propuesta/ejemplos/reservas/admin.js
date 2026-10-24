@@ -190,7 +190,7 @@
     if ((x = e.target.closest('[data-rango]'))) { rango = +x.dataset.rango; pintar(); return; }
     if ((x = e.target.closest('[data-acc]'))) {
       var id = x.dataset.id, r = D.reservas.filter(function (z) { return z.id === id; })[0], a = x.dataset.acc;
-      if (a === 'pagar') R.pagar(neg, id, r.precio.total);
+      if (a === 'pagar') { var pg = R.pagar(neg, id, r.precio.total); if (pg && pg.error) alert(pg.error); }
       else if (a === 'cancelar') { var rb = R.reembolso(D, r); if (confirm('Cancelar ' + r.codigo + '. Según la política se devuelve el ' + rb.porcentaje + ' % de lo pagado: ' + clp(rb.monto) + '. ¿Seguir?')) R.cancelar(neg, id, 'negocio'); }
       else R.estado(neg, id, a);
       return;

@@ -816,3 +816,9 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 - **Arreglo en cabañas:** `cuadro()` de `sitio.js` ahora mide todo antes de escribir y solo escribe lo que cambió (antes forzaba 3 recálculos de diseño por cuadro); en celular (≤ 900 px) la barra fija y las dos cajas de vidrio de `#adentro` pasan de `backdrop-filter: blur()` a un fondo casi opaco (se ve igual y no se re-desenfoca en cada cuadro).
 - **Arreglo en barbería:** mismo orden lectura → escritura en `barberia.js`; las polaroids heredan `--py` del collage (una escritura en vez de seis); las fotos con parallax y las polaroids (gris, sombra, filtro) van en capa propia (`will-change: transform`, solo con movimiento activado).
 - **Resultado:** `scroll.mjs` sobre los dos, 3 rondas: 4/4, 4/4 y 3/4 (la falla, 47 px con umbral 40, fue con la auditoría de 6 agentes corriendo en paralelo; la máquina estaba cargada). Antes: cabañas fallaba siempre.
+
+## 2026-10-24 · Auditoría: doble venta en reservas corregida y publicación final
+
+- La auditoría (6 frentes) alcanzó a confirmar una falla alta: `pagar()` reactivaba una retención cancelada o vencida y la misma unidad quedaba vendida dos veces. Corregido en `reservas/motor.js` (`estado()` rechaza pagar/confirmar una reserva cancelada o con retención vencida y devuelve `{error}`); `reservar.js` vuelve al paso 2 y `admin.js` avisa.
+- **Sin revisar:** el resto de los hallazgos de la auditoría (otros 100+ verificadores se cortaron por el límite de uso). Pendiente: relanzarla con `resumeFromRunId: wf_67573c7e-01e`. Hallazgo parcial conocido: una reserva cancelada igual recibe recordatorio y petición de opinión (`motor.js`, `programarAvisos`).
+- Check completo 24/24 sin observaciones. Publicado en la vista previa `ejemplos`; Production sin tocar (espera datos de pagos de Benjamín).

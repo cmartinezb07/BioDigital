@@ -1,6 +1,6 @@
-# Check del sitio · 23 de octubre de 2026 a las 3:43 a. m.
+# Check del sitio · 24 de octubre de 2026 a las 2:08 p. m.
 
-Revisado en: http://localhost:4321 · 23 de 23 páginas sin observaciones.
+Revisado en: http://localhost:4321 · 24 de 24 páginas sin observaciones.
 Para repetirlo: `node web/herramientas/check.mjs` (vista previa) o `node web/herramientas/check.mjs http://localhost:4321` (local).
 
 ## 1. Revisión automática (celular 390 px y escritorio 1440 px)
@@ -25,8 +25,9 @@ Criterios (de la skill crear-sitio-web): sin desborde horizontal, textos de 12 p
 | [Ejemplo · Restaurante (menú 3D y pedidos)](http://localhost:4321/ejemplos/fogon-del-sur/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 11/11 |
 | [Restaurante · Cocina](http://localhost:4321/ejemplos/fogon-del-sur/cocina/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Restaurante · Repartidor](http://localhost:4321/ejemplos/fogon-del-sur/repartidor/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| [Restaurante · Panel del dueño](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
-| [Sistema de reservas (cliente)](http://localhost:4321/ejemplos/reservas/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 14/14 |
+| [Restaurante · Panel del dueño (caso base: servicio automático)](http://localhost:4321/ejemplos/fogon-del-sur/panel/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 13/13 |
+| [Pastelería · Carta](http://localhost:4321/ejemplos/casa-dulce/carta/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
+| [Sistema de reservas (cliente)](http://localhost:4321/ejemplos/reservas/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 16/16 |
 | [Sistema de reservas (panel)](http://localhost:4321/ejemplos/reservas/admin/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |
 | [Fidelización (cliente)](http://localhost:4321/ejemplos/fidelizacion/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 6/6 |
 | [Fidelización (caja del local)](http://localhost:4321/ejemplos/fidelizacion/local/) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — |

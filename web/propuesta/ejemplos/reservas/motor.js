@@ -243,6 +243,7 @@
   function estado(id, rid, nuevo, extra) {
     return cambiar(id, function (d) {
       var r = d.reservas.filter(function (x) { return x.id === rid; })[0]; if (!r) return null;
+      if ((nuevo === 'pagada' || nuevo === 'confirmada') && (r.estado === 'cancelada' || (r.estado === 'retenida' && r.expira && r.expira < Date.now()))) return { error: 'La retención venció y la fecha se liberó. Haz una reserva nueva.' };   // no se revive: la fecha pudo venderse a otra persona
       r.estado = nuevo; r.historial.push({ estado: nuevo, t: Date.now() }); if (extra) Object.keys(extra).forEach(function (k) { r[k] = extra[k]; });
       if (nuevo === 'confirmada' || nuevo === 'pagada') { r.expira = null; programarAvisos(d, r, 'confirmacion'); }
       if (nuevo === 'cancelada') { aviso(d, r, 'cancelacion', Date.now()); avisarEspera(d, r); }

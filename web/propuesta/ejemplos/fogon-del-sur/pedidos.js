@@ -17,6 +17,8 @@
     negocio: R.nombre,
     local: { lat: -36.8270, lng: -73.0503, dir: '' },
     mesas: 12, minimoDelivery: 8000,
+    pagoEnLinea: true,   // la demostración ofrece un pago en línea de prueba; un local real lo activa recién con su propia cuenta de pago
+    servicios: ['mesa', 'retiro', 'delivery'],   // cómo recibe pedidos este local (lo define su carta publicada)
     prepBase: 8, prepPorItem: 2, prepMax: 45,   // minutos; si el plato trae su propio tiempo (prep), se usa ese
     kmh: 22,                                     // velocidad media del reparto en ciudad (supuesto)
     pistas: R.pistas || {},
@@ -28,6 +30,8 @@
     ['mesas', 'minimoDelivery', 'prepBase', 'prepPorItem', 'prepMax', 'kmh'].forEach(function (k) { if (c[k] != null) CONFIG[k] = c[k]; });
     if (c.local) CONFIG.local = Object.assign({}, CONFIG.local, c.local);
     if (c.comunas) CONFIG.comunas = c.comunas;
+    if (Array.isArray(c.servicios) && c.servicios.length) CONFIG.servicios = c.servicios;
+    if (typeof c.pagoEnLinea === 'boolean') CONFIG.pagoEnLinea = c.pagoEnLinea;
   }
   // Estados con su color. El nombre y el texto cambian según cómo se pidió: en la mesa, para retirar o con delivery.
   var ESTADOS = {

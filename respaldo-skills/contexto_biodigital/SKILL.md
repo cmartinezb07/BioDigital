@@ -7,28 +7,25 @@ description: Contexto completo de Bío Digital (startup de 5 estudiantes UdeC en
 
 **Responder siempre en español.** Proyecto: `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` · Repo privado: https://github.com/cmartinezb07/BioDigital · Antes de nada lee `MEMORY.md`, `memoria/estado-actual.md` y el final de `memoria/decisiones.md` (bitácora; la más reciente está al final).
 
-## PRÓXIMO CHAT — leer primero (estado al 24-oct-2026)
+## PRÓXIMO CHAT — leer primero (estado al 24-oct-2026, noche)
 
-**Hecho el 24-oct (pedido del usuario: "que todo esté interconectado, no una demo"):**
-- **Conexión en la nube** de pedidos (Fogón del Sur), reservas y fidelización: base Supabase propia `biodigital-demos` (id `xoetybrsbuxcdoamcaeb`), roles por PIN, el cliente ve solo lo suyo. **Leer `memoria/conexion-nube.md`** (arquitectura, PIN de la demo, flujo, delivery con GPS paso a paso, costos, límites).
-- Fogón del Sur: el pedido llega a la cocina al instante; pago en línea (de prueba) → `pagar/`; efectivo → directo al seguimiento; el seguimiento cambia según mesa, retiro o delivery (mapa solo en delivery); **nada automático** (la cocina presiona cada paso, tiempos por plato); el repartidor comparte GPS; el dueño ve todo.
-- **Juegos nuevos** (`fogon-del-sur/juego.js`): Zip, Queens, Tango y Sudoku mini. El usuario pidió "Went": no es un juego conocido de LinkedIn, se dejó Sudoku mini; **preguntarle cuál era**.
-- **Menú 3D y realidad aumentada quitados** de la página, la carta, los formularios y el catálogo (el usuario lo posterga: "un desafío más adelante"). La skill crear-menu-digital conserva la técnica 3D como referencia futura.
-- Pruebas: `check.mjs` (páginas + caso base conectado + `nube-e2e.mjs`), todo sumado. Publicado en la vista previa y en GitHub.
-**Sistema de menú digital como plantilla (24-oct noche, pedido del usuario "implementa los cambios posibles"):**
-- Reglas de pedidos **en el servidor** (Supabase `biodigital-demos`): precios contra la carta publicada, opciones, estados por rol (cliente/cocina/reparto/dueño), un pedido "Nuevo" por sesión, **modificar el MISMO pedido solo en "recibido"** (versión `rev`, versiones anteriores en `ediciones`), repartidor único. Probado: `web/herramientas/pedidos-reglas-e2e.mjs` (62) y `nube-e2e.mjs` (25).
-- Páginas de Fogón: carta (datos desde `carta.js`, no HTML fijo), `mis-pedidos/`, `pedido/` (seguimiento + modificar), `cocina/`, `repartidor/`, `panel/` (dueño: Pedidos en vivo, Carta, Estadísticas, Opiniones, Negocio y equipo). Config por local: `restaurante.config.js`.
-- **Plantilla:** `node web/herramientas/nuevo-restaurante.mjs --id x --nombre "X"` (ver `memoria/plantilla-restaurante.md`). Los SQL con PIN quedan en `web/herramientas/restaurantes/` (fuera de git).
-- **Precios propuestos (no aprobados, sitio sin cambios):** `memoria/precios-menu-digital.md` (instalación $149.000 / $249.000 / $349.000 + mensualidad $14.900 / $24.900 / $34.900, netos; cifras de terceros aproximadas).
-- **Dirección única (24-oct noche):** trabajar y publicar solo en https://biodigital-bgw.pages.dev (proyecto `biodigital`, rama `main`). No desplegar a `biodigital-propuesta` (Production de Benjamín, pagos) ni a la vista previa `ejemplos` salvo que el usuario lo pida. Mercado Pago funciona por enlaces fijos; el cobro por API de prueba solo existe en `payments-test`. Ver `memoria/decisiones.md`.
-- **Restaurante = dos páginas (24-oct noche):** (1) `fogon-del-sur/` menú y pedir; (2) `fogon-del-sur/panel/` acceso único del equipo con tres códigos (cocinero 247135, repartidor 913572, jefe 482916 en la demo): el código decide si entras a cocina, reparto o administración. La portada muestra 4 imágenes seguidas (menú, pedidos, cocina, panel) que llevan a una de esas dos; las capturas de cocina y panel salen de una copia con pedidos de muestra (`web/herramientas/semillas-restaurante.mjs`, negocio `captura-fogon`), sin tocar los pedidos reales.
-- Pruebas nuevas en `check.mjs`: `mis-pedidos.js`, `fogon-servicio.js` (reescrito), `panel-dueno.js`. Pendiente: guardar en el repo el SQL final de las migraciones 003-005, Supabase Pro antes del primer cliente real, `web/menu/` antiguo aún tiene 3D.
+**Dónde trabajar y publicar:** solo https://biodigital-bgw.pages.dev (proyecto Cloudflare `biodigital`, rama `main`): `node web/propuesta/fuentes/generar.mjs --publico 8`, `npx wrangler pages deploy --project-name=biodigital --branch=main --commit-dirty=true`, y después `node web/propuesta/fuentes/generar.mjs 8`. No desplegar a `biodigital-propuesta` (Production de Benjamín, pagos) ni a su vista previa `ejemplos` salvo que el usuario lo pida; no borrar esos proyectos sin confirmar (tienen links ya compartidos y el entorno de pruebas de pagos). Mercado Pago funciona por **enlaces fijos** (`enlaces-pago.mjs`); el cobro por API de prueba solo existe en `payments-test`. Deploys, commits y push: solo cuando el usuario lo pide.
+
+**El sistema de menú digital para restaurantes (listo, es la plantilla de los clientes):**
+- Demo: `web/propuesta/ejemplos/fogon-del-sur/`, **dos páginas**: (1) el menú para ver la carta y pedir; (2) `panel/`, acceso único del equipo con tres códigos (demo: cocinero 247135, repartidor 913572, jefe 482916): el código decide si entras a cocina, reparto o administración (pedidos en vivo, carta editable, estadísticas, opiniones, negocio y equipo).
+- Reglas en el servidor (Supabase `biodigital-demos`, id `xoetybrsbuxcdoamcaeb`): precios y opciones contra la carta publicada, estados por rol, un pedido "Nuevo" por cliente, modificar el mismo pedido solo mientras está "recibido", un repartidor por entrega. Cada local es un `negocio` aislado. Leer `memoria/conexion-nube.md`, `memoria/plantilla-restaurante.md` y la skill `crear-menu-digital` (`referencias/sistema-restaurante.md`).
+- **Plug and play:** formulario del cliente → `node web/herramientas/aplicar-formulario.mjs respuestas.json` → SQL de accesos → `cargar-carta-base.mjs` → prueba de humo → panel → publicar. Todo está en la skill `crear-menu-digital`; probado de punta a punta con un restaurante de prueba.
+- Portada y galería: el carrusel muestra 4 imágenes seguidas (menú, pedidos con repartidor, cocina, panel) que llevan a esas dos páginas; las capturas de cocina y panel salen de una copia con pedidos de muestra (`semillas-restaurante.mjs`, negocio `captura-fogon`) sin tocar pedidos reales.
+- 3D y AR **postergados** (no se ofrecen). "Went" (juego): no se pudo identificar; la demo tiene Zip, Queens, Tango y Sudoku mini; **preguntarle al usuario cuál era**.
+- Pruebas: `check.mjs` (27 páginas + nube; ≈ 17 min; no usar el panel mientras corre), `pedidos-reglas-e2e.mjs` (62), `nube-e2e.mjs` (25), `node --test` (38). Última corrida completa: 27/27 el 24-oct.
+- Precios del sistema: **propuesta sin aprobar** en `memoria/precios-menu-digital.md` (instalación $149.000 / $249.000 / $349.000 y mensualidad $14.900 / $24.900 / $34.900, netos; cifras de terceros aproximadas). El catálogo del sitio sigue igual.
 
 **Pendiente (en este orden):**
-1. Auditoría con varios agentes (script en `C:\Users\criss\.claude\projects\C--Users-criss-OneDrive-Escritorio-Proyecto-DCP\5d9893e0-a37b-4dd6-b25d-821ab54a93cf\workflows\scripts\auditoria-sistemas-biodigital-wf_efb7dee6-743.js`; corrida parcial el 23-oct, solo el primer hallazgo estaba verificado y ya se corrigió). Conviene relanzarla sobre el código conectado nuevo.
-2. Decidir con el equipo: precio de las versiones completas (a cotizar; separar costo único de la base de datos, mapas y avisos recurrentes), PIN reales por local, y si cada cliente tiene su propio proyecto Supabase.
-3. Production sigue sin tocarse hasta los datos de pagos de Benjamín. Vista previa: `node web/propuesta/fuentes/generar.mjs --publico 8` y `npx wrangler pages deploy --branch=ejemplos --commit-dirty=true` → https://ejemplos.biodigital-propuesta.pages.dev. Espejo con otro nombre: `--project-name=biodigital --branch=main` → https://biodigital-bgw.pages.dev (después `node web/propuesta/fuentes/generar.mjs 8`).
-4. Los otros ejemplos de rubro (cabañas, barbería, etc.) usan el módulo de reservas **solo local** (demo); si se quiere que sean reales, llamar a `Reservas.conectar(negocio)` como hace `ejemplos/reservas/`.
+1. Que el equipo apruebe los precios del sistema y se actualice el catálogo.
+2. Benjamín: probar un pago real con un enlace desde biodigital-bgw y decidir si el cobro por API se traslada; recién después decidir qué hacer con `biodigital-propuesta` (alternativa a borrarlo: dejarlo redirigiendo).
+3. Antes del primer cliente real: Supabase Pro, PIN privados, pago en línea con su cuenta, privacidad revisada con el negocio, guardar en el repo el SQL final de las migraciones 003–005 (`web/herramientas/nube-sql/`), bloquear en el servidor los servicios que el local no atiende, y hashear los PIN.
+4. Relanzar la auditoría con varios agentes sobre el código conectado (script en `C:\Users\criss\.claude\projects\C--Users-criss-OneDrive-Escritorio-Proyecto-DCP\5d9893e0-a37b-4dd6-b25d-821ab54a93cf\workflows\scripts\auditoria-sistemas-biodigital-wf_efb7dee6-743.js`).
+5. `web/menu/` (versión antigua) aún tiene 3D; los otros ejemplos de rubro usan reservas solo local (llamar a `Reservas.conectar(negocio)` si se quieren reales).
 
 **Notas técnicas:** en Git Bash las rutas que empiezan con "/" se convierten en rutas de Windows: a `scroll.mjs` pasarle rutas sin barra inicial. El servidor local (preview `maquetas`, puerto 4321) se apaga al reiniciar la sesión: encenderlo con preview_start. Los proyectos gratis de Supabase se pausan tras 1 semana sin uso: si las demos fallan, despertar `biodigital-demos`. Las pruebas escriben en la base real y borran lo suyo; si queda algo, `nube_vaciar` con el PIN del dueño.
 **Uso:** el usuario autorizó gastar el límite completo del plan en esta etapa.
@@ -68,33 +65,26 @@ Página web desde $49.990 · Videos para redes desde $9.990 · Menú digital des
 - **Pendiente en Supabase (panel web):** Site URL = `https://main.biodigital-panel.pages.dev`; largo mínimo de contraseña 11; SMTP propio (el correo de prueba solo envía al dueño y los compañeros no reciben la confirmación). Cuenta de Christhoper ya creada y confirmada a mano. Para agregar compañeros: pestaña Equipo → Autorizar; luego ellos "Crear mi cuenta" (si no les llega el correo, confirmar la cuenta desde SQL).
 - El proyecto Supabase `agente-whatsapp` (otro proyecto del usuario, con datos reales) está **pausado, no borrado**, para liberar el cupo gratis de 2 proyectos.
 
-## Menú digital (`web/menu/`)
-- Subrama de crear-sitio-web: carta estilo restaurante (café y dorado, Playfair + DM Sans) con 5 categorías (Entradas, Ensaladas, Platos de fondo, Postres, Bebestibles), favoritos, buscador, "Ver en tu mesa" (3D y AR con model-viewer 3.5.0 + SRI).
-- Demo ficticia "Fogón del Sur": https://main.menu-demo.pages.dev (noindex). `node generar-menu.mjs --opciones` genera 5 estilos. Fotos de prueba que mandó el usuario; los discos planos (empanadas 26 cm, carne asada 28 cm) y la brocheta (modelo de muestra) tienen botón AR.
-- **(Postergado, ya no está en el sitio)** Estado de la AR: probada en un iPhone 15 Pro con un plato plano desde foto (se apoya en la mesa a tamaño real). **Falta** probar con un escaneo 3D real (Polycam instalado; plan gratis puede llevar marca de agua y tiene tope en el modo fotos: probar exportación; alternativas Scaniverse y RealityScan) y en Android.
-- Herramienta de fotos: `foto-a-modelo.py` (tarjetas, discos y `og`) con Pillow.
+## Menú digital
+- **Sistema completo para restaurantes:** `web/propuesta/ejemplos/fogon-del-sur/` (ver "PRÓXIMO CHAT" y la skill `crear-menu-digital`). **Carta QR simple (estática):** generador de la skill (`generar-menu.mjs`); la versión antigua con 3D vive en `web/menu/` (https://main.menu-demo.pages.dev, noindex) y está **archivada**: el 3D/AR se retomará más adelante (la técnica sigue en `referencias/captura-3d.md` de la skill).
 
 ## Skills y cómo se relacionan
 - **`crear-sitio-web`** (base): flujo completo de un sitio (preguntas → maquetas → sitio final → seguridad → publicación → checklist), formulario de 59 preguntas, mascota, requisitos SEO/seguridad.
-- **`crear-menu-digital`** (subrama): depende de la anterior y la especializa: formulario de gustos y forma (60 preguntas), 5 estilos, generador (SEO, JSON-LD Restaurant/Menu, CSP, SRI, privacidad, 404, sitemap, llms.txt), captura 3D, verificación y entrega. Su `requisitos-menu.md` dice qué se hereda, adapta o no aplica.
+- **`crear-menu-digital`** (subrama, plug and play): depende de la anterior. Del formulario del cliente (64 preguntas) a un restaurante funcionando con `aplicar-formulario.mjs`: carta editable, pedidos mesa/retiro/delivery, cocina, reparto, panel del jefe con estadísticas, reglas en el servidor, prueba de humo y publicación; y la carta QR simple. Su `referencias/sistema-restaurante.md` resume la arquitectura.
 - **`contexto_biodigital`** (esta): memoria operativa del proyecto. Reemplaza a `contexto_pagina_web`.
 - Copias del repo en `respaldo-skills/`. El formulario del menú se arma sobre el motor del formulario de página web (una sola fuente).
 
 ## Publicación (Cloudflare Pages; la ejecuta el usuario)
-Proyectos: `biodigital-propuesta` (sitio), `biodigital-panel`, `menu-demo`. Comandos desde la raíz del proyecto:
-- Sitio: `node web/propuesta/fuentes/generar.mjs --publico 8` y `npx wrangler pages deploy web/propuesta --project-name=biodigital-propuesta --branch=main --commit-dirty=true`
-- Panel: `npx wrangler pages deploy web/panel --project-name=biodigital-panel --branch=main --commit-dirty=true`
-- Menú demo: `npx wrangler pages deploy web/menu --project-name=menu-demo --branch=main --commit-dirty=true`
+- **Sitio de Bío Digital (demo, el que se usa): https://biodigital-bgw.pages.dev** → `node web/propuesta/fuentes/generar.mjs --publico 8` y `npx wrangler pages deploy --project-name=biodigital --branch=main --commit-dirty=true`; luego `node web/propuesta/fuentes/generar.mjs 8` (deja la versión de trabajo; la pública no se commitea).
+- Otros proyectos que existen y **no se tocan sin pedirlo:** `biodigital-propuesta` (Production de Benjamín con pagos; rama `ejemplos` = vista previa; `payments-test` = pruebas de pago), `biodigital-panel` (panel interno), `menu-demo` (menú antiguo).
+- **Un restaurante de cliente** se publica solo, desde su carpeta autosuficiente: `npx wrangler pages deploy web/propuesta/ejemplos/<id> --project-name=<id> --branch=main --commit-dirty=true`.
 - **Trampa conocida:** los proyectos creados por el primer deploy quedan con otra rama de producción: `proyecto.pages.dev` da 404 y `main.proyecto.pages.dev` abre. Arreglo: Cloudflare → proyecto → Settings → rama de producción = `main`.
-- Antes de pegar el link en Instagram y WhatsApp Business: publicar la **versión pública** del sitio. Hoy el link vigente es https://biodigital-propuesta.pages.dev (Production, sin los sistemas nuevos). Mientras dure la fase de pagos, publicar en la vista previa: `npx wrangler pages deploy --branch=ejemplos --commit-dirty=true` desde la raíz → https://ejemplos.biodigital-propuesta.pages.dev
 
-## Pendiente (consolidado)
-- Probar la AR con un escaneo real (Polycam: exportar GLB y ver si trae marca de agua) y en Android; fijar el **precio de la versión interactiva** y quién cobra los cambios de carta.
-- Ajustes de Supabase (Site URL, largo 11, SMTP); autorizar a los compañeros; publicar panel, sitio (versión pública) y menú demo con lo último; instalar `qrcode` o decidir el generador de QR (pedir permiso).
-- Valor del hosting para reservas/menú/fidelización (si necesitan más que una página estática); capital semilla $80.000 en Caja como "Capital aportado".
-- Acortar la página principal (el usuario define criterios con un amigo); probar a ojo la burbuja del tema; confirmar variante de logo.
+## Pendiente (consolidado; lo urgente está en "PRÓXIMO CHAT")
+- Probar la AR con un escaneo real y en Android cuando se retome el 3D; quién cobra los cambios de carta.
+- Ajustes de Supabase (Site URL, largo 11, SMTP); autorizar a los compañeros; generador de QR (pedir permiso antes de instalar `qrcode`).
+- Acortar la página principal (el usuario define criterios con un amigo); confirmar variante de logo; capital semilla $80.000 en Caja como "Capital aportado".
 - Preguntas viejas: Jornada de Terreno, plan de Claude y quién lo paga, piloto del bot de WhatsApp.
-- Todo está en GitHub (commits del 23-oct). Commit y push al cerrar cada tanda de trabajo, cuando el usuario lo pida.
 
 ## Cómo verificar
 Navegador integrado a 1440 y 390 px: sin desborde (`scrollWidth`), textos ≥ 12 px, áreas táctiles ≥ 44 px, consola sin errores, recursos sin 404. Los `.reveal` quedan en opacidad 0 hasta entrar en pantalla. **El panel del navegador se "congela" si la ventana está oculta**: un `screenshot` lo despierta (los temporizadores y la carga de modelos pueden quedar a medias). Previews: `maquetas` (4321, sitio), `panel` (4322), `menu` (4323), todos con `web/servir.py` sin caché (`.claude/launch.json`).

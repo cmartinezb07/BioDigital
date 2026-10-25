@@ -23,6 +23,8 @@ La carta de ejemplo trae **24 platos con fotos con licencia** (Wikimedia Commons
 
 ## Crear un restaurante nuevo (paso a paso)
 
+**Atajo (recomendado):** `node web/herramientas/aplicar-formulario.mjs respuestas.json --id mirador [--url https://…]` hace los pasos 1 y 2 desde las respuestas del formulario del cliente (carta, comunas, opciones, equipo) y deja listos el SQL, la prueba de humo y los pendientes. Flujo completo en la skill `crear-menu-digital`.
+
 1. `node web/herramientas/nuevo-restaurante.mjs --id mirador --nombre "El Mirador"` (agregar `--demo` solo para demostraciones: muestra los PIN en pantalla).
    - Copia la carpeta de la plantilla a `web/propuesta/ejemplos/mirador/`, cambia el nombre en todas las páginas y escribe `restaurante.config.js` con PIN al azar.
    - Escribe `web/herramientas/restaurantes/mirador-instalar.sql` con los accesos (dueño, cocina, repartidor). Esa carpeta **no se sube a git** (tiene los PIN).

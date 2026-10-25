@@ -59,6 +59,20 @@ export const FORM_MENU = [
     { id: 'agotados', t: 'uno', q: 'Si se te acaba un plato, ¿quieres poder marcarlo como agotado?', ops: [['Sí, es muy común'], ['A veces'], ['No hace falta']] },
   ]},
 
+  { t: 'Pedidos y delivery', n: 'Solo si quieres que tus clientes pidan desde el celular. Con esto dejamos andando los pedidos, la cocina y el reparto.', p: [
+    { id: 'servicios', t: 'varios', q: '¿Cómo quieres recibir pedidos?', req: 1, ops: [
+      ['En la mesa|El cliente escanea el QR de su mesa y pide'], ['Para retirar en el local'], ['Delivery con repartidor propio|Tú o tu gente reparten; el cliente ve al repartidor en el mapa'], ['Solo mostrar la carta, sin pedidos|Es el menú simple, sin cocina ni reparto'],
+    ]},
+    { id: 'comunas_envio', t: 'larga', q: 'Si haces delivery: ¿a qué comunas llegas y cuánto cobras de envío?', a: 'Una comuna por línea, con el valor. Ejemplo: Concepción: 1500. Talcahuano: 2500.' },
+    { id: 'minimo_delivery', t: 'texto', q: 'Si haces delivery: ¿cuál es el pedido mínimo?', a: 'En pesos. Ejemplo: 8000. Si no tienes, escribe "sin mínimo".' },
+    { id: 'tiempos', t: 'larga', q: '¿Cuánto demora preparar tus platos?', a: 'En minutos, un plato por línea. Ejemplo: Lomo a lo pobre: 25. Si no sabes, déjalo en blanco y usamos tiempos típicos que tú puedes cambiar después.' },
+    { id: 'opciones_platos', t: 'larga', q: '¿Algún plato tiene opciones para elegir (tamaño, término, extras)?', a: 'Un plato por línea. Ejemplo: Lomo: Término (obligatorio): Jugoso, A punto, Bien cocido; Agregar (hasta 2): Palta +1500, Tocino +1200. Lo que va con + es lo que suma al precio.' },
+    { id: 'equipo', t: 'larga', q: '¿Quiénes van a trabajar con el sistema?', req: 1, a: 'Un nombre por línea con su función: cocina o reparto. Ejemplo: Ana - cocina. Pedro - reparto. Cada uno recibe su código para entrar a lo suyo; tú entras a todo como jefe.' },
+    { id: 'pago_online', t: 'uno', q: '¿Quieres que el cliente pueda pagar en línea?', ops: [
+      ['Solo pago en el local o al recibir'], ['Quiero pago en línea|Con tu cuenta de Mercado Pago; la comisión de cada pago la paga el local'], ['No sé: explíquenme'],
+    ]},
+  ]},
+
   { t: 'Cómo te gustaría que se vea', n: 'Mueve cada escala hacia el lado que mejor describe tu local. No pienses en diseño: piensa en cómo se siente entrar.', p: [
     { id: 'e_clasico', t: 'escala', q: 'Estilo', izq: 'Clásico, de toda la vida', der: 'Moderno y actual', req: 1 },
     { id: 'e_sobrio', t: 'escala', q: 'Presencia', izq: 'Sobrio y tranquilo', der: 'Llamativo y con energía', req: 1 },

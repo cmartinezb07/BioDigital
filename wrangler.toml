@@ -1,4 +1,4 @@
-name = "biodigital-propuesta"
+name = "biodigital"
 pages_build_output_dir = "./web/propuesta"
 compatibility_date = "2026-10-11"
 
@@ -6,15 +6,7 @@ compatibility_date = "2026-10-11"
 PAYMENTS_ENABLED = "false"
 
 [env.preview.vars]
-# Alias estable de la rama Preview `payments-test`. Cloudflare lo activará
-# cuando exista el primer despliegue de esa rama.
-CHECKOUT_SITE_URL = "https://payments-test.biodigital-propuesta.pages.dev"
 PAYMENTS_ENABLED = "false"
-
-[[env.preview.d1_databases]]
-binding = "DB"
-database_name = "biodigital-payments-test"
-database_id = "221dc879-c80a-4c95-b8e0-62b36af30c9d"
 
 # Antes de habilitar pagos se debe configurar CHECKOUT_SITE_URL con el origen
 # HTTPS real. Las rutas de retorno tienen valores predeterminados documentados
@@ -24,4 +16,5 @@ database_id = "221dc879-c80a-4c95-b8e0-62b36af30c9d"
 # entorno de prueba, nunca aquí.
 # MP_LIVE_MODE debe permanecer en "false" mientras se usen usuarios de prueba.
 
-# La base anterior es exclusivamente de prueba y no debe enlazarse a Production.
+# El entorno payments-test permanece en biodigital-propuesta y no se publica
+# con este archivo. Ver MIGRACION-SITIO.md. No enlazar su D1 a este proyecto.

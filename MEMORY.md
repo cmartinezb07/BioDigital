@@ -1,5 +1,7 @@
 # Índice — memoria del proyecto Bío Digital
 
+- [Sitio principal y migración](MIGRACION-SITIO.md) — trabajar y publicar en `biodigital` (biodigital-bgw.pages.dev); la dirección antigua redirige y conserva payments-test.
+
 - [Menú digital: plantilla de restaurante](memoria/plantilla-restaurante.md) — estructura vs datos, aislamiento por negocio y cómo crear un restaurante nuevo con nuevo-restaurante.mjs
 - [Precios del menú digital](memoria/precios-menu-digital.md) — comparables (Fudo, MenuTiger, apps de delivery), costos únicos vs recurrentes y 3 tramos propuestos (pendiente de aprobación)
 - [Conexión en la nube](memoria/conexion-nube.md) — pedidos, reservas y fidelización conectados entre equipos (Supabase `biodigital-demos`): roles por PIN, flujo del restaurante, GPS del delivery paso a paso, costos y límites.

@@ -152,7 +152,9 @@ Para regenerar las maquetas 3 a 8 después de cambiar textos:
 node web/propuesta/fuentes/generar.mjs
 ```
 
-El sitio publicado está en https://biodigital-propuesta.pages.dev
+El sitio publicado está en https://biodigital-bgw.pages.dev.
+La dirección anterior redirige a la nueva. Publicación y entornos:
+[MIGRACION-SITIO.md](MIGRACION-SITIO.md).
 
 ---
 

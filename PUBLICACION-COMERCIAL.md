@@ -1,5 +1,10 @@
 # Publicación comercial con enlaces de Mercado Pago
 
+**Sitio vigente:** https://biodigital-bgw.pages.dev (proyecto `biodigital`).
+La dirección anterior redirige a la nueva. Para publicar, seguir
+[MIGRACION-SITIO.md](MIGRACION-SITIO.md); las referencias al despliegue anterior
+al final de este documento son históricas.
+
 Estado: preparación en la rama `feat/pagos-comerciales-por-enlace`, basada en
 `origin/main` 9b43f8f. Se retiró el producto de $100 y se conservan los cambios
 recientes de ejemplos, reservas y páginas de información.
@@ -107,7 +112,7 @@ Production ni habilitar los endpoints API como parte de este lanzamiento.
 
 ```powershell
 $env:CLOUDFLARE_ACCOUNT_ID='1f79804ece4d02d62f0df05f07c23ad2'
-npx wrangler pages deploy web/propuesta --project-name=biodigital-propuesta --branch=main
+npx.cmd wrangler pages deploy web/propuesta --project-name=biodigital --branch=main
 ```
 
 Subir código a GitHub y publicar con Wrangler son pasos distintos en el flujo

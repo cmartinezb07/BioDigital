@@ -16,7 +16,7 @@ const c2 = R.crear('cabanas', selC, { nombre: 'Prueba Dos', correo: 'b@b.cl', te
 ok('1c la Casa Familiar (1 unidad) no se vende dos veces', !!c2.error, c2.error);
 // 2. Retención vencida se libera sola
 R.guardarConfig('cabanas', () => {});
-const d0 = R.leer('cabanas'); d0.reservas[0].expira = Date.now() - 1000; localStorage.setItem('bdres-v1-cabanas', JSON.stringify(d0));
+const d0 = R.leer('cabanas'); d0.reservas[0].expira = Date.now() - 1000; localStorage.setItem('bdres-v1-' + (Reservas.AGENDA.negocio ? Reservas.AGENDA.negocio + '-' : '') + 'cabanas', JSON.stringify(d0));
 R.automatico('cabanas');
 ok('2 la retención sin pago se cancela y libera la fecha', R.leer('cabanas').reservas[0].estado === 'cancelada' && !R.validar(R.leer('cabanas'), selC));
 // 3. Pago y política de cancelación (con 7+ días de anticipación devuelve 100 %)
@@ -57,7 +57,7 @@ const hoyR = R.crear('cabanas', { recurso: 'araucaria', llegada: U.hoy(), salida
 R.pagar('cabanas', hoyR.reserva.id, hoyR.reserva.precio.deposito);
 R.automatico('cabanas');
 ok('8 al llegar el día queda "En curso" solo', R.leer('cabanas').reservas.find((x) => x.id === hoyR.reserva.id).estado === 'checkin');
-const d8 = R.leer('cabanas'); d8.reservas.find((x) => x.id === hoyR.reserva.id).hasta = Date.now() - 1000; localStorage.setItem('bdres-v1-cabanas', JSON.stringify(d8));
+const d8 = R.leer('cabanas'); d8.reservas.find((x) => x.id === hoyR.reserva.id).hasta = Date.now() - 1000; localStorage.setItem('bdres-v1-' + (Reservas.AGENDA.negocio ? Reservas.AGENDA.negocio + '-' : '') + 'cabanas', JSON.stringify(d8));
 R.automatico('cabanas');
 ok('8b al terminar queda "Completada" solo', R.leer('cabanas').reservas.find((x) => x.id === hoyR.reserva.id).estado === 'completada');
 ['cabanas', 'tours', 'medico'].forEach((x) => R.restablecer(x));

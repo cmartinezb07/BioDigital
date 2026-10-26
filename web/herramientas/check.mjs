@@ -38,6 +38,13 @@ const PAGINAS = [
   { nombre: 'Pastelería · Carta', ruta: '/ejemplos/casa-dulce/carta/' },
   { nombre: 'Sistema de reservas (cliente)', ruta: '/ejemplos/reservas/', prueba: 'reservas-sistema.js' },
   { nombre: 'Sistema de reservas (panel, pide PIN)', ruta: '/ejemplos/reservas/admin/' },
+  { nombre: 'Reservas · Pantallas del cliente de punta a punta (reservar, validar, modificar, cancelar)', ruta: '/ejemplos/reservas/?negocio=cabanas', prueba: 'reservas-ui.js' },
+  { nombre: 'Reservas · Panel del negocio de punta a punta (jefe, recepción, aviso en vivo, catálogo, bloqueos)', ruta: '/ejemplos/reservas/?negocio=cabanas', prueba: 'reservas-panel.js' },
+  { nombre: 'Reservas · Agenda de alojamiento (noches)', ruta: '/ejemplos/reservas/?negocio=cabanas', prueba: 'agenda-cliente.js' },
+  { nombre: 'Reservas · Agenda de tours (cupos)', ruta: '/ejemplos/reservas/?negocio=tours', prueba: 'agenda-cliente.js' },
+  { nombre: 'Reservas · Agenda de citas (centro médico)', ruta: '/ejemplos/reservas/?negocio=medico', prueba: 'agenda-cliente.js' },
+  { nombre: 'Reservas · Agenda de espacios (por horas)', ruta: '/ejemplos/reservas/?negocio=espacios', prueba: 'agenda-cliente.js' },
+  { nombre: 'Reservas · Agenda de salón de belleza (citas)', ruta: '/ejemplos/reservas/?negocio=salon', prueba: 'agenda-cliente.js' },
   { nombre: 'Fidelización (cliente)', ruta: '/ejemplos/fidelizacion/', prueba: 'fidelizacion.js' },
   { nombre: 'Fidelización (caja del local, pide PIN)', ruta: '/ejemplos/fidelizacion/local/' },
   { nombre: 'Cómo trabajamos', ruta: '/como-trabajamos/' },
@@ -92,6 +99,9 @@ if (!solo.length) {
   let out = '';
   try { out = execFileSync('node', ['web/herramientas/nube-e2e.mjs'], { cwd: raiz, encoding: 'utf8', timeout: 240000, stdio: ['ignore', 'pipe', 'ignore'] }); } catch (e) { out = e.stdout || ''; nube.fallo = out ? '' : String(e.message || e).split('\n')[0]; }
   try { nube.vals = Object.entries(JSON.parse(out)); } catch (e) { nube.fallo = nube.fallo || 'no se pudo leer el resultado'; }
+  // Reglas del servidor de las reservas (precio, cupos, políticas, roles, versiones): prueba directa contra la base, en un negocio propio de pruebas
+  try { const o2 = execFileSync('node', ['web/herramientas/reservas-reglas-e2e.mjs'], { cwd: raiz, encoding: 'utf8', timeout: 280000, stdio: ['ignore', 'pipe', 'ignore'] }); nube.vals.push(...Object.entries(JSON.parse(o2)).map(([k, v]) => ['Reservas › ' + k, v])); }
+  catch (e) { try { nube.vals.push(...Object.entries(JSON.parse(e.stdout || '')).map(([k, v]) => ['Reservas › ' + k, v])); } catch (e2) { nube.vals.push(['Reservas › reglas del servidor', 'FALLÓ: no se pudo correr']); } }
   console.log(nube.vals.length && nube.vals.every(([, v]) => v === 'ok') ? 'ok' : 'revisar');
 }
 const nubeOk = nube.vals.filter(([, v]) => v === 'ok').length;

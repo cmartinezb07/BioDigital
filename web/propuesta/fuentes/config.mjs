@@ -6,7 +6,8 @@ export const MAIL = 'biodigitalici@gmail.com';
 // Dominio .cl: lo registra NIC Chile. Valor informado por el equipo (12-oct-2026); verificar en nic.cl.
 export const DOMINIO_ANUAL = 10000;
 export const INSTAGRAM = 'biodigital.cl';
-export const SITIO = 'https://biodigital-bgw.pages.dev';
+// Dirección definitiva (dominio propio, comprado en NIC Chile el 25-oct-2026). La usan la dirección canónica, el sitemap y los datos para buscadores.
+export const SITIO = 'https://biodigitales.cl';
 // Base del panel interno (Supabase). La llave publicable es pública por diseño: solo permite ENVIAR solicitudes y formularios; leer exige ser del equipo.
 export const SUPABASE_URL = 'https://mkxxqhywwzsaeojfmkme.supabase.co';
 export const SUPABASE_KEY = 'sb_publishable_IY0ngSo4QeKmUFVQTTUTGw_jTudkX8Z';

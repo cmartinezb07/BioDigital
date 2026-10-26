@@ -1,5 +1,7 @@
 # Sistema de reservas completo · 23-oct-2026
 
+> **Actualización 26-oct-2026 (nivel menú digital):** el sistema se rehízo con reglas en el servidor (precio, depósito, disponibilidad con candado, límites de la política, estados por rol, versiones de la reserva), cliente con validación, "Mis reservas" y modificar/cancelar sobre la misma reserva, panel con jefe y recepción por PIN (aviso sonoro, catálogo en borrador → publicar, bloqueos, cobrar saldo), plantilla por negocio y herramienta formulario → agenda. Lo vigente: [plantilla-agenda.md](plantilla-agenda.md) y la skill `crear-sistemas-agendas`. Pruebas: 77 reglas del servidor (`reservas-reglas-e2e.mjs`), 17 por agenda (`agenda-cliente.js`), pantallas (`reservas-ui.js`, `reservas-panel.js`) y el motor local (`reservas-sistema.js`). Lo de abajo sigue valiendo como mapa de lo pedido y de la competencia; "Lo que falta para un cliente real" quedó parcialmente resuelto (base en la nube y panel con acceso por PIN: hecho; pagos, correos y WhatsApp reales: pendientes).
+
 > **Actualización 24-oct-2026:** `ejemplos/reservas/` y su panel están conectados en la nube (PIN por rol, cupos que no se venden dos veces, el cliente ve solo lo suyo). Se quitaron los datos de prueba automáticos. Lo vigente está en [conexion-nube.md](conexion-nube.md); lo de abajo es el historial del 23-oct.
 
 Encargo del usuario (23-oct): sistema de reservas completo y "todo automático" para hotel o cabañas, agencia de tours, centro médico, arriendo de espacios y salones. Demo en `web/propuesta/ejemplos/reservas/` (cliente) y `ejemplos/reservas/admin/` (panel). El módulo anterior (`_compartido/reservas.js`, nivel 1 por WhatsApp) sigue en los sitios de ejemplo y no se tocó.
@@ -10,7 +12,7 @@ Encargo del usuario (23-oct): sistema de reservas completo y "todo automático" 
 - `reservar.js` + `index.html`: lo que ve el cliente.
 - `admin.js` + `admin/index.html`: el panel del negocio.
 - `estilo.css`: estilos (claro y oscuro automáticos).
-- Prueba: `web/herramientas/pruebas/reservas-sistema.js` (14/14), sumada al check.
+- Pruebas: ver la actualización de arriba (el motor local sigue en `pruebas/reservas-sistema.js`, 16/16).
 
 ## Qué cubre (lo pedido → dónde está)
 
@@ -51,7 +53,7 @@ Fuentes: [Capterra, alternativas a FareHarbor](https://www.capterra.es/alternati
 
 ## Lo que falta para un cliente real
 
-1. **Varios equipos:** la demo guarda los datos en el navegador. Para producción, la misma interfaz va a una base en la nube (Supabase, ya en uso) con acceso del panel protegido por contraseña y segundo factor, como el panel interno.
+1. ~~Varios equipos~~ **Hecho (24 y 26-oct):** los datos viven en la base (Supabase) y el panel pide PIN por rol. Para producción falta guardar los PIN con hash y, si se quiere, segundo factor.
 2. Pagos reales (Mercado Pago u otra pasarela), envío real de correos y WhatsApp, lectura automática periódica de los iCal de los portales.
 3. Traducir los nombres de servicios y alojamientos (hoy se traduce la interfaz, no el contenido del negocio).
 4. Confirmar textos legales de cancelación y depósito con cada negocio.

@@ -105,12 +105,14 @@ a { color: var(--c1); }
 
 /* ---------- Panel de administración ---------- */
 .adm { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 18px; padding: 18px 0 96px; }
-@media (max-width: 900px) { .adm { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .adm { grid-template-columns: minmax(0, 1fr); } }
+.adm > * { min-width: 0; }
 .menu-adm { display: grid; gap: 2px; align-content: start; position: sticky; top: 76px; }
 @media (max-width: 900px) { .menu-adm { position: static; display: flex; overflow-x: auto; scrollbar-width: none; } .menu-adm button { flex: none; } }
 .menu-adm button { min-height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: none; text-align: left; cursor: pointer; color: var(--fg-2); }
 .menu-adm button[aria-current="page"] { background: var(--c1-s); color: var(--c1); font-weight: 600; }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .kpi { padding: 14px; border-radius: 14px; background: var(--bg-2); border: 1px solid var(--line); }
 .kpi span { display: block; font-size: 13px; color: var(--fg-3); }
 .kpi b { display: block; font-size: 26px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
@@ -146,3 +148,45 @@ a { color: var(--c1); }
 .form-l { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); align-items: end; }
 textarea.ics { width: 100%; min-height: 110px; font: 12px ui-monospace, monospace; padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-3); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* Campos con error: rojo, un temblor corto y el mensaje debajo (se corrige solo al arreglarlo) */
+.campo.mal input, .campo.mal select { border-color: var(--lleno); background: color-mix(in srgb, var(--lleno) 8%, var(--bg-2)); }
+.campo.mal label { color: var(--lleno); }
+.campo-err { display: block; min-height: 0; font-size: 13px; line-height: 1.35; color: var(--lleno); }
+.campo-err:empty { display: none; }
+.campo.sacude { animation: sacude .35s; }
+@keyframes sacude { 20%, 60% { translate: -5px 0; } 40%, 80% { translate: 5px 0; } }
+@media (prefers-reduced-motion: reduce) { .campo.sacude { animation: none; } }
+.banda-ed { margin-bottom: 12px; padding: 10px 14px; border-radius: var(--r); background: color-mix(in srgb, var(--c1) 12%, var(--bg-2)); border: 1px solid color-mix(in srgb, var(--c1) 40%, var(--line)); font-size: 14px; }
+.banda-ed a { margin-left: 6px; }
+
+/* Panel: barra de publicar, alerta de reserva nueva, editor del catálogo, colores */
+.barra-pub { position: sticky; top: 64px; z-index: 15; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; background: color-mix(in srgb, var(--pocos) 14%, var(--bg-2)); border: 1px solid color-mix(in srgb, var(--pocos) 50%, var(--line)); }
+.barra-pub > span { flex: 1 1 260px; }
+.alerta-nueva { position: sticky; top: 64px; z-index: 16; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--c1); color: var(--sobre); box-shadow: 0 10px 30px -12px rgba(0,0,0,.45); animation: llega .4s ease-out; }
+.alerta-nueva[hidden], .barra-pub[hidden] { display: none; }
+.alerta-nueva > span { flex: 1 1 240px; }
+.alerta-nueva .btn { background: color-mix(in srgb, var(--sobre) 18%, transparent); border-color: color-mix(in srgb, var(--sobre) 45%, transparent); color: var(--sobre); }
+@keyframes llega { from { opacity: 0; translate: 0 -10px; } to { opacity: 1; translate: 0 0; } }
+.menu-adm .num { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; margin-left: 6px; border-radius: 99px; background: var(--lleno); color: #fff; font-size: 12px; font-weight: 700; }
+.swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+.swatches button { width: 44px; height: 44px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
+.swatches button[aria-pressed="true"] { border-color: var(--fg); }
+dialog.editor { width: min(100% - 24px, 560px); max-height: 92dvh; padding: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-2); color: var(--fg); box-shadow: 0 30px 80px -20px rgba(0,0,0,.5); }
+dialog.editor::backdrop { background: rgba(10,12,16,.55); }
+dialog.editor form { display: flex; flex-direction: column; max-height: 92dvh; }
+.ed-cab, .ed-pie { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.ed-cab { justify-content: space-between; }
+.ed-pie { justify-content: flex-end; border-bottom: 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.ed-cuerpo { display: grid; gap: 14px; padding: 18px; overflow-y: auto; }
+.ed-cuerpo textarea, .ed-cuerpo input:not([type=checkbox]) { width: 100%; }
+
+[hidden] { display: none !important; }
+
+/* Color del negocio (lo pone el JS en --marca; sin él, el azul de Bío Digital) */
+:root { --c1: var(--marca, #0b7fd4); --c1-s: color-mix(in srgb, var(--marca, #0b7fd4) 12%, var(--bg-2)); }
+@media (prefers-color-scheme: dark) { :root { --c1: color-mix(in srgb, var(--marca, #3aa6f5) 62%, white); --c1-s: color-mix(in srgb, var(--marca, #3aa6f5) 24%, var(--bg-2)); } }
+@media (max-width: 900px) { .resumen-lat.vacio { display: none; } }
+
+.campo, .campo input, .campo select, .campo textarea { min-width: 0; }
+.campo input:not([type=checkbox]):not([type=radio]), .campo select, .campo textarea { width: 100%; }

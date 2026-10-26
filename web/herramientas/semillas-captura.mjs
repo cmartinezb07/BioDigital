@@ -1,4 +1,4 @@
-// Datos de ejemplo para las capturas de la portada y la galería (cocina, panel del restaurante, panel de reservas, tarjeta de fidelización).
+// Datos de ejemplo para las capturas de la portada y la galería (cocina, panel del restaurante, tarjeta de fidelización; las reservas usan semillas-reservas.mjs).
 // Se crean en la base por el mismo camino que usan las pantallas, se capturan, y se borran al terminar (marcados con muestra o con un correo propio).
 // Cada función corre DENTRO de la página (por eso usa Pedidos, Nube y Reservas, y no variables de Node).
 export const sembrarFogon = async () => {
@@ -42,31 +42,6 @@ export const limpiarFogon = async () => {
   Nube.pin('fogon', null); return JSON.stringify(r);
 };
 
-export const sembrarReservas = async () => {
-  const R = Reservas, U = R.util, dormir = (ms) => new Promise((r) => setTimeout(r, ms));
-  Nube.pin('reservas', '482916'); R.entrarEquipo('cabanas'); await R.listo('cabanas'); await dormir(2500);
-  const cli = (n) => ({ nombre: n, correo: 'muestra@ejemplo.cl', telefono: '+56911112222', pais: 'Chile', idioma: 'es' });
-  const nombres = ['Andrea Fuentes', 'Rodrigo Pizarro', 'Carolina Soto', 'Familia Muñoz', 'Pablo Reyes', 'Lorena Araya', 'Felipe Tapia', 'Daniela Vera', 'Marcos Ibáñez', 'Paula Rojas'];
-  const recursos = ['copihue', 'araucaria', 'familiar'];
-  const sabado = (dias) => { let f = U.sumaDias(U.hoy(), dias); while (U.diaSem(f) !== 5) f = U.sumaDias(f, 1); return f; };
-  let k = 0;
-  for (const dias of [3, 8, 12, 17, 22, 28, 35, 41]) {
-    const rec = recursos[k % 3], f = sabado(dias), noches = 1 + (k % 3);
-    const sel = { recurso: rec, llegada: f, salida: U.sumaDias(f, noches), personas: rec === 'copihue' ? 2 : 4 };
-    if (R.validar(R.leer('cabanas'), sel)) { k++; continue; }
-    const out = R.crear('cabanas', sel, cli(nombres[k % nombres.length]), { canal: ['Sitio web', 'Sitio web', 'WhatsApp', 'Airbnb (iCal)'][k % 4] });
-    if (out.reserva && k % 3 !== 2) R.pagar('cabanas', out.reserva.id, out.reserva.precio.deposito);
-    if (out.reserva && k === 5) R.cancelar('cabanas', out.reserva.id, 'cliente');
-    k++;
-  }
-  await dormir(4000);
-  return 'sembrado ' + R.leer('cabanas').reservas.filter((r) => !r._pub).length;
-};
-export const limpiarReservas = async () => {
-  const r = await Promise.all([Nube.borrar('reservas', 'reservas', '482916', { filtro: { cliente: { correo: 'muestra@ejemplo.cl' } } }), Nube.borrar('reservas', 'avisos', '482916', { filtro: { para: 'muestra@ejemplo.cl' } })]);
-  Nube.pin('reservas', null); return JSON.stringify(r);
-};
-
 export const sembrarFidelizacion = async () => {
   const f = (cod, nombre, sellos, visitas, premios) => Nube.escribir('fidelizacion', 'tarjetas', cod, { codigo: cod, nombre, telefono: '', sellos, creada: Date.now() - visitas * 864e5, visitas, premios, ultimo: Date.now() - 3600e3, muestra: true }, { pin: '482916', modo: 'poner' });
   await Promise.all([f('ZZCAP001', 'Camila', 5, 5, 1), f('ZZCAP002', 'Tomás', 2, 2, 0), f('ZZCAP003', 'Fernanda', 8, 9, 1), f('ZZCAP004', 'Joaquín', 1, 1, 0)]);
@@ -76,6 +51,5 @@ export const limpiarFidelizacion = async () => JSON.stringify(await Nube.borrar(
 
 // Qué se siembra para cada tarjeta de la portada, y en qué página se corre
 export const SEMILLAS = {
-  reservas: { ruta: 'reservas/', sembrar: sembrarReservas, limpiar: limpiarReservas, para: ['reservas-panel'] },
   fidelizacion: { ruta: 'fidelizacion/', sembrar: sembrarFidelizacion, limpiar: limpiarFidelizacion, para: ['fidelizacion'] }
 };

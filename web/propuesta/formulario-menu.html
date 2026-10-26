@@ -228,7 +228,7 @@ var FORM = [
             "Reemplazar las cartas de papel|Que no se rompan, no se ensucien ni haya que reimprimir"
           ],
           [
-            "Que vean los platos antes de pedir|Fotos, y los platos en 3D sobre su mesa"
+            "Que vean los platos antes de pedir|Fotos buenas de cada plato"
           ],
           [
             "Que pidan por WhatsApp|Que el pedido llegue directo a mi celular"
@@ -473,6 +473,79 @@ var FORM = [
     ]
   },
   {
+    "t": "Pedidos y delivery",
+    "n": "Solo si quieres que tus clientes pidan desde el celular. Con esto dejamos andando los pedidos, la cocina y el reparto.",
+    "p": [
+      {
+        "id": "servicios",
+        "t": "varios",
+        "q": "¿Cómo quieres recibir pedidos?",
+        "req": 1,
+        "ops": [
+          [
+            "En la mesa|El cliente escanea el QR de su mesa y pide"
+          ],
+          [
+            "Para retirar en el local"
+          ],
+          [
+            "Delivery con repartidor propio|Tú o tu gente reparten; el cliente ve al repartidor en el mapa"
+          ],
+          [
+            "Solo mostrar la carta, sin pedidos|Es el menú simple, sin cocina ni reparto"
+          ]
+        ]
+      },
+      {
+        "id": "comunas_envio",
+        "t": "larga",
+        "q": "Si haces delivery: ¿a qué comunas llegas y cuánto cobras de envío?",
+        "a": "Una comuna por línea, con el valor. Ejemplo: Concepción: 1500. Talcahuano: 2500."
+      },
+      {
+        "id": "minimo_delivery",
+        "t": "texto",
+        "q": "Si haces delivery: ¿cuál es el pedido mínimo?",
+        "a": "En pesos. Ejemplo: 8000. Si no tienes, escribe \"sin mínimo\"."
+      },
+      {
+        "id": "tiempos",
+        "t": "larga",
+        "q": "¿Cuánto demora preparar tus platos?",
+        "a": "En minutos, un plato por línea. Ejemplo: Lomo a lo pobre: 25. Si no sabes, déjalo en blanco y usamos tiempos típicos que tú puedes cambiar después."
+      },
+      {
+        "id": "opciones_platos",
+        "t": "larga",
+        "q": "¿Algún plato tiene opciones para elegir (tamaño, término, extras)?",
+        "a": "Un plato por línea. Ejemplo: Lomo: Término (obligatorio): Jugoso, A punto, Bien cocido; Agregar (hasta 2): Palta +1500, Tocino +1200. Lo que va con + es lo que suma al precio."
+      },
+      {
+        "id": "equipo",
+        "t": "larga",
+        "q": "¿Quiénes van a trabajar con el sistema?",
+        "req": 1,
+        "a": "Un nombre por línea con su función: cocina o reparto. Ejemplo: Ana - cocina. Pedro - reparto. Cada uno recibe su código para entrar a lo suyo; tú entras a todo como jefe."
+      },
+      {
+        "id": "pago_online",
+        "t": "uno",
+        "q": "¿Quieres que el cliente pueda pagar en línea?",
+        "ops": [
+          [
+            "Solo pago en el local o al recibir"
+          ],
+          [
+            "Quiero pago en línea|Con tu cuenta de Mercado Pago; la comisión de cada pago la paga el local"
+          ],
+          [
+            "No sé: explíquenme"
+          ]
+        ]
+      }
+    ]
+  },
+  {
     "t": "Cómo te gustaría que se vea",
     "n": "Mueve cada escala hacia el lado que mejor describe tu local. No pienses en diseño: piensa en cómo se siente entrar.",
     "p": [
@@ -623,8 +696,8 @@ var FORM = [
     ]
   },
   {
-    "t": "Fotos y platos en 3D",
-    "n": "Aquí está lo más especial del menú: ver el plato sobre la mesa con la cámara del celular.",
+    "t": "Fotos de los platos",
+    "n": "Un menú con fotos buenas vende más: así resolvemos las fotos.",
     "p": [
       {
         "id": "fotos_tengo",
@@ -663,34 +736,6 @@ var FORM = [
         "t": "larga",
         "q": "Si van al local, ¿qué días y horas les acomodan?",
         "a": "Idealmente cuando no haya mucho servicio, para no molestar a tus clientes."
-      },
-      {
-        "id": "vista",
-        "t": "uno",
-        "q": "¿Qué tipo de vista de los platos quieres?",
-        "ops": [
-          [
-            "Ver el plato en 3D sobre la mesa|Escaneamos cada plato; cuesta más y se cotiza"
-          ],
-          [
-            "Solo fotos por ahora"
-          ],
-          [
-            "No sé: explíquenme"
-          ]
-        ]
-      },
-      {
-        "id": "plato3d",
-        "t": "larga",
-        "q": "¿Qué platos te gustaría que se vieran sobre la mesa?",
-        "a": "Empieza por 3 a 6, los más pedidos o los más difíciles de explicar."
-      },
-      {
-        "id": "no3d",
-        "t": "larga",
-        "q": "¿Hay platos que no convenga escanear?",
-        "a": "Sopas, líquidos, salsas muy brillantes o platos que cambian cada día."
       },
       {
         "id": "personas_fotos",

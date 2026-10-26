@@ -46,3 +46,6 @@ web/herramientas/restaurantes/
 
 # Copia temporal del restaurante para capturas (se crea y se borra sola)
 web/propuesta/ejemplos/captura-fogon/
+
+# PIN de negocios reales generados por nuevo-agenda.mjs
+web/herramientas/agendas/

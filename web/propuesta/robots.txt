@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /pago/
+
+Sitemap: https://biodigitales.cl/sitemap.xml

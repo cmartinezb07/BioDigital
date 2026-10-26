@@ -59,6 +59,7 @@ Un negocio real tiene **una agenda** (id fijo: `alojamiento`, `tours`, `citas` o
 `referencias/verificacion.md` de `crear-sitio-web` (sitio) **y**: la prueba de humo del paso 7; `node web/herramientas/reservas-reglas-e2e.mjs` (77 reglas del servidor) si se tocó el servidor; las pruebas de pantalla `reservas-ui.js` y `reservas-panel.js` (en `web/herramientas/pruebas/`; se lanzan con `revisar.mjs --probar`, ver `sistema-agenda.md`); `node --test`; en la demo de Bío Digital, `node web/herramientas/check.mjs http://localhost:4321` (≈ 20 min; escribe en la base real y limpia lo suyo; no usar el panel mientras corre; el aviso en vivo del panel y las pruebas de reglas se estorban si corren a la vez).
 
 ## Límites conocidos (decirlos, no esconderlos)
+Checklist completo contra un sistema universal, con lo que falta y los casos no considerados: `memoria/reservas-checklist.md`. Lo más visible hoy: el servidor no guarda ni muestra la **unidad asignada** ("Cabaña Copihue 2"), los días no disponibles no explican el motivo, un reintento de las mismas fechas puede dejar el asistente en "Tus datos" sin un error claro, y los módulos no se activan: hay 4 modos por rubro.
 - Los PIN se guardan en texto plano (demostración): para producción, guardarlos con hash.
 - Los avisos quedan programados y "enviados (simulado)": no salen correos ni WhatsApp todavía (se conecta un proveedor aparte).
 - El pago del depósito es manual (el negocio lo registra); la pasarela se conecta aparte.

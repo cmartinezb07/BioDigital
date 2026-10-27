@@ -8,7 +8,7 @@ export const PAYMENT_LINKS = Object.freeze({
   'interactive-menu': { amount: 27990, url: '' },
   'photography': { amount: 4990, url: 'https://mpago.la/2WXuyew' },
   'reservations': { amount: 24990, url: '' },
-  'loyalty-card': { amount: 5990, url: '' },   // cambió de $9.990: el enlace viejo ya no vale, generar uno nuevo
+  'loyalty-card': { amount: 9990, url: 'https://mpago.la/1YgPBi2' },
   'interactive-menu-pro': { amount: 99990, url: '' },
   'reservations-pro': { amount: 99990, url: '' },
   'full-pack': { amount: 79990, url: 'https://mpago.la/1VSZrje' },
@@ -21,7 +21,7 @@ export const PAYMENT_LINKS = Object.freeze({
   'web-video': { amount: 52990, url: '' },
   'social-video-2': { amount: 17990, url: 'https://mpago.la/326EtXb' },
   'social-video-3': { amount: 24990, url: 'https://mpago.la/2qcCph5' },
-  'launch-loyalty-card': { amount: 4990, url: '' },   // cambió de $7.990: el enlace viejo ya no vale, generar uno nuevo
+  'launch-loyalty-card': { amount: 5990, url: '' },   // cambió de $7.990: el enlace viejo ya no vale, generar uno nuevo
   'menu-photography': { amount: 89990, url: '' },   // cambió de $29.990: el enlace viejo ya no vale, generar uno nuevo
   'reservations-loyalty': { amount: 94990, url: '' }   // cambió de $29.990: el enlace viejo ya no vale, generar uno nuevo
 });

@@ -58,7 +58,7 @@ const SERVICIOS = [
     ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
   ['reservations', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
     ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Sin panel ni disponibilidad en vivo: si lo necesitas, mira el Sistema de reservas PRO']],
-  ['loyalty-card', 'card', 'Tarjeta de fidelización', 5990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
+  ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
     ['QR con sellos, sin tarjetas de papel', 'Queda como acceso directo en el celular del cliente, sin instalar nada', 'Ves cuántos clientes están volviendo']],
 ];
 const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 127.940
@@ -76,7 +76,7 @@ const PRO = [
 ];
 const PACK_PRO = 150000, PACK_PRO_5 = 120000;            // pack con un sistema PRO (menú o reservas, a elección)
 const precioDe = (id) => [...SERVICIOS, ...PRO].find((s) => s[0] === id)[3];
-const SUMA_PRO = precioDe('web') + precioDe('interactive-menu-pro') + precioDe('loyalty-card') + precioDe('photography') + precioDe('social-video');   // 170.950
+const SUMA_PRO = precioDe('web') + precioDe('interactive-menu-pro') + precioDe('loyalty-card') + precioDe('photography') + precioDe('social-video');   // 174.940
 const AHORRO_PRO = SUMA_PRO - PACK_PRO;
 const PACK_PRO_ITEMS = ['Página web', 'Menú digital PRO o Sistema de reservas PRO (a tu elección)', 'Tarjeta de fidelización', 'Registro fotográfico', '1 video para redes'];
 // Orden en la lista de precios: cada PRO va justo después de su versión simple
@@ -87,7 +87,7 @@ const LANZ = [
   ['launch-web', 'Página web', 39990, precioDe('web'), false, true],
   ['launch-interactive-menu-pro', 'Menú digital PRO', 79990, precioDe('interactive-menu-pro'), true, false],
   ['launch-reservations-pro', 'Sistema de reservas PRO', 79990, precioDe('reservations-pro'), true, false],
-  ['launch-loyalty-card', 'Tarjeta de fidelización', 4990, precioDe('loyalty-card'), false, false],
+  ['launch-loyalty-card', 'Tarjeta de fidelización', 5990, precioDe('loyalty-card'), false, false],
   ['launch-pack', 'Pack esencial (los seis)', PACK_5, PACK, false, false],
   ['launch-pro-pack', 'Pack PRO', PACK_PRO_5, PACK_PRO, true, false],
 ];

@@ -8,7 +8,10 @@
       "producto": "interactive-menu",
       "hoy": "Tu carta es un PDF en Google Drive, enlazado desde tu perfil.",
       "propuesta": "La carta completa en el celular, con foto de cada producto: la abren en la mesa con un QR o desde tu perfil.",
-      "incluye": ["QR impreso para las mesas o el mesón", "Foto, descripción y precio por producto"]
+      "incluye": [
+        "QR impreso para las mesas o el mesón",
+        "Foto, descripción y precio por producto"
+      ]
     },
     {
       "producto": "reservations",
@@ -23,5 +26,12 @@
       "ejemplo": "ejemplos/fidelizacion/"
     }
   ],
-  "pack": true
+  "pack": true,
+  "fuentes": [
+    "Carta en PDF de Google Drive: link «Carta» fijado en https://www.instagram.com/kairoscafe.chile/",
+    "Reservas por DM y WhatsApp: link «Reservas» (wa.me/56979720113) del perfil; posts de cumpleaños https://www.instagram.com/p/DYaWIaVppJO/, Entre Hilos y Pausas https://www.instagram.com/p/DZJciVJjGGw/ y Día del Padre https://www.instagram.com/p/DZoY30GDGG1/",
+    "Tarjetas de cliente frecuente de papel: post del aniversario https://www.instagram.com/p/DeN_q9HtwMF/",
+    "16.415 seguidores: perfil, 27-oct-2026. Nota 5,0 con 44 reseñas: barrido de Google Maps del 12-oct-2026, ficha https://www.google.com/maps/place/?q=place_id:ChIJYx0tkbzJaZYRMLyUK0R9nzQ",
+    "No se ofrecieron videos: ya publica reels propios."
+  ]
 }

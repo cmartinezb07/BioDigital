@@ -1,6 +1,7 @@
 // Propuesta comercial de una página (A4) para un cliente, en HTML y PDF.
 // Uso:  node propuestas/generar.mjs <carpeta>      p. ej.  node propuestas/generar.mjs kairos-cafe
-// Lee propuestas/<carpeta>/datos.json y deja propuesta.pdf en la misma carpeta. Lo que se manda es siempre el PDF.
+// Lee propuestas/<carpeta>/datos.json y deja en la misma carpeta propuesta.pdf (lo que se adjunta, siempre en PDF) y
+// mensajes.md (el correo y el WhatsApp para mandarlo: texto genérico, solo cambia el nombre del negocio).
 // Precios, nombres y lo que incluye cada producto salen del sitio (web/propuesta/fuentes/comun.mjs):
 // si el sitio cambia un precio, basta con volver a generar.
 import { readFileSync, writeFileSync, existsSync, mkdtempSync, rmSync } from 'node:fs';
@@ -12,7 +13,7 @@ import { SERVICIOS, SUMA, PACK, PACK_5, clp } from '../web/propuesta/fuentes/com
 import { WHATSAPP_VISIBLE, MAIL, INSTAGRAM, DOMINIO_ANUAL } from '../web/propuesta/fuentes/config.mjs';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
-const SITIO = 'https://biodigital-bgw.pages.dev';   // dirección de trabajo desde el 24-oct-2026 (la anterior redirige aquí)
+const SITIO = 'https://biodigitales.cl';   // dominio propio (27-oct-2026); biodigital-bgw.pages.dev es la dirección de trabajo
 // Chrome o Edge (los dos imprimen a PDF sin ventana). Se puede forzar con la variable CHROME.
 const NAVEGADORES = [process.env.CHROME, '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
@@ -156,4 +157,44 @@ try {
   rmSync(tmp, { recursive: true, force: true });
 }
 if (!existsSync(pdf)) throw new Error('Chrome no generó el PDF. Prueba de nuevo o revisa datos.json.');
-console.log(`${join(carpeta, 'propuesta.pdf')} · ${d.filas.length} piezas, sueltas ${clp(totalSueltos)}${d.pack ? `, pack ${clp(PACK_5)}` : ''}`);
+
+// Mensajes para mandar la propuesta. Son genéricos a propósito (decisión del 27-oct-2026): el detalle va en el PDF y
+// el texto no lleva comentarios personales. Solo cambia el nombre del negocio.
+const web = SITIO.replace('https://', '');
+const fuentes = (d.fuentes || []).map((f) => `- ${f}`).join('\n') || '- (falta: agregar "fuentes" en datos.json)';
+writeFileSync(join(dir, 'mensajes.md'), `# ${d.negocio} · mensajes para mandar la propuesta
+
+Generado por \`node propuestas/generar.mjs ${carpeta}\`: no se edita a mano. Adjuntar \`propuesta.pdf\` en los dos.
+Enviar desde ${MAIL} y desde el WhatsApp de Bío Digital, y poner tu nombre en la firma.
+
+## Correo
+
+**Asunto:** Propuesta de Bío Digital para ${d.negocio}
+
+Hola, ¿cómo estás?
+
+Somos Bío Digital, un equipo de estudiantes de Ingeniería Civil Industrial de la Universidad de Concepción. Ayudamos
+a negocios del Gran Concepción a estar listos para vender en internet: página web, menú digital, reservas, tarjeta de
+fidelización, fotos y videos, con pago único y sin mensualidades.
+
+Revisamos cómo se ve ${d.negocio} hoy en internet y te preparamos una propuesta de una página, que va adjunta.
+Puedes ver lo que hacemos y algunos ejemplos en ${web}.
+
+Si te interesa, coordinamos para pasar por el local cuando te acomode.
+
+Saludos,
+[Tu nombre] · Bío Digital
+WhatsApp ${WHATSAPP_VISIBLE} · ${web}
+
+## WhatsApp
+
+Hola, ¿cómo estás? Te escribo de Bío Digital, un equipo de estudiantes de la UdeC que ayuda a negocios del Gran
+Concepción a estar listos para vender en internet. Te preparamos una propuesta corta para ${d.negocio}, te la dejo
+acá 👇
+
+Puedes ver lo que hacemos en ${web}. Si te interesa, coordinamos para pasar por el local.
+
+## De dónde sale lo que dice la propuesta (no se envía)
+${fuentes}
+`);
+console.log(`${join(carpeta, 'propuesta.pdf')} + mensajes.md · ${d.filas.length} piezas, sueltas ${clp(totalSueltos)}${d.pack ? `, pack ${clp(PACK_5)}` : ''}`);

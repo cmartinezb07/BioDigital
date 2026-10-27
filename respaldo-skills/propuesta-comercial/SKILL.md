@@ -13,13 +13,18 @@ haber visto cómo se hicieron las anteriores. Si puedes leer la carpeta, mira ig
 | `propuestas/kairos-cafe/` (cafetería) | 3 piezas que suman **menos** que el pack: «el pack por $7.020 más» |
 | `propuestas/zoul-barber/` (barbería) | 2 piezas que suman **más** que el pack: «el pack cuesta $4.990 menos» |
 
-Cada uno tiene `datos.json` (lo que se escribe), `propuesta.pdf` (lo que se manda) y `mensajes.md` (correo, WhatsApp y fuentes).
+Cada uno tiene `datos.json` (lo único que se escribe) y lo que genera el script: `propuesta.pdf` (lo que se adjunta)
+y `mensajes.md` (el correo y el WhatsApp para mandarla).
 
 ## Qué es y qué no es
 - **Una sola página A4**: qué vimos del negocio, qué pieza resuelve cada cosa, cuánto cuesta y cómo seguimos.
 - **No lleva forma de pago, anticipo ni condiciones** (decisión del 27-oct-2026). Eso se conversa después.
 - **Los precios no se escriben a mano**: `propuestas/generar.mjs` los toma de `web/propuesta/fuentes/comun.mjs`,
   el mismo archivo del sitio. Si el equipo cambia un precio, se vuelve a generar y queda al día.
+- **Por cada local salen dos cosas, con un solo comando:** el documento (`propuesta.pdf`) y el texto para mandarlo
+  (`mensajes.md`, correo y WhatsApp). **El texto es genérico y lo escribe el script**, igual para todos los locales:
+  solo cambia el nombre del negocio y menciona biodigitales.cl. No se le agregan comentarios personales
+  (aniversarios, felicitaciones, posdatas): lo específico va solo en el PDF.
 - **La IA no envía nada.** Deja el PDF y los mensajes listos; los manda una persona del equipo.
 
 ## 0. Antes de empezar
@@ -45,7 +50,7 @@ ficha): va en `mensajes.md`.
 unas 6 publicaciones con el texto abierto y la ficha de Google Maps. **No inventes lo que no se ve en las capturas.**
 
 **Compara el teléfono de Instagram con el de Maps.** Si no coinciden (en Zoul uno terminaba en 0225 y el otro en
-0255), no va en la propuesta: va como posdata en el correo, como dato útil.
+0255), anótalo en `fuentes` para que quien mande el WhatsApp use el correcto. No va en la propuesta ni en el mensaje.
 
 ## 2. Elegir de 1 a 3 piezas
 Cada pieza responde a algo que **viste**. Si no hay evidencia, no va.
@@ -98,7 +103,14 @@ Ejemplo completo (Zoul):
       "ejemplo": "ejemplos/barberia/"
     }
   ],
-  "pack": true
+  "pack": true,
+  "fuentes": [
+    "Reservas por teléfono o WhatsApp a dos números: bio de https://www.instagram.com/zoulbarberstudio/",
+    "«Escríbenos para reservar»: https://www.instagram.com/p/DY0J3yWq_br/",
+    "Nota 5,0 con 960 reseñas y sin sitio web: ficha https://www.google.com/maps/place/?q=place_id:ChIJQ4GCO2y1aZYR21gZPZKrO1w",
+    "Ojo, no va en el mensaje: el teléfono de Maps termina en 0225 y el de Instagram en 0255",
+    "No se ofrecieron videos: sus 12 últimas publicaciones ya son reels"
+  ]
 }
 ```
 
@@ -112,8 +124,9 @@ Ejemplo completo (Zoul):
 | `filas[].hoy` | Lo que viste, concreto y sin juicio. «Tu carta es un PDF en Google Drive», no «tu carta está mal hecha». Máximo unas 25 palabras |
 | `filas[].propuesta` | Qué cambia para su cliente, en una frase |
 | `filas[].incluye` | Opcional: 2 cosas que recibe, sacadas de lo que dice el sitio. Si no se pone, salen las 2 primeras del sitio |
-| `filas[].ejemplo` | Opcional: una demo de https://biodigital-bgw.pages.dev (ver tabla abajo) |
+| `filas[].ejemplo` | Opcional: una demo de https://biodigitales.cl (ver tabla abajo) |
 | `pack` | `true` o `false` (ver paso 2) |
+| `fuentes` | De dónde salió cada afirmación de `hoy` y cada cifra (link del post, del perfil o de la ficha de Maps), lo que decidiste no ofrecer y por qué, y cualquier dato que deba saber quien mande el mensaje. No se envía: queda al final de `mensajes.md` |
 
 **Demos que se pueden enlazar** (negocios ficticios del sitio):
 
@@ -139,53 +152,24 @@ node propuestas/generar.mjs <negocio>
 Abre `propuestas/<negocio>/propuesta.pdf` y revisa:
 - [ ] Es **una sola página**. Si se pasa, acorta `hoy` y `propuesta` o quita una pieza.
 - [ ] El título no queda cortado de forma rara.
-- [ ] Cada «hoy» se puede comprobar en su Instagram o en Maps, y tiene su fuente en `mensajes.md`.
+- [ ] Cada «hoy» se puede comprobar en su Instagram o en Maps, y tiene su fuente en `fuentes`.
 - [ ] El nombre del negocio está bien escrito.
 - [ ] Nada de la lista «Nunca ofrezcas ni prometas» del paso 2.
-- [ ] Los precios coinciden con https://biodigital-bgw.pages.dev.
+- [ ] Los precios coinciden con https://biodigitales.cl.
 
-## 5. Los mensajes: `propuestas/<negocio>/mensajes.md`
-Cortos y **sin detalle**: el detalle está en el PDF, y el mensaje solo tiene que lograr que lo abran.
+## 5. Los mensajes
+`node propuestas/generar.mjs <negocio>` escribe solo `propuestas/<negocio>/mensajes.md`, con:
+- **Correo.** Asunto «Propuesta de Bío Digital para <Negocio>». Dice quiénes somos, qué hacemos, que va adjunta una
+  propuesta de una página, que en biodigitales.cl se ven ejemplos, y ofrece pasar por el local.
+- **WhatsApp.** Lo mismo en cuatro líneas, para mandar con el PDF adjunto.
+- **Fuentes.** Lo que pusiste en `fuentes`, al final y marcado como «no se envía».
 
-```markdown
-# <Negocio> · mensajes para mandar la propuesta
+**No edites `mensajes.md` a mano ni le agregues frases sobre el local**: el texto es genérico a propósito
+(decisión del 27-oct-2026) y se vuelve a escribir cada vez que se genera. Si hay que cambiar el texto para todos,
+se cambia en `propuestas/generar.mjs`.
 
-Adjuntar `propuesta.pdf` en los dos. Enviar desde biodigitalici@gmail.com y el WhatsApp de Bío Digital.
-
-## Correo
-
-**Asunto:** Una propuesta para <Negocio>
-
-Hola, ¿cómo estás?
-
-Somos Bío Digital, un equipo de cinco estudiantes de Ingeniería Civil Industrial de la Universidad de
-Concepción. Ayudamos a negocios del Gran Concepción con lo digital: <las 3 o 4 cosas más cercanas a su rubro>.
-Pago único, sin mensualidades.
-
-Revisamos el Instagram y la ficha de Google Maps de <Negocio> y armamos una propuesta de una página pensada para
-ustedes. Te la dejo adjunta.
-
-Si te hace sentido, coordinamos para pasar por el local cuando te acomode.
-
-<Opcional, una línea: algo personal y cierto que viste (un aniversario, un local nuevo) o un dato útil
-(teléfonos que no coinciden).>
-
-Saludos,
-[Nombre] · Bío Digital
-WhatsApp +56 9 4694 1640 · biodigital-bgw.pages.dev
-
-## WhatsApp
-
-Hola, ¿cómo estás? Te escribo de Bío Digital, un equipo de estudiantes de la UdeC que ayuda a negocios del Gran
-Concepción con <lo más cercano a su rubro>. Vimos el Instagram de <Negocio> y armamos una propuesta corta para
-ustedes, te la dejo acá 👇
-
-Si te tinca, coordinamos para pasar por el local.
-
-## Fuentes de lo que dice la propuesta (revisado el <fecha>)
-- <cada afirmación de «hoy» y cada cifra, con el link del post, del perfil o de la ficha de Maps>
-- <lo que decidiste no ofrecer y por qué, en una línea>
-```
+Quien manda pone su nombre en la firma, envía el correo desde biodigitalici@gmail.com y el WhatsApp desde el número
+de Bío Digital, siempre con el PDF adjunto.
 
 ## 6. Dejarla registrada
 - Agrega una fila a la tabla «Propuestas hechas» de `propuestas/LEEME.md`.

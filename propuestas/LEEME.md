@@ -1,6 +1,8 @@
 # Propuestas comerciales
 
-Una página A4 **en PDF**, para mandar por correo o WhatsApp después del diagnóstico. Siempre se manda el PDF. Dice qué vimos del negocio,
+Una página A4 **en PDF**, para mandar por correo o WhatsApp después del diagnóstico. Siempre se manda el PDF.
+El mismo comando escribe `mensajes.md`: el correo y el WhatsApp para mandarla, genéricos (solo cambia el nombre
+del negocio) y con biodigitales.cl. Dice qué vimos del negocio,
 qué pieza resuelve cada cosa, cuánto cuesta y cómo seguimos. **No lleva forma de pago ni condiciones**: eso se
 conversa después (decidido el 27-oct-2026).
 
@@ -23,7 +25,7 @@ En Claude Code también se puede instalar como skill: copiar la carpeta `respald
 ```sh
 cp -r propuestas/_ejemplo propuestas/<negocio>      # p. ej. propuestas/kairos-cafe
 # editar propuestas/<negocio>/datos.json
-node propuestas/generar.mjs <negocio>               # deja propuesta.pdf en esa carpeta
+node propuestas/generar.mjs <negocio>               # deja propuesta.pdf y mensajes.md en esa carpeta
 ```
 Necesita Node, Google Chrome o Edge (crean el PDF) e internet (carga la fuente Geist).
 
@@ -33,8 +35,9 @@ Necesita Node, Google Chrome o Edge (crean el PDF) e internet (carga la fuente G
 | `negocio`, `fecha` | Nombre y fecha (AAAA-MM-DD) |
 | `titulo` | Dos líneas separadas por `\n`; lo que va entre `*asteriscos*` sale en azul |
 | `intro` | Qué revisamos, con datos que el cliente pueda comprobar (seguidores, nota en Maps) |
-| `filas` | De 1 a 3 piezas. `producto` es el id del sitio: `web`, `social-video`, `interactive-menu`, `photography`, `reservations`, `loyalty-card`. `hoy` es lo que vimos; `propuesta`, qué cambia. `incluye` y `ejemplo` son opcionales (`ejemplo` es una ruta de biodigital-bgw.pages.dev) |
+| `filas` | De 1 a 3 piezas. `producto` es el id del sitio: `web`, `social-video`, `interactive-menu`, `photography`, `reservations`, `loyalty-card`. `hoy` es lo que vimos; `propuesta`, qué cambia. `incluye` y `ejemplo` son opcionales (`ejemplo` es una ruta de biodigitales.cl) |
 | `pack` | `true` agrega el pack completo como opción recomendada al lado de las piezas sueltas |
+| `fuentes` | De dónde salió cada dato; queda al final de `mensajes.md`, marcado como «no se envía» |
 
 Los precios, los nombres y lo que incluye cada producto **no se escriben aquí**: salen de
 `web/propuesta/fuentes/comun.mjs`, el mismo archivo del sitio. Si cambia un precio, se vuelve a generar.

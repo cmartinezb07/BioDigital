@@ -93,7 +93,8 @@ Cierra con este resumen, adaptado a la IA que eres:
    - el nombre del negocio bien escrito.
 
    Si recomienda el pack de lanzamiento ($69.990), avisa por el grupo, porque es solo para los primeros 5 clientes.
-4. **Mándala tú.** Los textos están en `propuestas/<negocio>/mensajes.md`. El correo sale desde
+4. **Mándala tú.** El correo y el WhatsApp los escribe el script en `propuestas/<negocio>/mensajes.md`: son
+   genéricos y no se editan. El correo sale desde
    biodigitalici@gmail.com y el WhatsApp desde el número de Bío Digital, siempre con el PDF adjunto y tu nombre en la
    firma. La IA no envía nada.
 5. **Déjala registrada** con `git add propuestas`, `git commit -m "Propuesta para <negocio>"` y `git push`, y avisa

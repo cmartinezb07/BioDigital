@@ -1,7 +1,11 @@
 # Índice — memoria del proyecto Bío Digital
 
+- [Sitio principal y migración](MIGRACION-SITIO.md) — trabajar y publicar en `biodigital` (biodigital-bgw.pages.dev); la dirección antigua redirige y conserva payments-test.
+
 - [Menú digital: plantilla de restaurante](memoria/plantilla-restaurante.md) — estructura vs datos, aislamiento por negocio y cómo crear un restaurante nuevo con nuevo-restaurante.mjs
+- [Sistema de reservas: plantilla de agenda](memoria/plantilla-agenda.md) — mismo nivel que el menú: reglas en el servidor, panel jefe/recepción, formulario → agenda con aplicar-formulario-agenda.mjs (skill crear-sistemas-agendas); la demo en vivo aún espera el cambio (006e)
 - [Precios del menú digital](memoria/precios-menu-digital.md) — comparables (Fudo, MenuTiger, apps de delivery), costos únicos vs recurrentes y 3 tramos propuestos (pendiente de aprobación)
+- [Precios de todo el catálogo](memoria/precios-catalogo.md) — análisis del 25-oct: costo por hora, competencia, único vs. único + mensual y precios sugeridos (pendiente de aprobación)
 - [Conexión en la nube](memoria/conexion-nube.md) — pedidos, reservas y fidelización conectados entre equipos (Supabase `biodigital-demos`): roles por PIN, flujo del restaurante, GPS del delivery paso a paso, costos y límites.
 - [EMPEZAR-AQUI.md](EMPEZAR-AQUI.md) — para quien llega nuevo o va a trabajar el proyecto con otra IA: qué leer, en qué orden y el prompt listo para copiar.
 
@@ -20,10 +24,10 @@
 - [Pagos](PAGOS.md) — estado vigente del flujo manual y API deshabilitada. [Ensayo de $100](PRUEBA-COBRO-100.md): histórico, rechazado por seguridad; producto retirado.
 - [Decisiones](memoria/decisiones.md) — bitácora cronológica de decisiones tomadas y su justificación.
 - Skill `crear-sitio-web` (en `~/.claude/skills/`, respaldo en `respaldo-skills/`) — flujo reutilizable para sitios de clientes: preguntas, maquetas con 5 estéticas, requisitos SEO/seguridad, recursos evaluados.
-- Skills (en `~/.claude/skills/`, respaldo en `respaldo-skills/`): `crear-sitio-web` (base), `crear-menu-digital` (subrama para menús con QR y plato en vivo; usa el mismo motor de formularios) y `contexto_biodigital` (contexto completo del proyecto; reemplaza a `contexto_pagina_web`).
+- Skills (en `~/.claude/skills/`, respaldo en `respaldo-skills/`): `crear-sitio-web` (base), `crear-menu-digital` (subrama para menús con QR y plato en vivo; usa el mismo motor de formularios), `crear-sistemas-agendas` (subrama para sistemas de reservas y agendas, plug and play) y `contexto_biodigital` (contexto completo del proyecto; reemplaza a `contexto_pagina_web`).
 - [Panel interno](web/panel/LEEME.md) — solicitudes en vivo, formularios, caja y equipo, con login y segundo factor (Supabase). Dirección: https://main.biodigital-panel.pages.dev
 - [Menú digital](web/menu/) — plantilla y demo "Fogón del Sur" (https://main.menu-demo.pages.dev): carta estilo restaurante con "Ver en tu mesa" (3D y realidad aumentada).
-- Formularios para clientes: `web/propuesta/formulario.html` (página web, 59 preguntas) y `formulario-menu.html` (menú digital, 60); se arman con `node web/propuesta/fuentes/formularios.mjs`.
+- Formularios para clientes: `web/propuesta/formulario.html` (página web, 59 preguntas) y `formulario-menu.html` (menú digital, 64) y `formulario-reservas.html` (sistema de reservas, 39); se arman con `node web/propuesta/fuentes/formularios.mjs`.
 - [Ejemplos: matriz CREA y trazabilidad](memoria/ejemplos-matriz.md) — plantilla de referencia, segmento y matriz CREA de cada sitio de ejemplo; requisitos → criterios → pruebas.
 - [Competencia y margen de mejora](memoria/competencia.md) — mapa de competencia con precios, costo a 3 años, velocidad medida, hallazgos por impacto y decisiones pendientes (22-oct-2026).
 - [Menú digital con pedidos](memoria/menu-pedidos.md) — restaurante: pedidos en mesa, retiro y delivery, seguimiento con mapa, cocina, repartidor y panel; competencia y costos recurrentes (23-oct-2026).

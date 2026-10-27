@@ -54,7 +54,7 @@
         (p.cliente.telefono ? '<p><a class="btn-s" href="tel:' + esc(p.cliente.telefono) + '">Llamar al cliente</a></p>' : '') +
         '<p class="sis-nota" style="margin-top:8px">' + (r.lat ? 'Ubicación compartida a las ' + P.hora(r.t) + ' · faltan ' + km.toFixed(1) + ' km' + (km < .06 ? ' · ¡ya llegaste! Marca la entrega.' : '') : 'Todavía no se comparte tu ubicación: el cliente no ve la moto en su mapa.') + '</p>' +
         '<div class="acc" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">' +
-        (vigilar != null ? '<span class="pagado">GPS real activo: el cliente te ve en su mapa</span>' : detener ? '<span class="por-pagar">Recorrido de prueba en curso</span>' : '<button class="btn-s prim" type="button" data-gps>Compartir mi ubicación (GPS)</button><button class="btn-s" type="button" data-sim>Probar sin moto: simular recorrido</button>') +
+        (vigilar != null ? '<span class="pagado">GPS real activo: el cliente te ve en su mapa</span>' : detener ? '<span class="por-pagar">Recorrido de prueba en curso</span>' : '<button class="btn-s prim" type="button" data-gps>Compartir mi ubicación (GPS)</button>' + (R.demo ? '<button class="btn-s" type="button" data-sim>Probar sin moto: simular recorrido</button>' : '')) +
         '<button class="btn-s prim" type="button" data-entregar>' + (p.pago.pagado ? 'Marcar entregado' : 'Entregado y cobrado (' + clp(p.total) + ')') + '</button></div>' +
         '<p style="margin-top:10px"><a class="btn-s" href="https://www.google.com/maps/dir/?api=1&destination=' + p.destino.lat + ',' + p.destino.lng + '" target="_blank" rel="noopener">Abrir la ruta en Google Maps</a></p>';
     }

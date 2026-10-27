@@ -3,13 +3,13 @@
 // Cuatro modos cubren los rubros: "noches" (cabañas, hotel), "horas" (centro médico, salón), "cupos" (tours) y
 // "bloques" (arriendo de espacios por hora).
 //
-// CONECTADO: con Reservas.conectar(negocio) los datos se comparten por una base en la nube (_compartido/nube.js): el cliente reserva en
-// su celular y la reserva aparece en el panel de administración; lo que el panel cambia (confirmar, cancelar, precios, bloqueos) lo ve el cliente.
-// El cliente ve solo lo suyo y qué fechas están ocupadas; el equipo entra con PIN. Sin conectar, funciona solo en este navegador
-// (los ejemplos de rubro de la galería). Ver memoria/conexion-nube.md.
+// CONECTADO: con Reservas.conectar(negocio) los datos viven en una base en la nube (_compartido/nube.js) y el SERVIDOR manda: calcula precio, depósito y
+// disponibilidad, y valida quién puede hacer qué. El navegador solo envía lo que la persona eligió. El cliente ve solo lo suyo (con el código secreto de su
+// reserva) y qué fechas están ocupadas; el equipo entra con PIN (recepción o jefe). Sin conectar, funciona solo en este navegador. Ver memoria/reservas-sistema.md.
+// Cada negocio real define sus agendas en agenda.config.js (window.AGENDA); sin eso se usan las 5 de demostración.
 (function () {
   'use strict';
-  var V = 'bdres-v1-';
+  var V = 'bdres-v1-', MIS = 'bdres-mis-';   // se completan con el negocio apenas se lee la configuración (dos negocios en un mismo sitio no mezclan su caché)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var fstr = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
   var fdate = function (s, min) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2], 0, min || 0); };
@@ -24,7 +24,7 @@
   var LV = function (a, b) { return { lun: [[a, b]], mar: [[a, b]], mie: [[a, b]], jue: [[a, b]], vie: [[a, b]] }; };
 
   // ---------- Negocios de demostración (ficticios, Gran Concepción) ----------
-  var NEGOCIOS = [
+  var DEMOS = [
     { id: 'cabanas', nombre: 'Cabañas Bosque Nativo', rubro: 'Cabañas y hotel', modo: 'noches', icono: 'cabana', color: '#2f6f4e', sigla: 'BN', comuna: 'Tomé', direccion: 'Camino a Cocholgüe km 3 (ejemplo)',
       recursos: [
         { id: 'copihue', nombre: 'Cabaña Copihue', unidades: 3, capacidad: 2, precio: 45000, desc: 'Para dos, con terraza y vista al mar.', incluye: ['Cama king', 'Cocina equipada', 'Wifi', 'Estacionamiento'] },
@@ -64,6 +64,9 @@
       politicas: { deposito: 0, retencionMin: 10, anticipacionHoras: 1, maxDias: 45, cancelacion: [{ horas: 2, reembolso: 100 }, { horas: 0, reembolso: 0 }] },
       promos: [{ codigo: 'PRIMERAVEZ', tipo: 'monto', valor: 3000, minimo: 10000, activa: true, usos: 0, usosMax: 100 }], reglas: [] }
   ];
+  var AG = window.AGENDA || {};
+  var NEGOCIOS = AG.negocios || DEMOS;
+  if (AG.negocio) { V += AG.negocio + '-'; MIS += AG.negocio + '-'; }
   // Íconos de línea (24×24, trazo) para rubros y pantallas. Sin emojis: se ven igual en todos los equipos.
   var ICONOS = {
     cabana: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/>',
@@ -87,7 +90,7 @@
     if (!d) d = { config: JSON.parse(JSON.stringify(base)), reservas: [], bloqueos: [], avisos: [] };
     return d;
   }
-  function guardar(id, d, sinNube) { try { localStorage.setItem(V + id, JSON.stringify(d)); } catch (e) {} avisar(id); if (!sinNube && nubes[id]) sincronizar(id, d); }
+  function guardar(id, d) { try { localStorage.setItem(V + id, JSON.stringify(d)); } catch (e) {} avisar(id); }
   var canal = null; try { canal = new BroadcastChannel('bd-reservas'); } catch (e) {}
   var oyentes = [];
   function avisar(id) { var m = { id: id, t: Date.now() }; if (canal) canal.postMessage(m); oyentes.forEach(function (f) { f(m); }); }
@@ -113,7 +116,7 @@
   function limites(c) { var a = Date.now() + (c.politicas.anticipacionHoras || 0) * 36e5; return { desde: a, hasta: fdate(sumaDias(hoy(), c.politicas.maxDias || 365)).getTime() }; }
 
   // Unidades libres de un tipo de alojamiento en una noche
-  function libresNoche(d, rec, fecha) { var r = recurso(d, rec), a = fdate(fecha).getTime(); return r.unidades - ocupan(d, rec, a, a + 864e5); }
+  function libresNoche(d, rec, fecha, salvo) { var r = recurso(d, rec), a = fdate(fecha).getTime(); return r.unidades - ocupan(d, rec, a, a + 864e5, salvo); }
   // Horas disponibles de un servicio en un día (con qué profesional o sala)
   function horas(d, sel) {
     var c = d.config, lim = limites(c), out = [], dur, recs;
@@ -146,7 +149,7 @@
     for (var i = 1; i <= n; i++) {
       var f = anio + '-' + pad(mesN + 1) + '-' + pad(i), fin = fdate(f).getTime() + 864e5, est = 'cerrado', info = '';
       if (fin <= lim.desde - (c.modo === 'noches' ? 0 : 864e5) || fdate(f).getTime() > lim.hasta) { out[f] = { estado: 'pasado' }; continue; }
-      if (c.modo === 'noches') { var lb = sel.recurso ? libresNoche(d, sel.recurso, f) : c.recursos.reduce(function (t, r) { return t + libresNoche(d, r.id, f); }, 0), tot = sel.recurso ? recurso(d, sel.recurso).unidades : c.recursos.reduce(function (t, r) { return t + r.unidades; }, 0); est = lb <= 0 ? 'lleno' : lb / tot <= .34 ? 'pocos' : 'libre'; info = lb; }
+      if (c.modo === 'noches') { var lb = sel.recurso ? libresNoche(d, sel.recurso, f, sel.salvo) : c.recursos.reduce(function (t, r) { return t + libresNoche(d, r.id, f, sel.salvo); }, 0), tot = sel.recurso ? recurso(d, sel.recurso).unidades : c.recursos.reduce(function (t, r) { return t + r.unidades; }, 0); est = lb <= 0 ? 'lleno' : lb / tot <= .34 ? 'pocos' : 'libre'; info = lb; }
       else if (c.modo === 'cupos') { if (sel.servicio) { var sl = salidas(d, { servicio: sel.servicio, fecha: f }); if (sl.length) { var q = sl.reduce(function (t, x) { return t + x.quedan; }, 0), cap = sl.reduce(function (t, x) { return t + x.capacidad; }, 0); est = q < (sel.personas || 1) ? 'lleno' : q / cap <= .3 ? 'pocos' : 'libre'; info = q; } } }
       else if ((sel.servicio || sel.recurso) && abierto(c, f).length) { var hs = horas(d, { servicio: sel.servicio, recurso: sel.recurso, fecha: f, horas: sel.horas }); est = !hs.length ? 'lleno' : hs.length <= 4 ? 'pocos' : 'libre'; info = hs.length; }
       out[f] = { estado: est, info: info };
@@ -204,7 +207,7 @@
       var n = difDias(sel.llegada, sel.salida), alta = enTemporada(c, sel.llegada);
       if (n < (alta ? P.estadiaMinAlta || 1 : P.estadiaMin || 1)) return 'En esas fechas la estadía mínima es de ' + (alta ? P.estadiaMinAlta : P.estadiaMin) + ' noches.';
       if (sel.personas > r.capacidad) return r.nombre + ' es para ' + r.capacidad + ' personas como máximo.';
-      for (var i = 0; i < n; i++) if (libresNoche(d, r.id, sumaDias(sel.llegada, i)) <= 0) return 'Alguien acaba de tomar una de esas noches. Elige otras fechas.';
+      for (var i = 0; i < n; i++) if (libresNoche(d, r.id, sumaDias(sel.llegada, i), sel.salvo) <= 0) return 'Alguien acaba de tomar una de esas noches. Elige otras fechas.';
       if (fdate(sel.llegada).getTime() + 864e5 < Date.now()) return 'Esa fecha ya pasó.';
       return '';
     }
@@ -223,6 +226,7 @@
   function codigoNuevo(d) { var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s; do { s = ''; var b = new Uint8Array(6); crypto.getRandomValues(b); for (var i = 0; i < 6; i++) s += a[b[i] % a.length]; } while (d.reservas.some(function (r) { return r.codigo === s; })); return s; }
   function crear(id, sel, cliente, opc) {
     opc = opc || {};
+    if (nubes[id]) return crearNube(id, sel, cliente, opc);   // conectado: devuelve una promesa con { reserva } o { error }
     return cambiar(id, function (d) {
       var err = validar(d, sel); if (err) return { error: err };
       var c = d.config, pr = precio(d, sel, opc.codigo), desde, hasta, rec = sel.recurso;
@@ -236,12 +240,13 @@
         estado: conDep ? 'retenida' : 'confirmada', expira: conDep ? Date.now() + (c.politicas.retencionMin || 10) * 6e4 : null,
         canal: opc.canal || 'Sitio web', idioma: cliente.idioma || 'es', historial: [{ estado: conDep ? 'retenida' : 'confirmada', t: Date.now() }], semilla: !!opc.semilla };
       if (pr.promo && pr.promo.codigo && pr.motivo.indexOf(pr.promo.codigo) > -1) c.promos.forEach(function (p) { if (p.codigo === pr.promo.codigo) p.usos++; });
-      d.reservas.push(r); if (nubes[id]) recordarMia(id, r.id);
+      d.reservas.push(r);
       if (!opc.semilla) programarAvisos(d, r, conDep ? 'pago' : 'confirmacion');
       return { reserva: r };
     });
   }
   function estado(id, rid, nuevo, extra) {
+    if (nubes[id]) return escribirRes(id, rid, { estado: nuevo, pagado: extra && extra.pagado }, 'parchar').then(function (x) { return x.error ? x : x.reserva; });   // conectado: promesa
     return cambiar(id, function (d) {
       var r = d.reservas.filter(function (x) { return x.id === rid; })[0]; if (!r) return null;
       if ((nuevo === 'pagada' || nuevo === 'confirmada') && (r.estado === 'cancelada' || (r.estado === 'retenida' && r.expira && r.expira < Date.now()))) return { error: 'La retención venció y la fecha se liberó. Haz una reserva nueva.' };   // no se revive: la fecha pudo venderse a otra persona
@@ -258,8 +263,10 @@
     var t = tramos.filter(function (x) { return h >= x.horas; })[0] || { reembolso: 0 };
     return { porcentaje: t.reembolso, monto: Math.round(r.pagado * t.reembolso / 100), horas: Math.max(0, Math.floor(h)) };
   }
-  function cancelar(id, rid, por) { var d = leer(id), r = d.reservas.filter(function (x) { return x.id === rid; })[0]; if (!r) return null; var rb = reembolso(d, r); return estado(id, rid, 'cancelada', { reembolso: rb, canceladaPor: por || 'cliente' }); }
-  function esperar(id, sel, cliente) { return cambiar(id, function (d) { d.espera = d.espera || []; var e = { id: 'e' + Date.now().toString(36), t: Date.now(), sel: sel, cliente: cliente, avisado: false }; d.espera.push(e); return e; }); }
+  function cancelar(id, rid, por) { if (nubes[id]) return estado(id, rid, 'cancelada'); var d = leer(id), r = d.reservas.filter(function (x) { return x.id === rid; })[0]; if (!r) return null; var rb = reembolso(d, r); return estado(id, rid, 'cancelada', { reembolso: rb, canceladaPor: por || 'cliente' }); }
+  function esperar(id, sel, cliente) {
+    if (nubes[id]) return Nube.escribir(NUBE, 'espera', Nube.idNuevo(), { agenda: id, neg: id, sel: sel, cliente: cliente }, { modo: 'poner' }).then(function () { return { ok: true }; }).catch(function (e) { return { error: mensajeError(e && e.codigo ? e.codigo : 'red') }; });
+    return cambiar(id, function (d) { d.espera = d.espera || []; var e = { id: 'e' + Date.now().toString(36), t: Date.now(), sel: sel, cliente: cliente, avisado: false }; d.espera.push(e); return e; }); }
   function avisarEspera(d, r) {
     (d.espera || []).forEach(function (e) {
       if (e.avisado) return;
@@ -294,14 +301,15 @@
   }
   // Tareas automáticas: vencer retenciones sin pago, enviar avisos programados, cerrar reservas pasadas
   function automatico(id) {
-    var d = leer(id), cambio = false, ahora = Date.now(), equipo = !nubes[id] || !!pinEquipo();   // en la nube, check-in y cierre los hace el equipo; el cliente solo ve vencer sus propias retenciones
+    if (nubes[id]) return automaticoNube(id);
+    var d = leer(id), cambio = false, ahora = Date.now(), equipo = true;
     d.reservas.forEach(function (r) {
       if (r._pub) return;
       if (r.estado === 'retenida' && r.expira && r.expira < ahora) { r.estado = 'cancelada'; r.canceladaPor = 'sistema: no se pagó a tiempo'; r.historial.push({ estado: 'cancelada', t: ahora }); avisarEspera(d, r); cambio = true; }
       if (equipo && (r.estado === 'confirmada' || r.estado === 'pagada') && r.desde <= ahora && r.hasta > ahora && !r.semilla) { r.estado = 'checkin'; r.historial.push({ estado: 'checkin', t: ahora, auto: true }); cambio = true; }   // llegó la hora: queda "En curso"
       if (equipo && (r.estado === 'confirmada' || r.estado === 'pagada' || r.estado === 'checkin') && r.hasta < ahora && !r.semilla) { r.estado = 'completada'; r.historial.push({ estado: 'completada', t: ahora }); cambio = true; }
     });
-    if (equipo) d.avisos.forEach(function (a) { if (a.estado === 'programado' && a.cuando <= ahora) { a.estado = nubes[id] ? 'enviado (simulado)' : 'enviado (demo)'; a.enviado = ahora; cambio = true; } });
+    if (equipo) d.avisos.forEach(function (a) { if (a.estado === 'programado' && a.cuando <= ahora) { a.estado = 'enviado (demo)'; a.enviado = ahora; cambio = true; } });
     if (cambio) guardar(id, d);
   }
 
@@ -321,6 +329,7 @@
   }
   // Importa un calendario .ics (por ejemplo, el de Airbnb o Booking) como bloqueos de un recurso
   function importarIcal(id, rec, txt, origen) {
+    if (nubes[id]) return importarIcalNube(id, rec, txt, origen);
     var eventos = String(txt).replace(/\r\n[ \t]/g, '').split('BEGIN:VEVENT').slice(1), n = 0;
     var fecha = function (v) { var m = /(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/.exec(v || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0)).getTime() : null; };
     return cambiar(id, function (d) {
@@ -333,10 +342,28 @@
       return n;
     });
   }
-  function bloquear(id, rec, desde, hasta, motivo) { return cambiar(id, function (d) { d.bloqueos.push({ id: 'b' + Date.now().toString(36), recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual', unidades: 1 }); }); }
+  // Quitar un bloqueo manual: las fechas vuelven a estar disponibles (en la nube se marca como quitado; el historial queda)
+  function quitarBloqueo(id, bid) {
+    var sacar = function () { var d = leer(id); d.bloqueos = d.bloqueos.filter(function (b) { return b.id !== bid; }); guardar(id, d, true); };
+    if (!nubes[id]) { sacar(); return Promise.resolve({ ok: true }); }
+    return Nube.escribir(NUBE, 'bloqueos', bid, { quitado: true }, { pin: pinEquipo(), modo: 'parchar' }).then(function () { sacar(); nubes[id].sondeos[3].ya(); return { ok: true }; }).catch(function (e) { return { error: mensajeError(e && e.codigo ? e.codigo : 'red') }; });
+  }
+  function importarIcalNube(id, rec, txt, origen) {
+    var eventos = String(txt).replace(/\r\n[ \t]/g, '').split('BEGIN:VEVENT').slice(1), pin = pinEquipo();
+    var fecha = function (v) { var m = /(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/.exec(v || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0)).getTime() : null; };
+    var filas = [];
+    eventos.forEach(function (ev) { var g = function (k) { var m = new RegExp('^' + k + '[^:]*:(.*)$', 'm').exec(ev); return m ? m[1].trim() : ''; }; var a = fecha(g('DTSTART')), b = fecha(g('DTEND')) || (a && a + 864e5); if (a && b && b > a) filas.push({ desde: a, hasta: b, motivo: (g('SUMMARY') || 'Reservado') + ' (' + origen + ')' }); });
+    return Nube.borrar(NUBE, 'bloqueos', pin, { filtro: { agenda: id, recurso: rec, origen: origen } }).catch(function () {}).then(function () {
+      return Promise.all(filas.map(function (f) { return Nube.escribir(NUBE, 'bloqueos', Nube.idNuevo(), { agenda: id, neg: id, recurso: rec, desde: f.desde, hasta: f.hasta, motivo: f.motivo, origen: origen }, { pin: pin, modo: 'poner' }).catch(function () {}); }));
+    }).then(function () { nubes[id].sondeos[3].ya(); return filas.length; });
+  }
+  function bloquear(id, rec, desde, hasta, motivo) {
+    if (nubes[id]) return Nube.escribir(NUBE, 'bloqueos', Nube.idNuevo(), { agenda: id, neg: id, recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual' }, { pin: pinEquipo(), modo: 'poner' }).then(function () { nubes[id].sondeos[3].ya(); return { ok: true }; }).catch(function (e) { return { error: mensajeError(e && e.codigo ? e.codigo : 'red') }; });
+    return cambiar(id, function (d) { d.bloqueos.push({ id: 'b' + Date.now().toString(36), recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual', unidades: 1 }); }); }
 
   // ---------- Datos de prueba para el panel (marcados; clientes "de prueba") ----------
   function sembrar(id) {
+    if (nubes[id]) return;   // los datos de muestra solo existen en modo local
     var d = leer(id), c = d.config;
     d.reservas = d.reservas.filter(function (r) { return !r.semilla; });
     var canales = c.modo === 'noches' ? ['Sitio web', 'Sitio web', 'Airbnb (iCal)', 'Booking (iCal)', 'WhatsApp', 'Teléfono'] : ['Sitio web', 'Sitio web', 'Sitio web', 'WhatsApp', 'Teléfono', 'Presencial'];
@@ -368,16 +395,16 @@
     guardar(id, d);
   }
   function restablecer(id) {
-    if (nubes[id]) {   // en la nube solo el dueño puede vaciar; se vuelve a leer todo desde cero
+    if (nubes[id]) {   // en la nube solo el jefe puede vaciar; se vuelve a leer todo desde cero
       var pin = pinEquipo();
-      return Promise.all(['reservas', 'avisos', 'espera'].map(function (c) { return Nube.vaciar(NUBE, c, pin); })).then(function (r) {
+      return Promise.all(['reservas', 'avisos', 'espera', 'bloqueos'].map(function (c) { return Nube.vaciar(NUBE, c, pin); })).then(function (r) {
         if (r[0] && r[0].error) throw new Error('sin permiso');
-        try { localStorage.removeItem(V + id); } catch (e) {} nubes[id].ultimo = { reservas: {}, avisos: {}, espera: {}, config: null }; nubes[id].sondeos.forEach(function (x) { x.reiniciar(); }); avisar(id);
+        try { localStorage.removeItem(V + id); } catch (e) {} nubes[id].sondeos.forEach(function (x) { x.reiniciar(); }); avisar(id);
       });
     }
     try { localStorage.removeItem(V + id); } catch (e) {} avisar(id); return Promise.resolve();
   }
-  function guardarConfig(id, fn) { return cambiar(id, function (d) { fn(d.config); }); }
+  function guardarConfig(id, fn) { var x = cambiar(id, function (d) { fn(d.config); }); if (nubes[id]) { nubes[id].sucio = true; avisar(id); } return x; }
 
   var clp = function (n) { return '$' + Math.round(n).toLocaleString('es-CL'); };
   function fechaHora(d, r) {
@@ -388,78 +415,83 @@
   var ESTADOS = { retenida: ['Retenida (falta pago)', '#f59e0b'], confirmada: ['Confirmada', '#3b82f6'], pagada: ['Pagada', '#22c55e'], checkin: ['En curso', '#a855f7'], completada: ['Completada', '#94a3b8'], cancelada: ['Cancelada', '#ef4444'], noshow: ['No llegó', '#b91c1c'] };
 
 
-  // ---------- Nube: espejo de este negocio en la base compartida ----------
-  var NUBE = 'reservas', nubes = {};
+  // ---------- Nube: el servidor manda ----------
+  // Conectado a la nube, este navegador NO decide nada importante: manda lo que la persona eligió (selección y datos) y el SERVIDOR calcula precio,
+  // depósito, disponibilidad y estado, y valida quién puede hacer qué (cliente con el código de su reserva, recepción, jefe). Lo que vuelve es lo que vale.
+  // Sin conectar, todo funciona solo en este navegador (los ejemplos de rubro de la galería). Ver memoria/reservas-sistema.md.
+  var NUBE = AG.negocio || 'reservas', nubes = {};
   function pinEquipo() { return window.Nube ? Nube.pin(NUBE) : ''; }
-  function mias(id) { try { return JSON.parse(localStorage.getItem('bdres-mis-' + id)) || []; } catch (e) { return []; } }
-  function recordarMia(id, rid) { var l = mias(id); if (l.indexOf(rid) < 0) { l.push(rid); try { localStorage.setItem('bdres-mis-' + id, JSON.stringify(l.slice(-40))); } catch (e) {} } }
-  // Lo único que se publica de cada reserva para calcular fechas libres: sin nombre ni contacto
-  function pubDe(d, r) {
-    var c = d.config, m = c.modo === 'noches' ? 'n' : c.modo === 'cupos' ? 'c' : c.modo === 'horas' ? 'h' : 'b';
-    return { n: c.id, m: m, r: c.id + ':' + r.recurso + (m === 'c' ? ':' + r.desde : ''), d: r.desde, h: r.hasta, u: m === 'c' ? (r.personas || 1) : (r.unidades || 1), e: r.estado, x: r.expira || 0 };
+  function mias(id) { try { return JSON.parse(localStorage.getItem(MIS + id)) || []; } catch (e) { return []; } }
+  function recordarMia(id, rid) { var l = mias(id); if (l.indexOf(rid) < 0) { l.push(rid); try { localStorage.setItem(MIS + id, JSON.stringify(l.slice(-40))); } catch (e) {} } }
+  function olvidarMia(id, rid) { var l = mias(id).filter(function (x) { return x !== rid; }); try { localStorage.setItem(MIS + id, JSON.stringify(l)); } catch (e) {} }
+
+  // Mensajes para las personas: el servidor responde con códigos cortos
+  var MSJ = {
+    ocupado: 'Alguien acaba de tomar esa fecha u hora. Elige otra.', ya_paso: 'Esa fecha u hora ya pasó o es muy pronto para reservar.', lejos: 'Todavía no se puede reservar para tan adelante.',
+    fechas: 'Revisa las fechas elegidas.', estadia_larga: 'La estadía máxima es de 60 noches.', fuera_horario: 'Esa hora no está disponible. Elige otra.', sin_salida: 'Esa salida no está disponible.',
+    seleccion: 'Revisa lo que elegiste.', sin_agenda: 'Este negocio todavía no publica su agenda de reservas.', horas_max: 'Se puede arrendar hasta 12 horas seguidas.',
+    demasiadas_retenciones: 'Ya tienes 2 reservas esperando pago. Págalas o espera a que venzan.', conflicto: 'Esta reserva cambió mientras la editabas. Ábrela otra vez para ver la versión actual.',
+    no_modificable: 'Esta reserva ya no se puede modificar.', transicion_invalida: 'Ese cambio no está permitido para esta reserva.', retencion_vencida: 'La retención venció y la fecha se liberó. Haz una reserva nueva.',
+    aun_no: 'Esa reserva todavía no empieza.', 'sin permiso': 'No tienes permiso para hacer eso.', config_invalida: 'La configuración no es válida: revisa nombres, códigos y números.', bloqueo_invalido: 'Revisa las fechas del bloqueo.',
+    red: 'No hay conexión. Revisa tu internet e intenta de nuevo.'
+  };
+  function mensajeError(c) {
+    c = String(c || ''); var p = c.split(':'), k = p[0], a = p.slice(1);
+    if (k === 'estadia_min') return 'En esas fechas la estadía mínima es de ' + a[0] + ' noches.';
+    if (k === 'capacidad') return 'La capacidad máxima es de ' + a[0] + ' personas.';
+    if (k === 'minimo_personas') return 'Esta salida requiere mínimo ' + a[0] + ' personas por reserva.';
+    if (k === 'cupos') return +a[0] > 0 ? 'Quedan ' + a[0] + ' cupos en esa salida.' : 'Esa salida ya no tiene cupos.';
+    if (k === 'horas_min') return 'El mínimo para este espacio es de ' + a[0] + ' horas.';
+    if (k === 'tarde_modificar') return 'Ya no se puede modificar: faltan menos de ' + a[0] + ' horas. Escríbele al negocio.';
+    if (k === 'datos') return { nombre: 'Escribe tu nombre y apellido.', correo: 'Escribe un correo válido.', telefono: 'Escribe un celular válido, con código de país.', contacto: 'Escribe un correo o un celular válido.' }[a[0]] || 'Revisa tus datos.';
+    if (k === 'transicion_invalida') return MSJ[k];
+    return MSJ[k] || MSJ[c] || 'No se pudo guardar (' + c + '). Intenta de nuevo.';
   }
-  function cupoDe(d, r) {
-    var c = d.config, p = pubDe(d, r), mx = c.modo === 'cupos' ? (servicio(d, r.servicio) || {}).capacidad : (recurso(d, r.recurso) || {}).unidades;
-    return { r: p.r, d: r.desde, h: r.hasta, u: p.u, max: mx || 1, paso: c.modo === 'noches' ? 864e5 : 0 };
-  }
-  function sincronizar(id, d) {
-    var n = nubes[id]; if (!n) return;
+  function reservaDe(id, rid) { return leer(id).reservas.filter(function (x) { return x.id === rid; })[0] || null; }
+  // Escribe un cambio y devuelve lo que quedó en el servidor (o el mensaje de por qué no)
+  function escribirRes(id, rid, data, modo) {
     var pin = pinEquipo();
-    ['reservas', 'avisos', 'espera'].forEach(function (col) {
-      (d[col] || []).forEach(function (it) {
-        if (it._pub) return;
-        it.neg = id;
-        var js = Nube.canon(it); if (n.ultimo[col][it.id] === js) return;
-        n.ultimo[col][it.id] = js;
-        var o = { pin: pin, modo: 'poner' }, nuevo = !n.subidas[it.id];
-        if (col === 'reservas') { o.pub = pubDe(d, it); if (nuevo && it.estado !== 'cancelada') o.cupo = cupoDe(d, it); }
-        n.subidas[it.id] = 1;
-        var copia = JSON.parse(JSON.stringify(it));
-        Nube.cola(col + it.id, function () {
-          if (n.rechazadas[it.id]) return Promise.resolve();   // ya se anuló: no se vuelve a publicar un estado viejo
-          return Nube.escribir(NUBE, col, it.id, copia, o).then(function () { n.enLinea = true; }).catch(function (e) {
-          if (col === 'reservas' && e.codigo === 'ocupado') {
-            n.rechazadas[it.id] = true;   // alguien reservó lo mismo un instante antes: se anula y se avisa
-            var dd = leer(id), r = dd.reservas.filter(function (x) { return x.id === it.id; })[0];
-            if (r) {
-              r.estado = 'cancelada'; r.canceladaPor = 'sistema: la fecha se ocupó justo antes'; r.historial.push({ estado: 'cancelada', t: Date.now() });
-              n.ultimo.reservas[it.id] = Nube.canon(r); guardar(id, dd, true);
-              oyentes.forEach(function (f) { f({ id: id, tipo: 'rechazo', rid: it.id }); });
-              return Nube.escribir(NUBE, 'reservas', it.id, r, { pin: pin, modo: 'poner', pub: pubDe(dd, r) }).catch(function () {});
-            }
-            oyentes.forEach(function (f) { f({ id: id, tipo: 'rechazo', rid: it.id }); });
-          } else {
-            delete n.ultimo[col][it.id]; delete n.subidas[it.id];
-            oyentes.forEach(function (f) { f({ id: id, tipo: 'error', mensaje: 'No se pudo guardar. Revisa tu conexión.' }); });
-          }
-          });
-        });
-      });
-    });
-    if (pin) {   // el equipo publica la configuración (precios, políticas, bloqueos) para que el cliente la vea
-      var cf = Nube.canon({ config: d.config, bloqueos: d.bloqueos });
-      if (n.ultimo.config !== cf) { n.ultimo.config = cf; Nube.escribir(NUBE, 'config', 'cfg-' + id, { config: d.config, bloqueos: d.bloqueos }, { pin: pin, modo: 'poner' }).catch(function () { n.ultimo.config = null; }); }
-    }
+    return Nube.cola('res' + rid, function () { return Nube.escribir(NUBE, 'reservas', rid, data, { pin: pin, modo: modo || 'parchar' }); })
+      .then(function () { return traer(id, rid); })
+      .then(function () { var r = reservaDe(id, rid); return r ? { ok: true, reserva: r } : { error: 'No pudimos leer la reserva. Revisa "Mis reservas".', codigo: 'lectura' }; })
+      .catch(function (e) { var cod = e && e.codigo ? e.codigo : 'red'; return { error: mensajeError(cod), codigo: cod }; });
   }
+  // Lee una reserva por su código secreto (sirve para cualquiera que lo tenga) y la mezcla en lo local
+  function traer(id, rid) {
+    return Nube.leer(NUBE, 'reservas', { ids: [rid] }).then(function (r) { fusionar(id, 'reservas', r.mios || []); });
+  }
+  function crearNube(id, sel, cliente, opc) {
+    var rid = Nube.idNuevo();
+    var doc = { agenda: id, neg: id, sel: JSON.parse(JSON.stringify(sel)), cliente: cliente, codigoPromo: opc.codigo || '', canal: opc.canal || undefined, sinPago: !!opc.sinPago };
+    recordarMia(id, rid);
+    return escribirRes(id, rid, doc, 'poner').then(function (x) { if (x.error) { olvidarMia(id, rid); return { error: x.error, codigo: x.codigo }; } return { reserva: x.reserva }; });
+  }
+  function modificar(id, rid, cambios) {
+    if (!nubes[id]) return Promise.resolve({ error: 'Modificar reservas solo funciona conectado.' });
+    var r = reservaDe(id, rid); if (!r) return Promise.resolve({ error: 'No encontramos la reserva.' });
+    var data = { baseRev: r.rev || 1 };
+    ['sel', 'cliente', 'codigoPromo'].forEach(function (k) { if (cambios[k] !== undefined) data[k] = cambios[k]; });
+    return escribirRes(id, rid, data, 'parchar');
+  }
+  // Precio calculado por el servidor (con códigos de descuento, que nunca se publican)
+  function cotizar(id, sel, codigo) {
+    if (!nubes[id]) return Promise.resolve({ ok: true, precio: precio(leer(id), sel, codigo) });
+    return Nube.rpc('reserva_cotizar', { p_neg: NUBE, p_ag: id, p_sel: sel, p_codigo: codigo || null }).catch(function () { return { error: 'red' }; });
+  }
+
   function fusionar(id, col, filas) {
-    var n = nubes[id], d = leer(id), cambio = false, lista = d[col] = d[col] || [];
+    var d = leer(id), cambio = false, lista = d[col] = d[col] || [];
     filas.forEach(function (f) {
       var x = f.data; if (!x || x.neg !== id) return; x.id = f.id;
-      var js = Nube.canon(x), i = -1; lista.forEach(function (y, k) { if (y.id === x.id) i = k; });
-      if (i < 0) { lista.push(x); cambio = true; }
-      else {
-        var loc = Nube.canon(lista[i]);
-        if (loc === js) { n.ultimo[col][x.id] = js; return; }
-        if (n.ultimo[col][x.id] !== loc) return;   // hay un cambio local sin enviar: gana lo local
-        lista[i] = x; cambio = true;
-      }
-      n.ultimo[col][x.id] = js; n.subidas[x.id] = 1;
+      var i = -1; lista.forEach(function (y, k) { if (y.id === x.id) i = k; });
+      if (i < 0) { lista.push(x); cambio = true; } else if (Nube.canon(lista[i]) !== Nube.canon(x)) { lista[i] = x; cambio = true; }
     });
     if (cambio) { d[col] = lista; guardar(id, d, true); }
   }
+  // Lo único público de cada reserva ajena: fechas y estado, sin nombre, contacto, código ni precio
   function fusionarPub(id, pubs) {
     var d = leer(id);
-    var stubs = pubs.filter(function (p) { return p && p.n === id; }).map(function (p, i) {
+    var stubs = (pubs || []).filter(function (p) { return p && p.n === id && p.e !== 'bloqueo'; }).map(function (p, i) {
       var k = String(p.r).split(':');
       return { id: 'pub-' + i, _pub: true, neg: id, recurso: k[1], servicio: p.m === 'c' ? k[1] : null, desde: p.d, hasta: p.h, personas: p.u, unidades: p.m === 'c' ? 1 : p.u, estado: p.e, expira: p.x || null };
     });
@@ -467,44 +499,96 @@
     if (Nube.canon(actuales) === Nube.canon(stubs)) return;
     d.reservas = d.reservas.filter(function (r) { return !r._pub; }).concat(stubs); guardar(id, d, true);
   }
+  function fusionarBloqueos(id, r) {
+    var d = leer(id), nuevos;
+    if (r.staff) {
+      nuevos = d.bloqueos.filter(function (b) { return !b._pub; });
+      r.filas.forEach(function (f) { var x = f.data; if (!x || x.neg !== id) return; x.id = f.id; var i = -1; nuevos.forEach(function (y, k) { if (y.id === x.id) i = k; }); if (i < 0) nuevos.push(x); else nuevos[i] = x; });
+    } else {
+      nuevos = (r.pub || []).filter(function (p) { return p && p.n === id && p.e === 'bloqueo'; }).map(function (p, i) { return { id: 'pub-b' + i, _pub: true, recurso: String(p.r).split(':')[1], desde: p.d, hasta: p.h, unidades: 1, motivo: 'No disponible' }; });
+    }
+    nuevos = nuevos.filter(function (b) { return !b.quitado; });
+    if (Nube.canon(nuevos) === Nube.canon(d.bloqueos)) return;
+    d.bloqueos = nuevos; guardar(id, d, true);
+  }
   function conectar(id) {
     if (nubes[id]) return nubes[id].listo;
-    var n = nubes[id] = { ultimo: { reservas: {}, avisos: {}, espera: {}, config: null }, subidas: {}, rechazadas: {}, sondeos: [], enLinea: true, vistoConfig: false };
-    var pend = 2, fin, primera = {};
+    var n = nubes[id] = { ultimo: { config: null }, sondeos: [], enLinea: true, sucio: false, auto: {}, publicada: null };
+    var pend = 3, fin, primera = {};
     n.listo = new Promise(function (ok) { fin = ok; setTimeout(ok, 9000); });
-    var listo1 = function () { if (--pend === 0) fin(); };
+    var listo1 = function (k) { if (!primera[k]) { primera[k] = 1; if (--pend === 0) fin(); } };
     var base = function (ids) { return { pin: pinEquipo, ids: ids, cada: 3000, alConectar: function (ok) { if (ok !== n.enLinea) { n.enLinea = ok; oyentes.forEach(function (f) { f({ id: id, tipo: 'conexion', ok: ok }); }); } } }; };
+    // La configuración publicada (precios, políticas, catálogo) la ve todo el mundo; los códigos de descuento, solo el equipo
     n.sondeos.push(Nube.sondear(NUBE, 'config', base(function () { return ['cfg-' + id]; }), function (r) {
       var fila = r.filas.filter(function (f) { return f.id === 'cfg-' + id; })[0];
       if (fila && fila.data && fila.data.config) {
-        var d = leer(id), js = Nube.canon(fila.data), local = Nube.canon({ config: d.config, bloqueos: d.bloqueos });
-        if (n.ultimo.config !== js && local !== js && (n.ultimo.config === null || n.ultimo.config === local)) { d.config = fila.data.config; d.bloqueos = fila.data.bloqueos || []; n.ultimo.config = js; guardar(id, d, true); }
-        else n.ultimo.config = js;
-      } else if (r.staff && !n.vistoConfig) { n.ultimo.config = null; sincronizar(id, leer(id)); }   // la nube aún no tiene la configuración: la publica el primer panel que entra
-      n.vistoConfig = true; if (!primera.c) { primera.c = 1; listo1(); }
+        n.publicada = true; n.cfgVista = true;
+        if (!n.sucio) {
+          var d = leer(id), c = fila.data.config; c.promos = pinEquipo() ? (d.config.promos || []) : [];
+          if (Nube.canon(d.config) !== Nube.canon(c)) { d.config = c; guardar(id, d, true); }
+        }
+      } else if (!n.cfgVista && n.publicada !== false) { n.publicada = false; oyentes.forEach(function (f) { f({ id: id, tipo: 'sinconfig' }); }); }
+      listo1('c');
+    }));
+    n.sondeos.push(Nube.sondear(NUBE, 'promos', { pin: pinEquipo, soloSiHayIds: true, cada: 6000 }, function (r) {
+      if (!r.staff || n.sucio) return;
+      var f = r.filas.filter(function (x) { return x.data && x.data.agenda === id; })[0]; if (!f) return;
+      var d = leer(id); if (Nube.canon(d.config.promos || []) !== Nube.canon(f.data.lista || [])) { d.config.promos = f.data.lista || []; guardar(id, d, true); }
     }));
     n.sondeos.push(Nube.sondear(NUBE, 'reservas', base(function () { return mias(id); }), function (r) {
-      fusionar(id, 'reservas', r.filas); if (!r.staff) fusionarPub(id, r.pub);
-      if (!primera.r) { primera.r = 1; listo1(); }
+      if (r.staff) n.equipoVisto = true;   // ya llegaron todas las reservas al equipo (el panel avisa solo de las que lleguen después)
+      fusionar(id, 'reservas', r.filas); if (!r.staff) fusionarPub(id, r.pub); listo1('r');
     }));
+    n.sondeos.push(Nube.sondear(NUBE, 'bloqueos', base(function () { return []; }), function (r) { fusionarBloqueos(id, r); listo1('b'); }));
     n.sondeos.push(Nube.sondear(NUBE, 'avisos', { pin: pinEquipo, soloSiHayIds: true, cada: 5000 }, function (r) { if (r.staff) fusionar(id, 'avisos', r.filas); }));
     n.sondeos.push(Nube.sondear(NUBE, 'espera', { pin: pinEquipo, soloSiHayIds: true, cada: 6000 }, function (r) { if (r.staff) fusionar(id, 'espera', r.filas); }));
     return n.listo;
   }
+  // Configuración: el jefe edita un borrador y lo publica con un botón (como la carta del restaurante)
+  function configPendiente(id) { return !!(nubes[id] && nubes[id].sucio); }
+  function publicarConfig(id) {
+    var n = nubes[id], d = leer(id), pin = pinEquipo();
+    if (!n) return Promise.resolve({ ok: true });
+    if (!pin) return Promise.resolve({ error: mensajeError('sin permiso') });
+    return Nube.escribir(NUBE, 'config', 'cfg-' + id, { config: d.config }, { pin: pin, modo: 'poner' })
+      .then(function () { n.sucio = false; n.publicada = true; n.sondeos[0].ya(); avisar(id); return { ok: true }; })
+      .catch(function (e) { return { error: mensajeError(e && e.codigo ? e.codigo : 'red') }; });
+  }
+  function descartarConfig(id) { var n = nubes[id]; if (!n) return; n.sucio = false; n.sondeos[0].reiniciar(); avisar(id); }
+  function estaPublicada(id) { return !nubes[id] || nubes[id].publicada !== false; }   // mientras no se sabe (null), se muestra la agenda de base
   // Al entrar el equipo con su PIN se vuelve a leer todo
-  function entrarEquipo(id) { var n = nubes[id]; if (!n) return; n.ultimo.config = null; n.vistoConfig = false; n.sondeos.forEach(function (x) { x.reiniciar(); }); }
+  function entrarEquipo(id) { var n = nubes[id]; if (!n) return; n.sondeos.forEach(function (x) { x.reiniciar(); }); }
   // Un cliente que abre el enlace de su reserva en otro equipo: se agrega a las que sigue
-  function seguir(id, rid) { if (rid && /^[a-z0-9]{6,40}$/.test(rid)) { recordarMia(id, rid); if (nubes[id]) nubes[id].sondeos.forEach(function (x) { x.ya(); }); } }
+  function seguir(id, rid) { if (rid && /^[a-z0-9]{6,40}$/.test(rid)) { recordarMia(id, rid); if (nubes[id]) { nubes[id].sondeos.forEach(function (x) { x.ya(); }); return traer(id, rid).catch(function () {}); } } return Promise.resolve(); }
   // Solo para las pruebas automáticas: deja el negocio trabajando solo en este navegador
   function desconectar(id) { var n = nubes[id]; if (!n) return; n.sondeos.forEach(function (x) { x.parar(); }); delete nubes[id]; }
   function enLinea(id) { return !nubes[id] || nubes[id].enLinea; }
+  function equipoVisto(id) { return !!(nubes[id] && nubes[id].equipoVisto); }
   function listo(id) { return nubes[id] ? nubes[id].listo : Promise.resolve(); }
+  function conectado(id) { return !!nubes[id]; }
+
+  // Tareas del equipo: pasar a "En curso" y "Completada" cuando llega la hora, vencer retenciones y dar por enviados los avisos programados
+  function automaticoNube(id) {
+    var n = nubes[id], d = leer(id), ahora = Date.now(), pin = pinEquipo();
+    d.reservas.forEach(function (r) {
+      if (r._pub) return;
+      var sig = null;
+      if (r.estado === 'retenida' && r.expira && r.expira < ahora) sig = 'cancelada';
+      else if (pin && (r.estado === 'confirmada' || r.estado === 'pagada') && r.desde <= ahora && r.hasta > ahora) sig = 'checkin';
+      else if (pin && (r.estado === 'confirmada' || r.estado === 'pagada' || r.estado === 'checkin') && r.hasta < ahora) sig = 'completada';
+      if (sig && !n.auto[r.id + sig]) { n.auto[r.id + sig] = 1; estado(id, r.id, sig); }
+    });
+    if (pin) (d.avisos || []).forEach(function (a) {
+      if (a.estado === 'programado' && a.cuando <= ahora && !n.auto[a.id]) { n.auto[a.id] = 1; Nube.escribir(NUBE, 'avisos', a.id, { estado: 'enviado (simulado)', enviado: ahora }, { pin: pin, modo: 'parchar' }).catch(function () { delete n.auto[a.id]; }); }
+    });
+  }
 
   window.Reservas = {
     NEGOCIOS: NEGOCIOS, ESTADOS: ESTADOS, icono: icono, logo: logo, leer: leer, guardarConfig: guardarConfig, escuchar: function (f) { oyentes.push(f); },
     mes: mes, horas: horas, salidas: salidas, libresNoche: libresNoche, precio: precio, validar: validar, crear: crear, estado: estado, pagar: pagar,
-    cancelar: cancelar, reembolso: reembolso, esperar: esperar, automatico: automatico, exportarIcal: exportarIcal, importarIcal: importarIcal, bloquear: bloquear,
-    sembrar: sembrar, restablecer: restablecer, conectar: conectar, desconectar: desconectar, entrarEquipo: entrarEquipo, seguir: seguir, enLinea: enLinea, listo: listo, recurso: recurso, servicio: servicio, enTemporada: enTemporada, fechaHora: fechaHora,
+    cancelar: cancelar, reembolso: reembolso, esperar: esperar, automatico: automatico, exportarIcal: exportarIcal, importarIcal: importarIcal, bloquear: bloquear, quitarBloqueo: quitarBloqueo,
+    sembrar: sembrar, restablecer: restablecer, conectar: conectar, desconectar: desconectar, entrarEquipo: entrarEquipo, seguir: seguir, enLinea: enLinea, listo: listo, equipoVisto: equipoVisto, recurso: recurso, servicio: servicio, enTemporada: enTemporada, fechaHora: fechaHora,
+    modificar: modificar, cotizar: cotizar, mensajeError: mensajeError, conectado: conectado, mias: mias, reservaDe: reservaDe, configPendiente: configPendiente, publicarConfig: publicarConfig, descartarConfig: descartarConfig, estaPublicada: estaPublicada, AGENDA: AG, NUBE: function () { return NUBE; },
     util: { fstr: fstr, fdate: fdate, hoy: hoy, sumaDias: sumaDias, difDias: difDias, diaSem: diaSem, hMin: hMin, minH: minH, clp: clp, pad: pad }
   };
 })();

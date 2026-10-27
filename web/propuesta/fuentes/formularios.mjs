@@ -1,6 +1,7 @@
-// Genera los dos formularios para clientes de Bío Digital a partir de las skills (copias en respaldo-skills/):
+// Genera los tres formularios para clientes de Bío Digital a partir de las skills (copias en respaldo-skills/):
 //   formulario.html       → página web (59 preguntas)
 //   formulario-menu.html  → menú digital
+//   formulario-reservas.html → sistema de reservas (agenda)
 // Ambos envían las respuestas al panel (Supabase) y ofrecen copiar / WhatsApp como respaldo.
 // Uso (desde la raíz del proyecto):  node web/propuesta/fuentes/formularios.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -14,6 +15,7 @@ const raiz = join(aqui, '..', '..', '..');
 const motor = join(raiz, 'respaldo-skills/crear-sitio-web/plantilla/formulario/formulario-cliente.html');
 const salidaWeb = join(aqui, '..', 'formulario.html');
 const salidaMenu = join(aqui, '..', 'formulario-menu.html');
+const salidaReservas = join(aqui, '..', 'formulario-reservas.html');
 const agencia = { nombre: 'Bío Digital', contacto: `WhatsApp ${WHATSAPP_VISIBLE} · biodigitalici@gmail.com`, whatsapp: WHATSAPP, envio: { url: SUPABASE_URL, llave: SUPABASE_KEY, tipo: 'web' }, salida: 'RESPUESTAS DEL CLIENTE' };
 
 // Página web: el motor tal cual, con los datos de Bío Digital
@@ -26,3 +28,6 @@ console.log('formulario.html listo');
 
 // Menú digital
 execFileSync('node', [join(raiz, 'respaldo-skills/crear-menu-digital/plantilla/formulario/construir-formulario.mjs'), '--motor', motor, '--salida', salidaMenu, '--agencia', agencia.nombre, '--contacto', agencia.contacto, '--whatsapp', WHATSAPP, '--supabase-url', SUPABASE_URL, '--supabase-key', SUPABASE_KEY], { stdio: 'inherit' });
+
+// Sistema de reservas (agenda)
+execFileSync('node', [join(raiz, 'respaldo-skills/crear-sistemas-agendas/plantilla/formulario/construir-formulario.mjs'), '--motor', motor, '--salida', salidaReservas, '--agencia', agencia.nombre, '--contacto', agencia.contacto, '--whatsapp', WHATSAPP, '--supabase-url', SUPABASE_URL, '--supabase-key', SUPABASE_KEY], { stdio: 'inherit' });

@@ -40,9 +40,12 @@
 
   // ---------- Modo de pedido (mesa, retiro, delivery) bajo los datos del local ----------
   var MODOS = { mesa: 'En la mesa', retiro: 'Para retirar', delivery: 'Delivery' };
+  // Solo los modos que este local atiende (config.servicios de su carta); sin dato, los tres
+  function modosActivos() { var s = P.CONFIG.servicios || Object.keys(MODOS); var l = Object.keys(MODOS).filter(function (k) { return s.indexOf(k) > -1; }); return l.length ? l : Object.keys(MODOS); }
   var modoEl = document.createElement('div');
   modoEl.className = 'modo-caja';
-  modoEl.innerHTML = '<div class="modo" role="group" aria-label="Cómo quieres pedir">' + Object.keys(MODOS).map(function (k) { return '<button type="button" data-modo="' + k + '">' + MODOS[k] + '</button>'; }).join('') + '</div><p class="modo-nota" aria-live="polite"></p>';
+  function armarModos() { var act = modosActivos(); if (act.indexOf(estado.modo) < 0) estado.modo = act[0]; modoEl.innerHTML = '<div class="modo" role="group" aria-label="Cómo quieres pedir"' + (act.length < 2 ? ' hidden' : '') + '>' + act.map(function (k) { return '<button type="button" data-modo="' + k + '">' + MODOS[k] + '</button>'; }).join('') + '</div><p class="modo-nota" aria-live="polite"></p>'; }
+  armarModos();
   var acciones = $('.portada .acciones'); if (acciones) acciones.after(modoEl);
   function pintarModo() {
     $$('[data-modo]', modoEl).forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.modo === estado.modo)); });
@@ -177,7 +180,7 @@
             '<div class="cant-ctl"><button type="button" data-menos-l="' + esc(i.lid) + '" aria-label="Quitar uno">−</button><span>' + i.cant + '</span><button type="button" data-mas-l="' + esc(i.lid) + '" aria-label="Agregar uno">+</button></div>' + (i.fijo && !C.plato(i.id) ? '' : '<button class="btn-s editar-l" type="button" data-editar-l="' + esc(i.lid) + '" aria-label="Editar ' + esc(i.nombre) + '">Editar</button>') +
             '<input class="nota-l" data-nota-l="' + esc(i.lid) + '" maxlength="120" placeholder="Nota (opcional)" value="' + esc(i.nota) + '" aria-label="Nota para ' + esc(i.nombre) + '"></div>';
         }).join('') : '<p class="vacio-s">Tu pedido está vacío. Agrega platos de la carta.</p>') + '<small class="campo-err" data-err-lineas role="alert"></small></div>' +
-        '<div class="campo"><span class="lbl">¿Cómo lo quieres?</span><div class="modo" role="group" aria-label="Cómo quieres pedir">' + Object.keys(MODOS).map(function (k) { return '<button type="button" data-modo="' + k + '" aria-pressed="' + (k === estado.modo) + '">' + MODOS[k] + '</button>'; }).join('') + '</div></div>' +
+        '<div class="campo"><span class="lbl">¿Cómo lo quieres?</span><div class="modo" role="group" aria-label="Cómo quieres pedir">' + modosActivos().map(function (k) { return '<button type="button" data-modo="' + k + '" aria-pressed="' + (k === estado.modo) + '">' + MODOS[k] + '</button>'; }).join('') + '</div></div>' +
         (estado.modo === 'mesa' ? '<div class="campo"><label for="c-mesa">Número de mesa</label><select id="c-mesa" required>' + Array.from({ length: P.CONFIG.mesas }, function (_, k) { return '<option' + (String(k + 1) === (origen && origen.mesa ? String(origen.mesa) : mesaAct) ? ' selected' : '') + '>' + (k + 1) + '</option>'; }).join('') + '</select><small class="campo-err" role="alert"></small></div>' : '') +
         '<div class="dos"><div class="campo"><label for="c-nombre">Tu nombre</label><input id="c-nombre" autocomplete="given-name" maxlength="40" value="' + esc(cli.nombre || '') + '" required><small class="campo-err" role="alert"></small></div>' +
         (estado.modo !== 'mesa' ? '<div class="campo"><label for="c-fono">Celular</label><input id="c-fono" type="tel" inputmode="tel" autocomplete="tel" placeholder="9 1234 5678" maxlength="15" value="' + esc((cli.telefono || '').replace(/^\+56/, '')) + '" required><small class="campo-err" role="alert"></small></div>' : '') + '</div>' +
@@ -187,10 +190,10 @@
         '<div class="campo"><label for="c-nota">Nota para la cocina (opcional)</label><input id="c-nota" maxlength="200" placeholder="Sin cebolla, término medio…" value="' + esc(origen ? origen.nota : '') + '"></div>' +
         (ed ? '<p class="sis-nota">Pago: ' + esc(origen && origen.pago.metodo === 'linea' ? 'en línea' : (estado.modo === 'delivery' ? 'al recibir' : 'en caja')) + (origen && origen.pago.pagado ? ' (pagado)' : '') + '. No cambia al modificar.</p>' :
           '<div class="campo"><span class="lbl">Pago</span><div class="opciones">' +
-            '<label><input type="radio" name="pago" id="c-pago-linea" value="linea" checked><span>Pagar ahora en línea<small>Tarjeta con Mercado Pago. Aquí es un pago de prueba: no se cobra nada.</small></span></label>' +
-            '<label><input type="radio" name="pago" id="c-pago-caja" value="caja"><span>' + (estado.modo === 'delivery' ? 'Pagar al recibir' : 'Pagar en caja') + '<small>Efectivo o tarjeta.</small></span></label></div></div>' +
+            (P.CONFIG.pagoEnLinea === false ? '' : '<label><input type="radio" name="pago" id="c-pago-linea" value="linea" checked><span>Pagar ahora en línea<small>Tarjeta con Mercado Pago. Aquí es un pago de prueba: no se cobra nada.</small></span></label>') +
+            '<label><input type="radio" name="pago" id="c-pago-caja" value="caja"' + (P.CONFIG.pagoEnLinea === false ? ' checked' : '') + '><span>' + (estado.modo === 'delivery' ? 'Pagar al recibir' : 'Pagar en caja') + '<small>Efectivo o tarjeta.</small></span></label></div></div>' +
           '<div class="campo"><label for="c-ref">¿Cómo nos conociste?</label><select id="c-ref"><option value="">Prefiero no decir</option><option>Instagram</option><option>TikTok</option><option>Google Maps</option><option>Me lo recomendaron</option><option>Pasaba por fuera</option><option>Otro</option></select></div>') +
-        '<p class="sis-nota">Demostración: tu pedido llega de verdad a la cocina de esta demo, pero ' + esc(P.CONFIG.negocio) + ' es un local de ejemplo: no se prepara ni se cobra nada. No escribas datos personales reales.</p>' +
+        (window.RESTAURANTE.demo ? '<p class="sis-nota">Demostración: tu pedido llega de verdad a la cocina de esta demo, pero ' + esc(P.CONFIG.negocio) + ' es un local de ejemplo: no se prepara ni se cobra nada. No escribas datos personales reales.</p>' : '') +
       '</div>' +
       '<div class="carrito-pie"><div class="resumen"><div><span>Subtotal</span><span>' + clp(t.sub) + '</span></div>' + (estado.modo === 'delivery' ? '<div><span>Envío</span><span data-envio>' + (t.envio ? clp(t.envio) : 'según comuna') + '</span></div>' : '') +
         '<div class="tot"><span>Total</span><span data-total>' + clp(t.sub + t.envio) + '</span></div></div>' +
@@ -385,7 +388,7 @@
   P.escuchar(function (m) { if (m.tipo === 'cambio' || m.tipo === 'nuevo') { miPedido(); revisarEdicion(); } });
 
   // ---------- Arranque ----------
-  document.addEventListener('carta:lista', function () { pintarControles(); pintarCarro(); revisarEdicion(); });
+  document.addEventListener('carta:lista', function () { armarModos(); pintarModo(); pintarControles(); pintarCarro(); revisarEdicion(); });
   if (C.modelo()) { pintarControles(); revisarEdicion(); }   // la carta guardada en el equipo puede estar lista antes de que cargue este archivo
   if (q.get('editar')) P.seguir(q.get('editar'));
   P.esperar().then(function () { miPedido(); revisarEdicion(); }, function () {});

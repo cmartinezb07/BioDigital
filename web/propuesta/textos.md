@@ -204,7 +204,7 @@ Te lo revisamos gratis. Respondemos en menos de 24 horas.
 ## 4. Planes — `/planes`
 
 - **Title:** Planes y precios de presencia digital | Bío Digital
-- **Meta description:** Tres planes desde $150.000: Base, Estándar y Premium. Precio acordado antes de empezar, anticipo del 50% y todo queda a tu nombre.
+- **Meta description:** Tres planes desde $150.000: Base, Estándar y Premium. Precio acordado antes de empezar, sin anticipo y todo queda a tu nombre.
 - **Migas:** Inicio › Planes
 - **H1:** Elige cuánto quieres que tu negocio destaque
 
@@ -217,7 +217,7 @@ Tenemos tres planes. Todos incluyen ficha de Google, fotos y catálogo; los supe
 1. Base desde $150.000: aparecer bien en Google.
 2. Estándar desde $250.000: suma página web, dominio y correo.
 3. Premium desde $380.000: página completa y catálogo dentro de tu web.
-4. Pagas 50% al aceptar y 50% cuando firmas el acta de entrega.
+4. Sin anticipo: pagas cuando firmas el acta de entrega.
 5. Sin cobros mensuales de nuestra parte.
 
 ### H2 — Compara los planes
@@ -238,7 +238,7 @@ Tenemos tres planes. Todos incluyen ficha de Google, fotos y catálogo; los supe
 - **H3 Premium:** si vendes muchos productos o servicios y quieres mostrarlos ordenados en tu web.
 
 ### H2 — Cómo se paga
-50% al aceptar la propuesta y 50% al firmar el acta de entrega. Medio de pago: `[PENDIENTE: transferencia u otro]`. Documento tributario: `[PENDIENTE: boleta de honorarios o de empresa; precios brutos o líquidos]`.
+Sin anticipo: el pago se hace una sola vez, al firmar el acta de entrega. Medio de pago: `[PENDIENTE: transferencia u otro]`. Documento tributario: `[PENDIENTE: boleta de honorarios o de empresa; precios brutos o líquidos]`.
 
 ### H2 — Qué no incluye
 Publicidad pagada, administración de redes sociales, cambios después del período de soporte y tienda con pagos en línea.
@@ -247,7 +247,7 @@ Publicidad pagada, administración de redes sociales, cambios después del perí
 
 ### H2 — Preguntas frecuentes
 1. **¿Tengo que pagar algo mensual?** A nosotros no. El dominio .cl se renueva una vez al año directamente con NIC Chile y lo pagas tú (valor aproximado; revísalo en nic.cl). `[PENDIENTE: definir dónde se alojan las páginas de clientes y si eso tiene costo]`
-2. **¿Por qué cobran anticipo?** Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando.
+2. **¿Cuándo pago?** No cobramos anticipo: pagas cuando todo está funcionando y firmas el acta.
 3. **¿Qué pasa si no quedo conforme?** Cada plan incluye una ronda de ajustes. `[PENDIENTE: política si el cliente desiste]`
 4. **¿Puedo cambiar de plan después?** Sí: pagas la diferencia y sumamos lo que falte.
 5. **¿Emiten boleta?** Sí. `[PENDIENTE: tipo de documento]`
@@ -316,5 +316,5 @@ Formulario: nombre · nombre del negocio · rubro · comuna · correo · teléfo
 | `/gracias` (noindex) | Mensaje recibido \| Bío Digital | ¡Recibimos tu mensaje! | Qué pasa ahora · plazo de respuesta · enlaces a Servicios y Planes |
 | 404 | Página no encontrada \| Bío Digital | Esta página no existe | Enlaces a Inicio, Servicios, Planes y Diagnóstico |
 | `/privacidad` | Política de privacidad \| Bío Digital | Cómo cuidamos tus datos | Responsable · datos que pedimos · para qué · base legal (consentimiento) · cuánto tiempo los guardamos · tus derechos (Ley 19.628; Ley 21.719 cuando entre en vigencia, verificar fecha) · cookies y Google Analytics · contacto. **Recomendado: revisión por alguien con formación legal** |
-| `/terminos` | Términos del servicio \| Bío Digital | Condiciones de nuestros servicios | Alcance · precios y anticipo · plazos y material del cliente (regla de 5 días hábiles) · una ronda de ajustes · soporte · titularidad y transferencia · servicios de terceros (Google, NIC Chile) · sin garantía de posicionamiento · término del servicio |
+| `/terminos` | Términos del servicio \| Bío Digital | Condiciones de nuestros servicios | Alcance · precios y pago · plazos y material del cliente (regla de 5 días hábiles) · una ronda de ajustes · soporte · titularidad y transferencia · servicios de terceros (Google, NIC Chile) · sin garantía de posicionamiento · término del servicio |
 | `/casos` | — | — | **No se publica** hasta tener el primer cliente con autorización |

@@ -53,11 +53,11 @@ const SERVICIOS = [
   ['social-video', 'video', 'Videos para redes', 9990, true, 'Videos cortos para Instagram y TikTok, grabados y editados en tu local.',
     ['Video vertical de 15 a 30 segundos', 'Grabación, edición, música y textos', 'Quedan tuyos, para usarlos donde quieras']],
   ['interactive-menu', 'qr', 'Menú digital', 27990, true, 'Tu carta o lista de precios en un QR, sin cartas de papel.',
-    ['QR impreso para las mesas o el mesón', 'Foto, descripción y precio por producto', 'Funciona en cualquier celular, sin instalar nada']],
+    ['QR impreso para las mesas o el mesón', 'Foto, descripción y precio por producto', 'Funciona en cualquier celular, sin instalar nada', 'Sin pedidos ni cocina: si los necesitas, mira el Menú digital PRO']],
   ['photography', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
     ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
   ['reservations', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
-    ['Agenda en línea con tus horarios', 'Confirmación automática al cliente', 'Ves las reservas del día en tu teléfono']],
+    ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Sin panel ni disponibilidad en vivo: si lo necesitas, mira el Sistema de reservas PRO']],
   ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
     ['QR con sellos, sin tarjetas de papel', 'Queda como acceso directo en el celular del cliente, sin instalar nada', 'Ves cuántos clientes están volviendo']],
 ];
@@ -65,6 +65,34 @@ const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 127.940
 const PACK = 79990;
 const PACK_5 = 69990;                                   // promoción para los primeros 5 clientes
 const AHORRO = SUMA - PACK;                             // 47.950
+
+// Versión PRO: sistemas con base de datos, panel y acceso por código. Llevan una mensualidad y el primer mes no se cobra.
+const MENSUAL = 20000;
+const PRO = [
+  ['interactive-menu-pro', 'qr', 'Menú digital PRO', 99990, false, 'Tu carta que tú editas, con pedidos en la mesa, para retirar y con delivery, cocina y panel del jefe.',
+    ['Carta editable por ti: fotos, precios, opciones y favoritos', 'Pedidos en la mesa, para retirar y con delivery', 'Pantalla de cocina y seguimiento del pedido para el cliente', 'Mapa con el repartidor en movimiento (delivery)', 'Panel del jefe con estadísticas; cada persona entra con su código']],
+  ['reservations-pro', 'calendar', 'Sistema de reservas PRO', 99990, false, 'Calendario con disponibilidad en vivo: no se vende dos veces, y el cliente puede modificar o cancelar su reserva.',
+    ['Calendario en vivo para alojamiento, tours, citas o arriendo por hora', 'El sistema calcula el precio, el depósito y la devolución según tu política', 'El cliente modifica o cancela su reserva', 'Panel con aviso sonoro de reserva nueva; entran el jefe y la recepción', 'Catálogo, horarios y promociones editables por ti, y reportes']],
+];
+const PACK_PRO = 150000, PACK_PRO_5 = 120000;            // pack con un sistema PRO (menú o reservas, a elección)
+const precioDe = (id) => [...SERVICIOS, ...PRO].find((s) => s[0] === id)[3];
+const SUMA_PRO = precioDe('web') + precioDe('interactive-menu-pro') + precioDe('loyalty-card') + precioDe('photography') + precioDe('social-video');   // 174.940
+const AHORRO_PRO = SUMA_PRO - PACK_PRO;
+const PACK_PRO_ITEMS = ['Página web', 'Menú digital PRO o Sistema de reservas PRO (a tu elección)', 'Tarjeta de fidelización', 'Registro fotográfico', '1 video para redes'];
+// Orden en la lista de precios: cada PRO va justo después de su versión simple
+const VISIBLES = SERVICIOS.flatMap((s) => s[0] === 'interactive-menu' ? [s, PRO[0]] : s[0] === 'reservations' ? [s, PRO[1]] : [s]);
+const esPro = (id) => PRO.some((x) => x[0] === id);
+// Precios de lanzamiento para los primeros 5 clientes: [sku, nombre, precio de lanzamiento, precio normal, mensualidad, "desde"]
+const LANZ = [
+  ['launch-web', 'Página web', 39990, precioDe('web'), false, true],
+  ['launch-interactive-menu-pro', 'Menú digital PRO', 79990, precioDe('interactive-menu-pro'), true, false],
+  ['launch-reservations-pro', 'Sistema de reservas PRO', 79990, precioDe('reservations-pro'), true, false],
+  ['launch-loyalty-card', 'Tarjeta de fidelización', 5990, precioDe('loyalty-card'), false, false],
+  ['launch-pack', 'Pack esencial (los seis)', PACK_5, PACK, false, false],
+  ['launch-pro-pack', 'Pack PRO', PACK_PRO_5, PACK_PRO, true, false],
+];
+// Bloque de la mensualidad, en grande (lo usan el desglose de cada PRO y el pack PRO)
+const mens = (corto) => corto ? `<div class="mens mens-corto" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-bolt"/></svg>¡El primer mes no se paga mensualidad!</b><span>Después, <b class="num">${clp(MENSUAL)}</b> al mes (una sola por cliente).</span></div>` : `<div class="mens" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-bolt"/></svg>¡El primer mes no se paga mensualidad!</b><span>Después son <b class="num">${clp(MENSUAL)}</b> al mes, una sola mensualidad aunque tengas más de un producto PRO. Incluye base de datos, hosting, soporte y los cambios de carta, precios y horarios.</span></div>`;
 
 // Cómo funciona cada producto, en tres pasos (el flujo general está en PASOS).
 const COMO = {
@@ -74,14 +102,16 @@ const COMO = {
   photography: ['Coordinamos día y hora en tu local', 'Sacamos las fotos de tus productos y espacios', 'Editamos y te entregamos de 10 a 15 fotos'],
   reservations: ['Definimos tus horarios y servicios', 'Configuramos la agenda en línea', 'Tus clientes reservan solos, a cualquier hora'],
   'loyalty-card': ['Defines el premio y cuántos sellos lleva', 'Armamos la tarjeta con tu marca', 'Tus clientes la guardan en el celular y tú sumas sellos'],
+  'interactive-menu-pro': ['Nos pasas tu carta, tus fotos, tus comunas y tus horarios', 'Dejamos andando la carta, los pedidos, la cocina y el panel, y probamos un pedido de cada tipo', 'Te damos los códigos de acceso y te enseñamos a usar el panel'],
+  'reservations-pro': ['Nos cuentas qué reservan tus clientes y tus horarios, precios y políticas', 'Cargamos tu agenda, probamos una reserva completa y dejamos el panel listo', 'Te damos los códigos de acceso (jefe y recepción) y te enseñamos a usarlo'],
 };
 // Versión con más trabajo de un producto: se agrega aparte y se cotiza (hoy ninguna).
 const EXTRA = {};
 // Demos completas (páginas aparte) y su versión con más funciones: a cotizar, porque usan servicios con costo mensual o por uso.
 const DEMO = {
-  'interactive-menu': ['ejemplos/fogon-del-sur/', 'Ver la demo con pedidos y delivery', 'Versión para restaurantes con pedidos en la mesa, retiro y delivery, seguimiento con mapa y GPS del repartidor, pantalla de cocina y panel del dueño, todo conectado entre sí: a cotizar. Puede tener costos mensuales de terceros (base de datos, mapas, pagos) si el local supera sus planes gratis.'],
+  'interactive-menu-pro': ['ejemplos/fogon-del-sur/', 'Ver la demo del Menú digital PRO', 'Es el sistema real con datos de ejemplo: pide en la mesa, para retirar o con delivery, y entra al panel con los códigos de demostración. Con pedidos en línea reales, los pagos y mapas de terceros pueden tener costo aparte.'],
   'loyalty-card': ['ejemplos/fidelizacion/', 'Ver la tarjeta de ejemplo', 'Pruébala: crea tu tarjeta en tu celular y suma sellos desde la caja del local (con el PIN de demostración) en otro equipo.'],
-  reservations: ['ejemplos/reservas/', 'Ver la demo de reservas', 'Versión completa con depósito, políticas de cancelación, idiomas, calendario sincronizado (iCal) y panel: a cotizar. Los avisos por WhatsApp y las pasarelas de pago cobran por uso.'],
+  'reservations-pro': ['ejemplos/reservas/', 'Ver la demo del Sistema de reservas PRO', 'Es el sistema real con datos de ejemplo: reserva, modifica y cancela, y entra al panel con los códigos de demostración. Los avisos por WhatsApp y las pasarelas de pago cobran por uso, aparte.'],
 };
 const NOTA = { web: `Dominio .cl no incluido (${'$' + DOMINIO_ANUAL.toLocaleString('es-CL')} al año en NIC Chile). El hosting no tiene costo.` };
 
@@ -101,12 +131,13 @@ const PASOS = [
 ];
 
 // Promociones de lanzamiento. La de los primeros 5 clientes va en su propio bloque.
+// Ofertas relámpago: [ícono, nombre, precio, precio suelto, texto, sku, ¿PRO?, ¿precio "desde"?]. Siempre entre el precio normal y el de lanzamiento.
 const PROMOS = [
-  ['video', '2 videos para redes', 17990, 9990 * 2, 'Dos videos distintos, grabados el mismo día.', 'social-video-2'],
-  ['video', '3 videos para redes', 24990, 9990 * 3, 'Un mes de contenido resuelto en una sola visita.', 'social-video-3'],
-  ['card', 'Tarjeta de fidelización', 7990, 9990, 'Precio de lanzamiento del primer programa de sellos.', 'launch-loyalty-card'],
-  ['qr', 'Menú digital + fotos', 29990, 27990 + 4990, 'El menú se ve mucho mejor con fotos tuyas.', 'menu-photography'],
-  ['calendar', 'Reservas + fidelización', 29990, 24990 + 9990, 'Que reserven solos y que además vuelvan.', 'reservations-loyalty'],
+  ['web', 'Página web + video', 52990, precioDe('web') + precioDe('social-video'), 'La web y un video para arrancar con presencia.', 'web-video', false, true],
+  ['qr', 'Menú digital PRO + fotos', 89990, precioDe('interactive-menu-pro') + precioDe('photography'), 'El menú se ve mucho mejor con fotos tuyas.', 'menu-photography', true, false],
+  ['calendar', 'Reservas PRO + fidelización', 94990, precioDe('reservations-pro') + precioDe('loyalty-card'), 'Que reserven solos y que además vuelvan.', 'reservations-loyalty', true, false],
+  ['video', '2 videos para redes', 17990, 9990 * 2, 'Dos videos distintos, grabados el mismo día.', 'social-video-2', false, false],
+  ['video', '3 videos para redes', 24990, 9990 * 3, 'Un mes de contenido resuelto en una sola visita.', 'social-video-3', false, false],
 ];
 
 const PROMESAS = [
@@ -119,8 +150,8 @@ const PROMESAS = [
 const FAQ = [
   ['¿De verdad es gratis el diagnóstico?', 'Sí. Es nuestra primera conversación: revisamos juntos qué tiene tu negocio y qué le falta, y te decimos tu puntaje. No tienes que contratar nada después.'],
   ['¿Cuánto se demora?', 'Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. Por eso tomamos casi todo en la visita.'],
-  ['¿El dominio y el hosting están incluidos?', `El dominio .cl no está incluido: lo registra NIC Chile, cuesta ${clp(DOMINIO_ANUAL)} al año y queda a nombre del negocio. El hosting de la página web va en Cloudflare, sin costo para ti. Nosotros no cobramos mensualidad.`],
-  ['¿Por qué cobran anticipo?', 'Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando y firmamos el acta.'],
+  ['¿El dominio y el hosting están incluidos?', `El dominio .cl no está incluido: lo registra NIC Chile, cuesta ${clp(DOMINIO_ANUAL)} al año y queda a nombre del negocio. El hosting de la página web va en Cloudflare, sin costo para ti. Nosotros solo cobramos mensualidad en los productos PRO (menú digital y reservas con panel): $20.000 al mes, y el primer mes no se paga.`],
+  ['¿Cuándo pago?', 'No cobramos anticipo. Pagas una sola vez, cuando tu trabajo está funcionando y firmamos el acta de entrega. Si contratas un producto PRO, la mensualidad parte recién el segundo mes.'],
   ['¿La tarjeta de fidelización funciona en cualquier celular?', 'Sí. Se abre en el navegador de cualquier celular y queda como acceso directo, sin instalar ninguna aplicación. Si quieres que además se guarde en Google Wallet o Apple Wallet, eso se cotiza aparte, porque esas plataformas cobran una mensualidad.'],
   ['¿Qué pasa si me demoro en mandar mis fotos o textos?', 'El plazo de producción se corre los mismos días y te avisamos.'],
   ['¿Tengo que saber de tecnología?', 'No. Nosotros hacemos todo y te lo dejamos funcionando.'],
@@ -173,7 +204,7 @@ ${o.fondo || ''}
 <a class="skip" href="#contenido">Saltar al contenido</a>
 ${ICONOS}
 
-${o.n === 8 ? (publico ? '' : '<p class="proto">Sitio de Bío Digital · <a href="plantillas/index.html">ver las plantillas ya hechas</a></p>') : `<p class="proto">Plantilla ${o.n} · ${o.nombre} · <a href="index.html">ver todas las plantillas</a> · <a href="../index.html">ir al sitio</a></p>`}
+${o.n === 8 ? (publico ? '' : '<p class="proto">Sitio de Bío Digital</p>') : `<p class="proto">Plantilla ${o.n} · ${o.nombre} · <a href="index.html">ver todas las plantillas</a> · <a href="../index.html">ir al sitio</a></p>`}
 
 <header class="top">
   <nav class="nav" aria-label="Principal">
@@ -214,12 +245,12 @@ ${o.hero.trim()}
     <div class="wrap">
       <div class="sec-head center reveal">
         <h2 id="t-planes" class="h2">Precios claros, producto por producto</h2>
-        <p class="muted">Sin mensualidades. Pagas una vez por lo que te hacemos y queda a tu nombre.</p>
+        <p class="muted">Pagas una vez por lo que te hacemos y queda a tu nombre. Solo los productos <b class="pro-txt">PRO</b> llevan <b class="num">${clp(MENSUAL)}</b> al mes, y <b>el primer mes no se paga</b>.</p>
       </div>
       <div class="precios">
         <div class="tarifario reveal" data-seq>
-          ${SERVICIOS.map(([id, ic, t, precio, desde, p, items]) => `<div class="item" id="svc-${id}"${d.shine ? ' data-shine' : ''}>
-            <button class="fila" type="button" aria-expanded="false" aria-controls="det-${id}">${ico(ic, 18)}<b>${t}</b><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+          ${VISIBLES.map(([id, ic, t, precio, desde, p, items]) => `<div class="item${esPro(id) ? ' item-pro' : ''}" id="svc-${id}"${d.shine ? ' data-shine' : ''}>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-${id}"${esPro(id) ? ' data-gato="pro"' : ''}>${ico(ic, 18)}<b>${esPro(id) ? t.replace(/ PRO$/, '') + '<span class="pro">PRO</span>' : t}</b><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}${esPro(id) ? '<small class="mes-fila">+ ' + clp(MENSUAL) + '/mes</small>' : ''}</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
             <div class="det" id="det-${id}" hidden>
               <p>${p}</p>
               <div class="det-cols">
@@ -228,18 +259,30 @@ ${o.hero.trim()}
               </div>
               ${EXTRA[id] ? `<div class="det-extra"><div><h4>${EXTRA[id].titulo} <span class="rec">${EXTRA[id].cuesta}</span></h4><p>${EXTRA[id].texto}</p><small>${EXTRA[id].precio}</small></div>${agregar(EXTRA[id].id, 'Agregar la versión interactiva', false)}</div>` : ''}
               ${DEMO[id] ? `<p class="det-demo"><a href="${b}${DEMO[id][0]}">${DEMO[id][1]} ↗</a><small>${DEMO[id][2]}</small></p>` : ''}
-              <div class="det-foot"><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}${NOTA[id] ? `<small>${NOTA[id]}</small>` : ''}</span>${agregar(id)}</div>
+              ${esPro(id) ? mens() : ''}
+              <div class="det-foot"><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}${esPro(id) ? `<small>Instalación única. Mensualidad ${clp(MENSUAL)} desde el 2.º mes</small>` : ''}${NOTA[id] ? `<small>${NOTA[id]}</small>` : ''}</span>${agregar(id)}</div>
             </div>
           </div>`).join('\n          ')}
-          <p class="fila total"><b>Los seis por separado</b><span class="num">${clp(SUMA)}</span></p>
+          <p class="fila total"><b>Los seis simples por separado</b><span class="num">${clp(SUMA)}</span></p>
         </div>
-        <article class="pack reveal"${d.shine ? ' data-shine' : ''}>
-          <div class="plan-top"><h3 class="h3">Pack completo</h3><span class="rec">Lo que más conviene</span></div>
-          <p class="price"><small>los seis productos</small><b class="num">${clp(PACK)}</b></p>
-          <p class="ahorro">Te ahorras <b>${clp(AHORRO)}</b> frente a comprarlos sueltos</p>
-          <ul data-seq>${li(SERVICIOS.map((s) => s[2]))}</ul>
-          ${agregar('full-pack', 'Agregar el pack al carrito')}
-        </article>
+        <div class="packs">
+          <article class="pack reveal"${d.shine ? ' data-shine' : ''}>
+            <div class="plan-top"><h3 class="h3">Pack esencial</h3><span class="rec">Sin mensualidad</span></div>
+            <p class="price"><small>los seis productos simples</small><b class="num">${clp(PACK)}</b></p>
+            <p class="ahorro">Te ahorras <b>${clp(AHORRO)}</b> frente a comprarlos sueltos</p>
+            <ul data-seq>${li(SERVICIOS.map((s) => s[2]))}</ul>
+            <div class="mens mens-corto mens-sin" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-check"/></svg>Sin mensualidad</b><span>Pagas una vez y queda a tu nombre.</span></div>
+            ${agregar('full-pack', 'Agregar el pack esencial')}
+          </article>
+          <article class="pack pack-pro reveal"${d.shine ? ' data-shine' : ''}>
+            <div class="plan-top"><h3 class="h3">Pack PRO</h3><span class="rec">Lo más completo</span></div>
+            <p class="price"><small>con un sistema PRO</small><b class="num">${clp(PACK_PRO)}</b></p>
+            <p class="ahorro">Te ahorras <b>${clp(AHORRO_PRO)}</b> frente a comprarlos sueltos</p>
+            <ul data-seq>${li(PACK_PRO_ITEMS)}</ul>
+            ${mens(true)}
+            ${agregar('pro-pack', 'Agregar el pack PRO')}
+          </article>
+        </div>
       </div>
       <ul class="promises reveal" data-seq aria-label="Lo que viene con cualquier producto">
         ${PROMESAS.map(([ic, bb, s]) => `<li>${ico(ic, 20)}<div><b>${bb}</b><span>${s}</span></div></li>`).join('\n        ')}
@@ -255,23 +298,28 @@ ${o.hero.trim()}
           <span class="gift-ico"><svg class="gift" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5v7h14v-7M12 12.5v7"/><g class="lid"><rect x="3.5" y="8" width="17" height="4.5" rx="1"/><path d="M12 8v4.5M12 8c-1.5-3.5-5.5-3.5-5.5-1 0 1 1 1 5.5 1Zm0 0c1.5-3.5 5.5-3.5 5.5-1 0 1-1 1-5.5 1Z"/></g></svg></span>
           <div>
             <h2 id="t-promos">Precio de lanzamiento para los primeros 5 clientes</h2>
-            <p>El pack completo queda en <b class="num">${clp(PACK_5)}</b> en vez de ${clp(PACK)}. Y si prefieres armar tu propia combinación, te hacemos un 10&nbsp;% de descuento sobre cualquier compra desde ${clp(30000)}. Cupos limitados a los primeros 5 clientes.</p>
+            <p>Los primeros 5 clientes pagan menos en cada producto. Cupos limitados. Los productos PRO llevan ${clp(MENSUAL)} al mes desde el segundo mes: <b>el primer mes no se paga</b>.</p>
           </div>
         </div>
-        ${agregar('launch-pack', 'Agregar pack de lanzamiento')}
+        <ul class="lanz">
+          ${LANZ.map(([sku, t, precio, normal, mensual, desde]) => `<li><span class="lanz-t">${t}${mensual ? '<span class="pro">PRO</span>' : ''}</span><span class="lanz-p"><b class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}</b><s class="num">${clp(normal)}</s></span>${agregar(sku, 'Agregar', false)}</li>`).join('\n          ')}
+        </ul>
+        <p class="lanz-nota">Las ofertas relámpago de abajo no se suman al precio de lanzamiento.</p>
       </div>
 
-      <div class="sec-head reveal promo-head">
-        <h2 class="h2">Promociones fugaces</h2>
-        <p class="muted">Combinaciones a precio rebajado mientras dure el lanzamiento.</p>
+      <div class="sec-head reveal promo-head" id="relampago">
+        <h2 class="h2">Ofertas relámpago</h2>
+        <p class="muted">Combinaciones a precio rebajado por tiempo limitado: llegan, brillan y se van.</p>
       </div>
       <div class="promos">
-        ${PROMOS.map(([ic, t, precio, normal, p, sku]) => `<article class="promo reveal"${d.shine ? ' data-shine' : ''}>
-          <div class="promo-top">${ico(ic, 20)}<span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Lanzamiento</span></div>
-          <h3 class="h3">${t}</h3>
-          <p class="promo-price"><b class="num">${clp(precio)}</b><s class="num">${clp(normal)}</s></p>
+        ${PROMOS.map(([ic, t, precio, normal, p, sku, pro, desde], i) => `<article class="promo promo-rayo reveal"${d.shine ? ' data-shine' : ''} style="--i:${i}">
+          <svg class="rayo" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2.5 5 13.5h5.5L9.5 21.5 19 10h-5.8Z"/></svg>
+          <div class="promo-top">${ico(ic, 20)}<span class="flash"><svg width="13" height="13"><use href="#i-bolt"/></svg>Relámpago</span></div>
+          <h3 class="h3">${t}${pro ? '<span class="pro">PRO</span>' : ''}</h3>
+          <p class="promo-price"><b class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}</b><s class="num">${clp(normal)}</s></p>
           <p class="promo-save">Ahorras ${clp(normal - precio)}</p>
           <p class="promo-txt">${p}</p>
+          ${pro ? `<p class="promo-mens">+ ${clp(MENSUAL)}/mes · <b>primer mes gratis</b></p>` : ''}
           ${agregar(sku, 'Agregar al carrito', false)}
         </article>`).join('\n        ')}
       </div>
@@ -299,7 +347,7 @@ ${o.hero.trim()}
           <label>Comuna<select name="comuna" required aria-describedby="e-comuna"><option value="" selected disabled>Elige tu comuna</option>${COMUNAS_GC.map((c) => `<option>${c}</option>`).join('')}</select><span class="err" id="e-comuna" data-err="comuna" role="alert"></span></label>
           <label>Correo<input name="correo" type="email" autocomplete="email" placeholder="tu@correo.cl" maxlength="80" required aria-describedby="e-correo"><span class="err" id="e-correo" data-err="correo" role="alert"></span></label>
           <label><span>Celular <small>(opcional)</small></span><input name="telefono" type="tel" autocomplete="tel" placeholder="+56 9 1234 5678" maxlength="16" inputmode="tel" aria-describedby="e-telefono"><span class="err" id="e-telefono" data-err="telefono" role="alert"></span></label>
-          <label class="full" data-interes><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes" aria-describedby="e-interes"><option value="" selected>Todavía no lo sé</option>${SERVICIOS.map((s) => `<option>${s[2]}</option>`).join('')}<option>El pack completo</option></select><span class="err" id="e-interes" data-err="interes" role="alert"></span></label>
+          <label class="full" data-interes><span>¿Qué te interesa? <small>(opcional)</small></span><select name="interes" aria-describedby="e-interes"><option value="" selected>Todavía no lo sé</option>${VISIBLES.map((s) => `<option>${s[2]}</option>`).join('')}<option>El pack esencial</option><option>El pack PRO</option></select><span class="err" id="e-interes" data-err="interes" role="alert"></span></label>
           <label class="check-row"><input type="checkbox" name="beneficio" data-benefit-check>Me interesa el precio de lanzamiento para los primeros 5 clientes.</label>
           <label class="check-row"><input type="checkbox" name="acepto" required aria-describedby="e-acepto"><span>Acepto la <a href="${b}privacidad/" target="_blank" rel="noopener">política de privacidad</a> y que me contacten por este pedido.</span></label>
           <span class="err full" id="e-acepto" data-err="acepto" role="alert"></span>
@@ -368,6 +416,7 @@ ${o.hero.trim()}
   <div class="cart-pie" data-cart-pie hidden>
     <p class="cart-total"><span>Total</span><b data-cart-total>$0</b></p>
     <p class="cart-tip" data-cart-tip hidden></p>
+    <p class="cart-mens" data-cart-mensual hidden></p>
     <p class="cart-nota">Los precios "desde" se confirman en el diagnóstico gratis. Dominio .cl no incluido ($10.000 al año en NIC Chile).</p>
     <p class="cart-payment-state" data-cart-payment-state role="status" aria-live="polite"></p>
     <button class="btn btn-main cart-pay" type="button" data-cart-pay data-mp-checkout-cta="checkout-pro" hidden disabled><span class="btn-label">Pagar con Mercado Pago</span></button>
@@ -377,7 +426,14 @@ ${o.hero.trim()}
     <button class="cart-link" type="button" data-cart-vaciar>Vaciar carrito</button>
   </div>
 </aside>
-<script type="application/json" id="catalogo">${JSON.stringify([...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })), { id: 'full-pack', nombre: 'Pack completo', precio: PACK, desde: false, promocion: false }, { id: 'launch-pack', nombre: 'Pack completo de lanzamiento', precio: PACK_5, desde: false, promocion: true }, ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: false, promocion: true }))])}</script>
+<script type="application/json" id="catalogo">${JSON.stringify([
+  ...SERVICIOS.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: x[4], promocion: false })),
+  ...PRO.map((x) => ({ id: x[0], nombre: x[2], precio: x[3], desde: false, promocion: false, mensual: MENSUAL })),
+  { id: 'full-pack', nombre: 'Pack esencial', precio: PACK, desde: false, promocion: false },
+  { id: 'pro-pack', nombre: 'Pack PRO', precio: PACK_PRO, desde: false, promocion: false, mensual: MENSUAL },
+  ...LANZ.map((x) => ({ id: x[0], nombre: x[1] + ' (lanzamiento)', precio: x[2], desde: x[5], promocion: true, ...(x[4] ? { mensual: MENSUAL } : {}) })),
+  ...PROMOS.map((x) => ({ id: x[5], nombre: x[1], precio: x[2], desde: !!x[7], promocion: true, ...(x[6] ? { mensual: MENSUAL } : {}) }))
+])}</script>
 <script src="${b}secciones.js"></script>
 <script src="${b}tienda.js"></script>
 <script src="${b}carrusel.js"></script>

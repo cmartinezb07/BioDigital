@@ -3,7 +3,7 @@
 // Lo que depende de una decisión del equipo (razón social, plazos) está marcado en memoria/decisiones.md.
 import { MAIL, WHATSAPP_VISIBLE, INSTAGRAM, DOMINIO_ANUAL } from './config.mjs';
 
-const VIGENCIA = '24 de octubre de 2026';
+const VIGENCIA = '27 de octubre de 2026';
 const clp = (n) => '$' + n.toLocaleString('es-CL');
 
 const PRIVACIDAD = {
@@ -22,11 +22,13 @@ const PRIVACIDAD = {
       <tbody>
         <tr><td>Formulario de diagnóstico o pedido</td><td>Nombre, nombre y rubro del negocio, comuna, correo, celular (opcional), lo que te interesa y los productos del carrito.</td><td>Responder tu solicitud, hacerte el diagnóstico gratis y cotizar.</td></tr>
         <tr><td>Formularios de levantamiento (página web y menú digital)</td><td>Datos del negocio y sus preferencias: horarios, servicios, carta, colores, fotos, textos y datos de contacto públicos del negocio.</td><td>Diseñar y construir la página o el menú que contrataste.</td></tr>
+        <tr><td>Menú digital y reservas de un negocio cliente (productos PRO)</td><td>Lo que tú, como cliente final, escribes al pedir o reservar: nombre, celular, dirección de entrega si pides delivery, detalle del pedido o de la reserva, y opiniones que dejes.</td><td>Que el negocio reciba y gestione tu pedido o tu reserva, y avisarte de su estado.</td></tr>
         <tr><td>Pagos en línea (cuando estén habilitados)</td><td>Productos, montos y estado de la orden. Los datos de la tarjeta los recibe Mercado Pago, no Bío Digital.</td><td>Registrar y confirmar el pago.</td></tr>
         <tr><td>Datos técnicos</td><td>Dirección IP y datos del navegador que registran los servidores, y un control temporal por conexión que limita los envíos repetidos.</td><td>Seguridad del sitio y prevención de abuso.</td></tr>
       </tbody>
     </table></div>
     <p>No pedimos RUT, datos bancarios ni datos sensibles (salud, origen, creencias, etc.). Te pedimos que no los escribas en los formularios.</p>`],
+    ['Si pides o reservas en un negocio que usa nuestro sistema', `<p>Cuando haces un pedido o una reserva en el menú digital o en el sistema de reservas de un negocio cliente, <strong>ese negocio es el responsable</strong> de tus datos y Bío Digital los guarda y procesa por encargo suyo en la base de datos del sistema (Supabase). Los usamos solo para que el negocio atienda tu pedido o reserva; no los usamos para otra cosa ni los vendemos. Para ver, corregir o borrar esos datos, pídeselo al negocio o escríbenos a <a href="mailto:${MAIL}">${MAIL}</a> y se lo hacemos llegar.</p>`],
     ['Base para usarlos', `<p>Usamos tus datos porque tú nos los entregas al enviar un formulario y aceptas esta política (consentimiento), y para cumplir el servicio que contrates. Puedes retirar tu consentimiento cuando quieras; eso no afecta lo que ya se hizo antes.</p>`],
     ['Con quién los compartimos', `<p>Solo con los proveedores que necesitamos para operar, que los procesan por encargo nuestro:</p>
     <ul>
@@ -46,7 +48,7 @@ const PRIVACIDAD = {
     ['Tus derechos', `<p>Puedes pedir <strong>acceso</strong> a tus datos, su <strong>rectificación</strong>, <strong>supresión</strong>, <strong>oposición</strong> a que los usemos, su <strong>portabilidad</strong> y su <strong>bloqueo</strong> temporal. Escríbenos a <a href="mailto:${MAIL}">${MAIL}</a> con el asunto "Mis datos" y el correo o celular que usaste. Respondemos dentro de 15 días hábiles. Si no quedas conforme, puedes reclamar ante la autoridad que corresponda.</p>
     <p>Esta política se basa en la Ley N° 19.628 sobre protección de la vida privada y considera la Ley N° 21.719, que la reemplaza y crea la Agencia de Protección de Datos Personales.</p>`],
     ['Seguridad', `<p>El sitio funciona con conexión cifrada (HTTPS). En la base de datos, el público solo puede enviar solicitudes: leerlas exige ser del equipo, con contraseña y segundo factor. Limitamos los envíos por conexión para frenar el abuso. Ningún sistema es infalible: si detectamos una filtración que te afecte, te avisaremos.</p>`],
-    ['Sitios de ejemplo', `<p>Las páginas de la sección de ejemplos son negocios ficticios hechos para mostrar nuestro trabajo. Sus formularios y reservas no envían datos a nadie: a lo más abren WhatsApp o descargan un archivo de calendario en tu equipo. Las fotos de esas páginas son referenciales.</p>`],
+    ['Sitios de ejemplo', `<p>Las páginas de la sección de ejemplos son negocios ficticios hechos para mostrar nuestro trabajo. La mayoría no envía datos a nadie: a lo más abre WhatsApp o descarga un archivo de calendario en tu equipo. Las demostraciones del menú digital (Fogón del Sur) y del sistema de reservas sí guardan en nuestra base de datos los pedidos y reservas de prueba que hagas, para mostrar cómo funcionan el panel y la cocina. <strong>Usa datos de prueba y no escribas datos reales</strong>: esos registros de demostración pueden borrarse en cualquier momento. Las fotos de esas páginas son referenciales.</p>`],
     ['Menores de edad', `<p>El servicio está dirigido a dueños y encargados de negocios. No pedimos datos de menores de 18 años a sabiendas.</p>`],
     ['Cambios a esta política', `<p>Si cambiamos lo que hacemos con tus datos, actualizaremos esta página y su fecha de vigencia. Si el cambio es importante y ya eres cliente, te avisaremos.</p>`],
   ],
@@ -57,26 +59,30 @@ const TERMINOS = {
   resumen: 'Las reglas para usar este sitio y contratar con Bío Digital: precios, pagos, plazos, cambios y qué pasa al entregar.',
   secciones: [
     ['En simple', `<ul>
-      <li>El precio que ves es un pago único: no hay mensualidad de Bío Digital.</li>
+      <li>El precio que ves es un pago único, salvo los productos <strong>PRO</strong> (menú digital PRO, sistema de reservas PRO y el pack PRO): llevan una mensualidad de $20.000 y <strong>el primer mes no se cobra</strong>. Es una sola mensualidad aunque tengas más de un producto PRO.</li>
       <li>El dominio .cl y el alojamiento no están incluidos, y los dominios quedan a tu nombre.</li>
-      <li>Antes de empezar acordamos por escrito qué incluye tu pedido; al terminar te entregamos todo funcionando, con acta.</li>
+      <li>Antes de empezar acordamos por escrito qué incluye tu pedido. <strong>No cobramos anticipo</strong>: pagas una sola vez, cuando te entregamos todo funcionando y firmamos el acta.</li>
       <li>Los cambios posteriores los hace Bío Digital, no tú.</li>
     </ul>`],
     ['Quiénes somos', `<p><strong>Bío Digital</strong> es un emprendimiento de estudiantes de Concepción que hace páginas web, menús digitales, reservas, videos para redes, registro fotográfico y tarjetas de fidelización para micro y pequeñas empresas. Trabajamos solo en el Gran Concepción: Concepción, Talcahuano, Hualpén, San Pedro de la Paz, Chiguayante, Coronel, Lota, Penco, Tomé y Hualqui.</p>`],
     ['Uso del sitio', `<p>Puedes navegar, armar tu carrito y pedirnos un diagnóstico gratis sin compromiso. Te pedimos datos reales y no usar los formularios para enviar publicidad, contenido ilegal o envíos automáticos. Los textos, diseños y el gato de este sitio son de Bío Digital; los sitios de ejemplo son ficticios.</p>`],
     ['Precios', `<ul>
       <li>Los precios están en pesos chilenos y se muestran en la sección de precios. Los que dicen "desde" o "a cotizar" se confirman después del diagnóstico, según lo que necesite tu negocio.</li>
-      <li>Las promociones valen en las condiciones y fechas que indica cada una, y no se suman entre sí salvo que se diga lo contrario.</li>
+      <li>El precio de lanzamiento vale para los primeros 5 clientes y las ofertas relámpago son combinaciones por tiempo limitado: unas y otras valen en las condiciones que indica cada una y <strong>no se suman entre sí</strong>.</li>
+      <li>Los productos PRO llevan una mensualidad (ver más abajo); el resto es un pago único.</li>
       <li>No incluyen el dominio .cl (en NIC Chile cuesta cerca de ${clp(DOMINIO_ANUAL)} al año; el valor vigente está en nic.cl) ni servicios de terceros que el cliente decida contratar.</li>
       <li>La página web se aloja en Cloudflare sin costo para el cliente mientras sus condiciones lo permitan. Si un servicio necesita un alojamiento pagado, lo diremos antes de cotizar.</li>
     </ul>`],
     ['Cómo se contrata', `<ol>
       <li>Nos envías tu solicitud por el sitio, correo o WhatsApp.</li>
       <li>Te hacemos el diagnóstico gratis y te mandamos una propuesta con lo que incluye, el precio final y el plazo.</li>
-      <li>El contrato queda cerrado cuando aceptas la propuesta por escrito (correo o WhatsApp) y se registra el pago acordado.</li>
+      <li>El contrato queda cerrado cuando aceptas la propuesta por escrito (correo o WhatsApp). No se paga nada por adelantado.</li>
     </ol>`],
-    ['Pagos', `<p>Los productos con precio cerrado pueden ofrecer un enlace de Mercado Pago por el importe publicado. Los servicios con precio "desde" o "a cotizar", y los pedidos con varios productos, se confirman antes de enviar el enlace por el total acordado. La forma y las fechas de pago quedan en la propuesta.</p>
-      <p>El enlace abre Mercado Pago, que recibe los datos de la tarjeta; Bío Digital no los recibe ni guarda. El equipo comprueba la operación en la cuenta receptora antes de comenzar el trabajo. Un pago pendiente o en revisión todavía no está confirmado. El sitio no actualiza automáticamente el estado de los pagos realizados por enlace.</p>`],
+    ['Pagos', `<p><strong>No cobramos anticipo.</strong> El trabajo se paga una sola vez, cuando está terminado, funcionando y firmamos el acta de entrega. El monto es el de la propuesta aceptada; la forma de pago queda anotada en ella.</p>
+      <p>Los productos con precio cerrado pueden pagarse con un enlace de Mercado Pago por el importe publicado. Los servicios con precio "desde" o "a cotizar", y los pedidos con varios productos, se confirman antes de enviar el enlace por el total acordado.</p>
+      <p>El enlace abre Mercado Pago, que recibe los datos de la tarjeta; Bío Digital no los recibe ni guarda. El equipo comprueba la operación en la cuenta receptora. Un pago pendiente o en revisión todavía no está confirmado. El sitio no actualiza automáticamente el estado de los pagos realizados por enlace.</p>`],
+    ['Mensualidad de los productos PRO', `<p>El menú digital PRO, el sistema de reservas PRO y el pack PRO tienen una mensualidad de ${clp(20000)}. <strong>El primer mes no se cobra</strong>: se cobra desde el segundo mes. Es una sola mensualidad por cliente, aunque tenga más de un producto PRO.</p>
+      <p>Cubre la base de datos y el alojamiento del sistema, el soporte y los cambios de carta, precios y horarios, que los hace Bío Digital. Las condiciones puntuales (fecha de inicio del cobro y forma de pago) quedan en la propuesta. Los productos que no son PRO no tienen mensualidad.</p>`],
     ['Lo que nos toca a cada uno', `<p><strong>Bío Digital</strong> hace lo acordado en la propuesta, en el plazo acordado, y te mantiene al tanto del avance.</p>
     <p><strong>El cliente</strong> entrega a tiempo la información, los textos, las fotos y los logos, y confirma que tiene derecho a usarlos. Si el material llega tarde, el plazo se corre en la misma medida.</p>`],
     ['Revisiones y cambios', `<p>Cada trabajo incluye revisiones antes de la entrega para ajustar textos, colores y detalles. Lo que cambie el alcance (más secciones, más productos o un servicio nuevo) se cotiza aparte. Después de la entrega, los cambios los hace Bío Digital, no el cliente.</p>`],
@@ -85,7 +91,7 @@ const TERMINOS = {
       <li>El dominio se registra a nombre del cliente. Los textos, fotos y logos del cliente siguen siendo suyos.</li>
       <li>Al pagar el total, el cliente puede usar el diseño hecho para su negocio. Bío Digital puede mostrarlo en su portafolio, salvo que el cliente pida lo contrario.</li>
     </ul>`],
-    ['Retracto y devoluciones', `<p>Si contrataste por medios electrónicos, puedes retractarte dentro de 10 días desde que aceptaste la propuesta, siempre que no hayamos empezado el trabajo, y te devolvemos lo pagado. Si el trabajo ya empezó, se devuelve la parte que no se ha hecho. Esto no limita los derechos que te da la Ley N° 19.496 de protección de los derechos de los consumidores.</p>`],
+    ['Retracto y devoluciones', `<p>Si contrataste por medios electrónicos, puedes retractarte dentro de 10 días desde que aceptaste la propuesta, siempre que no hayamos empezado el trabajo, y no pagas nada. Si el trabajo ya empezó, solo se paga la parte que ya se hizo; y si ya habías pagado algo, te devolvemos lo que corresponda. Esto no limita los derechos que te da la Ley N° 19.496 de protección de los derechos de los consumidores.</p>`],
     ['Garantía', `<p>Si después de la entrega algo de lo acordado no funciona por un error nuestro, lo corregimos sin costo. No cubre fallas de servicios de terceros (Cloudflare, NIC Chile, Instagram, WhatsApp, Google, Mercado Pago u otros) ni cambios hechos por otras personas.</p>`],
     ['Responsabilidad', `<p>Hacemos nuestro trabajo con cuidado, pero no podemos garantizar un número de visitas, ventas o una posición en Google, porque dependen de factores fuera de nuestro control.</p>`],
     ['Datos personales', `<p>El uso de tus datos se explica en la <a href="../privacidad/">política de privacidad</a>.</p>`],

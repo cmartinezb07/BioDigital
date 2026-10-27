@@ -1,92 +1,69 @@
 ---
 name: crear-menu-digital
-description: Subrama de crear-sitio-web para el menú digital de un cliente de Bío Digital (restaurante, cafetería, bar, local de comida): carta con QR, estilo de restaurante y plato en vivo (el cliente elige un plato y lo ve en 3D y, desde el celular, sobre su mesa con la cámara). Incluye el formulario de gustos y forma para el cliente, varios estilos para elegir, el generador (menu.json → sitio estático con SEO, seguridad y accesibilidad), la guía de captura 3D y la publicación. Úsala cuando pidan crear, armar, rediseñar, actualizar o publicar un menú digital, carta con QR o el "plato en vivo" / menú interactivo, aunque no digan "menú digital".
+description: Subrama de crear-sitio-web para el menú digital de un cliente de Bío Digital (restaurante, cafetería, bar, local de comida). Arma, casi sola, el sistema completo para un local a partir de las respuestas de su formulario: carta editable con fotos y opciones, pedidos en la mesa, para retirar y con delivery, pantalla de cocina, reparto con GPS, panel del jefe con estadísticas, acceso por código y reglas de seguridad en el servidor; también el menú simple con QR (solo carta). Incluye el formulario del cliente, la herramienta que lo convierte en un restaurante funcionando, la prueba de humo y la publicación. Úsala cuando pidan crear, armar, aplicar, actualizar o publicar un menú digital, carta con QR, sistema de pedidos o delivery para un restaurante, aunque no digan "menú digital".
 ---
 
-# Crear menú digital (subrama de crear-sitio-web)
+# Crear menú digital (subrama de crear-sitio-web) — plug and play
 
-> **Actualización 24-oct-2026:** (1) el **plato en 3D y la realidad aumentada están postergados** por decisión del usuario: no se ofrecen ni se muestran en el sitio, la carta de ejemplo ni el formulario; lo de 3D/AR de esta skill queda como referencia para cuando se retome. (2) El **sistema de pedidos del restaurante está conectado en la nube** (pedido → cocina → seguimiento → panel, con PIN por rol, juegos de espera y GPS del repartidor): ver `memoria/conexion-nube.md` y el ejemplo `web/propuesta/ejemplos/fogon-del-sur/`.
+**Responder siempre en español.** Esta skill depende de `crear-sitio-web` (reglas, estilos, seguridad) y de `contexto_biodigital` (estado del proyecto): léelas si es un chat nuevo. Todo se hace **dentro del repo del proyecto** (`C:\Users\criss\OneDrive\Escritorio\Proyecto DCP`; si no está, clonar https://github.com/cmartinezb07/BioDigital). La plantilla viva es `web/propuesta/ejemplos/fogon-del-sur/` y las herramientas están en `web/herramientas/`. **No se reescribe nada: se aplica el formulario.**
 
-**Responder siempre en español.**
+## Qué producto es (lo define la pregunta `servicios` del formulario)
+| | **Carta QR simple** | **Menú con pedidos (sistema completo)** |
+|---|---|---|
+| Qué es | Carta estática con QR, sin pedidos | Carta editable por el dueño + pedidos mesa/retiro/delivery + cocina + reparto + panel del jefe |
+| Cómo se arma | Generador `plantilla/generar-menu.mjs` (ver "Carta QR simple") | **`aplicar-formulario.mjs`** (flujo de abajo) |
+| Precio | "desde $27.990" (catálogo, costo único) | Propuesta en `memoria/precios-menu-digital.md` (instalación + mensualidad): **aún no aprobada**; no prometer valores |
+Si el cliente solo quiere mostrar la carta, no uses el sistema.
 
-> **Esta skill depende de `crear-sitio-web`. Léela primero** (`~/.claude/skills/crear-sitio-web/SKILL.md` y `referencias/requisitos.md`).
-> Todo lo que aquí no se redefine se hereda de ella. El menú es una página de una sola pantalla larga, así que algunas
-> partes del sitio completo no aplican; la tabla de `referencias/requisitos-menu.md` dice, punto por punto, qué se
-> hereda, qué se adapta y qué no aplica. Si la página que piden es otra cosa (landing, sitio de servicios), usa solo `crear-sitio-web`.
+## Flujo plug and play del sistema completo
+1. **Formulario** (64 preguntas, 10 bloques, ~15 min): `node respaldo-skills/crear-menu-digital/plantilla/formulario/construir-formulario.mjs --salida formulario-menu.html --agencia "Bío Digital" --contacto "…" --whatsapp 569XXXXXXXX [--supabase-url … --supabase-key …]`. Se publica o se manda por WhatsApp; con Supabase las respuestas llegan al panel interno como JSON. Si el dueño está presente, se usa como guion. **No mandarlo sin avisar.** Cómo leerlo: `referencias/levantamiento-menu.md`.
+2. **Guardar las respuestas** en un archivo (`respuestas.json` con el JSON del formulario, o el texto que copia el formulario tal cual). Ejemplo completo: `web/herramientas/ejemplos-formulario/respuestas-ejemplo.json`.
+3. **Aplicar:** `node web/herramientas/aplicar-formulario.mjs respuestas.json [--id mirador] [--url https://dominio-final/] [--demo]`. Crea `web/propuesta/ejemplos/<id>/` con la carta, platos, precios, tiempos, opciones, favoritos, comunas y envíos, horarios, mesas, mínimo de delivery, servicios, color y nombre; **quita todo lo de "ejemplo de Bío Digital"** (cinta, notas, pago de prueba, simulador de reparto, foto de portada) y las fotos de muestra; deja la carpeta **autosuficiente** (lleva su `nube.js`). Escribe, en `web/herramientas/restaurantes/` (fuera de git, tiene los PIN): `<id>-instalar.sql`, `<id>-prueba.js` y `<id>-pendientes.md`.
+4. **Pendientes:** léelos y resuélvelos con el cliente (ubicación exacta del local, comunas sin coordenadas, fotos, logo, privacidad, dominio…). Lo que el cliente no dijo **nunca se inventa**: queda en pendientes. Etiquetas dietéticas y alérgenos solo con su confirmación, plato por plato, desde el panel.
+5. **Accesos en la base:** ejecutar `<id>-instalar.sql` en el proyecto Supabase `biodigital-demos` (id `xoetybrsbuxcdoamcaeb`) con la herramienta `execute_sql` del MCP de Supabase. Crea jefe, cocina, reparto y el personal que nombró (cada uno con su PIN). No pegar PIN en canales públicos.
+6. **Cargar la carta publicada:** `node web/herramientas/cargar-carta-base.mjs <id> <PIN-del-jefe> <id>`. Es **obligatorio**: el servidor valida precios y opciones contra la carta publicada; sin ella no hay validación. (Vuelve a la carta de la plantilla: usarlo solo antes de entregar, porque pisa lo que el dueño edite en el panel.)
+7. **Probar:** servidor local (`preview_start maquetas`) y `node web/herramientas/revisar.mjs http://localhost:4321/ejemplos/<id>/ --anchos 390,1440 --probar web/herramientas/restaurantes/<id>-prueba.js` (carta, PIN, precio manipulado rechazado, pedido real, cocina lo acepta, limpieza). Después a ojo, en celular y escritorio, con un pedido de cada tipo (mesa, retiro, delivery) pasando por cocina y reparto.
+8. **Dejarlo del cliente:** entrar a `.../<id>/panel/` con el PIN del jefe → Carta (fotos propias, opciones), Negocio y equipo (logo, color, comunas, PIN), **publicar**. Cambiar los PIN provisorios y entregarlos por un canal privado.
+9. **Publicar** (la ejecuta el usuario, salvo que lo pida): la carpeta se publica sola en el proyecto Cloudflare del cliente: `npx wrangler pages deploy web/propuesta/ejemplos/<id> --project-name=<id> --branch=main --commit-dirty=true` (acordarse de la rama de producción `main`; ver `crear-sitio-web`). Dominio propio y HTTPS antes de imprimir el QR (QR estático, probado desde otro celular). **Para la demo de Bío Digital**, en cambio, solo se publica en https://biodigital-bgw.pages.dev (`contexto_biodigital`; la dirección antigua `biodigital-propuesta` solo redirige).
+10. **Entrega y registro:** acta (dirección, accesos, quién cambia qué), anotar en `memoria/decisiones.md` el cliente, lo entregado y los pendientes.
 
-Todo lo repetitivo está resuelto en `plantilla/` (generador, estilos, visor 3D, formulario, herramientas de fotos). No lo reescribas: copia la plantilla a `clientes/<nombre>/` y llena `menu.json`.
+## Qué recibe el cliente (sistema completo)
+- **Carta pública** (datos, no HTML fijo): categorías, platos con foto, descripción, precio, opciones obligatorias o no (tamaño, término, extras), favoritos, agotados, buscador. El dueño la edita sola desde el panel y se publica en vivo.
+- **Pedir:** en la mesa (QR por mesa), para retirar, o delivery con comunas y envío; validación visible de campos; "Modificar mi pedido" sobre el **mismo** pedido solo mientras está "Nuevo"; "Mis pedidos" con historial; seguimiento con estados, tiempo estimado y, en delivery, el repartidor en el mapa (más 4 juegos de espera).
+- **Panel del restaurante** (`panel/`): un solo acceso. Según su código entra el **cocinero** (pantalla de cocina), el **repartidor** (entregas y GPS del celular) o el **jefe** (pedidos en vivo con aviso sonoro, carta, estadísticas con datos reales, opiniones con respuesta, negocio y equipo).
+- **Reglas en el servidor** (no se pueden saltar desde el navegador): precios y opciones contra la carta, cada estado lo cambia solo su rol, un pedido "Nuevo" por cliente, versiones del pedido, un solo repartidor por entrega. Detalle y archivos: `referencias/sistema-restaurante.md`.
 
-## Qué recibe el cliente
-- Una carta con estilo de restaurante: portada, "Favoritos de la casa", categorías (entradas, ensaladas, platos de fondo, postres, bebestibles…), buscador, foto redonda, descripción, precio, etiquetas dietéticas y "Agotado hoy". Los platos sin foto se ven como línea de carta.
-- En los platos con 3D, el botón **"Ver en tu mesa"**: visor 3D (se gira con el dedo) y, desde el celular, la cámara pone el plato sobre la mesa a tamaño real. En computador solo se ve el 3D.
-- Un QR impreso que abre la carta. **No hace falta tener 3D de toda la carta**: los platos sin 3D se ven con foto.
-- Estilo a elegir entre varios (`referencias/esteticas-menu.md`), con modo claro/oscuro automático si el cliente lo quiere.
+## Reglas que no se negocian
+- **No inventar nada**: platos, precios, direcciones, horarios, alérgenos, fotos, reseñas, años. Falta → pendiente y se avisa.
+- **Las referencias del cliente mandan** (cartas o links que le gustan).
+- **Fotos con permiso o con licencia** (CC0, dominio público o CC BY con crédito); las de la plantilla son de ejemplo y se reemplazan.
+- **Costo único vs recurrente**, siempre dicho: instalación (único) y mensualidad (base de datos, soporte). El pago en línea cobra comisión por venta **que paga el local**. El dominio .cl es aparte (~$10.000 al año; verificar en nic.cl). Supabase **Pro** (~US$25 al mes, compartido entre locales) antes del primer cliente real: el plan gratis se pausa tras una semana sin uso.
+- **Seguridad y datos:** PIN privados (`demo: false` en un local real), nada de datos reales en demos, página de privacidad revisada con el negocio, sin secretos en el código (la llave de Supabase del sitio es pública por diseño).
+- **Sin permiso del usuario no descargues archivos ni instales paquetes**, y no hagas deploys ni commits que no pidió.
+- Frases cortas, sin jerga, en el idioma del cliente final.
 
-## Reglas que no se negocian (las de crear-sitio-web, aplicadas al menú)
-- **No inventar nada**: platos, precios, direcciones, horarios, alérgenos, fotos, reseñas, años. Todo sale de lo que entrega el cliente. Si falta: `[PENDIENTE]` y se avisa. **Los alérgenos y etiquetas (vegano, sin gluten) solo los que el cliente confirme**: una etiqueta falsa es un riesgo de salud.
-- **Las referencias del cliente mandan.** Si manda cartas o links que le gustan, cada estilo se acerca a ellas y se confirma el mapeo antes de construir.
-- **Trabaja por fases**, muestra qué hiciste y qué falta, y no digas "terminado" sin pasar la verificación de `referencias/verificacion.md`.
-- **El cliente no edita nada.** Los cambios de carta y precios los hacemos nosotros (editamos `menu.json` y volvemos a publicar). Cuánto se cobra un cambio: *por definir con el equipo*.
-- **Costo único vs recurrente**: el menú no lleva mensualidad nuestra. El dominio .cl es aparte (≈ $10.000 al año en NIC Chile; verificar en nic.cl) y el hosting en Cloudflare Pages no tiene costo para el cliente (verificar términos vigentes). Si una app de escaneo cobra, es un costo del servicio.
-- **Precio de la versión interactiva (3D): por definir.** Hoy el sitio la muestra "a cotizar"; no prometas valores al cliente.
-- **Sin permiso del usuario no descargues archivos ni instales paquetes** (ni modelos, ni librerías, ni generadores de QR).
-- Idioma de la carta: como habla el cliente final, frases cortas, sin jerga técnica.
+## Cambios que NO salen del formulario (dónde se hacen)
+| Cambio | Dónde |
+|---|---|
+| Fotos, precios, platos, opciones, favoritos, agotados | Panel › Carta (el dueño) |
+| Logo, color (6), nombre, lema, horarios, mesas, mínimo, envío de las comunas | Panel › Negocio y equipo (el dueño) |
+| PIN del personal | Panel › Negocio y equipo |
+| Comuna nueva o ubicación exacta del local | `carta-base.json` del local (`config.comunas`, `config.local`) + `cargar-carta-base.mjs` (hoy no hay editor) |
+| Pago en línea real | Aparte, con la cuenta de pago del local |
+| Diseño y estructura de la página | Nunca el dueño; lo hace Bío Digital en la plantilla |
 
-## Fase 0 — Levantamiento: el formulario de gustos y forma
-1. Entrega el formulario si el dueño no está en la conversación (lo normal): `plantilla/formulario/` → `node construir-formulario.mjs` crea `formulario-menu.html` (60 preguntas, 9 bloques, 15 minutos: local, objetivo, carta, estilo en seis escalas, fotos y 3D, marca, QR, publicación, plazos). En Bío Digital ya está publicado como `formulario-menu.html` y las respuestas llegan al panel (pestaña Formularios, tipo "Menú digital") o se copian por WhatsApp.
-2. Si el dueño sí está (visita en terreno): úsalo como guion y anota; sale mejor que dárselo a leer.
-3. **Cómo leer las respuestas y convertirlas en decisiones: `referencias/levantamiento-menu.md`.** Resume en 10 líneas lo que entendiste y pide confirmación antes de armar nada.
-4. Mínimo para empezar: carta completa con precios, categorías, estilo (o "propónganme"), horario/dirección/WhatsApp, qué platos llevarán 3D y fotos disponibles.
+## Carta QR simple (solo carta, sin pedidos)
+Generador estático en `plantilla/` (`menu.json` → `generar-menu.mjs`: `index.html`, 404, privacidad, sitemap, llms.txt, datos estructurados Restaurant + Menu, CSP). `--opciones` genera 5 estilos para elegir; fotos con `foto-a-modelo.py`; publicación en un proyecto Cloudflare por cliente. Pasos y estilos: `referencias/esquema.md`, `esteticas-menu.md`, `requisitos-menu.md`, `verificacion.md`. **El plato en 3D y la realidad aumentada están postergados** por decisión del usuario (no se ofrecen); la técnica queda archivada en `referencias/captura-3d.md` y en `plantilla/modelos/`.
 
-## Fase 1 — Opciones de estilo
-`node generar-menu.mjs --opciones` genera la misma carta en 5 estilos (`opciones.html` + `opcion-<estilo>.html`). Se las muestras al cliente en su celular, con fortalezas y riesgos honestos (`esteticas-menu.md`). Si pidió algo distinto, ajusta `tema` en `menu.json` (colores, letras, modo automático). Si trae referencias, se usan como guía del ajuste.
+## Verificación antes de entregar
+`referencias/verificacion.md` (sitio) **y** estos: la prueba de humo del paso 7; `node web/herramientas/pedidos-reglas-e2e.mjs` (62 reglas del servidor) y `nube-e2e.mjs` (25 permisos) si se tocó el servidor; `node --test`; en la demo de Bío Digital, `node web/herramientas/check.mjs http://localhost:4321` (≈ 17 min; escribe en la base real y limpia lo suyo; no usar el panel mientras corre). Las pruebas de la demo están en `web/herramientas/pruebas/` (`fogon-del-sur.js`, `fogon-servicio.js`, `panel-dueno.js`, `mis-pedidos.js`).
 
-## Fase 2 — Contenido y fotos
-1. Copia `plantilla/` a `clientes/<nombre>/`; pon fotos en `fotos/` y modelos en `modelos/`.
-2. Fotos de tarjeta: `python foto-a-modelo.py tarjeta foto.jpg fotos/plato.webp --caja X Y LADO` (cuadradas, ≤ 120 KB).
-3. Imagen para redes: `python foto-a-modelo.py og og.jpg --nombre "…" --lema "…" --foto fotos/plato.webp` (1200 × 630).
-4. Edita `menu.json` (`referencias/esquema.md`): datos del negocio, `url` final, categorías y platos tal como los entregó el cliente. Sin `"demo": true`.
-5. **Captura 3D** de los platos estrella (`referencias/captura-3d.md`). Hay dos niveles; no los confundas al vender:
-   - **3D real (escaneo)**: el plato tiene volumen y se ve de todos lados. Es lo que se promete como "plato en vivo".
-   - **Plato plano desde una foto (provisorio)**: `python foto-a-modelo.py disco foto.jpg modelos/plato.glb --centro CX CY --radio R --diametro-cm 26` crea un plato del tamaño real (2,2 cm de alto, borde levantado) con la foto desde arriba como textura. Se ve realista desde arriba, pero **es plano**. Sirve para pruebas y como solución mínima; no se vende como 3D. Las fotos en ángulo no sirven. Una foto sola **no puede** convertirse en 3D real.
+## Límites conocidos (decirlos, no esconderlos)
+- Los servicios que no atiende un local (p. ej. sin delivery) se ocultan en la pantalla, pero el servidor todavía no los bloquea.
+- Sin avisos con el navegador cerrado (Web Push/WhatsApp) ni boleta electrónica; pago en línea solo cuando el local tenga su cuenta.
+- Los PIN se guardan en texto plano (demostración): para producción, guardarlos con hash.
+- La carta no tiene idiomas (solo español) ni editor de comunas nuevas.
+- El SQL final de las reglas del servidor (migraciones 003–005) está aplicado en Supabase pero falta guardarlo en el repo (`web/herramientas/nube-sql/`).
 
-## Fase 3 — Generar y verificar
-`node generar-menu.mjs` crea `index.html`, `404.html`, `privacidad.html`, `robots.txt`, `sitemap.xml`, `llms.txt`, `favicon.svg`, `manifest.webmanifest` y `_headers`, con datos estructurados (Restaurant + Menu), canonical, Open Graph y política de seguridad. Lee el informe "Revisar:" y corrígelo **todo**. Después sigue `referencias/verificacion.md` (computador y **celulares reales**: iPhone con Safari y Android con Chrome; la realidad aumentada solo se puede probar en un celular).
-
-## Fase 4 — Publicación (la ejecuta el usuario)
-- Un proyecto de Cloudflare Pages por cliente: `npx wrangler pages deploy clientes/<nombre> --project-name=menu-<nombre> --branch=main --commit-dirty=true`.
-- **Ojo:** si el proyecto lo crea el primer deploy, Cloudflare lo toma como "vista previa" y la dirección corta da 404. La dirección que abre es `https://main.<proyecto>.pages.dev`. Para activar la corta, cambiar la rama de producción a `main` en Cloudflare (Settings) y volver a publicar.
-- Dominio propio con HTTPS antes de imprimir el QR. QR **estático** (no uno "dinámico" que vence o pide suscripción), en SVG o PNG grande, probado escaneando desde otro celular. Con dominio propio, el QR lleva el dominio, no `pages.dev`.
-- Analítica sin cookies (Cloudflare Web Analytics) en vez de GA4 con banner: ver la decisión en `requisitos-menu.md` §9.
-- Para producción, guardar el visor 3D en `vendor/model-viewer.min.js` (el generador lo detecta y deja de usar el CDN de Google). Requiere permiso del usuario para descargarlo.
-
-## Fase 5 — Entrega
-Acta con la dirección, el QR en alta resolución, la lista de platos con 3D, los accesos a nombre del cliente (dominio, Cloudflare, analítica) y quién hace los cambios. Anotar en `memoria/decisiones.md`: cliente cerrado, estilo elegido, pendientes.
-
-## Decisiones técnicas ya tomadas
-- Visor y realidad aumentada: **model-viewer de Google 3.5.0** con hash SRI, cargado solo al abrir el primer plato en 3D. Modos de AR: `webxr`, `scene-viewer` (Android) y `quick-look` (iPhone, genera el USDZ desde el GLB). Colocación en piso/mesa y tamaño real: el modelo debe estar en **metros reales**. Los modelos comprimidos con Draco o KTX2 necesitan `www.gstatic.com` en la política de seguridad (el generador ya lo incluye).
-- Sitio 100 % estático, sin base de datos ni cuentas, sin cookies, sin formularios. Todo el texto de los datos entra como texto, nunca como HTML armado a mano.
-- El tema por defecto de la plantilla es "café y dorado" (el que gustó). Modo automático claro/oscuro disponible con `tema.auto`.
-- Los modelos de muestra de la demo están en otros servidores (el generador lo avisa); en un cliente real siempre van en `modelos/` del propio menú.
-- Probado: AR en un iPhone 15 Pro con un plato plano hecho desde una foto (12-oct-2026). Falta probar con un escaneo 3D real y en Android.
-
-## Módulo de pedidos para restaurantes (23-oct-2026)
-Versión completa, a cotizar (no cabe en el precio del menú simple). Vive en `web/propuesta/ejemplos/fogon-del-sur/` y se suma a cualquier carta generada con 3 archivos y 4 páginas:
-- En la carta: `<link rel="stylesheet" href="sistema.css">` y, después de `menu.js`, `<script src="pedidos.js"></script><script src="pedir.js"></script>`. `pedir.js` lee `#menu-datos` y agrega "Agregar" a cada plato (los artículos deben seguir el orden de la carta), el carrito, mesa (`?mesa=N` en el QR de cada mesa), retiro y delivery con envío por comuna.
-- Páginas: `pedido/` (seguimiento con estados de color, tiempo estimado, mapa Leaflet 1.9.4 con SRI, juego `juego.js` y opinión), `cocina/` (KDS), `repartidor/` (GPS del celular) y `panel/` (visitas, pedidos, pagados, ventas, opiniones, referencias).
-- Configuración del local en `pedidos.js` → `CONFIG` (dirección y coordenadas, mesas, pedido mínimo, envío por comuna, tiempos).
-- La demo sincroniza pestañas del mismo navegador; un local real necesita base en la nube (Supabase). Costos recurrentes y competencia en `memoria/menu-pedidos.md`.
-- **Modo automático (23-oct-2026):** `pedidos.js` mueve el servicio solo desde una pestaña líder (acepta, cocina según el tiempo de preparación, sirve, entrega, repartidor por la ruta real, cobra al entregar). Interruptor y velocidad en la cocina; GPS real opcional del repartidor; "Simular un servicio" en el panel. Caso base: `web/herramientas/pruebas/fogon-servicio.js` (14/14). Tiempos del servicio en `TIEMPOS` dentro de `pedidos.js`.
-- Prueba: `web/herramientas/pruebas/fogon-del-sur.js`. Para reservas de mesa o eventos, usar el sistema de `ejemplos/reservas/` (modo horas o bloques).
-
-## Mascota (opcional)
-No va por defecto en un menú: la carta debe ser rápida y limpia. Si el cliente la pide, usa el módulo de `crear-sitio-web/referencias/mascota.md` y verifica que no tape los platos.
-
-## Sistema completo con pedidos (24-oct): plantilla reutilizable
-El menú de Fogón del Sur ya no es HTML fijo: la carta, fotos, precios, opciones, comunas y personal son **datos** que el dueño administra desde `panel/` y se publican sin reconstruir. Para un restaurante nuevo: `node web/herramientas/nuevo-restaurante.mjs --id <id> --nombre "<Nombre>"`, ejecutar el SQL que genera en Supabase y entrar al panel. Estados, permisos y modificación del pedido los valida el servidor. Detalle y límites en `memoria/plantilla-restaurante.md`; precios en `memoria/precios-menu-digital.md`.
-
-## Pendiente (preguntar al equipo)
-Precio de la versión interactiva (base + por plato), quién cobra los cambios de carta, impresión y entrega de los QR, y si la demo pública se mantiene.
-
-## Verificación con el revisor automático
-Usa `node web/herramientas/revisar.mjs http://localhost:<puerto>/<carpeta>/index.html --tag <cliente>` (ver crear-sitio-web). Para el catálogo de Bío Digital, el menú de demostración también vive copiado como ejemplo en `web/propuesta/ejemplos/fogon-del-sur/` (con la cinta "Ejemplo de Bío Digital"); el de la pastelería se generó con esta skill en `ejemplos/casa-dulce/carta/` (estilo crema). Si un cliente quiere reservas de mesa, se puede montar el módulo `ejemplos/_compartido/reservas.js` en modo horas.
+## Más detalle
+`referencias/sistema-restaurante.md` (arquitectura, archivos, tablas, reglas, pruebas, cómo se armaron la galería y el carrusel de la demo y sus capturas) · `memoria/plantilla-restaurante.md` · `memoria/precios-menu-digital.md` · `memoria/conexion-nube.md` · `memoria/menu-pedidos.md`.

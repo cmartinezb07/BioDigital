@@ -606,7 +606,7 @@ test('los retornos generados no acreditan un pago desde parámetros de URL', () 
 
 test('los enlaces comerciales cobran solo el producto y precio correctos sin activar la API', async () => {
   const config = await handlePaymentConfig({ env: { PAYMENTS_ENABLED: 'false' } }).json();
-  assert.equal(config.products.length, 13);   // sin el menú interactivo AR (3D quitado del sitio)
+  assert.equal(config.products.length, Object.keys(PAYMENT_LINKS).length);   // un producto por enlace comercial (21 hoy: simples, PRO, packs, lanzamiento y relámpago)
   const links = {
     'full-pack': { amount: 79990, url: 'https://mpago.la/pack-demo' },
     photography: { amount: 4990, url: 'https://mpago.la/foto-demo' },

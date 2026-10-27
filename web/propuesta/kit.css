@@ -311,3 +311,52 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 .antes-link { margin: 24px auto 0; text-align: center; color: var(--fg-2); font-size: 15px; }
 .antes-link a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--fg); text-underline-offset: 3px; }
 .antes-link a .btn-ico { flex: none; }
+
+/* PRO, mensualidad, lanzamiento y ofertas relámpago */
+/* Lista de productos a todo el ancho y, debajo, los dos packs lado a lado: sin huecos ni columnas descuadradas */
+.precios { grid-template-columns: minmax(0, 1fr); }
+.packs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+@media (max-width: 900px) { .packs { grid-template-columns: minmax(0, 1fr); } }
+.pro { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 6px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--accent-fg); background: var(--accent); vertical-align: 2px; }
+.pro-txt { color: var(--accent); letter-spacing: .04em; }
+.mes-fila { display: block; font-size: 12px; color: var(--fg-3); }
+.mens { display: grid; gap: 6px; margin: 8px 0; padding: 16px 18px; border: 1px dashed var(--warm, var(--accent)); border-radius: var(--r); background: color-mix(in srgb, var(--warm, var(--accent)) 12%, var(--bg-2)); }
+.mens-grande { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-size: clamp(20px, 2.6vw, 26px); line-height: 1.15; font-weight: 700; letter-spacing: -.015em; color: var(--fg); }
+.mens-grande svg { flex: none; color: var(--warm, var(--accent)); }
+.mens > span { font-size: 14px; color: var(--fg-2); }
+.lanz { list-style: none; flex: 1 1 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+.lanz li { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: var(--r); background: var(--bg-3); }
+.lanz-t { font-size: 15px; font-weight: 600; }
+.lanz-p { display: flex; align-items: baseline; justify-content: flex-end; gap: 8px; }
+.lanz-p b { font-size: 18px; }
+.lanz-p s { font-size: 12px; color: var(--fg-3); }
+.lanz-p small { font-size: 12px; color: var(--fg-3); }
+.lanz .btn { grid-column: 1 / -1; }
+.lanz-nota { flex: 1 1 100%; font-size: 13px; color: var(--fg-3); }
+.promo-rayo { overflow: hidden; }
+.promo-rayo > :not(.rayo) { position: relative; z-index: 1; }
+.rayo { position: absolute; top: 18px; right: -14px; width: 132px; height: 132px; rotate: 22deg; fill: var(--warm, var(--accent)); opacity: .2; pointer-events: none; animation: rayo 3.6s ease-in-out infinite; animation-delay: calc(var(--i, 0) * .6s); }
+@keyframes rayo {
+  0%, 60%, 100% { opacity: .2; scale: 1; filter: drop-shadow(0 0 0 transparent); }
+  64% { opacity: 1; scale: 1.14; filter: drop-shadow(0 0 16px var(--warm, var(--accent))); }
+  68% { opacity: .25; scale: 1; filter: drop-shadow(0 0 0 transparent); }
+  72% { opacity: 1; scale: 1.08; filter: drop-shadow(0 0 10px var(--warm, var(--accent))); }
+  82% { opacity: .2; scale: 1; filter: drop-shadow(0 0 0 transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .rayo { animation: none; opacity: .28; } }
+.promo-mens { font-size: 13px; color: var(--fg-2); }
+.promo-mens b { color: var(--fg); }
+.promo-price small { font-size: 12px; color: var(--fg-3); }
+.cart-mens { padding: 10px 12px; border-radius: var(--r); background: color-mix(in srgb, var(--accent) 12%, var(--bg-3)); font-size: 13px; color: var(--fg-2); }
+.cart-mens b { display: block; font-size: 15px; color: var(--fg); }
+
+.mens-corto { padding: 12px 14px; gap: 3px; margin: 0; }
+.mens-corto .mens-grande { font-size: clamp(17px, 1.9vw, 20px); }
+.mens-corto > span { font-size: 13px; }
+.packs .pack { gap: 12px; }
+
+/* Lanzamiento compacto: nombre y precio a la izquierda, botón a la derecha (la página no se alarga) */
+.lanz li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "t b" "p b"; gap: 2px 12px; padding: 10px 14px; }
+.lanz-t { grid-area: t; font-size: 15px; }
+.lanz-p { grid-area: p; justify-content: flex-start; }
+.lanz li .btn { grid-area: b; grid-column: auto; min-height: 44px; padding-inline: 14px; }

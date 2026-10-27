@@ -2,21 +2,23 @@
 // Separa la estructura (código, igual para todos) de los datos (carta, fotos, precios, comunas, personal), que viven en la base bajo un "negocio" propio:
 // los pedidos, la carta, las fotos y los PIN de un restaurante no se mezclan con los de otro.
 //
-// Uso:  node web/herramientas/nuevo-restaurante.mjs --id mirador --nombre "El Mirador" [--origen fogon-del-sur] [--demo]
+// Uso:  node web/herramientas/nuevo-restaurante.mjs --id mirador --nombre "El Mirador" [--origen fogon-del-sur] [--demo] [--url https://elmirador.cl/] [--telefono "+56 9 1111 2222"]
+//   Sin --demo es un local REAL: se quitan la cinta y las notas de "ejemplo de Bío Digital", la foto de portada de la demo, el pago en línea de prueba
+//   y el botón de simular recorrido; la carpeta queda autosuficiente (lleva su nube.js) y se publica sola con wrangler; se permite que los buscadores lo encuentren solo si se da --url (su dirección definitiva).
 // Hace:
 //   1. Copia la carpeta de la plantilla a web/propuesta/ejemplos/<id>/
 //   2. Cambia restaurante.config.js (negocio, nombre, PIN al azar) y los textos con el nombre del local.
 //   3. Escribe web/herramientas/restaurantes/<id>-instalar.sql (fuera de la carpeta publicada, tiene los PIN): crea los accesos (dueño, cocina, repartidor) y los permisos de ese negocio en la base.
 // Después: ejecutar ese SQL en Supabase (proyecto biodigital-demos), entrar a <id>/panel/ con el PIN del dueño y cargar la carta,
 // fotos, comunas y horarios del cliente. La carta de ejemplo trae fotos con licencia (ver fotos/CREDITOS.md): se reemplazan por las del local.
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomInt } from 'node:crypto';
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', 'propuesta', 'ejemplos');
 const arg = (n, def) => { const i = process.argv.indexOf('--' + n); return i > -1 ? process.argv[i + 1] : def; };
-const id = arg('id'), nombre = arg('nombre'), origen = arg('origen', 'fogon-del-sur'), demo = process.argv.includes('--demo');
+const id = arg('id'), nombre = arg('nombre'), origen = arg('origen', 'fogon-del-sur'), demo = process.argv.includes('--demo'), urlFinal = arg('url', ''), telefono = arg('telefono', '');
 if (!id || !/^[a-z0-9-]{3,20}$/.test(id) || !nombre) { console.error('Uso: node web/herramientas/nuevo-restaurante.mjs --id mirador --nombre "El Mirador" [--origen fogon-del-sur] [--demo]\n  --id: 3 a 20 letras minúsculas, números o guiones (es el "negocio" en la base).'); process.exit(1); }
 if (['fogon', 'reservas', 'fidelizacion'].includes(id)) { console.error('Ese id ya lo usa una demostración.'); process.exit(1); }
 const dir0 = join(RAIZ, origen), dir1 = join(RAIZ, id);
@@ -36,6 +38,29 @@ for (const f of recorrer(dir1)) {
   if (!['.html', '.js', '.json', '.webmanifest', '.css'].includes(extname(f))) continue;
   const a = readFileSync(f, 'utf8'), b = a.split(nombreOrigen).join(nombre);
   if (a !== b) { writeFileSync(f, b); tocados++; }
+}
+
+// Un local real no es "un ejemplo de Bío Digital": se quita todo lo de la demostración
+if (!demo) {
+  for (const f of recorrer(dir1)) {
+    if (extname(f) !== '.html') continue;
+    let h = readFileSync(f, 'utf8');
+    h = h.replace(/<link rel="stylesheet" href="[./]*_compartido\/demo\.css">\n?/g, '').replace(/<script src="[./]*_compartido\/demo\.js" defer><\/script>\n?/g, '')
+      .replace(/ data-ejemplo="[^"]*"/, '').replace(/<p class="aviso">[^<]*<\/p>\n?/, '')
+      .replace(/Carta digital de demostración de Bío Digital/g, 'Carta digital de ' + nombre);
+    h = urlFinal ? h.replace(/https:\/\/main\.menu-demo\.pages\.dev\//g, urlFinal.replace(/\/?$/, '/')) : h.replace(/<link rel="canonical"[^>]*>\n?/, '').replace(/<meta property="og:(url|image|image:width|image:height)"[^>]*>\n?/g, '');
+    if (urlFinal) h = h.replace(/<meta name="robots" content="noindex, nofollow">\n?/, '').replace(/<meta name="robots" content="noindex">/, '');   // con dirección definitiva, los buscadores pueden encontrarlo
+    h = h.replace(/\[TELÉFONO O CORREO DEL LOCAL\]/g, telefono || '[TELÉFONO O CORREO DEL LOCAL]');
+    writeFileSync(f, h);
+  }
+  rmSync(join(dir1, 'og.jpg'), { force: true });   // la foto de portada de la demo
+  // Carpeta autosuficiente: publicable sola en el proyecto de Cloudflare del cliente (sin depender de ../_compartido)
+  cpSync(join(RAIZ, '_compartido', 'nube.js'), join(dir1, 'nube.js'));
+  for (const f of recorrer(dir1)) {
+    if (extname(f) !== '.html') continue;
+    const h = readFileSync(f, 'utf8'), n = h.split('../../_compartido/nube.js').join('../nube.js').split('../_compartido/nube.js').join('nube.js');
+    if (n !== h) writeFileSync(f, n);
+  }
 }
 
 // El manifest de la app trae un nombre corto (12 letras) que no es el nombre completo

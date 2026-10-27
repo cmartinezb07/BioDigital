@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { EJEMPLOS } from '../propuesta/fuentes/maquetas.mjs';
 import { SEMILLAS } from './semillas-captura.mjs';
 import { copiarCarpeta, sembrar as sembrarRestaurante, limpiar as limpiarRestaurante } from './semillas-restaurante.mjs';
+import { copiarCarpeta as copiarReservas, sembrar as sembrarReservas, limpiar as limpiarReservas } from './semillas-reservas.mjs';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const destino = resolve(aqui, '../propuesta/ejemplos');
@@ -44,6 +45,9 @@ const enPagina = async (ruta, fn) => {
 // Cocina y panel del restaurante se capturan desde una copia de la plantilla con pedidos de muestra (no con los pedidos reales de la demo)
 const usaRestaurante = lista.some((e) => ['restaurante-cocina', 'restaurante-panel'].includes(e.id));
 if (usaRestaurante) { copiarCarpeta(); console.log('sembrando restaurante →', await sembrarRestaurante()); }
+// Lo mismo con las reservas: el panel y el calendario se capturan desde una copia con reservas de muestra
+const usaReservas = lista.some((e) => ['reservas', 'reservas-calendario', 'reservas-panel'].includes(e.id));
+if (usaReservas) { copiarReservas(); console.log('sembrando reservas →', await sembrarReservas()); }
 const usadas = Object.entries(SEMILLAS).filter(([, v]) => lista.some((e) => v.para.includes(e.id)));
 try {
   for (const [k, v] of usadas) console.log('sembrando', k, '→', await enPagina(v.ruta, v.sembrar));
@@ -72,6 +76,7 @@ for (const e of lista) {
 }
 } finally {
   if (usaRestaurante) { try { console.log('limpiando restaurante →', await limpiarRestaurante()); } catch (e) { console.log('NO se pudo limpiar el restaurante', e.message); } }
+  if (usaReservas) { try { console.log('limpiando reservas →', await limpiarReservas()); } catch (e) { console.log('NO se pudo limpiar las reservas', e.message); } }
   for (const [k, v] of usadas) { try { console.log('limpiando', k, '→', await enPagina(v.ruta, v.limpiar)); } catch (e) { console.log('NO se pudo limpiar', k, e.message); } }
 }
 ws.close(); chrome.kill();

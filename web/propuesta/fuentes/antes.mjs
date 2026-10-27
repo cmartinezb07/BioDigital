@@ -20,7 +20,7 @@ const ANTES_DOC = {
   secciones: [
     ['En simple', `<ul>
       <li>El dominio de tu negocio tiene que quedar <strong>a tu nombre</strong>, no al de quien te hace la página.</li>
-      <li>Antes de pagar un anticipo, pide <strong>por escrito</strong> qué incluye, cuánto cuesta y en qué plazo.</li>
+      <li>Antes de pagar, pide <strong>por escrito</strong> qué incluye, cuánto cuesta y en qué plazo.</li>
       <li>Pregunta qué vas a pagar <strong>cada mes o cada año</strong>, y a quién. "Pago único" no siempre lo es.</li>
       <li>Tu página tiene que poder <strong>irse contigo</strong> si cambias de proveedor.</li>
     </ul>`],
@@ -28,10 +28,10 @@ const ANTES_DOC = {
       'Clientes que pagaron una página y nunca recibieron las claves, o que quedaron con el dominio inscrito a nombre del desarrollador. Para recuperarlo tenían que pagar una página nueva y perder la dirección que sus clientes ya conocían.',
       'reclamos publicados por clientes en sitios de reclamos chilenos (2023 a 2025).',
       'El dominio .cl se inscribe en NIC Chile a nombre de tu negocio, y lo puedes comprobar tú mismo en nic.cl. Las claves y accesos te los entregamos con un acta de entrega firmada.')],
-    ['Pagas el anticipo sin nada por escrito', fx(
+    ['Pagas por adelantado sin nada por escrito', fx(
       'Proveedores que piden el 50 % por adelantado sin un presupuesto formal ni condiciones por escrito. Cuando el trabajo no llega, no hay cómo reclamar qué se había prometido.',
       'reclamos publicados por clientes en sitios de reclamos chilenos (2025).',
-      'Primero te mandamos una propuesta con lo que incluye, el precio final y el plazo. El contrato se cierra cuando la aceptas por escrito. El saldo lo pagas cuando todo funciona y firmamos el acta.')],
+      'Primero te mandamos una propuesta con lo que incluye, el precio final y el plazo. El contrato se cierra cuando la aceptas por escrito. No cobramos anticipo: pagas cuando todo funciona y firmamos el acta.')],
     ['El pago único que se renueva cada año', fx(
       'Agencias que cobran el diseño una sola vez, pero la página vive en su alojamiento: un plan que se renueva cada año (para pymes, del orden de $60.000 + IVA al año, aprox.). El dominio suele venir gratis solo el primer año.',
       'precios publicados por agencias chilenas, revisados en octubre de 2026 (valores aproximados).',
@@ -60,7 +60,7 @@ const ANTES_DOC = {
     <ol class="fx-preg">
       <li><strong>¿A nombre de quién queda el dominio?</strong> Tiene que ser el tuyo o el de tu negocio. Lo puedes revisar en nic.cl.</li>
       <li><strong>¿Qué voy a pagar cada mes o cada año, y a quién?</strong> Suma todo: alojamiento, dominio, plan, mensajes y funciones extra.</li>
-      <li><strong>¿Qué incluye exactamente y en qué plazo?</strong> Por escrito, antes del anticipo.</li>
+      <li><strong>¿Qué incluye exactamente y en qué plazo?</strong> Por escrito, antes de pagar.</li>
       <li><strong>¿Me entregan las claves y los accesos?</strong> ¿Con qué documento?</li>
       <li><strong>Si me cambio de proveedor, ¿me llevo la página?</strong> ¿O hay que hacerla de nuevo?</li>
       <li><strong>¿Puedo ver páginas suyas funcionando en el celular?</strong> No capturas: páginas que se puedan abrir.</li>

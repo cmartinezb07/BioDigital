@@ -1,0 +1,22 @@
+{
+  "negocio": "Zoulbarber Studio",
+  "fecha": "2026-10-27",
+  "titulo": "960 reseñas con nota 5,0 en Google.\n*Que agendar sea igual de bueno.*",
+  "intro": "Revisamos tu Instagram (2.106 seguidores) y tu ficha de Google Maps (nota 5,0 con 960 reseñas). La reputación ya está; lo que proponemos es que reservar una hora y llegar al local sea igual de fácil.",
+  "filas": [
+    {
+      "producto": "reservations",
+      "hoy": "Las horas se agendan por teléfono o WhatsApp, en dos números, y las publicaciones cierran con «escríbenos para reservar».",
+      "propuesta": "Que el cliente elija día y hora desde el celular, a cualquier hora, sin esperar respuesta, y tú veas la agenda del día en tu teléfono.",
+      "ejemplo": "ejemplos/reservas/"
+    },
+    {
+      "producto": "web",
+      "hoy": "Tu ficha de Google no tiene sitio web, y cómo llegar (2.º piso, entrada por el estacionamiento) está repartido entre la bio y las publicaciones.",
+      "propuesta": "Una página propia con tus servicios, cómo llegar paso a paso y el botón para reservar, enlazada desde tu ficha de Google.",
+      "incluye": ["Botón de WhatsApp, mapa y horario", "Hasta 5 secciones, hecha a tu medida"],
+      "ejemplo": "ejemplos/barberia/"
+    }
+  ],
+  "pack": true
+}

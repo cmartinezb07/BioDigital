@@ -39,7 +39,8 @@ Tres reglas para que esto no duela:
 
 ### Lo que no está en el repositorio
 Las herramientas instaladas en el computador de cada uno (`.claude/skills/`). No hacen falta para trabajar el
-proyecto. El procedimiento propio para hacer sitios sí está versionado, en `respaldo-skills/`.
+proyecto. El procedimiento propio para hacer sitios y propuestas comerciales sí está versionado, en `respaldo-skills/`
+(la propuesta desde un Instagram: `propuestas/LEEME.md`).
 
 ---
 

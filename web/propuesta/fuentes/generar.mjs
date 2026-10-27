@@ -3,7 +3,8 @@
 // Uso (desde web/propuesta):  node fuentes/generar.mjs        → todas
 //                             node fuentes/generar.mjs --publico 8   → el sitio listo para publicar
 //                             node fuentes/generar.mjs 3 5    → solo esas
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { pagina } from './comun.mjs';
@@ -31,9 +32,32 @@ const paginaPrincipal = (html) => conCanonica(html, '')
 const RUTAS_INDEXABLES = ['', 'ejemplos/', 'como-trabajamos/', 'antes-de-contratar/', 'privacidad/', 'terminos/'];
 
 const aqui = dirname(fileURLToPath(import.meta.url));
+
+// ---------- Versión de los CSS y JS ----------
+// El dominio propio entrega los .css y .js con caché de 4 horas (la zona de Cloudflare lo impone): quien ya había abierto el sitio
+// seguía viendo estilos viejos en el computador. Cada enlace lleva ?v=<huella del archivo>: si el archivo cambia, el enlace cambia.
+const RAIZ = join(aqui, '..');
+function versionar(archivo) {
+  if (!existsSync(archivo)) return;
+  const antes = readFileSync(archivo, 'utf8');
+  const despues = antes.replace(/(<(?:link|script)[^>]*?(?:href|src)=")([^"#?:]+\.(?:css|js))(?:\?v=[0-9a-f]+)?(")/g, (m, a, ruta, c) => {
+    const f = join(dirname(archivo), ruta);
+    return existsSync(f) ? a + ruta + '?v=' + createHash('sha1').update(readFileSync(f)).digest('hex').slice(0, 8) + c : m;
+  });
+  if (despues !== antes) { writeFileSync(archivo, despues); console.log("versión →", archivo.slice(-30)); }
+}
+function versionarSitio() {
+  const paginas = ['index.html', 'formulario.html', 'formulario-menu.html', 'formulario-reservas.html'].map((f) => join(RAIZ, f));
+  for (const d of ['privacidad', 'terminos', 'antes-de-contratar', 'como-trabajamos']) paginas.push(join(RAIZ, d, 'index.html'));
+  const pago = join(RAIZ, 'pago');
+  if (existsSync(pago)) for (const r of readdirSync(pago)) paginas.push(join(pago, r, 'index.html'));
+  const recorrer = (d) => { for (const e of readdirSync(d, { withFileTypes: true })) { const r = join(d, e.name); if (e.isDirectory()) recorrer(r); else if (e.name.endsWith('.html')) paginas.push(r); } };
+  recorrer(join(RAIZ, 'ejemplos'));
+  [...new Set(paginas)].forEach(versionar);
+}
 const publico = process.argv.includes('--publico');   // versión para publicar: sin rueda de colores del equipo ni aviso de prototipo
 const pedidas = process.argv.slice(2).filter((a) => a !== '--publico');
-const todas = ['3', '4', '5', '6', '7', '8'];
+const todas = ['8'];   // las plantillas 3 a 7 se eliminaron del sitio (27-oct); sus fuentes siguen en fuentes/opcion-N.mjs, pero ya no se generan por defecto
 
 for (const n of pedidas.length ? pedidas : todas) {
   let o;
@@ -65,5 +89,7 @@ for (const n of pedidas.length ? pedidas : todas) {
     writeFileSync(join(aqui, '..', 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${RUTAS_INDEXABLES.map((r) => `  <url><loc>${urlDe(r)}</loc><lastmod>${hoy}</lastmod></url>`).join('\n')}\n</urlset>\n`);
     console.log('robots.txt y sitemap.xml');
     console.log('galería → ejemplos/index.html');
+    versionarSitio();
+    console.log('enlaces de CSS y JS con versión');
   }
 }

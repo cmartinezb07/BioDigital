@@ -63,7 +63,7 @@
       band.textContent = '';
       for (var t = 0; t < l.columns; t++) (function (t) {
         var first = l.columns - 1 - t;
-        var pick = function (n) { return images[n % images.length]; };
+        var pick = function (n) { return images[((n % images.length) + images.length) % images.length]; };
         var cur = pick(first);
         var el = document.createElement('div');
         el.className = tile + ' tg-tile';
@@ -85,14 +85,70 @@
         }
         // Al dar la vuelta (fuera de pantalla) la tarjeta toma la imagen que sigue
         el.addEventListener('animationiteration', function (e) {
-          var lap = Math.round(e.elapsedTime / duration);
+          var an = el.getAnimations()[0];
+          var lap = an ? an.effect.getComputedTiming().currentIteration : Math.round(e.elapsedTime / duration);
           var next = pick(lap * l.columns + first);
           imgs.forEach(function (im) { if (im.getAttribute('src') !== next.src) im.src = next.src; });
-          el.dataset.i = (lap * l.columns + first) % images.length;
+          el.dataset.i = images.indexOf(next);
         });
         band.appendChild(el);
       })(t);
+      cycle = duration * 1000;
     }
+
+    // Arrastre con dedo o mouse: mueve el carrusel a gusto; al soltar sigue con la inercia y vuelve solo al movimiento de siempre.
+    var cycle = 0, drag = null, inercia = 0, arrastro = false;
+    function anims() { return band.getAnimations({ subtree: true }); }
+    function pxPorSeg() {
+      var u = Math.min(o.tileHeight / 100 * root.clientHeight, MAX_WIDTH / o.aspect / 100 * root.clientWidth);
+      return ((o.aspect + o.gap / 100) * u) / o.speed;   // píxeles que recorre una tira por segundo en el centro
+    }
+    function mover(ms) {
+      // Se adelanta un múltiplo de la cantidad de imágenes (la imagen de cada tira no cambia) para poder arrastrar hacia atrás sin tiempos negativos
+      var salto = cycle * images.length * 20;
+      anims().forEach(function (a) { var t = (a.currentTime || 0) + ms; a.currentTime = t < cycle * 2 ? t + salto : t; });
+    }
+    function soltar(v0, ppS) {
+      // v0 en px/ms (positivo = hacia la derecha). El movimiento normal es hacia la izquierda: ppS/1000 px/ms.
+      var v = v0, normal = ppS / 1000, last = performance.now();
+      function paso(now) {
+        var dt = Math.min(48, now - last); last = now;
+        v *= Math.exp(-dt / 420);
+        mover(((normal - v) * dt) / ppS * 1000);
+        if (Math.abs(v) < 0.02) { inercia = 0; anims().forEach(function (a) { a.play(); }); band.classList.remove('arrastrando'); return; }
+        inercia = requestAnimationFrame(paso);
+      }
+      inercia = requestAnimationFrame(paso);
+    }
+    band.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (inercia) { cancelAnimationFrame(inercia); inercia = 0; }
+      drag = { id: e.pointerId, x0: e.clientX, x: e.clientX, t: performance.now(), v: 0, activo: false };
+    });
+    band.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x, now = performance.now();
+      if (!drag.activo) {
+        if (Math.abs(e.clientX - drag.x0) < 6) return;
+        drag.activo = true; arrastro = true; band.classList.add('arrastrando');
+        try { band.setPointerCapture(e.pointerId); } catch (er) {}
+        anims().forEach(function (a) { a.pause(); });
+      }
+      var dt = Math.max(1, now - drag.t);
+      drag.v = 0.8 * (dx / dt) + 0.2 * drag.v;   // velocidad suavizada, px/ms
+      drag.x = e.clientX; drag.t = now;
+      mover(-dx / pxPorSeg() * 1000);              // arrastrar a la izquierda = avanzar
+    });
+    function fin(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var d = drag; drag = null;
+      if (!d.activo) return;
+      var quieto = performance.now() - d.t > 90;
+      soltar(quieto ? 0 : Math.max(-3, Math.min(3, d.v)), pxPorSeg());   // tope de velocidad: un salto brusco no lanza el carrusel por los aires
+      setTimeout(function () { arrastro = false; }, 0);
+    }
+    band.addEventListener('pointerup', fin);
+    band.addEventListener('pointercancel', fin);
 
     // Clic en un ejemplo (o en "Ver ejemplos en grande", que también sirve con teclado): se abre el visor con la página en vivo.
     // La página corre dentro de un marco a su ancho real (1440 escritorio, 390 celular) y se escala para caber.
@@ -142,7 +198,7 @@
           '<div class="tg-lb-modo" role="group" aria-label="Tamaño de pantalla"><button type="button" data-modo="pc" aria-pressed="true">Escritorio</button><button type="button" data-modo="cel" aria-pressed="false">Celular</button></div></div>' +
           '<div class="tg-lb-vista"><div class="tg-lb-pantalla"><div class="tg-lb-barra" aria-hidden="true"><i></i><i></i><i></i><span class="tg-lb-dir"></span></div>' +
           '<div class="tg-lb-marco"><img class="tg-lb-ph" alt=""><iframe loading="lazy" referrerpolicy="no-referrer"></iframe></div></div></div>' +
-          '<div class="tg-lb-pie"><small>Negocio ficticio, hecho por Bío Digital · <span class="tg-lb-n"></span></small>' +
+          '<div class="tg-lb-pie"><small>Negocio ficticio, hecho por Bío Digital · <span class="tg-lb-n"></span><span class="tg-lb-desliza"> · desliza para cambiar</span></small>' +
           '<a class="btn btn-main btn-sm tg-lb-abrir" target="_blank" rel="noopener">Abrir la página completa ↗</a>' +
           '<span class="tg-lb-nav"><button type="button" class="btn btn-sm" data-d="-1" aria-label="Ejemplo anterior">←</button><button type="button" class="btn btn-sm" data-d="1" aria-label="Ejemplo siguiente">→</button></span></div></div>';
         lb.addEventListener('click', function (e) {
@@ -152,6 +208,7 @@
           else if (e.target === lb || e.target.closest('.tg-lb-x')) close();
         });
         window.addEventListener('resize', ajustar);
+        deslizar(lb.querySelector('.tg-lb-in'));
         document.body.appendChild(lb);
       }
       back = document.activeElement;
@@ -160,6 +217,27 @@
       setModo(window.innerWidth < 760 ? 'cel' : modo, true);
       show(n);
       lb.querySelector('.tg-lb-x').focus();
+    }
+    // Deslizar a los lados cambia de ejemplo: en el marco del visor y también dentro de la página en vivo (es del mismo sitio)
+    function deslizar(el) {
+      var g = null;
+      function ini(e) { var t = e.touches ? e.touches[0] : e; g = { x: t.clientX, y: t.clientY, t: Date.now() }; }
+      function fin(e) {
+        if (!g) return;
+        var t = e.changedTouches ? e.changedTouches[0] : e, dx = t.clientX - g.x, dy = t.clientY - g.y, dt = Date.now() - g.t; g = null;
+        if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && dt < 700) show(at + (dx < 0 ? 1 : -1));
+      }
+      el.addEventListener('touchstart', ini, { passive: true });
+      el.addEventListener('touchend', fin, { passive: true });
+      var fr = el.querySelector('iframe');
+      fr.addEventListener('load', function () {
+        try {
+          var d = fr.contentDocument;
+          if (!d || d.location.href === 'about:blank') return;
+          d.addEventListener('touchstart', ini, { passive: true });
+          d.addEventListener('touchend', fin, { passive: true });
+        } catch (er) { /* otra dirección: solo el marco del visor */ }
+      });
     }
     function close() {
       lb.hidden = true; propio = '';
@@ -181,6 +259,7 @@
     });
     // En 3D el navegador no siempre entrega el clic a la tarjeta: se busca la tira que queda bajo el puntero
     band.addEventListener('click', function (e) {
+      if (arrastro) return;
       var t = e.target.closest('.tg-tile');
       if (!t) [].some.call(band.querySelectorAll('.tg-tile'), function (el) {
         if (getComputedStyle(el).visibility === 'hidden') return false;

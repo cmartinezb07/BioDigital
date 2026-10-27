@@ -2,7 +2,9 @@
 .tg { position: relative; overflow: hidden; height: clamp(300px, 46vw, 520px); }
 .tg-band { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; }
 .tg-tile { position: absolute; display: block; transform-style: preserve-3d; }
-.tg-band, .tg-tile { cursor: pointer; }
+.tg-band, .tg-tile { cursor: grab; }
+.tg-band { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.tg-band.arrastrando, .tg-band.arrastrando .tg-tile { cursor: grabbing; }
 .tg-slice { position: absolute; top: 0; overflow: hidden; background: var(--bg-3, #222); }
 .tg-first { border-radius: 10px 0 0 10px; }
 .tg-last { border-radius: 0 10px 10px 0; }
@@ -35,6 +37,8 @@
 .tg-lb.es-cel .tg-lb-pantalla { border-radius: 28px; }
 .tg-lb.es-cel .tg-lb-barra { height: 26px; }
 .tg-lb-pie { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 0 4px 2px; }
+.tg-lb-desliza { display: none; }
+@media (pointer: coarse) { .tg-lb-desliza { display: inline; } }
 .tg-lb-pie small { font-size: 12px; color: var(--fg-3, #888); }
 .tg-lb-nav { display: flex; gap: 8px; }
 html.tg-lb-abierto { overflow: hidden; }

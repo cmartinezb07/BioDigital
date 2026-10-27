@@ -9,7 +9,7 @@ export default {
   n: 8,
   archivo: 'index.html',
   nombre: 'Final (6 + 7)',
-  titulo: 'Bío Digital · Opción 8: Final (6 + 7)',
+  titulo: 'Bío Digital · Páginas web, menús digitales y reservas en Concepción',
   tema: 'dark',
   ejemplos: true,
   fuentes: 'family=Geist:wght@300..700&family=Geist+Mono:wght@400..600',

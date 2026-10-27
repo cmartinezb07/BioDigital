@@ -13,7 +13,7 @@ const ACT = [
   ['F', 'Construcción de la página', 1.5, ['C', 'E'], 0, 'Bío Digital'],
   ['G', 'Dominio y correo contacto@ conectados', 0.5, ['B', 'F'], 1, 'Bío Digital'],
   ['H', 'Pruebas en celular, velocidad y seguridad', 0.5, ['F'], 0, 'Bío Digital'],
-  ['I', 'Publicación, acta de entrega y saldo', 0.5, ['G', 'H'], 0, 'Bío Digital y tú'],
+  ['I', 'Publicación, acta de entrega y pago', 0.5, ['G', 'H'], 0, 'Bío Digital y tú'],
 ];
 // Método de la ruta crítica: pasada hacia adelante (inicio temprano) y hacia atrás (término tardío)
 function cpm() {
@@ -66,7 +66,7 @@ const DOC = {
       <li><strong>Propuesta aceptada</strong> (día 0): empieza el plazo. Te confirmamos la fecha de entrega.</li>
       <li><strong>Visita hecha</strong> (día ${dia(act.find((a) => a.id === 'A').et)}): ya tenemos fotos, textos y datos.</li>
       <li><strong>Maqueta aprobada</strong> (día ${dia(act.find((a) => a.id === 'E').et)}): el diseño queda cerrado.</li>
-      <li><strong>Página publicada y acta firmada</strong> (día ${dia(fin)}): todo queda a tu nombre y pagas el saldo.</li>
+      <li><strong>Página publicada y acta firmada</strong> (día ${dia(fin)}): todo queda a tu nombre y recién ahí pagas. No hay anticipo.</li>
     </ol>`],
     ['Si algo se atrasa', `<ul>
       <li><strong>Si tú te demoras</strong> en aprobar la maqueta o mandar material, el plazo se corre los mismos días. Queda registrado y te avisamos.</li>

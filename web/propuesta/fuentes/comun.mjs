@@ -151,7 +151,7 @@ const FAQ = [
   ['¿De verdad es gratis el diagnóstico?', 'Sí. Es nuestra primera conversación: revisamos juntos qué tiene tu negocio y qué le falta, y te decimos tu puntaje. No tienes que contratar nada después.'],
   ['¿Cuánto se demora?', 'Entre 3 y 7 días hábiles de trabajo desde que tenemos tus fotos, textos y accesos. Por eso tomamos casi todo en la visita.'],
   ['¿El dominio y el hosting están incluidos?', `El dominio .cl no está incluido: lo registra NIC Chile, cuesta ${clp(DOMINIO_ANUAL)} al año y queda a nombre del negocio. El hosting de la página web va en Cloudflare, sin costo para ti. Nosotros solo cobramos mensualidad en los productos PRO (menú digital y reservas con panel): $20.000 al mes, y el primer mes no se paga.`],
-  ['¿Por qué cobran anticipo?', 'Porque reservamos tiempo del equipo y vamos a tu local. El saldo lo pagas cuando todo está funcionando y firmamos el acta.'],
+  ['¿Cuándo pago?', 'No cobramos anticipo. Pagas una sola vez, cuando tu trabajo está funcionando y firmamos el acta de entrega. Si contratas un producto PRO, la mensualidad parte recién el segundo mes.'],
   ['¿La tarjeta de fidelización funciona en cualquier celular?', 'Sí. Se abre en el navegador de cualquier celular y queda como acceso directo, sin instalar ninguna aplicación. Si quieres que además se guarde en Google Wallet o Apple Wallet, eso se cotiza aparte, porque esas plataformas cobran una mensualidad.'],
   ['¿Qué pasa si me demoro en mandar mis fotos o textos?', 'El plazo de producción se corre los mismos días y te avisamos.'],
   ['¿Tengo que saber de tecnología?', 'No. Nosotros hacemos todo y te lo dejamos funcionando.'],
@@ -204,7 +204,7 @@ ${o.fondo || ''}
 <a class="skip" href="#contenido">Saltar al contenido</a>
 ${ICONOS}
 
-${o.n === 8 ? (publico ? '' : '<p class="proto">Sitio de Bío Digital · <a href="plantillas/index.html">ver las plantillas ya hechas</a></p>') : `<p class="proto">Plantilla ${o.n} · ${o.nombre} · <a href="index.html">ver todas las plantillas</a> · <a href="../index.html">ir al sitio</a></p>`}
+${o.n === 8 ? (publico ? '' : '<p class="proto">Sitio de Bío Digital</p>') : `<p class="proto">Plantilla ${o.n} · ${o.nombre} · <a href="index.html">ver todas las plantillas</a> · <a href="../index.html">ir al sitio</a></p>`}
 
 <header class="top">
   <nav class="nav" aria-label="Principal">

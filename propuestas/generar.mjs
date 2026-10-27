@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { SERVICIOS, SUMA, PACK, PACK_5, clp } from '../web/propuesta/fuentes/comun.mjs';
+import { SERVICIOS, SUMA, PACK, PACK_5, clp, PRO, MENSUAL, LANZ, PACK_PRO, PACK_PRO_5, PACK_PRO_ITEMS } from '../web/propuesta/fuentes/comun.mjs';
 import { WHATSAPP_VISIBLE, MAIL, INSTAGRAM, DOMINIO_ANUAL } from '../web/propuesta/fuentes/config.mjs';
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
@@ -27,8 +27,14 @@ if (!carpeta) throw new Error('Falta la carpeta del cliente: node propuestas/gen
 const dir = join(AQUI, carpeta);
 const d = JSON.parse(readFileSync(join(dir, 'datos.json'), 'utf8'));
 
-const PRODUCTO = Object.fromEntries(SERVICIOS.map(([id, , nombre, precio, desde, , incluye]) => [id, { nombre, precio, desde, incluye }]));
-const precio = (p) => (p.desde ? 'desde ' : '') + clp(p.precio);
+// Productos simples y PRO. Si el sitio tiene precio de lanzamiento (primeros 5 clientes), se usa ese y el normal va tachado.
+const LANZAMIENTO = Object.fromEntries(LANZ.map(([sku, , precio]) => [sku.replace(/^launch-/, ''), precio]));
+const PRO_IDS = new Set(PRO.map(([id]) => id));
+const PRODUCTO = Object.fromEntries([...SERVICIOS, ...PRO].map(([id, , nombre, precio, desde, , incluye]) =>
+  [id, { id, nombre, precio, desde, incluye, lanz: LANZAMIENTO[id], pro: PRO_IDS.has(id) }]));
+const vale = (p) => p.lanz ?? p.precio;
+const precio = (p) => (p.desde ? 'desde ' : '') + clp(vale(p)) + (p.lanz ? ` <s>${clp(p.precio)}</s>` : '')
+  + (p.pro ? ` <small>+ ${clp(MENSUAL)}/mes</small>` : '');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const fecha = new Date(d.fecha + 'T12:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -46,25 +52,36 @@ const filas = d.filas.map((f, i) => {
 }).join('');
 
 const sueltos = d.filas.map((f) => PRODUCTO[f.producto]);
-const totalSueltos = sueltos.reduce((t, p) => t + p.precio, 0);
+const totalSueltos = sueltos.reduce((t, p) => t + vale(p), 0);
+const conPro = sueltos.some((p) => p.pro);
+const conLanz = d.pack || sueltos.some((p) => p.lanz);
+// Si se eligió un producto PRO, el pack que corresponde es el Pack PRO; si no, el pack esencial de los seis.
+const P = conPro ? { nombre: 'Pack PRO', lanz: PACK_PRO_5, normal: PACK_PRO }
+  : { nombre: 'Pack completo', lanz: PACK_5, normal: PACK };
 const restantes = SERVICIOS.filter(([id]) => !d.filas.some((f) => f.producto === id)).map(([, , n]) => n.toLowerCase());
 const lista = (xs) => xs.length > 1 ? xs.slice(0, -1).join(', ') + ' y ' + xs.at(-1) : xs[0];
 const conWeb = d.pack || d.filas.some((f) => f.producto === 'web');
 
 const pack = d.pack ? `<div class="op reco">
     <p class="rot">Recomendado</p>
-    <p class="nom">Pack completo</p>
-    <p class="grande">${clp(PACK_5)} <s>${clp(PACK)}</s></p>
-    <p>Los seis productos: lo de arriba, más ${esc(lista(restantes))}.
-    ${PACK_5 > totalSueltos ? `Por ${clp(PACK_5 - totalSueltos)} más que` : `Cuesta ${clp(totalSueltos - PACK_5)} menos que`} ${sueltos.length === 1 ? 'la pieza suelta' : `las ${sueltos.length} piezas sueltas`}.</p>
-    <p class="chico">Precio de lanzamiento para los primeros 5 clientes. Por separado, los seis suman ${clp(SUMA)}.</p>
+    <p class="nom">${P.nombre}</p>
+    <p class="grande">${clp(P.lanz)} <s>${clp(P.normal)}</s>${conPro ? ` <span>+ ${clp(MENSUAL)}/mes</span>` : ''}</p>
+    <p>${conPro ? `Incluye ${esc(lista(PACK_PRO_ITEMS.map((x) => x.charAt(0).toLowerCase() + x.slice(1))))}.`
+      : `Los seis productos: lo de arriba, más ${esc(lista(restantes))}.`}
+    ${P.lanz > totalSueltos ? `Por ${clp(P.lanz - totalSueltos)} más que` : `Cuesta ${clp(totalSueltos - P.lanz)} menos que`} ${sueltos.length === 1 ? 'la pieza suelta' : `las ${sueltos.length} piezas sueltas`}.</p>
+    ${conPro ? '' : `<p class="chico">Por separado, a precio normal, los seis suman ${clp(SUMA)}.</p>`}
   </div>` : '';
 const solos = `<div class="op">
-    <p class="rot">${!d.pack ? 'Inversión' : totalSueltos > PACK_5 ? 'Por separado' : 'O solo lo que necesitas hoy'}</p>
+    <p class="rot">${!d.pack ? 'Inversión' : totalSueltos > P.lanz ? 'Por separado' : 'O solo lo que necesitas hoy'}</p>
     <p class="nom">${sueltos.length === 1 ? sueltos[0].nombre : `Las ${sueltos.length} piezas`}</p>
-    <p class="grande">${sueltos.some((p) => p.desde) ? '<span>desde</span> ' : ''}${clp(totalSueltos)}</p>
+    <p class="grande">${sueltos.some((p) => p.desde) ? '<span>desde</span> ' : ''}${clp(totalSueltos)}${conPro ? ` <span>+ ${clp(MENSUAL)}/mes</span>` : ''}</p>
     <ul class="suma">${sueltos.map((p) => `<li><span>${esc(p.nombre)}</span><span>${precio(p)}</span></li>`).join('')}</ul>
   </div>`;
+const nota = [conLanz ? 'Precios de lanzamiento para los primeros 5 clientes; tachado, el precio normal.' : '',
+  conPro ? `Pago único por la instalación. Los productos PRO llevan ${clp(MENSUAL)} al mes, una sola mensualidad por cliente, y el primer mes no se paga.`
+    : 'Pago único, sin mensualidad de Bío Digital.',
+  conWeb ? `Si se hace la página web, el dominio .cl se paga aparte a NIC Chile (aprox. ${clp(DOMINIO_ANUAL)} al año, verificar en nic.cl) y queda a tu nombre.` : '',
+].filter(Boolean).join(' ');
 
 const html = `<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
@@ -97,6 +114,8 @@ h2::after { content: ''; flex: 1; height: 1px; background: var(--linea); }
 .cab { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1mm; }
 .nom { font-weight: 600; font-size: 11pt; letter-spacing: -.02em; }
 .pre { font: 500 8.6pt 'Geist Mono', monospace; color: var(--tinta); }
+.pre s, .suma s { color: var(--t3); font-size: .9em; }
+.pre small, .suma small { color: var(--t3); }
 .prop ul { list-style: none; margin-top: 1.4mm; display: flex; flex-wrap: wrap; gap: 1mm 4mm; color: var(--t2); font-size: 8.6pt; }
 .prop li::before { content: '✓ '; color: var(--c1); font-weight: 700; }
 .ej { display: inline-block; margin-top: 1.4mm; font-size: 8.4pt; color: #0b7fc4; text-decoration: none; font-weight: 500; }
@@ -127,7 +146,7 @@ footer .quien { font-size: 7.6pt; color: var(--t3); max-width: 70mm; text-align:
 <section><h1>${esc(d.titulo).replace(/\*(.+?)\*/g, '<b>$1</b>').replace(/\n/g, '<br>')}</h1><p class="intro">${esc(d.intro)}</p></section>
 <section><h2>Lo que vimos y lo que haríamos</h2><div class="filas">${filas}</div></section>
 <section><h2>Inversión</h2><div class="ops">${pack}${solos}</div>
-  <p class="nota">Pago único, sin mensualidad de Bío Digital.${conWeb ? ` Si se hace la página web, el dominio .cl se paga aparte a NIC Chile (aprox. ${clp(DOMINIO_ANUAL)} al año, verificar en nic.cl) y queda a tu nombre.` : ''}</p></section>
+  <p class="nota">${nota}</p></section>
 <section><h2>Cómo seguimos</h2><div class="pasos">
   <p><b>Nos dices qué opción te acomoda.</b> El precio queda acordado antes de empezar.</p>
   <p><b>Vamos a tu local.</b> Tomamos fotos y los datos que hacen falta.</p>
@@ -197,4 +216,4 @@ Puedes ver lo que hacemos en ${web}. Si te interesa, coordinamos para pasar por 
 ## De dónde sale lo que dice la propuesta (no se envía)
 ${fuentes}
 `);
-console.log(`${join(carpeta, 'propuesta.pdf')} + mensajes.md · ${d.filas.length} piezas, sueltas ${clp(totalSueltos)}${d.pack ? `, pack ${clp(PACK_5)}` : ''}`);
+console.log(`${join(carpeta, 'propuesta.pdf')} + mensajes.md · ${d.filas.length} piezas, sueltas ${clp(totalSueltos)}${d.pack ? `, ${P.nombre.toLowerCase()} ${clp(P.lanz)}` : ''}`);

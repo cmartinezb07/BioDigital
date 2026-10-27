@@ -35,8 +35,8 @@ Necesita Node, Google Chrome o Edge (crean el PDF) e internet (carga la fuente G
 | `negocio`, `fecha` | Nombre y fecha (AAAA-MM-DD) |
 | `titulo` | Dos líneas separadas por `\n`; lo que va entre `*asteriscos*` sale en azul |
 | `intro` | Qué revisamos, con datos que el cliente pueda comprobar (seguidores, nota en Maps) |
-| `filas` | De 1 a 3 piezas. `producto` es el id del sitio: `web`, `social-video`, `interactive-menu`, `photography`, `reservations`, `loyalty-card`. `hoy` es lo que vimos; `propuesta`, qué cambia. `incluye` y `ejemplo` son opcionales (`ejemplo` es una ruta de biodigitales.cl) |
-| `pack` | `true` agrega el pack completo como opción recomendada al lado de las piezas sueltas |
+| `filas` | De 1 a 3 piezas. `producto` es el id del sitio: `web`, `social-video`, `interactive-menu`, `photography`, `reservations`, `loyalty-card`, o los PRO `interactive-menu-pro` y `reservations-pro` (con mensualidad). `hoy` es lo que vimos; `propuesta`, qué cambia. `incluye` y `ejemplo` son opcionales (`ejemplo` es una ruta de biodigitales.cl) |
+| `pack` | `true` agrega el pack como opción recomendada: el esencial, o el Pack PRO si hay un producto PRO. Usa precios de lanzamiento |
 | `fuentes` | De dónde salió cada dato; queda al final de `mensajes.md`, marcado como «no se envía» |
 
 Los precios, los nombres y lo que incluye cada producto **no se escriben aquí**: salen de
@@ -45,11 +45,11 @@ Los precios, los nombres y lo que incluye cada producto **no se escriben aquí**
 ## Reglas
 - Cada cosa de «hoy» tiene que poder comprobarse en su Instagram, su ficha de Maps o su web. Nada inventado.
 - Tutear. Sin tecnicismos.
-- No ofrecer lo que el equipo no aprobó: menú con pedidos y delivery, 3D, Wallet, cuotas, «tú lo editas».
+- No ofrecer lo que el equipo no aprobó: 3D, Wallet, cuotas, forma de pago. Los PRO solo si el negocio los necesita.
 - Máximo 3 piezas: si no cabe en una página, sobra algo.
 
 ## Propuestas hechas
 | Carpeta | Negocio | Fecha | Ofrecido |
 |---|---|---|---|
-| `kairos-cafe/` | Café Kairós, San Pedro de la Paz | 27-oct-2026 | Pack $69.990 o menú + reservas + fidelización desde $62.970 |
-| `zoul-barber/` | Zoulbarber Studio, Concepción | 27-oct-2026 | Pack $69.990 o reservas + página web desde $74.980 |
+| `kairos-cafe/` | Café Kairós, San Pedro de la Paz | 27-oct-2026 | Pack $69.990 o menú + reservas + fidelización desde $58.970 |
+| `zoul-barber/` | Zoulbarber Studio, Concepción | 27-oct-2026 | Pack $69.990 o reservas + página web desde $64.980 |

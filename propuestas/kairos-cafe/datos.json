@@ -16,8 +16,7 @@
     {
       "producto": "reservations",
       "hoy": "Cumpleaños, talleres como Entre Hilos y Pausas y la preventa del Día del Padre se reservan por mensaje directo o WhatsApp, uno por uno.",
-      "propuesta": "Que reserven solos desde el celular, a cualquier hora, y tú veas las reservas del día en tu teléfono.",
-      "ejemplo": "ejemplos/reservas/"
+      "propuesta": "Un calendario con tus horarios donde reservan desde el celular: la solicitud te llega ordenada por WhatsApp y tú confirmas."
     },
     {
       "producto": "loyalty-card",

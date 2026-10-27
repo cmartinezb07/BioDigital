@@ -53,29 +53,42 @@ unas 6 publicaciones con el texto abierto y la ficha de Google Maps. **No invent
 0255), anótalo en `fuentes` para que quien mande el WhatsApp use el correcto. No va en la propuesta ni en el mensaje.
 
 ## 2. Elegir de 1 a 3 piezas
-Cada pieza responde a algo que **viste**. Si no hay evidencia, no va.
+Cada pieza responde a algo que **viste**. Si no hay evidencia, no va. Los precios no se escriben: salen del sitio
+(biodigitales.cl, sección de precios, y `web/propuesta/fuentes/comun.mjs`). Míralos ahí antes de decidir.
 
-| Si ves esto | Ofrece | `producto` | Precio (sitio, 27-oct) |
-|---|---|---|---|
-| Carta o lista de precios en PDF, Drive, una foto, las destacadas, o «precios por DM» | Menú digital | `interactive-menu` | desde $27.990 |
-| «Reservas por DM», «agenda por WhatsApp», números para reservar, cupos que coordinan a mano | Sistema de reservas | `reservations` | desde $24.990 |
-| Tarjeta de sellos de papel, «cliente frecuente», promociones para que vuelvan | Tarjeta de fidelización | `loyalty-card` | $9.990 |
-| Sin web: Maps no tiene sitio y el link de la bio es WhatsApp, Linktree o nada | Página web | `web` | desde $49.990 |
-| Pocas fotos de producto, o fotos oscuras o sin cuidar | Registro fotográfico | `photography` | $4.990 |
-| Casi sin reels ni videos | Videos para redes | `social-video` | desde $9.990 |
+| Si ves esto | Ofrece | `producto` |
+|---|---|---|
+| Carta o lista de precios en PDF, Drive, una foto, las destacadas, o «precios por DM» | Menú digital (carta en QR, sin pedidos) | `interactive-menu` |
+| «Reservas por DM», «agenda por WhatsApp», números para reservar | Sistema de reservas (calendario con sus servicios y horarios; la solicitud le llega armada por WhatsApp y el dueño confirma) | `reservations` |
+| Tarjeta de sellos de papel, «cliente frecuente», promociones para que vuelvan | Tarjeta de fidelización | `loyalty-card` |
+| Sin web: Maps no tiene sitio y el link de la bio es WhatsApp, Linktree o nada | Página web | `web` |
+| Pocas fotos de producto, o fotos oscuras o sin cuidar | Registro fotográfico | `photography` |
+| Casi sin reels ni videos | Videos para redes | `social-video` |
 
-El **pack completo** trae los seis productos: $79.990, o **$69.990 de lanzamiento para los primeros 5 clientes**.
+**Versiones PRO** (llevan mensualidad: $20.000 al mes, una sola por cliente, y el primer mes no se paga). Ofrécelas
+solo si lo que viste **de verdad** las necesita; si no, la versión simple:
 
+| Si ves esto | Ofrece | `producto` |
+|---|---|---|
+| Restaurante que ya recibe pedidos para retirar o delivery por WhatsApp o DM, o que tiene muchos platos y cambia precios seguido | Menú digital PRO (carta que el dueño edita, pedidos en mesa, retiro y delivery, cocina y panel) | `interactive-menu-pro` |
+| Alojamiento, tours, arriendo por hora o citas con depósito; o que se le cruzan las reservas | Sistema de reservas PRO (calendario en vivo, depósito y política de cancelación, el cliente modifica o cancela, panel) | `reservations-pro` |
+
+**Cómo calcula los precios el generador:**
+- Si el producto tiene precio de lanzamiento para los primeros 5 clientes, usa ese y muestra el normal tachado.
+- `"pack": true` agrega al lado el pack recomendado, también a precio de lanzamiento: el **pack esencial** (los
+  seis productos simples) o, si elegiste un producto PRO, el **Pack PRO**. La propuesta dice sola cuánto más o
+  cuánto menos cuesta que las piezas sueltas.
+- Si hay un PRO, la nota de abajo explica la mensualidad. Si no, dice «pago único, sin mensualidad».
+
+Reglas:
 - **No ofrezcas lo que ya hace bien.** Kairós y Zoul ya publican buenos reels: a ninguno se le ofrecieron videos.
-- **`"pack": true` casi siempre.** Pon el pack como recomendado cuando las piezas sueltas suman cerca o más que
-  $69.990. Si es una sola pieza barata (por ejemplo, solo fidelización), deja `"pack": false`.
+- **`"pack": true` casi siempre**, salvo que sea una sola pieza barata (por ejemplo, solo fidelización).
   Antes de mandar, **confirma con el equipo que queda cupo de lanzamiento**: no hay registro automático.
-- **Reservas va en su versión base** (agenda con horarios, confirmación automática, reservas del día en el
-  teléfono). Cobrar por cupo, depósito, cancelación o elegir profesional es la versión completa, que se cotiza
-  aparte: no la prometas.
-- **Nunca ofrezcas ni prometas**: menú con pedidos y delivery, 3D o realidad aumentada, Wallet, cuotas, «tú mismo lo
-  editas», agente de voz, posición en Google («aparecer primero», «que te encuentren en Google»), más ventas o
-  clientes, ni plazos de respuesta.
+- **No describas lo que el producto no hace.** El sistema de reservas simple no confirma solo, no muestra
+  disponibilidad en vivo y no tiene panel: eso es el PRO. Usa las frases del sitio.
+- **Nunca ofrezcas ni prometas**: 3D o realidad aumentada, Wallet, cuotas, anticipo o forma de pago, agente de voz,
+  posición en Google («aparecer primero», «que te encuentren en Google»), más ventas o clientes, ni plazos de
+  respuesta. «Tú mismo lo editas» solo vale para el Menú digital PRO.
 
 ## 3. Escribir `datos.json`
 ```sh
@@ -120,7 +133,7 @@ Ejemplo completo (Zoul):
 | `fecha` | AAAA-MM-DD |
 | `titulo` | Dos líneas separadas por `\n`. La primera, lo que el negocio **ya tiene** (con una cifra si se puede); la segunda, entre `*asteriscos*` (sale en azul), lo que le proponemos. Corto: cada línea cabe en el ancho de la hoja |
 | `intro` | Qué revisamos, con un par de cifras que el dueño pueda comprobar, y en una frase qué proponemos |
-| `filas[].producto` | Un id de la tabla del paso 2 |
+| `filas[].producto` | Un id de las tablas del paso 2 |
 | `filas[].hoy` | Lo que viste, concreto y sin juicio. «Tu carta es un PDF en Google Drive», no «tu carta está mal hecha». Máximo unas 25 palabras |
 | `filas[].propuesta` | Qué cambia para su cliente, en una frase |
 | `filas[].incluye` | Opcional: 2 cosas que recibe, sacadas de lo que dice el sitio. Si no se pone, salen las 2 primeras del sitio |
@@ -128,22 +141,23 @@ Ejemplo completo (Zoul):
 | `pack` | `true` o `false` (ver paso 2) |
 | `fuentes` | De dónde salió cada afirmación de `hoy` y cada cifra (link del post, del perfil o de la ficha de Maps), lo que decidiste no ofrecer y por qué, y cualquier dato que deba saber quien mande el mensaje. No se envía: queda al final de `mensajes.md` |
 
-**Demos que se pueden enlazar** (negocios ficticios del sitio):
+**Demos que se pueden enlazar** (negocios ficticios del sitio). Cada una va **solo** con su producto:
 
-| Ruta | Qué es |
-|---|---|
-| `ejemplos/reservas/` | Reservas en línea |
-| `ejemplos/fidelizacion/` | Tarjeta de sellos (temática café) |
-| `ejemplos/barberia/` | Página web de una barbería |
-| `ejemplos/casa-dulce/` | Página web de una pastelería o cafetería |
-| `ejemplos/estetica/` | Página web de un centro de estética |
-| `ejemplos/dental/` | Página web de una clínica dental |
-| `ejemplos/tecnico/` | Página web de un servicio técnico |
-| `ejemplos/cabanas/` | Página web de cabañas |
-| `ejemplos/estudio-contable/` | Página web de un estudio contable |
-| `ejemplos/` | La galería completa |
+| Ruta | Qué es | Va con |
+|---|---|---|
+| `ejemplos/fidelizacion/` | Tarjeta de sellos (temática café) | `loyalty-card` |
+| `ejemplos/fogon-del-sur/` | Menú digital PRO: carta, pedidos y panel | `interactive-menu-pro` |
+| `ejemplos/reservas/` | Sistema de reservas PRO: calendario en vivo y panel | `reservations-pro` |
+| `ejemplos/barberia/` | Página web de una barbería | `web` |
+| `ejemplos/casa-dulce/` | Página web de una pastelería o cafetería | `web` |
+| `ejemplos/estetica/` | Página web de un centro de estética | `web` |
+| `ejemplos/dental/` | Página web de una clínica dental | `web` |
+| `ejemplos/tecnico/` | Página web de un servicio técnico | `web` |
+| `ejemplos/cabanas/` | Página web de cabañas | `web` |
+| `ejemplos/estudio-contable/` | Página web de un estudio contable | `web` |
 
-**No enlaces `ejemplos/fogon-del-sur/`**: muestra pedidos y delivery, que no se ofrecen en la propuesta.
+El menú digital simple y el sistema de reservas simple **no tienen demo propia**: no les pongas `ejemplo`. Enlazar
+la demo PRO a un producto simple promete cosas que no trae.
 
 ## 4. Generar y revisar
 ```sh

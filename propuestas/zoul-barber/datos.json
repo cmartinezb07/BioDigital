@@ -7,8 +7,7 @@
     {
       "producto": "reservations",
       "hoy": "Las horas se agendan por teléfono o WhatsApp, en dos números, y las publicaciones cierran con «escríbenos para reservar».",
-      "propuesta": "Que el cliente elija día y hora desde el celular, a cualquier hora, sin esperar respuesta, y tú veas la agenda del día en tu teléfono.",
-      "ejemplo": "ejemplos/reservas/"
+      "propuesta": "El cliente elige servicio, día y hora en un calendario con tus horarios, y la solicitud te llega armada por WhatsApp para que confirmes."
     },
     {
       "producto": "web",

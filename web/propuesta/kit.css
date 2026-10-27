@@ -313,7 +313,10 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 .antes-link a .btn-ico { flex: none; }
 
 /* PRO, mensualidad, lanzamiento y ofertas relámpago */
-.packs { display: grid; gap: 20px; }
+/* Lista de productos a todo el ancho y, debajo, los dos packs lado a lado: sin huecos ni columnas descuadradas */
+.precios { grid-template-columns: minmax(0, 1fr); }
+.packs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+@media (max-width: 900px) { .packs { grid-template-columns: minmax(0, 1fr); } }
 .pro { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 6px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--accent-fg); background: var(--accent); vertical-align: 2px; }
 .pro-txt { color: var(--accent); letter-spacing: .04em; }
 .mes-fila { display: block; font-size: 12px; color: var(--fg-3); }
@@ -346,3 +349,14 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 .promo-price small { font-size: 12px; color: var(--fg-3); }
 .cart-mens { padding: 10px 12px; border-radius: var(--r); background: color-mix(in srgb, var(--accent) 12%, var(--bg-3)); font-size: 13px; color: var(--fg-2); }
 .cart-mens b { display: block; font-size: 15px; color: var(--fg); }
+
+.mens-corto { padding: 12px 14px; gap: 3px; margin: 0; }
+.mens-corto .mens-grande { font-size: clamp(17px, 1.9vw, 20px); }
+.mens-corto > span { font-size: 13px; }
+.packs .pack { gap: 12px; }
+
+/* Lanzamiento compacto: nombre y precio a la izquierda, botón a la derecha (la página no se alarga) */
+.lanz li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "t b" "p b"; gap: 2px 12px; padding: 10px 14px; }
+.lanz-t { grid-area: t; font-size: 15px; }
+.lanz-p { grid-area: p; justify-content: flex-start; }
+.lanz li .btn { grid-area: b; grid-column: auto; min-height: 44px; padding-inline: 14px; }

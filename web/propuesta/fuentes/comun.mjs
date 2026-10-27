@@ -78,7 +78,7 @@ const PACK_PRO = 150000, PACK_PRO_5 = 120000;            // pack con un sistema 
 const precioDe = (id) => [...SERVICIOS, ...PRO].find((s) => s[0] === id)[3];
 const SUMA_PRO = precioDe('web') + precioDe('interactive-menu-pro') + precioDe('loyalty-card') + precioDe('photography') + precioDe('social-video');   // 174.940
 const AHORRO_PRO = SUMA_PRO - PACK_PRO;
-const PACK_PRO_ITEMS = ['Página web', 'Menú digital PRO <b>o</b> Sistema de reservas PRO (a tu elección)', 'Tarjeta de fidelización', 'Registro fotográfico', '1 video para redes'];
+const PACK_PRO_ITEMS = ['Página web', 'Menú digital PRO o Sistema de reservas PRO (a tu elección)', 'Tarjeta de fidelización', 'Registro fotográfico', '1 video para redes'];
 // Orden en la lista de precios: cada PRO va justo después de su versión simple
 const VISIBLES = SERVICIOS.flatMap((s) => s[0] === 'interactive-menu' ? [s, PRO[0]] : s[0] === 'reservations' ? [s, PRO[1]] : [s]);
 const esPro = (id) => PRO.some((x) => x[0] === id);
@@ -92,7 +92,7 @@ const LANZ = [
   ['launch-pro-pack', 'Pack PRO', PACK_PRO_5, PACK_PRO, true, false],
 ];
 // Bloque de la mensualidad, en grande (lo usan el desglose de cada PRO y el pack PRO)
-const mens = () => `<div class="mens" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-bolt"/></svg>¡El primer mes no se paga mensualidad!</b><span>Después son <b class="num">${clp(MENSUAL)}</b> al mes, una sola mensualidad aunque tengas más de un producto PRO. Incluye base de datos, hosting, soporte y los cambios de carta, precios y horarios.</span></div>`;
+const mens = (corto) => corto ? `<div class="mens mens-corto" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-bolt"/></svg>¡El primer mes no se paga mensualidad!</b><span>Después, <b class="num">${clp(MENSUAL)}</b> al mes (una sola por cliente).</span></div>` : `<div class="mens" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-bolt"/></svg>¡El primer mes no se paga mensualidad!</b><span>Después son <b class="num">${clp(MENSUAL)}</b> al mes, una sola mensualidad aunque tengas más de un producto PRO. Incluye base de datos, hosting, soporte y los cambios de carta, precios y horarios.</span></div>`;
 
 // Cómo funciona cada producto, en tres pasos (el flujo general está en PASOS).
 const COMO = {
@@ -271,6 +271,7 @@ ${o.hero.trim()}
             <p class="price"><small>los seis productos simples</small><b class="num">${clp(PACK)}</b></p>
             <p class="ahorro">Te ahorras <b>${clp(AHORRO)}</b> frente a comprarlos sueltos</p>
             <ul data-seq>${li(SERVICIOS.map((s) => s[2]))}</ul>
+            <div class="mens mens-corto mens-sin" role="note"><b class="mens-grande"><svg width="22" height="22" aria-hidden="true"><use href="#i-check"/></svg>Sin mensualidad</b><span>Pagas una vez y queda a tu nombre.</span></div>
             ${agregar('full-pack', 'Agregar el pack esencial')}
           </article>
           <article class="pack pack-pro reveal"${d.shine ? ' data-shine' : ''}>
@@ -278,7 +279,7 @@ ${o.hero.trim()}
             <p class="price"><small>con un sistema PRO</small><b class="num">${clp(PACK_PRO)}</b></p>
             <p class="ahorro">Te ahorras <b>${clp(AHORRO_PRO)}</b> frente a comprarlos sueltos</p>
             <ul data-seq>${li(PACK_PRO_ITEMS)}</ul>
-            ${mens()}
+            ${mens(true)}
             ${agregar('pro-pack', 'Agregar el pack PRO')}
           </article>
         </div>

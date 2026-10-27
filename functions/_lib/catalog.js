@@ -5,13 +5,21 @@ const entries = [
   ['photography', 'Registro fotográfico', 4990, false],
   ['reservations', 'Sistema de reservas', 24990, true],
   ['loyalty-card', 'Tarjeta de fidelización', 9990, false],
-  ['full-pack', 'Pack completo', 79990, false],
-  ['launch-pack', 'Pack completo — lanzamiento', 69990, false],
+  ['interactive-menu-pro', 'Menú digital PRO', 99990, false],
+  ['reservations-pro', 'Sistema de reservas PRO', 99990, false],
+  ['full-pack', 'Pack esencial', 79990, false],
+  ['launch-pack', 'Pack esencial — lanzamiento', 69990, false],
+  ['pro-pack', 'Pack PRO', 150000, false],
+  ['launch-pro-pack', 'Pack PRO — lanzamiento', 120000, false],
+  ['launch-web', 'Página web — lanzamiento', 39990, true],
+  ['launch-interactive-menu-pro', 'Menú digital PRO — lanzamiento', 79990, false],
+  ['launch-reservations-pro', 'Sistema de reservas PRO — lanzamiento', 79990, false],
+  ['web-video', 'Página web + video (relámpago)', 52990, true],
   ['social-video-2', '2 videos para redes', 17990, false],
   ['social-video-3', '3 videos para redes', 24990, false],
   ['launch-loyalty-card', 'Tarjeta de fidelización — lanzamiento', 7990, false],
-  ['menu-photography', 'Menú digital + fotos', 29990, false],
-  ['reservations-loyalty', 'Reservas + fidelización', 29990, false]
+  ['menu-photography', 'Menú digital PRO + fotos (relámpago)', 89990, false],
+  ['reservations-loyalty', 'Sistema de reservas PRO + fidelización (relámpago)', 94990, false]
 ];
 
 export const CURRENCY = 'CLP';

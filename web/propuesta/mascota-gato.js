@@ -14,11 +14,11 @@ window.MascotaConfig = {
   // id de sección de la página -> evento que se comenta al llegar (sirve para todas las opciones)
   secciones: {
     ejemplos: 'ejemplos',
-    proceso: 'proceso', planes: 'planes', promos: 'beneficio', beneficio: 'beneficio', diagnostico: 'formulario',
+    proceso: 'proceso', planes: 'planes', promos: 'beneficio', beneficio: 'beneficio', relampago: 'relampago', diagnostico: 'formulario',
     preguntas: 'preguntas', contacto: 'cierre', cierre: 'cierre',
   },
   // Pose de fondo mientras se lee cada sección (tranquilas: se mantienen varios segundos)
-  bases: { ejemplos: 'orgulloso', proceso: 'feliz', planes: 'sarcastico', beneficio: 'lentes', formulario: 'feliz', preguntas: 'pensativo', cierre: 'feliz' },
+  bases: { ejemplos: 'orgulloso', proceso: 'feliz', planes: 'sarcastico', beneficio: 'lentes', relampago: 'sorprendido', formulario: 'feliz', preguntas: 'pensativo', cierre: 'feliz' },
   selectores: { cta: '.btn-main, .btn-primary, .btn-foil', destacado: '.pack', precio: '.price, .promo-price', tarjeta: '.pack, .promo, .tarifario .fila, .tg-tile' },
 
   personajes: {
@@ -63,8 +63,19 @@ window.MascotaConfig = {
         planes: ['guino', [
           'Abre un producto y mira qué incluye. Yo abrí todos.',
           'Psst… el pack completo. Yo sé de estas cosas.',
-          'Seis productos por $79.990. Hice la cuenta dos veces.',
+          'Seis productos por $79.990, sin mensualidad. Hice la cuenta dos veces.',
         ]],
+        relampago: ['sorprendido', [
+          '¡Zas! Ofertas relámpago. Duran lo que dura un rayo. Más o menos.',
+          'Mira esos rayitos. Yo no me muevo tan rápido, pero tú sí deberías.',
+          'Relámpago: llega, brilla y se va. Como mis siestas.',
+        ], 'salta'],
+        pro: ['lentes', [
+          'PRO. Para negocios que van en serio. Yo voy en serio… cuando despierto.',
+          'Lo PRO se queda a trabajar por ti. Y el primer mes no se paga. Anotado.',
+          'Menú, reservas, panel. Todo con gafas oscuras.',
+          '¿Mensualidad? El primer mes es gratis. Hasta yo me quedé mirando.',
+        ], 'salta'],
         beneficio: ['lentes', [
           'Cupos limitados. Yo que tú, me apuro.',
           'Solo los primeros 5. No corras. Bueno, corre.',
@@ -110,7 +121,7 @@ window.MascotaConfig = {
         ]],
         precio: ['sorprendido', [
           'Precio claro, sin letra chica. Qué honestos.',
-          'Sin mensualidades. Pagas una vez.',
+          'Pago único en casi todo. Lo PRO lleva mensualidad, pero el primer mes es gratis.',
         ]],
         pregunta: ['afirmando', [
           'Buena pregunta. Casi tan buena como yo.',

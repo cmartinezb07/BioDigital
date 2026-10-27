@@ -210,7 +210,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
   <div class="hero">
     <div class="spot" aria-hidden="true"><i data-par="40"></i><i data-par="-28"></i><i data-par="20"></i></div>
     <div class="wrap hero-in">
-      <a class="pill enter" href="#beneficio">Pack completo a $69.990 para los primeros 5 clientes <b>Ver más <svg width="14" height="14"><use href="#i-arrow"/></svg></b></a>
+      <a class="pill enter" href="#beneficio">Pack esencial a $69.990 y Pack PRO a $120.000 para los primeros 5 clientes <b>Ver más <svg width="14" height="14"><use href="#i-arrow"/></svg></b></a>
       <h1 class="enter enter-2" data-par="6">Tu negocio, <span>listo para vender en internet</span></h1>
       <p class="lead enter enter-3">Página web, videos para redes, menú digital, fotos, reservas y tarjeta de fidelización. Armamos lo que te falta, te lo dejamos funcionando y queda todo a tu nombre.</p>
       <form class="capture enter enter-3" data-capture aria-label="Empezar tu diagnóstico gratis">
@@ -225,7 +225,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
       <a class="alt-link enter enter-4" href="#planes">o mira los precios <svg width="14" height="14"><use href="#i-arrow"/></svg></a>
       <p class="hero-meta enter enter-4">
         <span><svg width="14" height="14"><use href="#i-check"/></svg>Diagnóstico gratis al primer contacto</span>
-        <span><svg width="14" height="14"><use href="#i-check"/></svg>Productos desde $4.990 · pack completo $79.990</span>
+        <span><svg width="14" height="14"><use href="#i-check"/></svg>Productos desde $4.990 · pack esencial $79.990 · PRO desde $99.990</span>
       </p>
     </div>
     <div class="tg-sec" id="ejemplos">

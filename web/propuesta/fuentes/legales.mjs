@@ -57,7 +57,7 @@ const TERMINOS = {
   resumen: 'Las reglas para usar este sitio y contratar con Bío Digital: precios, pagos, plazos, cambios y qué pasa al entregar.',
   secciones: [
     ['En simple', `<ul>
-      <li>El precio que ves es un pago único: no hay mensualidad de Bío Digital.</li>
+      <li>El precio que ves es un pago único, salvo los productos <strong>PRO</strong> (menú digital PRO, sistema de reservas PRO y el pack PRO): llevan una mensualidad de $20.000 y <strong>el primer mes no se cobra</strong>. Es una sola mensualidad aunque tengas más de un producto PRO.</li>
       <li>El dominio .cl y el alojamiento no están incluidos, y los dominios quedan a tu nombre.</li>
       <li>Antes de empezar acordamos por escrito qué incluye tu pedido; al terminar te entregamos todo funcionando, con acta.</li>
       <li>Los cambios posteriores los hace Bío Digital, no tú.</li>

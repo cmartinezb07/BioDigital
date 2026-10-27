@@ -578,6 +578,11 @@
       decir(azar(ev[1], animal + 'tipeo'), 2200, 2);
     }
   });
+  // Elementos con data-gato="evento": el gato comenta al tocarlos (por ejemplo, abrir un producto PRO)
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest && e.target.closest('[data-gato]');
+    if (g) evento(g.getAttribute('data-gato'), 2600, 2);
+  });
   document.addEventListener('change', function (e) {
     var t = e.target;
     if (t.matches && t.matches('[data-benefit-check]') && t.checked) evento('beneficioOk', 2000, 3);

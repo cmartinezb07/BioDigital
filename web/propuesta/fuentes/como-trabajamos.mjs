@@ -73,7 +73,7 @@ const DOC = {
       <li><strong>Si nosotros nos atrasamos</strong> en una actividad crítica, te avisamos el mismo día con la nueva fecha.</li>
       <li>El dominio puede demorar hasta un día en activarse: por eso lo registramos el primer día, con margen de sobra.</li>
     </ul>`],
-    ['Con el pack completo', `<p>Con videos, menú digital, reservas y fidelización, el equipo trabaja en paralelo: los videos se graban en la misma visita y se editan mientras se construye la página, y el menú o las reservas se cargan después de la maqueta. La ruta crítica se alarga por las revisiones extra, y el plazo llega a <strong>7 días hábiles</strong>. Te mostramos tu propio cronograma en la propuesta.</p>
+    ['Con un pack', `<p>Con videos, menú digital, reservas y fidelización, el equipo trabaja en paralelo: los videos se graban en la misma visita y se editan mientras se construye la página, y el menú o las reservas se cargan después de la maqueta. La ruta crítica se alarga por las revisiones extra, y el plazo llega a <strong>7 días hábiles</strong>. Te mostramos tu propio cronograma en la propuesta.</p>
     <p class="fx-cta"><a class="fx-btn" href="../#diagnostico">Pide tu diagnóstico gratis</a><a class="fx-btn fx-btn-2" href="../antes-de-contratar/">Antes de contratar</a></p>`],
   ],
   css: `.lg-txt { min-width:0; }

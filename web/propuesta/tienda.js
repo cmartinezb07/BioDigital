@@ -11,7 +11,7 @@
     reservas: 'reservations', fidelizacion: 'loyalty-card', pack: 'full-pack',
     'promo-0': 'social-video-2',
     'promo-1': 'social-video-3', 'promo-2': 'launch-loyalty-card',
-    'promo-3': 'menu-photography', 'promo-4': 'reservations-loyalty'
+    'promo-3': 'web-video', 'promo-4': 'menu-photography', 'promo-5': 'reservations-loyalty'
   };
   var cart = [];
   try {
@@ -44,6 +44,8 @@
   function total() {
     return cart.reduce(function (t, id) { return t + (cat[id].precio || 0); }, 0);
   }
+  // Mensualidad de los productos PRO (el primer mes no se cobra): se avisa aparte, no entra en el total de hoy
+  var mensual = function () { return cart.reduce(function (m, id) { return Math.max(m, cat[id].mensual || 0); }, 0); };
   var porCotizar = function () { return cart.some(function (id) { return cat[id].precio == null || cat[id].desde; }); };
   function render() {
     count.forEach(function (c) { c.textContent = cart.length; c.hidden = !cart.length; });
@@ -65,12 +67,14 @@
     $('[data-cart-vacio]').hidden = cart.length > 0;
     $('[data-cart-pie]').hidden = !cart.length;
     totalEl.textContent = clp(total()) + (porCotizar() ? ' + a cotizar' : '');
+    var mensEl = $('[data-cart-mensual]');
+    if (mensEl) { mensEl.hidden = !mensual(); if (mensual()) mensEl.innerHTML = '<b>¡El primer mes no se paga mensualidad!</b> Después, ' + clp(mensual()) + ' al mes por lo PRO (base de datos, hosting y soporte).'; }
     // Si lo que lleva suelto cuesta más que el pack completo, se lo decimos
-    var sueltos = cart.filter(function (id) { return !cat[id].promocion && id !== 'full-pack' && cat[id].precio != null; });
+    var sueltos = cart.filter(function (id) { return !cat[id].promocion && !/pack/.test(id) && cat[id].precio != null && !cat[id].mensual; });
     var suma = sueltos.reduce(function (t, id) { return t + cat[id].precio; }, 0);
     var pack = cat['full-pack'].precio;
     tip.hidden = !(cart.indexOf('full-pack') < 0 && suma > pack);
-    if (!tip.hidden) tip.textContent = 'Tus productos suman ' + clp(suma) + ': el pack completo (' + clp(pack) + ') incluye los seis y te ahorra ' + clp(suma - pack) + '.';
+    if (!tip.hidden) tip.textContent = 'Tus productos suman ' + clp(suma) + ': el pack esencial (' + clp(pack) + ') incluye los seis, sin mensualidad, y te ahorra ' + clp(suma - pack) + '.';
     // Si ya hay algo en el carrito, no hace falta preguntar qué le interesa
     var pi = $('[data-interes]');
     if (pi) { pi.hidden = cart.length > 0; if (cart.length) pi.querySelector('select').value = ''; }
@@ -188,7 +192,9 @@
     if (cart.length) {
       l.push('Mi pedido:');
       cart.forEach(function (id) { l.push('- ' + cat[id].nombre + ': ' + clp(cat[id].precio) + (cat[id].desde ? ' (desde)' : '')); });
-      l.push('Total: ' + clp(total()) + (porCotizar() ? ' + lo que se cotice' : ''), '');
+      l.push('Total: ' + clp(total()) + (porCotizar() ? ' + lo que se cotice' : ''));
+      if (mensual()) l.push('Mensualidad PRO: ' + clp(mensual()) + ' al mes, desde el segundo mes (el primero no se paga).');
+      l.push('');
       l.push('Quiero confirmar el servicio y el monto para recibir un enlace de pago.', '');
     }
     if (d.interes) l.push('Me interesa: ' + d.interes);

@@ -194,3 +194,27 @@ Propuesta sin aprobar. **Sin mensualidad:** el producto con base de datos incluy
 | Pack completo | $259.990 | $189.990 | $249.990 (incluye 6 meses de fidelización) | $179.990 |
 
 Los lanzamientos del menú con pedidos con mensualidad (Esencial, Completo, Marca propia) son nuevos: 25 % bajo la instalación, redondeado. Cambio menor posterior en ambos modelos: $9.990.
+
+## 2026-10-26 (noche) · PRECIOS FINALES APROBADOS por el usuario (aplicados al sitio)
+
+Reemplazan las propuestas anteriores de este documento y de `precios-menu-digital.md` en lo que se contradigan. Instalación única, CLP; IVA sin definir.
+
+| Producto | Normal | Primeros 5 clientes | Mensualidad |
+|---|---|---|---|
+| Página web (desde) | $49.990 | $39.990 | No lleva |
+| Videos para redes (desde) | $9.990 | $9.990 | No lleva |
+| Menú digital simple (carta con QR, desde) | $27.990 | — | No lleva |
+| **Menú digital PRO** (pedidos, cocina, panel) | $99.990 | $79.990 | $20.000 |
+| Registro fotográfico | $4.990 | $4.990 | No lleva |
+| Sistema de reservas simple (por WhatsApp, desde) | $24.990 | — | No lleva |
+| **Sistema de reservas PRO** (calendario en vivo, panel) | $99.990 | $79.990 | $20.000 |
+| Tarjeta de fidelización | $9.990 | $7.990 | No lleva |
+| **Pack esencial** (los 6 simples; SKU `full-pack`) | $79.990 | $69.990 | No lleva |
+| **Pack PRO** (web + menú PRO o reservas PRO + tarjeta + fotos + 1 video) | $150.000 | $120.000 | $20.000 |
+
+- **Mensualidad PRO: $20.000, una sola por cliente aunque tenga menú y reservas PRO; el primer mes no se cobra.** Incluye base de datos, hosting, soporte y cambios de carta, precios y horarios. No incluye WhatsApp automático, comisión de la pasarela, dominio .cl (~$10.000 al año) ni channel manager.
+- **Ofertas relámpago** (antes "fugaces"; siempre entre el precio normal y el de lanzamiento; no se suman al precio de lanzamiento): Página web + video $52.990 (suelto $59.980) · Menú PRO + fotos $89.990 (suelto $104.980) · Reservas PRO + fidelización $94.990 (suelto $109.980) · 2 videos $17.990 · 3 videos $24.990. La relámpago de tarjeta sola se retiró.
+- Quien parte con el pack esencial puede pasar después a PRO pagando la diferencia. Si quiere menú PRO y reservas PRO, el segundo se suma a su precio y sigue pagando una sola mensualidad.
+- **Margen:** con 1 cliente PRO la mensualidad no cubre Supabase Pro (~$23.750/mes); con 2 sí. El pack esencial descuenta 37 % (45 % en lanzamiento): deja ~$2.000-4.000 por hora de trabajo; solo para los primeros 5, a cambio de testimonio.
+- **En el sitio** (`comun.mjs`, `functions/_lib/catalog.js`, `enlaces-pago.mjs`, `tienda.js`): filas PRO con insignia, "el primer mes no se paga mensualidad" en grande en el desglose y en el pack PRO, aviso en el carrito, sección de lanzamiento con precios por producto, "Ofertas relámpago" con rayo animado y comentarios nuevos del gato. El 10 % de descuento por combinación del lanzamiento anterior ya no existe.
+- **Pendiente:** IVA; Benjamín debe generar enlaces de Mercado Pago para los SKU nuevos y para `menu-photography` y `reservations-loyalty` (cambiaron de monto: su enlace viejo se vació a propósito); decidir cómo se edita el menú simple sin mensualidad (recomendado: lo hacemos nosotros, 3 cambios al año y luego $5.000 cada uno); el video publicado con precios antiguos: respetar el precio viejo a quien llegue por él por un tiempo corto y fijar un comentario con la aclaración.

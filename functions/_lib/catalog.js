@@ -4,7 +4,7 @@ const entries = [
   ['interactive-menu', 'Menú digital', 27990, true],
   ['photography', 'Registro fotográfico', 4990, false],
   ['reservations', 'Sistema de reservas', 24990, true],
-  ['loyalty-card', 'Tarjeta de fidelización', 9990, false],
+  ['loyalty-card', 'Tarjeta de fidelización', 5990, false],
   ['interactive-menu-pro', 'Menú digital PRO', 99990, false],
   ['reservations-pro', 'Sistema de reservas PRO', 99990, false],
   ['full-pack', 'Pack esencial', 79990, false],
@@ -17,7 +17,7 @@ const entries = [
   ['web-video', 'Página web + video (relámpago)', 52990, true],
   ['social-video-2', '2 videos para redes', 17990, false],
   ['social-video-3', '3 videos para redes', 24990, false],
-  ['launch-loyalty-card', 'Tarjeta de fidelización — lanzamiento', 7990, false],
+  ['launch-loyalty-card', 'Tarjeta de fidelización — lanzamiento', 4990, false],
   ['menu-photography', 'Menú digital PRO + fotos (relámpago)', 89990, false],
   ['reservations-loyalty', 'Sistema de reservas PRO + fidelización (relámpago)', 94990, false]
 ];

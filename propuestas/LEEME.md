@@ -5,6 +5,9 @@ qué pieza resuelve cada cosa, cuánto cuesta y cómo seguimos. **No lleva forma
 conversa después (decidido el 27-oct-2026).
 
 ## Hacerla con tu IA, desde un Instagram
+**Primera vez:** entrégale [INSTALAR-CON-IA.md](INSTALAR-CON-IA.md) a tu IA y dile «sigue este archivo»: revisa lo que
+falta, actualiza el proyecto, prueba el PDF e instala la skill.
+
 El procedimiento completo está en `respaldo-skills/propuesta-comercial/SKILL.md`. Con una IA que lee la carpeta
 (Claude Code, Cursor, Codex, Gemini CLI), pega esto y adjunta las capturas del Instagram si tu IA no puede abrirlo:
 

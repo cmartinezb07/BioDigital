@@ -473,6 +473,283 @@ var FORM = [
     ]
   },
   {
+    "t": "Cómo trabajan hoy",
+    "n": "Para entender cómo funciona tu local y armar el sistema a tu medida: no todos los locales trabajan igual. Responde como es hoy, no como debería ser.",
+    "p": [
+      {
+        "id": "hoy_toma_pedido",
+        "t": "uno",
+        "q": "¿Cómo se toma el pedido en la mesa hoy?",
+        "ops": [
+          [
+            "El garzón lo anota en papel"
+          ],
+          [
+            "El garzón lo recuerda y lo avisa a la cocina"
+          ],
+          [
+            "El garzón lo anota en un celular o tablet"
+          ],
+          [
+            "El cliente pide en la caja o el mesón"
+          ],
+          [
+            "Otra forma|Cuéntala en \"algo más\""
+          ]
+        ]
+      },
+      {
+        "id": "pedido_llega_cocina",
+        "t": "uno",
+        "q": "¿Cómo llega el pedido a la cocina?",
+        "ops": [
+          [
+            "El garzón lleva el papel o la comanda"
+          ],
+          [
+            "El garzón avisa a viva voz"
+          ],
+          [
+            "Una impresora de comandas"
+          ],
+          [
+            "Una pantalla en la cocina"
+          ],
+          [
+            "Otra forma"
+          ]
+        ]
+      },
+      {
+        "id": "quien_cocina",
+        "t": "uno",
+        "q": "¿Quién maneja los pedidos en la cocina?",
+        "ops": [
+          [
+            "Hay un jefe de cocina que organiza y despacha"
+          ],
+          [
+            "Los mismos garzones retiran y avisan"
+          ],
+          [
+            "El dueño o la dueña"
+          ],
+          [
+            "Depende del día"
+          ]
+        ]
+      },
+      {
+        "id": "garzones_turno",
+        "t": "texto",
+        "q": "¿Cuántos garzones atienden por turno, más o menos?",
+        "a": "Entre semana y fin de semana, si cambia."
+      },
+      {
+        "id": "horas_punta",
+        "t": "larga",
+        "q": "¿Cuándo se llena el local?",
+        "a": "Días y horas. Cuéntanos si entre semana y el fin de semana es distinto, y si se arma fila afuera."
+      },
+      {
+        "id": "dolor",
+        "t": "varios",
+        "q": "¿Qué es lo que más les cuesta en las horas punta?",
+        "a": "Marca todo lo que aplique.",
+        "ops": [
+          [
+            "Tomar los pedidos a tiempo"
+          ],
+          [
+            "Que el pedido llegue completo y bien a la cocina"
+          ],
+          [
+            "Atender a todas las mesas"
+          ],
+          [
+            "Responder qué hay hoy o qué se agotó"
+          ],
+          [
+            "Cobrar y entregar la cuenta"
+          ],
+          [
+            "Pedidos para llevar"
+          ],
+          [
+            "Otra cosa"
+          ]
+        ]
+      },
+      {
+        "id": "quien_pide",
+        "t": "uno",
+        "q": "¿Cómo prefieres que se pida en la mesa?",
+        "req": 1,
+        "ops": [
+          [
+            "Que el cliente pida solo desde su celular|Escanea el QR de su mesa"
+          ],
+          [
+            "Que el garzón anote y el cliente solo vea el estado|El cliente sigue su pedido en vivo desde el celular, sin tener que pedir"
+          ],
+          [
+            "Las dos formas|Cada mesa elige: pide solo o llama al garzón"
+          ],
+          [
+            "No sé: explíquenme"
+          ]
+        ]
+      },
+      {
+        "id": "cliente_ve",
+        "t": "uno",
+        "q": "Si el garzón anota el pedido, ¿quieres que el cliente lo vea en su celular?",
+        "a": "Ve en vivo si está en preparación, listo o servido, y puede jugar mientras espera.",
+        "ops": [
+          [
+            "Sí"
+          ],
+          [
+            "No"
+          ],
+          [
+            "No sé"
+          ]
+        ]
+      },
+      {
+        "id": "cocina_modo",
+        "t": "uno",
+        "q": "¿Cómo quieres manejar los pedidos en la cocina?",
+        "ops": [
+          [
+            "Una pantalla de cocina aparte|El cocinero ve y marca los pedidos"
+          ],
+          [
+            "El garzón maneja todo desde su celular|Sin pantalla de cocina"
+          ],
+          [
+            "Las dos|Pantalla en cocina y garzones con su celular"
+          ],
+          [
+            "No sé: explíquenme"
+          ]
+        ]
+      },
+      {
+        "id": "dispositivos",
+        "t": "varios",
+        "q": "¿Qué aparatos hay en el local para usar el sistema?",
+        "ops": [
+          [
+            "Celular de cada garzón"
+          ],
+          [
+            "Tablet"
+          ],
+          [
+            "Computador en la caja"
+          ],
+          [
+            "Pantalla o TV en la cocina"
+          ],
+          [
+            "Ninguno por ahora"
+          ]
+        ]
+      },
+      {
+        "id": "wifi",
+        "t": "uno",
+        "q": "¿Hay WiFi o buena señal de celular en todo el local, cocina incluida?",
+        "ops": [
+          [
+            "Sí, en todo el local"
+          ],
+          [
+            "Solo en algunos lugares"
+          ],
+          [
+            "No"
+          ],
+          [
+            "No sé"
+          ]
+        ]
+      },
+      {
+        "id": "cobro",
+        "t": "varios",
+        "q": "¿Cómo cobran hoy?",
+        "ops": [
+          [
+            "Efectivo"
+          ],
+          [
+            "Tarjeta con máquina"
+          ],
+          [
+            "Transferencia"
+          ],
+          [
+            "Mercado Pago u otra app"
+          ],
+          [
+            "Otro"
+          ]
+        ]
+      },
+      {
+        "id": "reservas_hoy",
+        "t": "uno",
+        "q": "¿Aceptan reservas de mesa?",
+        "ops": [
+          [
+            "No, por orden de llegada"
+          ],
+          [
+            "Solo en fechas especiales"
+          ],
+          [
+            "Solo para grupos o celebraciones"
+          ],
+          [
+            "Sí, siempre"
+          ]
+        ]
+      },
+      {
+        "id": "reservas_como",
+        "t": "texto",
+        "q": "Si aceptan reservas: ¿cómo las toman hoy?",
+        "a": "Teléfono, mensaje de Instagram, WhatsApp, otro."
+      },
+      {
+        "id": "google_resenas",
+        "t": "uno",
+        "q": "¿Quieres invitar a tus clientes a dejar su reseña en Google al terminar de comer?",
+        "a": "Les mostramos un botón que abre el formulario de Google. La reseña la escribe y publica el cliente con su cuenta: nosotros no podemos publicarla por él.",
+        "ops": [
+          [
+            "Sí"
+          ],
+          [
+            "No"
+          ],
+          [
+            "No sé"
+          ]
+        ]
+      },
+      {
+        "id": "maps_link",
+        "t": "texto",
+        "q": "Pega el enlace de tu local en Google Maps",
+        "a": "Búscalo en Google Maps, toca Compartir y copia el enlace."
+      }
+    ]
+  },
+  {
     "t": "Pedidos y delivery",
     "n": "Solo si quieres que tus clientes pidan desde el celular. Con esto dejamos andando los pedidos, la cocina y el reparto.",
     "p": [
@@ -484,6 +761,9 @@ var FORM = [
         "ops": [
           [
             "En la mesa|El cliente escanea el QR de su mesa y pide"
+          ],
+          [
+            "En la mesa, anotado por el garzón|El garzón toma el pedido en su celular y el cliente lo sigue en vivo"
           ],
           [
             "Para retirar en el local"
@@ -525,7 +805,7 @@ var FORM = [
         "t": "larga",
         "q": "¿Quiénes van a trabajar con el sistema?",
         "req": 1,
-        "a": "Un nombre por línea con su función: cocina o reparto. Ejemplo: Ana - cocina. Pedro - reparto. Cada uno recibe su código para entrar a lo suyo; tú entras a todo como jefe."
+        "a": "Un nombre por línea con su función: cocina, reparto o garzón. Ejemplo: Ana - cocina. Pedro - reparto. Camila - garzón. Cada uno recibe su código para entrar a lo suyo; tú entras a todo como jefe."
       },
       {
         "id": "pago_online",

@@ -191,6 +191,7 @@ const usados = new Set(Object.values(pins));
 const personas = [];
 for (const l of lineas('equipo')) {
   const m = /^(.+?)\s*[-–—:,]\s*(cocin\w*|reparto|repartidor\w*|delivery)\s*$/i.exec(l);
+  if (/^(.+?)\s*[-–—:,]\s*(garz[oó]n|mesero|mesera)\s*$/i.test(l)) { falta(`Garzón "${l}": el rol de garzón todavía no existe en el sistema (hoy solo cocina, reparto y jefe). Anotado para cuando se construya el modo garzón; mientras tanto no recibe código.`); continue; }
   if (!m) { falta(`Persona del equipo no entendida: "${l}" (debe ser "Nombre - cocina" o "Nombre - reparto").`); continue; }
   let pin; do { pin = String(100000 + Math.floor(Math.random() * 899999)); } while (usados.has(pin)); usados.add(pin);
   const rol = /cocin/i.test(m[2]) ? 'cocina' : 'reparto';
@@ -222,7 +223,12 @@ ok('7 limpieza de la prueba', lim.ok === true, JSON.stringify(lim));
 Nube.pin(N, null);
 return r;
 `);
-writeFileSync(join(out, id + '-pendientes.md'), `# Pendientes de ${nombre} (${id})\n\n${pendientes.map((p) => '- [ ] ' + p).join('\n')}\n\n## Accesos (privados: entregar por un canal seguro)\n\n- Jefe (dueño): \`${pins.dueno}\`\n- Cocina: \`${pins.cocina}\`\n- Reparto: \`${pins.reparto}\`\n${personas.map((p) => `- ${p.nombre} (${p.rol}): \`${p.pin}\``).join('\n')}\n`);
+// Cómo trabaja el local hoy (bloque "Cómo trabajan hoy" del formulario): no cambia la carta, pero define qué se le ofrece. Se deja escrito para no perderlo.
+const OPERACION = [['hoy_toma_pedido', 'Cómo se toma el pedido hoy'], ['pedido_llega_cocina', 'Cómo llega a la cocina'], ['quien_cocina', 'Quién maneja la cocina'], ['garzones_turno', 'Garzones por turno'], ['horas_punta', 'Cuándo se llena'], ['dolor', 'Lo que más cuesta en hora punta'], ['quien_pide', 'Cómo prefiere que se pida'], ['cliente_ve', 'Que el cliente vea su pedido en vivo'], ['cocina_modo', 'Cómo manejar la cocina'], ['dispositivos', 'Aparatos disponibles'], ['wifi', 'WiFi o señal'], ['cobro', 'Cómo cobran hoy'], ['reservas_hoy', 'Reservas de mesa'], ['reservas_como', 'Cómo toman las reservas'], ['google_resenas', 'Invitar a reseñar en Google'], ['maps_link', 'Enlace en Google Maps']];
+const operacion = OPERACION.filter(([k]) => txt(k)).map(([k, t]) => `- ${t}: ${txt(k).replace(/\|[^,\n]*/g, '')}`).join('\n');
+if (/garz[oó]n/i.test(txt('quien_pide') + ' ' + txt('cocina_modo') + ' ' + lista('servicios').join(' '))) pendientes.push('Pidió que el garzón anote los pedidos o maneje la cocina: ese modo (rol garzón, "Tomar pedido" y "Mi mesa" para el cliente) todavía no está construido. Ver memoria/cliente-la-joya-del-sur.md.');
+if (/^s[ií]/i.test(txt('google_resenas'))) pendientes.push('Quiere invitar a reseñar en Google: falta el enlace de reseñas (identificador de lugar de su ficha). La reseña la publica el cliente; nunca se sube desde nuestro sistema.');
+writeFileSync(join(out, id + '-pendientes.md'), `# Pendientes de ${nombre} (${id})\n\n${pendientes.map((p) => '- [ ] ' + p).join('\n')}\n\n## Cómo trabaja el local hoy (respuestas del formulario)\n\n${operacion || '(no respondió ese bloque)'}\n\n## Accesos (privados: entregar por un canal seguro)\n\n- Jefe (dueño): \`${pins.dueno}\`\n- Cocina: \`${pins.cocina}\`\n- Reparto: \`${pins.reparto}\`\n${personas.map((p) => `- ${p.nombre} (${p.rol}): \`${p.pin}\``).join('\n')}\n`);
 
 console.log(`\n${nombre} (${id}): ${carta.categorias.length} categorías, ${platos.length} platos, servicios: ${servicios.join(', ')}, ${Object.keys(comunas).length} comunas con envío.`);
 console.log(`Pendientes (${pendientes.length}) en web/herramientas/restaurantes/${id}-pendientes.md:`); pendientes.forEach((p) => console.log('  · ' + p));

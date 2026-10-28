@@ -74,3 +74,8 @@ Hasta el 23-oct las demos de pedidos, reservas y fidelización guardaban todo en
 - Vaciar una demostración: botón "Borrar datos" del panel del dueño (pedidos y visitas) o "Borrar las reservas de prueba" en el panel de reservas.
 - Borrar lo que dejó una prueba: `nube_borrar(negocio, colección, PIN del dueño, prefijo, filtro)`.
 - Cambios de esquema: migraciones en el proyecto `biodigital-demos` (`nube_demos`, `cupo_por_noche_y_avisos`, `fidelizacion_reglas_cliente`, `nube_borrar_pruebas`, `pedidos_cliente_solo_opinion_y_pago`).
+
+## Capacidad medida (27-oct-2026)
+- Prueba de carga **solo de lectura** sobre `biodigital-demos` (plan gratis, instancia Nano), simulando clientes que sondean `nube_leer` cada 2,5 s como hace `nube.js` (≈5 % con PIN): 40 clientes → 15 pet/s, p95 165 ms; 150 → 58 pet/s, p95 125 ms; 400 → 155 pet/s, p95 192 ms; **800 → 310 pet/s, p95 124 ms, 0 errores**. Medido desde un solo computador en Chile; no incluye escrituras masivas (pedidos simultáneos). Script de la prueba: reconstruible con `nube-node.mjs`.
+- Topes de Supabase Pro (docs, oct-2026): 250 GB de egress, 8 GB de base por proyecto, 60 conexiones directas y 200 del pooler en Micro, sin pausa por inactividad. La API REST no tiene tope de peticiones propio: manda la CPU y la memoria de la instancia. No usamos Realtime (sondeo), así que el tope de 500 conexiones realtime no aplica.
+- Un solo proyecto atiende a todos los clientes: vigilar el uso al sumar locales y subir a instancia Small (≈ US$15 al mes más; verificar) si hace falta.

@@ -49,3 +49,7 @@ web/propuesta/ejemplos/captura-fogon/
 
 # PIN de negocios reales generados por nuevo-agenda.mjs
 web/herramientas/agendas/
+
+# Material privado de clientes (fotos y cartas de terceros): no va al repositorio
+material-clientes/
+web/propuesta/ejemplos/la-joya-del-sur/

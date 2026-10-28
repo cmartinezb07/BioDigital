@@ -45,7 +45,7 @@ if (!demo) {
   for (const f of recorrer(dir1)) {
     if (extname(f) !== '.html') continue;
     let h = readFileSync(f, 'utf8');
-    h = h.replace(/<link rel="stylesheet" href="[./]*_compartido\/demo\.css">\n?/g, '').replace(/<script src="[./]*_compartido\/demo\.js" defer><\/script>\n?/g, '')
+    h = h.replace(/<link rel="stylesheet" href="[./]*_compartido\/demo\.css(\?v=[0-9a-f]+)?">\n?/g, '').replace(/<script src="[./]*_compartido\/demo\.js(\?v=[0-9a-f]+)?" defer><\/script>\n?/g, '')
       .replace(/ data-ejemplo="[^"]*"/, '').replace(/<p class="aviso">[^<]*<\/p>\n?/, '')
       .replace(/Carta digital de demostración de Bío Digital/g, 'Carta digital de ' + nombre);
     h = urlFinal ? h.replace(/https:\/\/main\.menu-demo\.pages\.dev\//g, urlFinal.replace(/\/?$/, '/')) : h.replace(/<link rel="canonical"[^>]*>\n?/, '').replace(/<meta property="og:(url|image|image:width|image:height)"[^>]*>\n?/g, '');

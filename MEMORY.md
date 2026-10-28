@@ -32,3 +32,4 @@
 - [Competencia y margen de mejora](memoria/competencia.md) — mapa de competencia con precios, costo a 3 años, velocidad medida, hallazgos por impacto y decisiones pendientes (22-oct-2026).
 - [Menú digital con pedidos](memoria/menu-pedidos.md) — restaurante: pedidos en mesa, retiro y delivery, seguimiento con mapa, cocina, repartidor y panel; competencia y costos recurrentes (23-oct-2026).
 - [Sistema de reservas completo](memoria/reservas-sistema.md) — 5 rubros, panel, políticas, avisos, iCal y reportes; competencia y costos recurrentes (23-oct-2026).
+- [Posible cliente: La Joya del Sur (Penco)](memoria/cliente-la-joya-del-sur.md) — diagnóstico del 27-oct, qué ofrecerles y plan para la reunión del miércoles 28-oct 18:00

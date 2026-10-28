@@ -1,0 +1,27 @@
+{
+  "negocio": "Nombre del negocio",
+  "fecha": "2026-10-27",
+  "titulo": "Una frase sobre lo que el negocio ya tiene.\n*Y otra sobre lo que le falta.*",
+  "intro": "Qué revisamos (Instagram, Google Maps, su web) con datos que se puedan comprobar, y en una línea qué proponemos.",
+  "filas": [
+    {
+      "producto": "interactive-menu",
+      "hoy": "Lo que vimos, concreto y comprobable: dónde está su carta hoy.",
+      "propuesta": "Qué cambia para su cliente con esta pieza, en una frase.",
+      "incluye": [
+        "Opcional: 2 cosas que recibe. Si no se pone, salen las 2 primeras del sitio"
+      ],
+      "ejemplo": "ejemplos/fogon-del-sur/"
+    },
+    {
+      "producto": "loyalty-card",
+      "hoy": "Segunda cosa que vimos.",
+      "propuesta": "Qué cambia con la segunda pieza."
+    }
+  ],
+  "pack": true,
+  "fuentes": [
+    "Cada afirmación de «hoy» y cada cifra, con el link del post, del perfil o de la ficha de Maps de donde salió",
+    "Lo que decidiste no ofrecer y por qué, en una línea"
+  ]
+}

@@ -163,6 +163,7 @@ const FAQ = [
 const pad = (i) => String(i + 1).padStart(2, '0');
 
 export { SERVICIOS, SUMA, PACK, PACK_5, AHORRO, clp };
+export { PRO, MENSUAL, LANZ, PACK_PRO, PACK_PRO_5, PACK_PRO_ITEMS };   // los usa propuestas/generar.mjs
 
 export function pagina(o, publico = false) {
   if (publico && o.head) o = { ...o, head: o.head.split(String.fromCharCode(10)).filter((l) => !/paleta\.(css|js)/.test(l)).join(String.fromCharCode(10)) };

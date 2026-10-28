@@ -1,0 +1,32 @@
+{
+  "negocio": "Zoulbarber Studio",
+  "fecha": "2026-10-27",
+  "titulo": "960 reseñas con nota 5,0 en Google.\n*Que agendar sea igual de bueno.*",
+  "intro": "Revisamos tu Instagram (2.106 seguidores) y tu ficha de Google Maps (nota 5,0 con 960 reseñas). La reputación ya está; lo que proponemos es que reservar una hora y llegar al local sea igual de fácil.",
+  "filas": [
+    {
+      "producto": "reservations",
+      "hoy": "Las horas se agendan por teléfono o WhatsApp, en dos números, y las publicaciones cierran con «escríbenos para reservar».",
+      "propuesta": "El cliente elige servicio, día y hora en un calendario con tus horarios, y la solicitud te llega armada por WhatsApp para que confirmes."
+    },
+    {
+      "producto": "web",
+      "hoy": "Tu ficha de Google no tiene sitio web, y cómo llegar (2.º piso, entrada por el estacionamiento) está repartido entre la bio y las publicaciones.",
+      "propuesta": "Una página propia con tus servicios, cómo llegar paso a paso y el botón para reservar, enlazada desde tu ficha de Google.",
+      "incluye": [
+        "Botón de WhatsApp, mapa y horario",
+        "Hasta 5 secciones, hecha a tu medida"
+      ],
+      "ejemplo": "ejemplos/barberia/"
+    }
+  ],
+  "pack": true,
+  "fuentes": [
+    "Reservas por teléfono o WhatsApp a dos números («Reservas: 986440255 o 976884874») y cómo llegar: bio de https://www.instagram.com/zoulbarberstudio/",
+    "«Escríbenos para reservar» / «agenda con nosotros»: https://www.instagram.com/p/DY0J3yWq_br/, https://www.instagram.com/p/DX9rQZDN1KD/, https://www.instagram.com/p/DY25KueqWhV/",
+    "2.º piso con entrada por el estacionamiento: bio y https://www.instagram.com/p/DfAR_pNKXSr/, https://www.instagram.com/p/DdtvL5PKxmR/",
+    "2.106 seguidores: perfil, 27-oct-2026. Nota 5,0 con 960 reseñas y sin sitio web: barrido de Google Maps del 12-oct-2026, ficha https://www.google.com/maps/place/?q=place_id:ChIJQ4GCO2y1aZYR21gZPZKrO1w",
+    "Ojo, no va en el mensaje: el teléfono de Maps termina en 0225 y el de Instagram en 0255. Escribir al de Instagram.",
+    "No se ofrecieron videos: sus 12 últimas publicaciones ya son reels."
+  ]
+}

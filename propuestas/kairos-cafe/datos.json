@@ -1,0 +1,36 @@
+{
+  "negocio": "Café Kairós",
+  "fecha": "2026-10-27",
+  "titulo": "Kairós ya tiene la comunidad.\n*Esto es para atenderla mejor.*",
+  "intro": "Revisamos tu Instagram (16.415 seguidores) y tu ficha de Google Maps (nota 5,0 con 44 reseñas). El contenido y la clientela ya están; lo que proponemos es que la carta, las reservas y la tarjeta de cliente frecuente funcionen desde el celular.",
+  "filas": [
+    {
+      "producto": "interactive-menu",
+      "hoy": "Tu carta es un PDF en Google Drive, enlazado desde tu perfil.",
+      "propuesta": "La carta completa en el celular, con foto de cada producto: la abren en la mesa con un QR o desde tu perfil.",
+      "incluye": [
+        "QR impreso para las mesas o el mesón",
+        "Foto, descripción y precio por producto"
+      ]
+    },
+    {
+      "producto": "reservations",
+      "hoy": "Cumpleaños, talleres como Entre Hilos y Pausas y la preventa del Día del Padre se reservan por mensaje directo o WhatsApp, uno por uno.",
+      "propuesta": "Un calendario con tus horarios donde reservan desde el celular: la solicitud te llega ordenada por WhatsApp y tú confirmas."
+    },
+    {
+      "producto": "loyalty-card",
+      "hoy": "En el aniversario entregaron tarjetas de cliente frecuente de papel, hasta agotar stock.",
+      "propuesta": "La misma tarjeta de sellos, pero en el celular del cliente: no se pierde, no se agota y ves cuántos vuelven.",
+      "ejemplo": "ejemplos/fidelizacion/"
+    }
+  ],
+  "pack": true,
+  "fuentes": [
+    "Carta en PDF de Google Drive: link «Carta» fijado en https://www.instagram.com/kairoscafe.chile/",
+    "Reservas por DM y WhatsApp: link «Reservas» (wa.me/56979720113) del perfil; posts de cumpleaños https://www.instagram.com/p/DYaWIaVppJO/, Entre Hilos y Pausas https://www.instagram.com/p/DZJciVJjGGw/ y Día del Padre https://www.instagram.com/p/DZoY30GDGG1/",
+    "Tarjetas de cliente frecuente de papel: post del aniversario https://www.instagram.com/p/DeN_q9HtwMF/",
+    "16.415 seguidores: perfil, 27-oct-2026. Nota 5,0 con 44 reseñas: barrido de Google Maps del 12-oct-2026, ficha https://www.google.com/maps/place/?q=place_id:ChIJYx0tkbzJaZYRMLyUK0R9nzQ",
+    "No se ofrecieron videos: ya publica reels propios."
+  ]
+}

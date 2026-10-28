@@ -18,7 +18,7 @@
 - [Servicios futuros](servicios-futuros/) — los que quedaron en stand by, también con una carpeta cada uno.
 - [Servicios vendibles](memoria/servicios-vendibles.md) — evaluación técnica previa (web, dominio, Google Business, fotos, catálogo, WhatsApp, voz): dificultad, estructura de costo y tiering. Sigue valiendo como análisis; el catálogo vigente es el de `servicios/`.
 - [PRODUCT.md](PRODUCT.md) — contexto de producto para diseño (Impeccable): usuarios, posicionamiento, restricciones, evidencia disponible.
-- [Propuesta del sitio web](web/propuesta/) — textos (`textos.md`) y el sitio es la opción 8 (`index.html`, generado con `node fuentes/generar.mjs 8`), con carrusel de 8 sitios de ejemplo, galería `ejemplos/` y políticas en `privacidad/` y `terminos/`.
+- [Propuesta del sitio web](web/propuesta/) — el sitio oficial (`index.html`, generado con `node fuentes/generar.mjs 8`; textos y precios en `fuentes/comun.mjs`), con carrusel de 8 sitios de ejemplo, galería `ejemplos/` y políticas en `privacidad/` y `terminos/`.
 - [Estado actual](memoria/estado-actual.md) — punto de retorno para sesiones nuevas: qué está listo, qué falta, cómo retomar.
 - [Publicación comercial](PUBLICACION-COMERCIAL.md) — guía para crear los 9 enlaces fijos, revisar y publicar en main. Catálogo sin el producto de $100, servicios “desde” por cotización; enlaces comerciales pendientes.
 - [Pagos](PAGOS.md) — estado vigente del flujo manual y API deshabilitada. [Ensayo de $100](PRUEBA-COBRO-100.md): histórico, rechazado por seguridad; producto retirado.

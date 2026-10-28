@@ -43,17 +43,13 @@ Todo lo que se entrega queda a nombre del cliente (dominio a su RUT, ficha con e
 - Nombre: Bío Digital.
 - Presentación: startup de un grupo de estudiantes de la Universidad de Concepción (Ingeniería Civil Industrial). Se menciona la universidad en texto; **no se usa su logo** sin autorización.
 - Voz: cercana, directa, sin tecnicismos, tuteando al dueño del negocio.
-- Estilo visual **en exploración** (17-sep-2026):
-  - La opción 1 (`maqueta-final.html`) usa vidrio translúcido tipo iOS 26 sobre un fondo de aurora.
-  - El equipo pidió 4 estéticas distintas más para elegir. Deben transmitir confianza y seriedad, pero también energía y modernidad, sin restricciones de estilo.
-  - Sus referencias son oscuras y tecnológicas: fondos generativos (cristal, red de partículas), un dibujo en puntos tipo ASCII y la plantilla fintech Paymark.
-- Todas las opciones mantienen el mismo contenido, las mismas secciones y el mismo nivel de animación.
+- Estilo visual **definido** (el sitio oficial, `web/propuesta/fuentes/opcion-8.mjs`): oscuro y tecnológico, con confianza y energía. Las otras opciones de diseño que se exploraron en septiembre se eliminaron el 27-oct-2026; si un cliente pide otro estilo, se busca una referencia nueva (21st.dev u otra).
 
 ## Evidence on Hand
 
 - No hay clientes, reseñas, casos de estudio, fotos del equipo ni fotos de negocios. **No inventar ninguno.** Mientras no existan, un bloque de "beneficio de lanzamiento" (doble soporte a los primeros 5 clientes a cambio de publicar su caso) ocupa el lugar de la prueba social.
 - Material de ejemplo, como un diagnóstico ilustrativo, se permite solo rotulado como ejemplo.
-- Textos aprobables en `web/propuesta/textos.md`. Plan y cifras del proyecto en `PRD.md`.
+- Textos y precios del sitio: `web/propuesta/fuentes/comun.mjs`. Plan y cifras originales del proyecto en `PRD.md` (los paquetes Base, Estándar y Premium ya no se venden: manda el catálogo del sitio).
 
 ## Product Principles
 

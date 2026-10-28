@@ -66,7 +66,7 @@ Después lee solo lo que necesites para la tarea que te pida:
 - memoria/conceptualizacion.md — problema, solución, cliente ideal, paquetes.
 - memoria/servicios-vendibles.md — evaluación técnica de cada servicio.
 - servicios-futuros/ — servicios en stand by, uno por carpeta.
-- web/propuesta/ — las 8 maquetas del sitio. Se abren con un servidor local (ver más abajo).
+- web/propuesta/ — el sitio oficial de Bío Digital (index.html, generado), sus páginas, los formularios y los sitios de ejemplo (ejemplos/). Se abre con un servidor local (ver más abajo).
 - respaldo-skills/crear-sitio-web/ — el procedimiento completo para hacer sitios: preguntas, plantilla,
   requisitos de SEO y seguridad, y checklist de entrega.
 
@@ -85,9 +85,10 @@ CÓMO QUIERO QUE TRABAJES:
   pendiente. Si no queda escrito ahí, se pierde.
 
 LO QUE NO DEBES HACER:
-- No edites los HTML de web/propuesta/opcion-3 a opcion-8: se generan solos. Se editan sus fuentes en
-  web/propuesta/fuentes/ y se regeneran con: node web/propuesta/fuentes/generar.mjs
-  (maqueta-final.html y opcion-2-certificado.html sí están escritos a mano.)
+- No edites a mano los HTML que genera el sitio (web/propuesta/index.html, privacidad/, terminos/,
+  antes-de-contratar/, como-trabajamos/ y ejemplos/index.html): se editan sus fuentes en
+  web/propuesta/fuentes/ y se regeneran con: node web/propuesta/fuentes/generar.mjs 8
+  (Las opciones 2 a 7 y sus plantillas se eliminaron el 27-oct-2026: solo existe el sitio oficial.)
 - No borres archivos sin revisar antes quién los usa.
 - No propongas el agente de voz como servicio de este semestre: ya se evaluó y no calza con el cliente objetivo.
 - No asumas contexto de otros proyectos. Si falta información, pregunta.
@@ -145,12 +146,12 @@ Necesitas Python instalado. Desde la carpeta del proyecto:
 python web/servir.py
 ```
 
-Y abre `http://localhost:4321`. Ahí está la galería con las 8 maquetas.
+Y abre `http://localhost:4321`. Ahí está el sitio; los sitios de ejemplo están en `/ejemplos/`.
 
-Para regenerar las maquetas 3 a 8 después de cambiar textos:
+Para regenerar el sitio después de cambiar textos o precios (salen de `fuentes/comun.mjs`):
 
 ```
-node web/propuesta/fuentes/generar.mjs
+node web/propuesta/fuentes/generar.mjs 8
 ```
 
 El sitio publicado está en https://biodigital-bgw.pages.dev.
@@ -165,8 +166,8 @@ La dirección anterior redirige a la nueva. Publicación y entornos:
 |---|---|---|
 | `memoria/` | Todo lo decidido, con fecha y justificación | Sí, agregando entradas nuevas |
 | `servicios/` y `servicios-futuros/` | Una ficha por servicio | Sí |
-| `web/propuesta/fuentes/` | Textos y estéticas que generan las maquetas | Sí |
-| `web/propuesta/opcion-*.html` | Maquetas generadas | **No**, se regeneran |
+| `web/propuesta/fuentes/` | Textos, precios y estética que generan el sitio | Sí |
+| `web/propuesta/index.html` y páginas generadas | El sitio generado | **No**, se regeneran |
 | `enlaces/` | Accesos directos del equipo | No hace falta tocarla |
 | `respaldo-skills/` | Copia de seguridad del procedimiento para hacer sitios | No |
 | `PRD.md`, `contexto.md` | Especificación y encargo | Sí, con cuidado: son la referencia del ramo |

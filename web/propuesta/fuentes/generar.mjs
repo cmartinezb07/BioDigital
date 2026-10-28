@@ -1,8 +1,6 @@
-// Genera las opciones 3 a 8 a partir del contenido común.
-// La 8 es el sitio de la empresa (index.html); las 3 a 7 son plantillas ya hechas y se escriben en plantillas/.
+// Genera el sitio de la empresa (index.html) a partir del contenido común. Solo queda la opción 8: las demás se eliminaron el 27-oct-2026.
 // Uso (desde web/propuesta):  node fuentes/generar.mjs        → todas
 //                             node fuentes/generar.mjs --publico 8   → el sitio listo para publicar
-//                             node fuentes/generar.mjs 3 5    → solo esas
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';

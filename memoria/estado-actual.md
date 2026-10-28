@@ -1,43 +1,22 @@
-# Estado actual (punto de retorno) — actualizado 2026-10-24
+# Estado actual (punto de retorno) — actualizado 2026-10-27
 
-> Resumen vigente y completo: skill `contexto_biodigital` (`~/.claude/skills/` y `respaldo-skills/`). Lo de abajo es el detalle del sitio hasta septiembre; las decisiones recientes están al final de `decisiones.md`.
+> El resumen más completo y vivo es la skill `contexto_biodigital` (copia en `respaldo-skills/contexto_biodigital/SKILL.md`). Esta hoja es la versión corta, para ubicarse en un minuto. Lo decidido, con fecha y motivo, está en [decisiones.md](decisiones.md); los precios vigentes, en [precios-catalogo.md](precios-catalogo.md).
 
-**Estado al 24-oct-2026:** publicado por solicitud del usuario en https://biodigital-propuesta.pages.dev. Rama `main` en GitHub `0214579`, despliegue Production `d0965b96`. Catálogo completo de 14 productos, sin la opción de $100; 9 enlaces comerciales configurados y tarjeta de lanzamiento de $7.990 confirmada. 37 pruebas y verificador estricto pasan; comprobación de Production: 6 rutas HTTP 200, catálogo y enlaces correctos. Cotizaciones y carritos combinados siguen por WhatsApp. La API automática sigue apagada. Falta revisar destinos externos y comprobar un cobro aprobado; guía `PUBLICACION-COMERCIAL.md`.
+## Qué existe hoy
+- **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev; `biodigital-propuesta.pages.dev` solo redirige). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios, catálogo y textos salen de `web/propuesta/fuentes/comun.mjs`. Publicación y entornos: [MIGRACION-SITIO.md](../MIGRACION-SITIO.md).
+- **Catálogo y precios** (26-oct): seis productos de pago único, dos sistemas PRO con mensualidad de $20.000 (primer mes gratis), pack esencial $69.990 de lanzamiento, pack PRO $120.000, ofertas relámpago. **Sin anticipo** (27-oct): se paga al entregar y firmar el acta.
+- **Sitios de ejemplo** (`web/propuesta/ejemplos/`): Fogón del Sur (menú digital con pedidos, cocina, reparto y panel), reservas, fidelización, y los ejemplos de rubro del carrusel.
+- **Pagos** (Benjamín): enlaces fijos de Mercado Pago; el cobro por API solo existe en el entorno de pruebas. Ver [PAGOS.md](../PAGOS.md), [COBROS-POR-ENLACE.md](../COBROS-POR-ENLACE.md) y [PUBLICACION-COMERCIAL.md](../PUBLICACION-COMERCIAL.md).
+- **Propuestas comerciales en PDF** (Xavier): `propuestas/` (ver [LEEME](../propuestas/LEEME.md)); los precios se leen del sitio. Primeras: Café Kairós y Zoulbarber Studio.
+- **Formularios del cliente:** `formulario.html` (página web), `formulario-menu.html` (menú digital, 80 preguntas) y `formulario-reservas.html`.
+- **Panel interno** (`web/panel/`, Supabase `biodigital-panel`) y **nube de las demos** (Supabase `biodigital-demos`): ver [conexion-nube.md](conexion-nube.md).
+- **Skills del proyecto** (`respaldo-skills/`): crear-sitio-web, crear-menu-digital, crear-sistemas-agendas, contexto_biodigital, propuesta-comercial.
 
-Leer esto primero al empezar una sesión nueva.
+## Pendientes que mandan
+1. Demo de reservas publicada: sigue el cliente viejo a propósito; falta aplicar `006e` (ver la skill `contexto_biodigital`).
+2. Antes del primer cliente real: Supabase Pro, PIN privados, pago en línea con la cuenta del local y privacidad revisada con el negocio.
+3. IVA, enlaces de Mercado Pago para los SKU nuevos y cómo se edita el menú simple sin mensualidad.
+4. Reunión con La Joya del Sur (28-oct 18:00): ver [cliente-la-joya-del-sur.md](cliente-la-joya-del-sur.md).
 
-**Repositorio:** https://github.com/cmartinezb07/BioDigital (privado, el equipo trabaja ahí desde el 2026-10-06).
-Quien llegue nuevo parte por [EMPEZAR-AQUI.md](../EMPEZAR-AQUI.md).
-
-## Sitio web (web/propuesta/)
-- **El sitio es la opción 8** (mezcla de la 6 y la 7) y se genera como `web/propuesta/index.html`. Logo aplicado y paleta de marca (`#0da5ff` / `#00e5d0`), con rueda de colores para probar otras.
-- **Pagos:** versión comercial por enlaces en https://payments-test.biodigital-propuesta.pages.dev; 9 enlaces fijos configurados en `web/propuesta/fuentes/enlaces-pago.mjs`. Un producto con enlace correcto abre su cobro; pedidos combinados y servicios variables se confirman por WhatsApp y reciben un enlace por el total. Verificación manual del estado aprobado en el portal, sin actualización automática del sitio/panel. El ensayo previo de $100 fue rechazado por seguridad y su producto/enlace se retiraron del sitio. La API Preferences y su D1 de prueba quedan separadas y deshabilitadas. Detalle en `PAGOS.md` y `PUBLICACION-COMERCIAL.md`.
-- Las siete anteriores son **plantillas ya hechas**: `web/propuesta/plantillas/`, con galería propia.
-- Servir: preview "maquetas" (`.claude/launch.json`, puerto 4321) con `web/servir.py`, sin caché.
-- Páginas 3–8 se generan: `node web/propuesta/fuentes/generar.mjs [3 4 … 8]`. No editar los HTML generados; textos comunes en `fuentes/comun.mjs`, estética en `fuentes/opcion-N.mjs`.
-- Paleta de la opción 8: dos colores (`--c1`, `--c2`) con rueda de colores para el equipo (`paleta.js`, se quita al publicar).
-- **Mascota (todas las páginas):** solo el gato, dibujado en SVG por partes (de frente y de perfil, con giro completo) y animado a la tasa de la pantalla (`gato.js`, `gato.css`). Frases en `mascota-gato.js`, motor en `mascota.js`. La ropa toma los colores de cada estética. Lámina de poses y gestos: `gato-lamina.html`.
-- **Mascota a prueba de usos raros (2026-09-18):**
-  - los ojos siguen al mouse;
-  - el giro nunca queda a medias;
-  - hay una reacción por tramo de scroll;
-  - el hover reacciona solo si el mouse se detiene;
-  - comenta cada sección como antes (unos 11 comentarios por recorrido); un globo dura lo que tarda en leerse y ya no queda pegado;
-  - con el mouse sacudido, el gato se marea (máximo 2 veces por visita).
-  - Detalle y mediciones en `decisiones.md`.
-- **Borrados el 2026-10-06** los 4 animales en imágenes y su motor (`mascota-personajes.js`, `mascotas/`): 5 MB sin uso desde que el gato se dibuja en SVG. Están en el historial de git (commit `d1e3823`); para recuperarlos: `git checkout d1e3823 -- web/propuesta/mascotas web/propuesta/mascota-personajes.js`.
-- Las hojas de referencia del gato siguen en `web/propuesta/referencias-gato/` (`gato-emociones.webp`, `gato-feliz.webp`), por si hay que redibujarlo.
-- Publicado en https://biodigital-propuesta.pages.dev (actualizado el 2026-09-18: las 8 opciones con el gato nuevo, y la lámina en `/gato-lamina`; **falta subir la corrección de los comentarios**). Para volver a subir: `npx wrangler pages deploy web/propuesta --project-name=biodigital-propuesta --branch=main --commit-dirty=true`.
-
-- **Formulario para el cliente:** `web/propuesta/formulario.html` (59 preguntas, 15 minutos). Se manda por link o por WhatsApp. Cómo leer las respuestas: `respaldo-skills/crear-sitio-web/referencias/levantamiento.md`.
-
-## Pendiente
-- Que el equipo fije la paleta con la rueda y apruebe el gato y sus frases.
-- Probar en celulares reales.
-- Luego: `DESIGN.md` y sitio final en Astro (fase 2 de la skill).
-- Datos del negocio marcados "por confirmar" siguen sin completar.
-
-## Skill crear-sitio-web
-- Instalada en `~/.claude/skills/crear-sitio-web/`; respaldo versionado en `respaldo-skills/crear-sitio-web/`.
-- Si se pierde la instalada: `cp -r respaldo-skills/crear-sitio-web ~/.claude/skills/`.
-- Incluye: preguntas, 5 estéticas generables, requisitos SEO/seguridad, recursos (repos y webs), verificación, y módulo opcional de mascota animada (preguntas, prompt de hoja, recortador, cuadro a cuadro).
+## Qué se eliminó (27-oct-2026)
+Las opciones de diseño 2 a 7 y la carpeta `plantillas/`, sus fuentes y accesos directos, `textos.md` (plan Base/Estándar/Premium), y capturas y reportes generados. Todo sigue en el historial de git: etiqueta `respaldo-antes-de-limpieza-27oct`.

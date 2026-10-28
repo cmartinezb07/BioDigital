@@ -1,7 +1,7 @@
 # Enlaces del proyecto Bío Digital
 
 Cada carpeta tiene accesos directos: doble clic y se abre la página.
-Actualizado: 17-sep-2026.
+Actualizado: 27-oct-2026 (se quitaron los accesos a las maquetas y referencias de las opciones 2 a 7, que ya no existen).
 
 **Estado:** ✅ usado · 🔜 por usar · ❌ descartado (con el motivo) · 💤 no este semestre
 
@@ -13,10 +13,9 @@ Los precios son aproximados: verificar siempre en la página oficial.
 
 | Qué | Enlace | Estado |
 |---|---|---|
-| Propuesta web: índice de las 7 opciones (esta se manda al equipo) | https://biodigital-propuesta.pages.dev | ✅ |
-| Maqueta final y opciones 2 a 7 | mismo dominio, un archivo por opción | ✅ |
-| Panel de Cloudflare (la propuesta está en la cuenta `biodigitalici@gmail.com`) | https://dash.cloudflare.com | ✅ |
-| Maquetas en local | http://localhost:4321 (solo funciona en el PC donde corre) | ✅ |
+| Sitio oficial de Bío Digital | https://biodigitales.cl | ✅ |
+| Formulario para el cliente (página web) | https://biodigitales.cl/formulario.html | ✅ |
+| Panel de Cloudflare (el sitio está en la cuenta `biodigitalici@gmail.com`) | https://dash.cloudflare.com | ✅ |
 
 ## 02 · GitHub
 
@@ -68,17 +67,6 @@ Los precios son aproximados: verificar siempre en la página oficial.
 | [PageSpeed Insights](https://pagespeed.web.dev) | Velocidad en celular (meta: 90+) | 🔜 |
 | [Rich Results Test](https://search.google.com/test/rich-results) | Revisa los datos que lee Google | 🔜 |
 | [Security Headers](https://securityheaders.com) | Revisa la seguridad del sitio | 🔜 |
-
-## 06 · Referencias de diseño que mandó el equipo
-
-| Referencia | Se usó en | Estado |
-|---|---|---|
-| [Liquid Metal Hero](https://21st.dev/@chowlol202/components/liquid-metal-hero) | Opción 3 | ✅ |
-| [Crystal Shader](https://21st.dev/@dhileepkumargm/components/crystal-shader) | Opción 4 | ✅ |
-| [Hero ASCII One](https://21st.dev/@larsen66/components/hero-ascii-one) | Opción 5 | ✅ |
-| [SaaS Template](https://21st.dev/@waleedkibhen/components/saa-s-template) | Opción 6 | ✅ |
-| [Paymark (Lovable)](https://lovable.dev/templates/websites/landing-page/paymark-template) · [vista en vivo](https://warm-structure-hub.lovable.app) | Opción 7 | ✅ |
-| [Aether Flow Hero](https://21st.dev/@dhileepkumargm/components/aether-flow-hero) | — | ❌ el equipo no lo eligió |
 
 ## 07 · Bibliotecas e inspiración
 

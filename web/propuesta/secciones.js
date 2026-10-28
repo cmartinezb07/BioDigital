@@ -1,4 +1,4 @@
-// Comportamiento común de las opciones 2 a 5: puntaje del informe, beneficio y formulario de maqueta.
+// Comportamiento común del sitio: puntaje del informe, beneficio y formulario.
 // Cada opción dibuja el puntaje a su manera leyendo la variable --p (0 a 100) del elemento [data-score].
 (function () {
   var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;

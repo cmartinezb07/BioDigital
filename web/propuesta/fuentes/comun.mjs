@@ -1,5 +1,5 @@
 import { WHATSAPP, WHATSAPP_VISIBLE, MAIL, DOMINIO_ANUAL, INSTAGRAM, SUPABASE_URL, SUPABASE_KEY } from './config.mjs';
-// Contenido común de las opciones 3 a 8. Cada opción entrega su estética (o) y esto arma la página completa.
+// Contenido común del sitio (precios, catálogo, FAQ, carrito). La estética (o) viene de opcion-8.mjs y esto arma la página completa.
 // o = { n, nombre, titulo, fuentes, css, hero, fondo, script, marca, tema, deco }
 // Catálogo vigente desde el 11-oct-2026: seis productos con precio propio y un pack completo.
 

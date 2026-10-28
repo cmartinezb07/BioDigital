@@ -3,7 +3,7 @@
 Primero lee la de `crear-sitio-web` (servidor local, capturas, errores que ya ocurrieron). Aquí está lo propio del menú. **No digas "terminado" sin pasar el checklist de abajo, con evidencia.**
 
 ## 1. Servidor local
-`.claude/launch.json` con el servidor sin caché del proyecto (en Bío Digital: `python web/servir.py 4323 web/menu`, nombre `menu`). Usa `http://localhost`.
+`.claude/launch.json` con el servidor sin caché del proyecto (en Bío Digital: `python web/servir.py 4321 web/propuesta`, nombre `maquetas`). Usa `http://localhost`.
 
 ## 2. En el computador (navegador integrado)
 1. `node generar-menu.mjs --opciones` sin líneas "Revisar:" (cada una es un trabajo pendiente).

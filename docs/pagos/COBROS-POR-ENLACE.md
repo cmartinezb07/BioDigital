@@ -1,7 +1,7 @@
 # Cobros comerciales por enlace
 
 La configuración y guía vigente están en
-[PUBLICACION-COMERCIAL.md](PUBLICACION-COMERCIAL.md).
+[PUBLICACION-COMERCIAL.md](../publicacion/PUBLICACION-COMERCIAL.md).
 
 Los 9 enlaces fijos para productos y promociones de precio cerrado están configurados.
 Falta revisar sus importes y receptor en Mercado Pago y comprobar un cobro aprobado.

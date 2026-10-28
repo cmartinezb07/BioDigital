@@ -20,16 +20,6 @@
         "web/panel"
       ],
       "port": 4322
-    },
-    {
-      "name": "menu",
-      "runtimeExecutable": "python",
-      "runtimeArgs": [
-        "web/servir.py",
-        "4323",
-        "web/menu"
-      ],
-      "port": 4323
     }
   ]
 }

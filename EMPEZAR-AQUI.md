@@ -58,7 +58,7 @@ ANTES DE RESPONDER NADA, lee en este orden:
 3. contexto.md — el encargo: equipo, meta, presupuesto, fechas.
 4. memoria/estado-actual.md — en qué va todo hoy.
 5. memoria/decisiones.md — bitácora: qué se decidió y por qué (es largo, lee al menos las 5 entradas más nuevas).
-6. servicios/README.md — los 6 servicios que se venden.
+6. servicios/README.md — el catálogo vigente (productos, versiones PRO y precios; la fuente única es el sitio).
 
 Después lee solo lo que necesites para la tarea que te pida:
 - PRD.md — especificación del servicio y de Radar, la herramienta interna de prospección.
@@ -107,7 +107,7 @@ Sube estos archivos al chat (son livianos, todos de texto):
 
 `CLAUDE.md`, `MEMORY.md`, `contexto.md`, `PRD.md`, `memoria/estado-actual.md`, `memoria/decisiones.md`,
 `memoria/conceptualizacion.md`, `memoria/riesgos-criticos.md`, `memoria/servicios-vendibles.md`,
-`servicios/README.md` y las fichas de `servicios/` que te interesen.
+`servicios/README.md`.
 
 No subas la carpeta `web/`: son archivos de código que no vas a poder ejecutar ahí.
 
@@ -156,7 +156,7 @@ node web/propuesta/fuentes/generar.mjs 8
 
 El sitio publicado está en https://biodigital-bgw.pages.dev.
 La dirección anterior redirige a la nueva. Publicación y entornos:
-[MIGRACION-SITIO.md](MIGRACION-SITIO.md).
+[MIGRACION-SITIO.md](docs/publicacion/MIGRACION-SITIO.md).
 
 ---
 
@@ -165,9 +165,12 @@ La dirección anterior redirige a la nueva. Publicación y entornos:
 | Carpeta | Qué es | ¿Se edita? |
 |---|---|---|
 | `memoria/` | Todo lo decidido, con fecha y justificación | Sí, agregando entradas nuevas |
-| `servicios/` y `servicios-futuros/` | Una ficha por servicio | Sí |
+| `servicios/` y `servicios-futuros/` | El catálogo vigente y los servicios en pausa | Sí, pero el precio manda en `fuentes/comun.mjs` |
 | `web/propuesta/fuentes/` | Textos, precios y estética que generan el sitio | Sí |
 | `web/propuesta/index.html` y páginas generadas | El sitio generado | **No**, se regeneran |
 | `enlaces/` | Accesos directos del equipo | No hace falta tocarla |
+| `docs/` | Guías de pagos y de publicación | Sí, con cuidado: tocan cobros y producción |
+| `propuestas/` | Propuestas comerciales en PDF, una carpeta por negocio | Sí; ver `propuestas/LEEME.md` |
+| `functions/`, `migrations/`, `test/`, `scripts/`, `deployment/` | Cobros por API (apagados) y redirección del sitio anterior | No sin avisar a Benjamín |
 | `respaldo-skills/` | Copia de seguridad del procedimiento para hacer sitios | No |
 | `PRD.md`, `contexto.md` | Especificación y encargo | Sí, con cuidado: son la referencia del ramo |

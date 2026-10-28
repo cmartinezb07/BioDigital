@@ -3,10 +3,10 @@
 > El resumen más completo y vivo es la skill `contexto_biodigital` (copia en `respaldo-skills/contexto_biodigital/SKILL.md`). Esta hoja es la versión corta, para ubicarse en un minuto. Lo decidido, con fecha y motivo, está en [decisiones.md](decisiones.md); los precios vigentes, en [precios-catalogo.md](precios-catalogo.md).
 
 ## Qué existe hoy
-- **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev; `biodigital-propuesta.pages.dev` solo redirige). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios, catálogo y textos salen de `web/propuesta/fuentes/comun.mjs`. Publicación y entornos: [MIGRACION-SITIO.md](../MIGRACION-SITIO.md).
+- **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev; `biodigital-propuesta.pages.dev` solo redirige). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios, catálogo y textos salen de `web/propuesta/fuentes/comun.mjs`. Publicación y entornos: [MIGRACION-SITIO.md](../docs/publicacion/MIGRACION-SITIO.md).
 - **Catálogo y precios** (26-oct): seis productos de pago único, dos sistemas PRO con mensualidad de $20.000 (primer mes gratis), pack esencial $69.990 de lanzamiento, pack PRO $120.000, ofertas relámpago. **Sin anticipo** (27-oct): se paga al entregar y firmar el acta.
 - **Sitios de ejemplo** (`web/propuesta/ejemplos/`): Fogón del Sur (menú digital con pedidos, cocina, reparto y panel), reservas, fidelización, y los ejemplos de rubro del carrusel.
-- **Pagos** (Benjamín): enlaces fijos de Mercado Pago; el cobro por API solo existe en el entorno de pruebas. Ver [PAGOS.md](../PAGOS.md), [COBROS-POR-ENLACE.md](../COBROS-POR-ENLACE.md) y [PUBLICACION-COMERCIAL.md](../PUBLICACION-COMERCIAL.md).
+- **Pagos** (Benjamín): enlaces fijos de Mercado Pago; el cobro por API solo existe en el entorno de pruebas. Ver [PAGOS.md](../docs/pagos/PAGOS.md), [COBROS-POR-ENLACE.md](../docs/pagos/COBROS-POR-ENLACE.md) y [PUBLICACION-COMERCIAL.md](../docs/publicacion/PUBLICACION-COMERCIAL.md).
 - **Propuestas comerciales en PDF** (Xavier): `propuestas/` (ver [LEEME](../propuestas/LEEME.md)); los precios se leen del sitio. Primeras: Café Kairós y Zoulbarber Studio.
 - **Formularios del cliente:** `formulario.html` (página web), `formulario-menu.html` (menú digital, 80 preguntas) y `formulario-reservas.html`.
 - **Panel interno** (`web/panel/`, Supabase `biodigital-panel`) y **nube de las demos** (Supabase `biodigital-demos`): ver [conexion-nube.md](conexion-nube.md).

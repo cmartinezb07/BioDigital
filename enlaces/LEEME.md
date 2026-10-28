@@ -1,7 +1,7 @@
 # Enlaces del proyecto Bío Digital
 
 Cada carpeta tiene accesos directos: doble clic y se abre la página.
-Actualizado: 27-oct-2026 (se quitaron los accesos a las maquetas y referencias de las opciones 2 a 7, que ya no existen).
+Actualizado: 27-oct-2026 (se quitaron los accesos de las opciones de diseño viejas, la inspiración de diseño, Radar, la competencia, el login y la generación de imágenes; los números de carpeta se reordenaron).
 
 **Estado:** ✅ usado · 🔜 por usar · ❌ descartado (con el motivo) · 💤 no este semestre
 
@@ -68,20 +68,7 @@ Los precios son aproximados: verificar siempre en la página oficial.
 | [Rich Results Test](https://search.google.com/test/rich-results) | Revisa los datos que lee Google | 🔜 |
 | [Security Headers](https://securityheaders.com) | Revisa la seguridad del sitio | 🔜 |
 
-## 07 · Bibliotecas e inspiración
-
-| Sitio | Para qué sirve | Estado |
-|---|---|---|
-| [21st.dev](https://21st.dev) · [Lovable](https://lovable.dev/templates) | Componentes y plantillas de referencia | ✅ |
-| [jsDelivr](https://www.jsdelivr.com) | Carga los shaders en las maquetas | ✅ (en el sitio final se instalan con npm) |
-| [GSAP](https://gsap.com) | Animaciones avanzadas, gratis | 🔜 solo si CSS no alcanza |
-| [React Bits](https://reactbits.dev) | Efectos animados | ❌ exige React, pesa en celular y se nota "hecho con IA"; solo ideas |
-| [Cult UI](https://cult-ui.com) | Componentes | ❌ exige React + Tailwind + Next.js; no calza con un sitio estático |
-| [easing.dev](https://easing.dev) · [easings.co](https://easings.co) · [emilkowal.ski](https://emilkowal.ski) | Curvas y criterio de animación | ✅ |
-| Inspiración gratis: [Godly](https://godly.website) · [Land-book](https://land-book.com) · [Awwwards](https://www.awwwards.com) · [Lapa Ninja](https://www.lapa.ninja) · [One Page Love](https://onepagelove.com) · [Siteinspire](https://www.siteinspire.com) · [Httpster](https://httpster.net) · [Minimal Gallery](https://minimal.gallery) | Que el cliente elija estilos con capturas | 🔜 |
-| [Mobbin](https://mobbin.com) · [Refero](https://refero.design) | Inspiración de apps | 💤 con límites o pagados |
-
-## 08 · Herramientas de trabajo
+## 06 · Herramientas de trabajo
 
 | Herramienta | Para qué sirve | Estado |
 |---|---|---|
@@ -91,30 +78,7 @@ Los precios son aproximados: verificar siempre en la página oficial.
 | [Taste skill](https://tasteskill.dev) | Alternativa a Impeccable | ❌ mismo motivo que arriba |
 | [Figma](https://www.figma.com) | Diseñar en pantalla antes de programar | ❌ el plan gratis da 6 usos al mes; el pagado es recurrente. Trabajamos directo en código |
 
-## 09 · Radar (herramienta interna de prospectos)
-
-| Herramienta | Para qué sirve | Estado |
-|---|---|---|
-| [Python](https://www.python.org) · [Streamlit](https://streamlit.io) | Lenguaje y pantallas de Radar | 🔜 |
-| [SQLite](https://www.sqlite.org) · [pandas](https://pandas.pydata.org) | Guardar y ordenar los prospectos | 🔜 |
-| [fpdf2](https://py-pdf.github.io/fpdf2/) | Crear los diagnósticos en PDF | 🔜 |
-| [Plotly](https://plotly.com/python/) | Gráficos del embudo | 🔜 |
-| [pytest](https://docs.pytest.org) · [Playwright](https://playwright.dev) | Pruebas automáticas | 🔜 |
-| [WeasyPrint](https://weasyprint.org) | Otra forma de hacer PDF | ❌ suele fallar en Windows |
-
-## 10 · Servicios para los clientes
-
-| Servicio | Para qué sirve | Estado |
-|---|---|---|
-| [Canva](https://www.canva.com) | Catálogo y material gráfico (gratis) | 🔜 |
-| [Zoho Mail](https://www.zoho.com/mail/) | Correo con dominio propio, gratis | 🔜 |
-| [Google Workspace](https://workspace.google.com) | Correo con dominio propio, pagado | 💤 costo mensual recurrente; Zoho es gratis |
-| [Lightroom](https://www.adobe.com/products/photoshop-lightroom.html) · Snapseed (app del celular) | Editar las fotos del cliente | 🔜 |
-| [Linktree](https://linktr.ee) · [Beacons](https://beacons.ai) | Página de enlaces para Instagram | 🔜 si el cliente no tiene sitio |
-| [WordPress](https://wordpress.org) · [Elementor](https://elementor.com) · [Wix](https://www.wix.com) · [Framer](https://www.framer.com) · [Carrd](https://carrd.co) | Crear sitios sin programar | ❌ elegimos Astro: más rápido, más seguro y sin pago mensual |
-| [Calendly](https://calendly.com) · [SimplyBook](https://simplybook.me) | Reservas online (peluquerías, talleres) | 💤 opcional, no este semestre |
-
-## 11 · WhatsApp, voz y automatización
+## 07 · WhatsApp, voz y automatización
 
 | Servicio | Para qué sirve | Estado |
 |---|---|---|
@@ -126,7 +90,7 @@ Los precios son aproximados: verificar siempre en la página oficial.
 | [Vapi](https://vapi.ai) · [Retell AI](https://www.retellai.com) · [Synthflow](https://synthflow.ai) · [Twilio](https://www.twilio.com) · [ElevenLabs](https://elevenlabs.io) | Agente de voz que contesta llamadas | ❌ cobran por minuto; un negocio de barrio no tiene llamadas suficientes para que valga la pena |
 | Imperio Agéntico (sin enlace guardado) | Curso y herramientas de agentes | ❌ 59 USD/mes: en 3 meses costaría más que todo el presupuesto ($80.000) |
 
-## 12 · Trámites y legal
+## 08 · Trámites y legal
 
 | Sitio | Para qué sirve | Estado |
 |---|---|---|
@@ -135,15 +99,3 @@ Los precios son aproximados: verificar siempre en la página oficial.
 | [Empresa en un Día](https://www.registrodeempresasysociedades.cl) | Crear una empresa | 💤 solo si el negocio sigue después del ramo |
 | [Ley Chile](https://www.bcn.cl/leychile) | Leyes de datos personales 19.628 y 21.719 | 🔜 para la política de privacidad |
 
-## 13 · Solo si algún día un sitio necesita login
-
-| Servicio | Estado |
-|---|---|
-| [Supabase Auth](https://supabase.com/auth) · [Clerk](https://clerk.com) · [Firebase Auth](https://firebase.google.com/products/auth) · [Auth0](https://auth0.com) | 💤 los sitios de este semestre no tienen login |
-
-## 14 · Generar imágenes y video con IA
-
-| Servicio | Para qué sirve | Estado |
-|---|---|---|
-| [Higgsfield](https://higgsfield.ai) | Crea imágenes, videos y voz a partir de texto | 💤 no evaluado; funciona con créditos pagados. Podría servir para redibujar las mascotas o hacer videos para redes |
-| [Everygen (viewmax.io)](https://www.viewmax.io) | Crea videos, imágenes y locuciones desde Claude (conector MCP) | 💤 no evaluado; precio no publicado en esa página. Ya aparece conectado en esta sesión de Claude |

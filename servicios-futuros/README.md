@@ -1,7 +1,7 @@
 # Servicios futuros (en stand by)
 
-Servicios evaluados que **no se venden este semestre**. El equipo decidió el 2026-10-06 quedarse solo con los seis de
-[servicios/](../servicios/). Esta carpeta los guarda para retomarlos cuando el proyecto siga.
+Servicios evaluados que **no se venden este semestre**. El equipo decidió el 2026-10-06 quedarse solo con los seis del
+[catálogo vigente](../servicios/README.md) (hoy con sus versiones PRO). Esta carpeta los guarda para retomarlos cuando el proyecto siga.
 
 | Servicio | Por qué está aquí | Qué lo reactivaría |
 |---|---|---|

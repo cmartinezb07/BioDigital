@@ -12,7 +12,7 @@ description: Subrama de crear-sitio-web para el menú digital de un cliente de B
 |---|---|---|
 | Qué es | Carta estática con QR, sin pedidos | Carta editable por el dueño + pedidos mesa/retiro/delivery + cocina + reparto + panel del jefe |
 | Cómo se arma | Generador `plantilla/generar-menu.mjs` (ver "Carta QR simple") | **`aplicar-formulario.mjs`** (flujo de abajo) |
-| Precio | "desde $27.990" (catálogo, costo único) | Propuesta en `memoria/precios-menu-digital.md` (instalación + mensualidad): **aún no aprobada**; no prometer valores |
+| Precio | "desde $27.990" (catálogo, costo único) | Precios finales PRO en `memoria/precios-catalogo.md` y en el sitio (instalación + mensualidad): **aún no aprobada**; no prometer valores |
 Si el cliente solo quiere mostrar la carta, no uses el sistema.
 
 ## Flujo plug and play del sistema completo

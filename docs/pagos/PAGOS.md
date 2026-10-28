@@ -18,8 +18,8 @@ según confirmó el usuario. El pack de lanzamiento ya aparece en el carrito.
 Los **9 enlaces comerciales están configurados**, recibidos del usuario el 24 de octubre.
 El usuario confirmó que `12kjBMo` es la tarjeta de lanzamiento de $7.990.
 La lista con nombres, importes y pasos está
-en [PUBLICACION-COMERCIAL.md](PUBLICACION-COMERCIAL.md).
-Se configuran en [enlaces-pago.mjs](web/propuesta/fuentes/enlaces-pago.mjs).
+en [PUBLICACION-COMERCIAL.md](../publicacion/PUBLICACION-COMERCIAL.md).
+Se configuran en [enlaces-pago.mjs](../../web/propuesta/fuentes/enlaces-pago.mjs).
 Los campos vacíos conservan el flujo de confirmar pedido por WhatsApp.
 No se sustituyen por el enlace abierto ni por el enlace del ensayo de $100.
 
@@ -82,4 +82,4 @@ destinos y comprobar un cobro aprobado. El ensayo previo de $100 (operación
 185920933158) terminó rechazado por seguridad; no fue una validación exitosa.
 
 Procedimiento de revisión, PR y despliegue:
-[PUBLICACION-COMERCIAL.md](PUBLICACION-COMERCIAL.md).
+[PUBLICACION-COMERCIAL.md](../publicacion/PUBLICACION-COMERCIAL.md).

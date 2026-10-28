@@ -13,4 +13,4 @@ causa del rechazo. La recomendación del proveedor es usar el medio de pago y
 dispositivo habituales del comprador.
 
 No reutilizar este enlace para cobrar otro importe. La guía vigente de
-lanzamiento es [PUBLICACION-COMERCIAL.md](PUBLICACION-COMERCIAL.md).
+lanzamiento es [PUBLICACION-COMERCIAL.md](../publicacion/PUBLICACION-COMERCIAL.md).

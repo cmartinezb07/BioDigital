@@ -10,11 +10,11 @@ PAYMENTS_ENABLED = "false"
 
 # Antes de habilitar pagos se debe configurar CHECKOUT_SITE_URL con el origen
 # HTTPS real. Las rutas de retorno tienen valores predeterminados documentados
-# en PAGOS.md y también pueden definirse como variables del entorno.
+# en docs/pagos/PAGOS.md y también pueden definirse como variables del entorno.
 # MP_ACCESS_TOKEN, MP_WEBHOOK_SECRET, ORDER_TOKEN_SECRET, MP_APPLICATION_ID,
 # MP_USER_ID y MP_TEST_PAYER_EMAIL se configuran como secretos/variables del
 # entorno de prueba, nunca aquí.
 # MP_LIVE_MODE debe permanecer en "false" mientras se usen usuarios de prueba.
 
 # El entorno payments-test permanece en biodigital-propuesta y no se publica
-# con este archivo. Ver MIGRACION-SITIO.md. No enlazar su D1 a este proyecto.
+# con este archivo. Ver docs/publicacion/MIGRACION-SITIO.md. No enlazar su D1 a este proyecto.

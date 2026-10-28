@@ -2,7 +2,7 @@
 
 Pregunta: ¿están bien los precios de Bío Digital?, ¿cuánto conviene cobrar según lo que nos cuesta, la calidad que entregamos, lo que los clientes pagan hoy y la competencia?, ¿pago único o único + mensual?
 
-**Esto es una propuesta para decidir en equipo. No se cambió ningún precio del sitio ni de los enlaces de pago.** Todas las cifras de terceros son aproximadas y llevan la fecha en que se miraron; verificar en la fuente antes de usarlas con un cliente. Complementa a [precios-menu-digital.md](precios-menu-digital.md) (24-oct), que solo trata el menú con pedidos.
+**Esto es una propuesta para decidir en equipo. No se cambió ningún precio del sitio ni de los enlaces de pago.** Todas las cifras de terceros son aproximadas y llevan la fecha en que se miraron; verificar en la fuente antes de usarlas con un cliente. Complementa a `precios-menu-digital.md` (eliminado el 27-oct-2026; sigue en el historial de git) (24-oct), que solo trata el menú con pedidos.
 
 ## 1. Conclusión en cinco líneas
 
@@ -44,7 +44,7 @@ Horas por entrega (estimación mía, a confirmar con lo que realmente tomó cada
 | Reservas simple (agenda + WhatsApp) | 5 | horarios, servicios, pruebas |
 | Reservas completo (panel, avisos, depósito) | 12 | configuración, pruebas y capacitación |
 | Fidelización | 4 | programa, QR, capacitación |
-| Menú con pedidos | 10 a 14 | carta, fotos, comunas, PIN, capacitación (ver precios-menu-digital.md) |
+| Menú con pedidos | 10 a 14 | carta, fotos, comunas, PIN, capacitación (ver el historial de `precios-menu-digital.md`, eliminado el 27-oct-2026) |
 
 **Qué hay que comprar o pagar (aproximado):**
 
@@ -114,7 +114,7 @@ El dominio .cl sigue **a costo del cliente** (≈ $10.000 al año, a su nombre).
 | Menú con pedidos · **Completo** (delivery con GPS) | **$249.000** | **$24.900** | todo lo anterior + reparto propio y pago en línea | Fudo Inicial + KDS + Delivery Apps ≈ $44.500 + IVA |
 | Menú con pedidos · **Marca propia** | **$349.000** | **$34.900** | dominio propio y soporte en 4 h | MenuTiger Premium ≈ US$119 |
 
-Los tres tramos del menú con pedidos y sus justificaciones están en [precios-menu-digital.md](precios-menu-digital.md) y los confirmo: cubren el costo de la base por cliente ($12.000 a $14.000) y dejan $0 a $11.000 por cliente al mes para soporte. **Con 3 clientes la mensualidad apenas cubre la infraestructura: el negocio está en la instalación.** No bajar la instalación ni regalarla.
+Los tres tramos del menú con pedidos y sus justificaciones están en `precios-menu-digital.md` (eliminado el 27-oct-2026; sigue en el historial de git) y los confirmo: cubren el costo de la base por cliente ($12.000 a $14.000) y dejan $0 a $11.000 por cliente al mes para soporte. **Con 3 clientes la mensualidad apenas cubre la infraestructura: el negocio está en la instalación.** No bajar la instalación ni regalarla.
 
 ### 5.3 Pack completo
 

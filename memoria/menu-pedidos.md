@@ -18,7 +18,7 @@ Capa de datos común: `pedidos.js` (estados, tiempos, ruta, simulación, visitas
 
 **Cómo funciona la demo:** los datos viven en el navegador y se sincronizan entre pestañas (BroadcastChannel). Abre la carta, la cocina, el repartidor y el panel en pestañas distintas del mismo navegador. Si nadie atiende la cocina o el reparto, el pedido avanza solo y acelerado (cada minuto dura 3 s) para que se vea completo. Prueba automática: `web/herramientas/pruebas/fogon-del-sur.js` (11/11).
 
-**Arreglos de Fogón del Sur (tarea 1):** el scroll "no bajaba bien" porque la barra de categorías llamaba a `scrollIntoView` en cada cambio de sección, y eso movía también la página y le peleaba el scroll al dedo. Ahora se mueve solo la barra (`scrollLeft`). Se quitó `background-attachment: fixed` (repinta en cada scroll en celulares). El error de consola `navigator.vibrate` bloqueado (al abrir la página dentro del visor del carrusel) se evita vibrando solo con un toque real. Mismo arreglo en `web/menu/` (plantilla del menú).
+**Arreglos de Fogón del Sur (tarea 1):** el scroll "no bajaba bien" porque la barra de categorías llamaba a `scrollIntoView` en cada cambio de sección, y eso movía también la página y le peleaba el scroll al dedo. Ahora se mueve solo la barra (`scrollLeft`). Se quitó `background-attachment: fixed` (repinta en cada scroll en celulares). El error de consola `navigator.vibrate` bloqueado (al abrir la página dentro del visor del carrusel) se evita vibrando solo con un toque real. Mismo arreglo en `web/menu/` (carpeta eliminada el 27-oct-2026) (plantilla del menú).
 
 ## Modo automático y caso base (23-oct-2026, tarde)
 
@@ -63,5 +63,5 @@ Fuentes: [Meniu sobre Fudo](https://meniuapp.com/en/blog/alternativa-gratuita-fu
 ## Actualización 24-oct (noche): sistema completo y plantilla
 
 - Reglas de negocio en el servidor, panel del dueño con carta editable, "Modificar mi pedido" sobre el mismo pedido, historial del cliente (`mis-pedidos/`), cocina y reparto separados, fotos con licencia para los 24 platos: ver [decisiones.md](decisiones.md) (entrada "Menú digital como sistema completo") y [plantilla-restaurante.md](plantilla-restaurante.md).
-- Precios propuestos y comparables: [precios-menu-digital.md](precios-menu-digital.md). La tabla de costos de arriba sigue vigente (única vs recurrente).
+- Precios propuestos y comparables: `precios-menu-digital.md` (eliminado el 27-oct-2026; sigue en el historial de git). La tabla de costos de arriba sigue vigente (única vs recurrente).
 - Cómo probar cada flujo (a mano): ver la sección final de la respuesta del 24-oct o ejecutar `node web/herramientas/check.mjs http://localhost:4321` (incluye `mis-pedidos.js`, `fogon-servicio.js`, `panel-dueno.js`).

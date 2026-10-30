@@ -51,6 +51,9 @@ if (!demo) {
     h = urlFinal ? h.replace(/https:\/\/main\.menu-demo\.pages\.dev\//g, urlFinal.replace(/\/?$/, '/')) : h.replace(/<link rel="canonical"[^>]*>\n?/, '').replace(/<meta property="og:(url|image|image:width|image:height)"[^>]*>\n?/g, '');
     if (urlFinal) h = h.replace(/<meta name="robots" content="noindex, nofollow">\n?/, '').replace(/<meta name="robots" content="noindex">/, '');   // con dirección definitiva, los buscadores pueden encontrarlo
     h = h.replace(/\[TELÉFONO O CORREO DEL LOCAL\]/g, telefono || '[TELÉFONO O CORREO DEL LOCAL]');
+    // El botón de WhatsApp de la demo apunta a Bío Digital: en un local va a SU número; sin número, el botón se quita (no se deja el nuestro)
+    const dig = telefono.replace(/\D/g, ''), wa = dig.length === 9 && dig[0] === '9' ? '56' + dig : dig;
+    h = wa.length >= 10 ? h.replace(/https:\/\/wa\.me\/56946941640/g, 'https://wa.me/' + wa) : h.replace(/<a class="chip" href="https:\/\/wa\.me\/56946941640[^"]*"[^>]*>[\s\S]*?<\/a>/g, '');
     writeFileSync(f, h);
   }
   rmSync(join(dir1, 'og.jpg'), { force: true });   // la foto de portada de la demo

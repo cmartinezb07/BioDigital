@@ -93,6 +93,20 @@
   function lista(pares, fmt) { if (!pares.length) return '<p class="nota">Sin datos.</p>'; var max = Math.max.apply(null, pares.map(function (p) { return p[1]; })); return '<ul class="lista-b">' + pares.slice(0, 10).map(function (p) { return '<li><span>' + esc(p[0]) + '</span><b>' + (fmt ? fmt(p[1]) : p[1]) + '</b><span class="b"><i style="width:' + (max ? p[1] / max * 100 : 0) + '%"></i></span></li>'; }).join('') + '</ul>'; }
   function agrupar(arr, k, v) { var o = {}; arr.forEach(function (x) { var key = k(x); o[key] = (o[key] || 0) + (v ? v(x) : 1); }); return Object.keys(o).map(function (x) { return [x, o[x]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
   var propias = function (D) { return D.reservas.filter(function (r) { return !r._pub; }); };
+  // Recordar a los de mañana por WhatsApp con un toque (desde el WhatsApp del negocio: $0 por mensaje). Lo enviado se marca en este equipo.
+  var RECORD = 'recordado-agenda-' + NUBE;
+  var recordados = function () { try { return JSON.parse(localStorage.getItem(RECORD)) || {}; } catch (e) { return {}; } };
+  function recordatorios(D) {
+    var c = D.config, ini = U.fdate(U.sumaDias(U.hoy(), 1)).getTime(), fin = ini + 864e5, hechos = recordados();
+    var l = propias(D).filter(function (r) { return ['confirmada', 'pagada'].indexOf(r.estado) > -1 && r.desde >= ini && r.desde < fin && r.cliente && r.cliente.telefono; }).sort(function (a, b) { return a.desde - b.desde; });
+    if (!l.length) return '';
+    var pend = l.filter(function (r) { return !hechos[r.id]; }).length;
+    return '<section class="caja" style="margin-bottom:14px"><h2>Recordar a los de mañana' + (pend ? ' <span class="num">' + pend + '</span>' : ' ✓') + '</h2><p class="nota" style="margin-bottom:8px">Un toque abre WhatsApp con el recordatorio escrito; lo envías tú. Reduce los que no llegan.</p><ul class="lista-b">' +
+      l.map(function (r) {
+        var t = 'Hola ' + r.cliente.nombre.split(' ')[0] + ', te recordamos tu reserva en ' + c.nombre + ' mañana ' + (c.modo === 'noches' ? '(llegada desde las ' + (c.politicas.checkin || '15:00') + ')' : 'a las ' + hora(r.desde)) + (r.unidadNombre ? ' · ' + r.unidadNombre : '') + '. Dirección: ' + c.direccion + '. Si no puedes venir, avísanos por aquí. ¡Te esperamos!';
+        return '<li><span>' + (c.modo === 'noches' ? '' : hora(r.desde) + ' · ') + esc(r.cliente.nombre) + ' · ' + esc(nombreDe(D, r)) + (hechos[r.id] ? ' <small class="nota">· recordado</small>' : '') + '</span><a class="btn chico' + (hechos[r.id] ? '' : ' prim') + '" target="_blank" rel="noopener" data-recordar="' + esc(r.id) + '" href="https://wa.me/' + String(r.cliente.telefono).replace(/\D/g, '') + '?text=' + encodeURIComponent(t) + '">' + (hechos[r.id] ? 'Otra vez' : 'Recordar') + '</a></li>';
+      }).join('') + '</ul></section>';
+  }
   // Ficha de clientes armada con las reservas: una persona = mismo celular (o correo, o nombre si no dejó contacto)
   function fichas(D) {
     var m = {}, ahora = Date.now(), c = D.config;
@@ -129,6 +143,7 @@
       var ret = P.filter(function (r) { return r.estado === 'retenida'; }), esp = (D.espera || []).filter(function (e) { return !e.avisado; });
       return '<div class="marca-n" style="margin-bottom:14px">' + R.logo(c, 48) + '<div><h1 style="font-size:26px">' + esc(c.nombre) + '</h1><p class="nota">' + esc(c.rubro) + ' · <span class="vivo">En vivo</span> · ' + esc(quien || (esJefe() ? 'Jefe' : 'Recepción')) + ' · <a data-cliente href="../">Ver el sitio de reservas</a></p></div></div>' +
         '<div class="kpis">' + kpi(c.modo === 'noches' ? 'Llegadas y estadías hoy' : 'Reservas de hoy', deHoy.length) + kpi('Próximos 7 días', prox.length) + kpi('Ocupación (30 días)', m.ocup + ' %', c.modo === 'noches' ? m.vendido + ' de ' + m.capacidad + ' noches' : '') + kpi('Ingresos (30 días)', clp(m.ingresos), 'cobrado ' + clp(m.cobrado)) + kpi('Por cobrar', clp(porCobrar), 'saldos de reservas futuras') + kpi('Cancelaciones', m.tasaCancel + ' %', m.noshow + ' no llegaron') + '</div>' +
+        recordatorios(D) +
         '<div class="grid2"><section class="caja"><h2>Hoy</h2>' + (deHoy.length ? '<ul class="lista-b">' + deHoy.map(function (r) { return '<li><span>' + (c.modo === 'noches' ? '' : hora(r.desde) + ' · ') + esc(nombreDe(D, r)) + ' · ' + esc(r.cliente.nombre) + '</span>' + chip(r.estado) + '</li>'; }).join('') + '</ul>' : '<p class="nota">Nada para hoy.</p>') + '</section>' +
         '<section class="caja"><h2>Alertas</h2><ul class="lista-b">' + (ret.length ? ret.map(function (r) { return '<li><span>' + r.codigo + ' espera el pago de ' + clp(r.precio.deposito) + (r.expira ? ' (vence a las ' + hora(r.expira) + ')' : '') + '</span>' + chip('retenida') + '</li>'; }).join('') : '<li class="nota">Sin retenciones por vencer.</li>') +
         '<li><span>Lista de espera</span><b>' + esp.length + '</b></li><li><span>Avisos programados</span><b>' + D.avisos.filter(function (a) { return a.estado === 'programado'; }).length + '</b></li></ul>' +
@@ -464,6 +479,7 @@
   app.addEventListener('click', function (e) {
     var x, D = R.leer(neg);
     if (e.target.closest('[data-cerrar-alerta]')) { alerta.hidden = true; return; }
+    if ((x = e.target.closest('[data-recordar]'))) { var h = recordados(); h[x.dataset.recordar] = Date.now(); try { localStorage.setItem(RECORD, JSON.stringify(h)); } catch (er) {} setTimeout(pintar, 300); return; }
     if (e.target.closest('[data-ver-nuevas]')) { tab = 'reservas'; alerta.hidden = true; pintar(); return; }
     if (e.target.closest('[data-sonido]')) { try { localStorage.setItem('sonido-agenda-' + NUBE, sonidoOn() ? '0' : '1'); } catch (er) {} beep(); pintar(); return; }
     if (e.target.closest('[data-publicar]')) { BUS(R.publicarConfig(neg)).then(function (o) { if (o && o.ok) toast('Publicado: tus clientes ya ven los cambios.'); pintar(); }); return; }

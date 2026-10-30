@@ -374,7 +374,7 @@
   function textoAviso(d, r, tipo) {
     var n = d.config.nombre, cu = fechaHora(d, r);
     return { confirmacion: r.estado === 'retenida' ? 'Reservamos tu cupo por ' + d.config.politicas.retencionMin + ' minutos. Paga el depósito para confirmar ' + n + ' (' + cu + '). Código ' + r.codigo + '.' : 'Tu reserva en ' + n + ' está confirmada: ' + cu + '. Código ' + r.codigo + '.',
-      recordatorio: 'Recordatorio: te esperamos en ' + n + ' el ' + cu + '. Si no puedes venir, cancela desde tu enlace.', resena: '¿Cómo te fue en ' + n + '? Cuéntanos en 1 minuto.',
+      recordatorio: 'Recordatorio: te esperamos en ' + n + ' el ' + cu + '. Si no puedes venir, cancela desde tu enlace.', resena: '¿Cómo te fue en ' + n + '? ' + (/^https:\/\//.test(d.config.resenaUrl || '') ? 'Déjanos tu opinión en Google, nos ayuda mucho: ' + d.config.resenaUrl : 'Cuéntanos en 1 minuto.'),
       cancelacion: 'Tu reserva ' + r.codigo + ' en ' + n + ' fue cancelada.' + (r.reembolso && r.reembolso.monto ? ' Te devolvemos ' + clp(r.reembolso.monto) + '.' : ''), espera: 'Se liberó un cupo en ' + n + ' para la fecha que esperabas. Reserva antes que otro.' }[tipo];
   }
   // Tareas automáticas: vencer retenciones sin pago, enviar avisos programados, cerrar reservas pasadas

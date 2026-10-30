@@ -7,9 +7,9 @@
   var q = new URLSearchParams(location.search);
   var neg = q.get('negocio') || R.NEGOCIOS[0].id; if (!R.NEGOCIOS.some(function (n) { return n.id === neg; })) neg = R.NEGOCIOS[0].id;
   var NUBE = R.NUBE(), rol = 'recepcion', quien = '';
-  var tab = 'resumen', rango = 30, filtro = { estado: '', texto: '' }, desdeCal = U.hoy();
+  var tab = 'resumen', rango = 30, filtro = { estado: '', texto: '' }, desdeCal = U.hoy(), filtroCli = { texto: '', grupo: '' };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
-  var TABS = [['resumen', 'Resumen', 0], ['reservas', 'Reservas', 0], ['calendario', 'Calendario', 0], ['catalogo', 'Catálogo', 1], ['horarios', 'Horarios y temporadas', 1], ['promos', 'Promociones', 1], ['politicas', 'Políticas', 1], ['avisos', 'Avisos', 0], ['integraciones', 'Integraciones', 1], ['reportes', 'Reportes', 0], ['modulos', 'Módulos y formulario', 1], ['negocio', 'Negocio y equipo', 1]];
+  var TABS = [['resumen', 'Resumen', 0], ['reservas', 'Reservas', 0], ['clientes', 'Clientes', 0], ['calendario', 'Calendario', 0], ['catalogo', 'Catálogo', 1], ['horarios', 'Horarios y temporadas', 1], ['promos', 'Promociones', 1], ['politicas', 'Políticas', 1], ['avisos', 'Avisos', 0], ['integraciones', 'Integraciones', 1], ['reportes', 'Reportes', 0], ['modulos', 'Módulos y formulario', 1], ['negocio', 'Negocio y equipo', 1]];
   var chip = function (e) { var x = R.ESTADOS[e] || [e, '#64748b']; return '<span class="chip" style="--ec:' + x[1] + '">' + x[0] + '</span>'; };
   var nombreDe = function (D, r) { var x = r.servicio ? R.servicio(D, r.servicio) : R.recurso(D, r.recurso); return x ? x.nombre : (r.servicio || r.recurso); };
   var dia = function (ms) { return new Date(ms).toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' }); };
@@ -93,6 +93,30 @@
   function lista(pares, fmt) { if (!pares.length) return '<p class="nota">Sin datos.</p>'; var max = Math.max.apply(null, pares.map(function (p) { return p[1]; })); return '<ul class="lista-b">' + pares.slice(0, 10).map(function (p) { return '<li><span>' + esc(p[0]) + '</span><b>' + (fmt ? fmt(p[1]) : p[1]) + '</b><span class="b"><i style="width:' + (max ? p[1] / max * 100 : 0) + '%"></i></span></li>'; }).join('') + '</ul>'; }
   function agrupar(arr, k, v) { var o = {}; arr.forEach(function (x) { var key = k(x); o[key] = (o[key] || 0) + (v ? v(x) : 1); }); return Object.keys(o).map(function (x) { return [x, o[x]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
   var propias = function (D) { return D.reservas.filter(function (r) { return !r._pub; }); };
+  // Ficha de clientes armada con las reservas: una persona = mismo celular (o correo, o nombre si no dejó contacto)
+  function fichas(D) {
+    var m = {}, ahora = Date.now(), c = D.config;
+    propias(D).forEach(function (r) {
+      var cl = r.cliente || {}, k = (cl.telefono || '').replace(/\D/g, '').slice(-9) || (cl.correo || '').toLowerCase() || (cl.nombre || '').toLowerCase(); if (!k) return;
+      var x = m[k] = m[k] || { nombre: cl.nombre || '', telefono: cl.telefono || '', correo: cl.correo || '', visitas: 0, canceladas: 0, noshow: 0, gastado: 0, ultima: 0, proxima: 0, primera: Infinity, respuestas: '', pidioResena: false };
+      if (!x.telefono && cl.telefono) x.telefono = cl.telefono; if (!x.correo && cl.correo) x.correo = cl.correo;
+      var resp = Object.keys(r.respuestas || {}).map(function (q) { var cp = (c.campos || []).filter(function (z) { return z.id === q; })[0]; return (cp ? cp.etiqueta : q) + ': ' + r.respuestas[q]; }).join(' · '); if (resp) x.respuestas = resp;
+      if (r.estado === 'cancelada') { x.canceladas++; return; }
+      if (r.estado === 'noshow') { x.noshow++; return; }
+      if (r.estado === 'retenida') return;
+      if (r.desde <= ahora) { x.gastado += r.precio ? r.precio.total : 0; x.visitas++; x.ultima = Math.max(x.ultima, r.desde); x.primera = Math.min(x.primera, r.desde); if ((r.historial || []).some(function (h) { return h.resena; })) x.pidioResena = true; }
+      else x.proxima = x.proxima ? Math.min(x.proxima, r.desde) : r.desde;
+    });
+    return Object.keys(m).map(function (k) {
+      var x = m[k]; x.grupos = [];
+      if (x.visitas >= 3) x.grupos.push('frecuente'); else if (x.visitas === 1) x.grupos.push('nuevo');
+      if (x.ultima && !x.proxima && ahora - x.ultima > 60 * 864e5) x.grupos.push('perdido');
+      if (x.proxima) x.grupos.push('proximo');
+      return x;
+    }).sort(function (a, b) { return b.visitas - a.visitas || b.gastado - a.gastado; });
+  }
+  var sitio = function () { return location.origin + location.pathname.replace(/admin\/?.*$/, '') + '?negocio=' + neg; };
+  var waBtn = function (tel, txt, et) { return '<a class="btn chico" target="_blank" rel="noopener" href="https://wa.me/' + String(tel).replace(/\D/g, '') + '?text=' + encodeURIComponent(txt) + '">' + et + '</a>'; };
 
   var VISTAS = {
     resumen: function (D) {
@@ -149,6 +173,7 @@
           if (r.estado === 'confirmada' || r.estado === 'pagada') acc.push('<button class="btn chico" type="button" data-acc="checkin" data-id="' + r.id + '">' + (c.modo === 'noches' ? 'Check-in' : 'Llegó') + '</button>');
           if ((r.estado === 'confirmada' || r.estado === 'pagada') && sale) acc.push('<button class="btn chico" type="button" data-acc="noshow" data-id="' + r.id + '">No llegó</button>');
           if (r.estado === 'checkin') acc.push('<button class="btn chico" type="button" data-acc="completada" data-id="' + r.id + '">' + (c.modo === 'noches' ? 'Check-out' : 'Terminar') + '</button>');
+          if (r.estado === 'completada' && c.resenaUrl && r.cliente.telefono) acc.push(waBtn(r.cliente.telefono, 'Hola ' + r.cliente.nombre.split(' ')[0] + ', gracias por venir a ' + c.nombre + '. ¿Nos dejas tu opinión en Google? Nos ayuda mucho: ' + c.resenaUrl, 'Pedir reseña'));
           if (ACTIVAS.indexOf(r.estado) > -1 && conUnidades(r) && r.hasta > Date.now()) acc.push('<button class="btn chico" type="button" data-mover="' + r.id + '">Mover</button>');
           if (ACTIVAS.indexOf(r.estado) > -1) acc.push('<button class="btn chico peligro" type="button" data-acc="cancelada" data-id="' + r.id + '">Cancelar</button>');
           var resp = Object.keys(r.respuestas || {}).map(function (k) { var cp = (c.campos || []).filter(function (x) { return x.id === k; })[0]; return (cp ? cp.etiqueta : k) + ': ' + r.respuestas[k]; }).join(' · ');
@@ -222,6 +247,25 @@
         tarjeta('ERP y contabilidad', true, 'Exporta las ventas y pagos para el contador o el ERP. La boleta electrónica (SII) la emite el negocio con su sistema actual.', '$0 la exportación', '<button class="btn chico" type="button" data-erp>Descargar ventas (CSV)</button>') +
         tarjeta('WhatsApp Business (API)', false, 'Confirmaciones y recordatorios automáticos por WhatsApp. Hoy quedan registrados en "Avisos".', 'cobro por conversación según la tarifa de Meta para Chile (verificar)') + '</div>';
     },
+    clientes: function (D) {
+      var lista = fichas(D), c = D.config, G = { frecuente: 'Frecuentes (3+ visitas)', nuevo: 'Nuevos (1 visita)', perdido: 'No han vuelto (60+ días)', proximo: 'Con reserva próxima' };
+      var vis = lista.filter(function (x) { return (!filtroCli.grupo || x.grupos.indexOf(filtroCli.grupo) > -1) && (!filtroCli.texto || (x.nombre + ' ' + x.telefono + ' ' + x.correo).toLowerCase().indexOf(filtroCli.texto.toLowerCase()) > -1); });
+      var cuenta = function (g) { return lista.filter(function (x) { return x.grupos.indexOf(g) > -1; }).length; };
+      return '<h1 style="font-size:24px;margin-bottom:6px">Clientes</h1><p class="nota" style="margin-bottom:12px">Cada persona que ha reservado, con sus visitas y cuánto ha gastado. Sirve para premiar a los frecuentes y escribirle a quien no ha vuelto (el WhatsApp se abre con el mensaje escrito; lo envías tú).</p>' +
+        '<div class="kpis">' + kpi('Clientes', lista.length) + Object.keys(G).map(function (g) { return kpi(G[g], cuenta(g)); }).join('') + '</div>' +
+        '<div class="form-l" style="margin:12px 0"><div class="campo"><label for="cl-txt">Buscar</label><input id="cl-txt" value="' + esc(filtroCli.texto) + '" placeholder="Nombre, celular o correo"></div><div class="campo"><label for="cl-gr">Mostrar</label><select id="cl-gr"><option value="">Todos</option>' + Object.keys(G).map(function (g) { return '<option value="' + g + '"' + (filtroCli.grupo === g ? ' selected' : '') + '>' + G[g] + '</option>'; }).join('') + '</select></div><button class="btn" type="button" data-crm>Descargar CSV</button></div>' +
+        '<div class="caja scroll"><table class="tabla"><thead><tr><th>Cliente</th><th>Visitas</th><th>Gastado</th><th>Última visita</th><th>Próxima</th><th></th></tr></thead><tbody>' +
+        (vis.slice(0, 120).map(function (x) {
+          var nom = x.nombre.split(' ')[0], acc = [];
+          if (x.telefono) {
+            if (x.grupos.indexOf('perdido') > -1) acc.push(waBtn(x.telefono, 'Hola ' + nom + ', ¡hace tiempo que no te vemos en ' + c.nombre + '! Si quieres volver, reserva aquí: ' + sitio(), 'Invitar a volver'));
+            if (x.grupos.indexOf('frecuente') > -1) acc.push(waBtn(x.telefono, 'Hola ' + nom + ', gracias por preferirnos siempre en ' + c.nombre + '. ', 'Agradecer'));
+            if (c.resenaUrl && x.ultima && !x.pidioResena) acc.push(waBtn(x.telefono, 'Hola ' + nom + ', gracias por venir a ' + c.nombre + '. ¿Nos dejas tu opinión en Google? Nos ayuda mucho: ' + c.resenaUrl, 'Pedir reseña'));
+          }
+          return '<tr><td><b>' + esc(x.nombre) + '</b>' + x.grupos.filter(function (g) { return g !== 'proximo'; }).map(function (g) { return ' <span class="chip" style="--ec:' + { frecuente: '#22c55e', nuevo: '#3b82f6', perdido: '#f59e0b' }[g] + '">' + { frecuente: 'Frecuente', nuevo: 'Nuevo', perdido: 'No ha vuelto' }[g] + '</span>'; }).join('') + '<br><small class="nota">' + esc([x.telefono, x.correo].filter(Boolean).join(' · ')) + '</small>' + (x.respuestas ? '<br><small class="nota">' + esc(x.respuestas) + '</small>' : '') + '</td><td>' + x.visitas + (x.canceladas ? '<br><small class="nota">' + x.canceladas + ' cancelada(s)</small>' : '') + (x.noshow ? '<br><small class="nota">' + x.noshow + ' no llegó</small>' : '') + '</td><td>' + clp(x.gastado) + '</td><td>' + (x.ultima ? dia(x.ultima) : '—') + '</td><td>' + (x.proxima ? dia(x.proxima) : '—') + '</td><td style="display:flex;gap:4px;flex-wrap:wrap">' + acc.join('') + '</td></tr>';
+        }).join('') || '<tr><td colspan="6" class="nota">Sin clientes con ese filtro.</td></tr>') + '</tbody></table></div>' +
+        (!c.resenaUrl && esJefe() ? '<p class="nota" style="margin-top:8px">Para pedir reseñas en Google, pega el enlace de tu ficha en <b>Negocio y equipo</b>.</p>' : '');
+    },
     reportes: function (D) {
       var c = D.config, m = metricas(D, rango), dias = [];
       for (var i = 0; i < rango; i++) { var f = U.sumaDias(U.hoy(), -rango + 1 + i), a = U.fdate(f).getTime(), b = a + 864e5; dias.push(m.validas.filter(function (r) { return r.desde < b && r.hasta > a; }).length); }
@@ -259,6 +303,7 @@
         '<div class="campo"><label for="n-nombre">Nombre</label><input id="n-nombre" maxlength="60" value="' + esc(c.nombre) + '"></div><div class="campo"><label for="n-rubro">Rubro (como lo ve el cliente)</label><input id="n-rubro" maxlength="40" value="' + esc(c.rubro) + '"></div>' +
         '<div class="campo"><label for="n-dir">Dirección</label><input id="n-dir" maxlength="100" value="' + esc(c.direccion) + '"></div><div class="campo"><label for="n-sigla">Iniciales del logo (2 letras)</label><input id="n-sigla" maxlength="3" value="' + esc(c.sigla) + '" style="width:90px"></div>' +
         '<div><p class="lbl nota">Color</p><div class="swatches" role="group" aria-label="Color principal">' + COL.map(function (x) { return '<button type="button" data-color="' + x + '" style="background:' + x + '" aria-label="Color ' + x + '" aria-pressed="' + (x === c.color) + '"></button>'; }).join('') + '</div></div>' +
+        '<div class="campo"><label for="n-resena">Enlace para dejar reseña en Google (opcional)</label><input id="n-resena" type="url" maxlength="300" placeholder="https://g.page/r/…/review" value="' + esc(c.resenaUrl || '') + '"><small class="nota">En tu ficha de Google: "Pedir reseñas" › copiar enlace. Se usa en el aviso después de la visita y en Clientes.</small></div>' +
         '<div class="campo"><label for="n-pago">Cómo paga el depósito el cliente (se muestra al reservar)</label><textarea id="n-pago" rows="3" maxlength="300" placeholder="Ejemplo: Transfiere a Banco X, cuenta Y, y envíanos el comprobante por WhatsApp. Confirmamos al recibirlo.">' + esc(c.pagoInstrucciones || '') + '</textarea></div>' +
         (AG.demo ? '<label class="chk"><input type="checkbox" id="n-demo"' + (c.pagoDemo ? ' checked' : '') + '><span>Pago "de mentira" para mostrar el sistema (solo demostraciones)</span></label>' : '') +
         '</div><div class="acciones-r"><span></span><button class="btn prim" type="submit">Guardar en el borrador</button></div></form>' +
@@ -458,6 +503,7 @@
   app.addEventListener('change', function (e) {
     var t = e.target, ds = t.dataset;
     if (t.id === 'f-est') { filtro.estado = t.value; pintar(); }
+    if (t.id === 'cl-gr') { filtroCli.grupo = t.value; pintar(); }
     if (t.id === 'b-rec') llenarUnidades();
     if (ds.modulo) {
       if (!t.checked && ds.impacto && !confirm('Apagar este módulo. ' + ds.impacto + ' ¿Seguir?')) { t.checked = true; return; }
@@ -469,7 +515,7 @@
     if (ds.notif) { R.guardarConfig(neg, function (c) { c.notif[ds.notif][ds.c] = t.checked; }); pintar(); }
     if (ds.t !== undefined) { R.guardarConfig(neg, function (c) { var tt = c.temporadas[+ds.t]; tt[ds.k] = ds.k === 'factor' ? Math.max(.5, Math.min(3, parseFloat(t.value) || 1)) : (ds.k === 'nombre' ? t.value.trim().slice(0, 40) : (/^\d{2}-\d{2}$/.test(t.value.trim()) ? t.value.trim() : tt[ds.k])); }); pintar(); }
   });
-  app.addEventListener('input', function (e) { if (e.target.id === 'f-txt') { filtro.texto = e.target.value; clearTimeout(app._b); app._b = setTimeout(function () { pintar(); var i = app.querySelector('#f-txt'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 300); } });
+  app.addEventListener('input', function (e) { if (e.target.id === 'cl-txt') { filtroCli.texto = e.target.value; clearTimeout(app._c); app._c = setTimeout(function () { pintar(); var i = app.querySelector('#cl-txt'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 300); return; } if (e.target.id === 'f-txt') { filtro.texto = e.target.value; clearTimeout(app._b); app._b = setTimeout(function () { pintar(); var i = app.querySelector('#f-txt'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 300); } });
   app.addEventListener('submit', function (e) {
     e.preventDefault(); var f = e.target, v = function (id) { var el = f.querySelector('#' + id); return el ? el.value : ''; };
     if (f.matches('[data-bloq]')) { var a = U.fdate(v('b-desde')).getTime(), b = U.fdate(v('b-hasta')).getTime(); if (!(b > a)) return toast('La fecha "hasta" debe ser después de "desde".', true); BUS(R.bloquear(neg, v('b-rec'), a, b, v('b-mot').slice(0, 60), v('b-uni') || 'todas')).then(function (o) { if (o && !o.error) { toast('Fechas bloqueadas: ya no se pueden reservar.'); pintar(); } }); return; }
@@ -505,7 +551,7 @@
     }
     if (f.matches('[data-negocio]')) {
       if (!v('n-nombre').trim()) return toast('Escribe el nombre del negocio.', true);
-      R.guardarConfig(neg, function (c) { c.nombre = v('n-nombre').trim().slice(0, 60); c.rubro = v('n-rubro').trim().slice(0, 40); c.direccion = v('n-dir').trim().slice(0, 100); c.sigla = (v('n-sigla').trim() || c.nombre.slice(0, 2)).toUpperCase().slice(0, 3); c.pagoInstrucciones = v('n-pago').trim().slice(0, 300); if (f.querySelector('#n-demo')) c.pagoDemo = f.querySelector('#n-demo').checked; });
+      R.guardarConfig(neg, function (c) { c.nombre = v('n-nombre').trim().slice(0, 60); c.rubro = v('n-rubro').trim().slice(0, 40); c.direccion = v('n-dir').trim().slice(0, 100); c.sigla = (v('n-sigla').trim() || c.nombre.slice(0, 2)).toUpperCase().slice(0, 3); c.pagoInstrucciones = v('n-pago').trim().slice(0, 300); var rs = v('n-resena').trim(); if (/^https:\/\/[^\s"<>]{8,290}$/.test(rs)) c.resenaUrl = rs; else delete c.resenaUrl; if (f.querySelector('#n-demo')) c.pagoDemo = f.querySelector('#n-demo').checked; });
       toast('Guardado en el borrador.'); pintar(); cargarEquipo(); return;
     }
     if (f.matches('[data-persona]')) {

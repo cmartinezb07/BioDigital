@@ -186,7 +186,7 @@ try {
   await publicar(CABANAS);
 
   // ---------- 10. Los otros tres modos ----------
-  const dTour = proxDow(3, 25);
+  const dTour = proxDow(3, 35);   // lejos del tour de la sección 4 (proxDow(3, 20)): si caen el mismo miércoles se restan cupos
   const t1 = await crear('tours', { servicio: 'cerro', fecha: dTour, min: 540, personas: 5 }), t2 = await crear('tours', { servicio: 'cerro', fecha: dTour, min: 540, personas: 5 }), t3 = await crear('tours', { servicio: 'cerro', fecha: dTour, min: 540, personas: 5 });
   ok('U1 tour con 12 cupos: caben 5 + 5; las otras 5 se rechazan indicando cuántos quedan', t1.ok && t2.ok && err(t3) === 'cupos:2', [t1.ok, t2.ok, err(t3)]);
   ok('U2 un tour exige su mínimo de personas, una salida que existe y un día en que sale', /minimo_personas:2/.test(err(await crear('tours', { servicio: 'kayak', fecha: proxDow(4, 25), min: 600, personas: 1 }))) && /sin_salida/.test(err(await crear('tours', { servicio: 'cerro', fecha: dTour, min: 600, personas: 2 }))) && /sin_salida/.test(err(await crear('tours', { servicio: 'vino', fecha: proxDow(3, 25), min: 540, personas: 2 }))));

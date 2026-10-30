@@ -13,6 +13,7 @@
 - **Skills del proyecto** (`respaldo-skills/`): crear-sitio-web, crear-menu-digital, crear-sistemas-agendas, contexto_biodigital, propuesta-comercial.
 
 ## Pendientes que mandan
+0. **Terminar el sistema de reservas** (29-oct): ver `memoria/reservas-requisitos.md`, `memoria/reservas-checklist.md` y la skill `crear-sistemas-agendas`.
 1. Demo de reservas publicada: sigue el cliente viejo a propósito; falta aplicar `006e` (ver la skill `contexto_biodigital`).
 2. Antes del primer cliente real: Supabase Pro, PIN privados, pago en línea con la cuenta del local y privacidad revisada con el negocio.
 3. IVA, enlaces de Mercado Pago para los SKU nuevos y cómo se edita el menú simple sin mensualidad.

@@ -257,6 +257,57 @@ try {
   const trasBaja = await leer(NEG, 'reservas', { pin: PIN_R2 });
   ok('P1 el jefe crea personal de recepción con su PIN (ve las reservas), la recepción no crea personal, y al desactivarlo deja de ver todo', alta.ok === true && comoR2.staff === true && r2NoCrea === 'sin permiso' && baja.ok === true && trasBaja.staff !== true, [alta, r2NoCrea, baja]);
   }
+
+  {
+  // ---------- 14. Unidad asignada, mover de unidad, reserva por teléfono, bloqueos por unidad (006f) ----------
+  const ll = mas(250), sa = mas(252), sel = { recurso: 'copihue', llegada: ll, salida: sa, personas: 2 };
+  const u1 = await crear('cabanas', sel), u2 = await crear('cabanas', sel), u3 = await crear('cabanas', sel), u4 = await crear('cabanas', sel);
+  const d1 = await ver(u1.id), d2 = await ver(u2.id), d3 = await ver(u3.id);
+  ok('U1 cada reserva guarda su unidad (Copihue 1, 2 y 3) y la cuarta no cabe', d1.unidad === 1 && d2.unidad === 2 && d3.unidad === 3 && d2.unidadNombre === 'Cabaña Copihue 2' && err(u4) === 'ocupado', [d1.unidad, d2.unidad, d3.unidad, d2.unidadNombre, err(u4)]);
+  const avisoU = ((await leer(NEG, 'avisos', { pin: DUENO })).filas || []).find((f) => f.data.reserva === u2.id && f.data.tipo === 'confirmacion');
+  ok('U2 el aviso de confirmación dice la unidad', avisoU && /Cabaña Copihue 2/.test(avisoU.data.texto), avisoU && avisoU.data.texto);
+  await cliente(u3.id, { unidad: 1 });
+  const ocupada = err(await recep(u3.id, { unidad: 1 }));
+  await recep(u1.id, { estado: 'cancelada' });
+  const mueve = await recep(u3.id, { unidad: 1 }), d3b = await ver(u3.id);
+  ok('U3 el cliente no cambia su unidad; la recepción no puede moverla a una ocupada (dice por cuál) y sí a una libre, con historial', (await ver(u3.id)).unidad === 1 && ocupada === 'unidad_ocupada:' + d1.codigo && mueve.ok === true && d3b.unidadNombre === 'Cabaña Copihue 1' && d3b.historial.some((h) => h.movida === 'Cabaña Copihue 3 → Cabaña Copihue 1'), [ocupada, mueve, d3b.historial]);
+  const mod = await cliente(u2.id, { sel: { ...sel, salida: mas(253) }, baseRev: 1 }), d2b = await ver(u2.id);
+  ok('U4 al modificar fechas conserva la misma unidad si sigue libre', mod.ok === true && d2b.unidad === 2 && d2b.rev === 2, [mod, d2b.unidad]);
+  const tel = await crear('cabanas', { recurso: 'familiar', llegada: mas(250), salida: mas(251) }, { pin: RECEP, cliente: { nombre: 'Prueba Teléfono', correo: '', telefono: '+56 9 8765 4321' }, extra: { canal: 'Teléfono', sinPago: true } });
+  const dTel = await ver(tel.id, RECEP), sinCorreoCli = err(await crear('cabanas', { recurso: 'familiar', llegada: mas(255), salida: mas(256) }, { cliente: cli({ correo: '' }) }));
+  const hoyRec = await crear('salon', { servicio: 'corte', fecha: mas(1), min: 600 }, { pin: RECEP, cliente: { nombre: 'Prueba Mostrador', telefono: '+56 9 8765 4321' } });
+  ok('T1 la recepción reserva por teléfono sin correo (canal Teléfono, confirmada sin depósito); un cliente sin correo no puede', tel.ok === true && dTel.canal === 'Teléfono' && dTel.estado === 'confirmada' && dTel.cliente.correo === '' && dTel.unidadNombre === 'Casa Familiar' && sinCorreoCli === 'datos:correo' && hoyRec.ok === true, [err(tel), dTel && dTel.estado, sinCorreoCli, err(hoyRec)]);
+  const bq = (id, ag, rec, d, h, x = {}) => escribir(NEG, 'bloqueos', id, { agenda: ag, recurso: rec, desde: U.fdate(d).getTime(), hasta: U.fdate(h).getTime(), motivo: 'Prueba', ...x }, { pin: RECEP, modo: 'poner' });
+  await bq('zzbqtodas', 'cabanas', 'araucaria', mas(260), mas(262), { todas: true });
+  const todasOcup = err(await crear('cabanas', { recurso: 'araucaria', llegada: mas(260), salida: mas(261), personas: 2 }));
+  await bq('zzbquni2', 'cabanas', 'araucaria', mas(265), mas(267), { unidad: 2 });
+  const a1 = await crear('cabanas', { recurso: 'araucaria', llegada: mas(265), salida: mas(266), personas: 2 }), a2 = err(await crear('cabanas', { recurso: 'araucaria', llegada: mas(265), salida: mas(266), personas: 2 }));
+  ok('B1 un bloqueo de "todas" cierra todas las unidades; uno de la unidad 2 deja libre solo la 1 (y la reserva cae en ella)', todasOcup === 'ocupado' && a1.ok === true && (await ver(a1.id)).unidad === 1 && a2 === 'ocupado', [todasOcup, err(a1), a2]);
+  const fT = proxDow(2, 40);
+  await bq('zzbqtour', 'tours', 'cerro', fT, mas(1, fT));
+  ok('B2 un bloqueo también cierra la salida de un tour', err(await crear('tours', { servicio: 'cerro', fecha: fT, min: 540, personas: 2 })) === 'bloqueado');
+
+  // ---------- 15. Campos propios del formulario y módulos ----------
+  const CAMPOS = [{ id: 'patente', etiqueta: 'Patente', tipo: 'texto', obligatorio: true }, { id: 'ninos', etiqueta: 'Niños', tipo: 'numero' }, { id: 'como', etiqueta: 'Cómo nos conociste', tipo: 'opciones', opciones: ['Instagram', 'Google'] }];
+  ok('C0 una configuración con campos mal formados o módulos desconocidos se rechaza', /config_invalida/.test(err(await publicar({ ...CABANAS, campos: [{ id: 'x', etiqueta: 'X', tipo: 'otro' }] }))) && /config_invalida/.test(err(await publicar({ ...CABANAS, modulos: { cohete: true } }))));
+  await publicar({ ...CABANAS, campos: CAMPOS });
+  const sC = (n) => ({ recurso: 'familiar', llegada: mas(270 + n), salida: mas(271 + n) });
+  const falta = err(await crear('cabanas', sC(0))), malNum = err(await crear('cabanas', sC(0), { extra: { respuestas: { patente: 'AB1234', ninos: 'dos' } } })), malOp = err(await crear('cabanas', sC(0), { extra: { respuestas: { patente: 'AB1234', como: 'TikTok' } } }));
+  const bien = await crear('cabanas', sC(0), { extra: { respuestas: { patente: ' AB1234 ', ninos: '2', como: 'Google', intruso: 'x' } } }), staffSin = await crear('cabanas', sC(2), { pin: RECEP, cliente: { nombre: 'Prueba Equipo', telefono: '+56 9 8765 4321' } });
+  const dB = await ver(bien.id);
+  ok('C1 el servidor exige las preguntas obligatorias, valida número y opciones, guarda solo las respuestas conocidas; el equipo puede dejarlas vacías', falta === 'campo:patente' && malNum === 'campo:ninos' && malOp === 'campo:como' && bien.ok === true && dB.respuestas.patente === 'AB1234' && dB.respuestas.ninos === '2' && dB.respuestas.como === 'Google' && Object.keys(dB.respuestas).length === 3 && staffSin.ok === true, [falta, malNum, malOp, dB && dB.respuestas, err(staffSin)]);
+  await publicar({ ...CABANAS, campos: CAMPOS, modulos: { pagos: false, promociones: false, espera: false, modificar: false, campos: false } });
+  const sM = { recurso: 'familiar', llegada: mas(280), salida: mas(282) };
+  const cot = await rpc('reserva_cotizar', { p_neg: NEG, p_ag: 'cabanas', p_sel: sM, p_codigo: 'BIENVENIDA10' });
+  const m1 = await crear('cabanas', sM, { codigo: 'BIENVENIDA10' }), dM = await ver(m1.id);
+  const esp = err(await escribir(NEG, 'espera', 'zzespm1', { agenda: 'cabanas', sel: sM, cliente: { nombre: 'Prueba', correo: 'zzesp@prueba.cl' } }, { modo: 'poner' }));
+  const modM = err(await cliente(m1.id, { sel: { ...sM, salida: mas(283) }, baseRev: 1 }));
+  ok('M1 con módulos apagados: sin depósito (confirmada al tiro), sin descuentos ni códigos, sin preguntas propias, sin lista de espera y sin modificar online', cot.ok && cot.precio.deposito === 0 && cot.precio.descuento === 0 && m1.ok === true && dM.estado === 'confirmada' && dM.precio.descuento === 0 && esp === 'sin_espera' && modM === 'no_modificable', [cot.precio, err(m1), dM && dM.estado, esp, modM]);
+  const cancelaM = await cliente(m1.id, { estado: 'cancelada' });
+  ok('M2 aunque no pueda modificar, el cliente sí puede cancelar', cancelaM.ok === true && (await ver(m1.id)).estado === 'cancelada', cancelaM);
+  await publicar(CABANAS);
+  ok('M3 al volver a encender los módulos todo vuelve a pedir depósito', (await rpc('reserva_cotizar', { p_neg: NEG, p_ag: 'cabanas', p_sel: sM, p_codigo: null })).precio.deposito > 0);
+  }
 } catch (e) { r.ERROR = String(e && e.stack || e); }
 finally {
   for (const c of ['reservas', 'avisos', 'espera', 'bloqueos', 'promos', 'config']) await vaciar(NEG, c, DUENO).catch(() => {});

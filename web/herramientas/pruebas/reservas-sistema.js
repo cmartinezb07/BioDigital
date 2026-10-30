@@ -6,7 +6,7 @@ const R = window.Reservas, U = R.util;
 ['cabanas', 'tours', 'medico', 'espacios', 'salon'].forEach((n) => { R.desconectar(n); R.restablecer(n); });
 await dormir(300);
 // 1. Noches: precio con fin de semana y descuento; una unidad no se vende dos veces
-const lunes = (() => { let f = U.sumaDias(U.hoy(), 40); while (U.diaSem(f) !== 1) f = U.sumaDias(f, 1); return f; })();
+const lunes = (() => { const c = R.leer('cabanas').config; let f = U.sumaDias(U.hoy(), 40); while (U.diaSem(f) !== 1 || R.enTemporada(c, f) || R.enTemporada(c, U.sumaDias(f, 1))) f = U.sumaDias(f, 1); return f; })();   // un lunes fuera de temporada alta (el precio esperado no lleva el ×1,3)
 const selC = { recurso: 'familiar', llegada: lunes, salida: U.sumaDias(lunes, 2), personas: 4 };
 const p1 = R.precio(R.leer('cabanas'), selC);
 ok('1 precio de 2 noches con reserva anticipada (−10 %)', p1.bruto === 170000 && p1.descuento === 17000 && p1.deposito === Math.round(153000 * .3), JSON.stringify([p1.bruto, p1.descuento, p1.deposito]));

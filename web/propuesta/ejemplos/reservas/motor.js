@@ -106,6 +106,32 @@
     d.bloqueos.forEach(function (b) { if (b.recurso === recurso && b.desde < hasta && b.hasta > desde) n += b.unidades || 1; });
     return n;
   }
+  // Unidades con nombre propio ya tomadas en un periodo; la que le toca a una reserva es la preferida si sigue libre o la primera libre (igual que el servidor)
+  function tomadas(d, rec, desde, hasta, salvo) {
+    var t = {};
+    d.reservas.forEach(function (r) { if (r.id === salvo || !ACTIVAS[r.estado] || r.recurso !== rec || !r.unidad || r.desde >= hasta || r.hasta <= desde) return; if (r.estado === 'retenida' && r.expira && r.expira < Date.now()) return; t[r.unidad] = r.codigo || '·'; });
+    d.bloqueos.forEach(function (b) { if (b.recurso === rec && b.unidad && !b.quitado && b.desde < hasta && b.hasta > desde) t[b.unidad] = 'bloqueo'; });
+    return t;
+  }
+  function unidadPara(d, rec, desde, hasta, salvo, pref) {
+    var r = recurso(d, rec); if (!r) return null; var n = Math.max(1, r.unidades || 1), t = tomadas(d, rec, desde, hasta, salvo);
+    if (pref >= 1 && pref <= n && !t[pref]) return pref;
+    for (var u = 1; u <= n; u++) if (!t[u]) return u;
+    return null;
+  }
+  function nombreUnidad(r, u) { if (!r || !u) return null; return (r.nombresUnidades && r.nombresUnidades[u - 1]) || r.nombre + ((r.unidades || 1) > 1 ? ' ' + u : ''); }
+  // Módulos que el negocio enciende o apaga (sin la clave, encendido). "efectiva" = la configuración con los módulos apagados aplicados, como en el servidor
+  var MODULOS = ['pagos', 'promociones', 'extras', 'avisos', 'espera', 'campos', 'modificar'];
+  function modulo(c, k) { return !(c.modulos && c.modulos[k] === false); }
+  function efectiva(c) {
+    var e = Object.assign({}, c);
+    if (!modulo(c, 'pagos')) { e.politicas = Object.assign({}, c.politicas, { deposito: 0 }); e.pagoDemo = false; }
+    if (!modulo(c, 'promociones')) { e.reglas = []; e.promos = []; }
+    if (!modulo(c, 'avisos')) e.notif = {};
+    if (!modulo(c, 'campos')) e.campos = [];
+    if (c.modo === 'noches' && !modulo(c, 'extras')) e.servicios = [];
+    return e;
+  }
   function recurso(d, id) { return d.config.recursos.filter(function (r) { return r.id === id; })[0]; }
   function servicio(d, id) { return d.config.servicios.filter(function (s) { return s.id === id; })[0]; }
   function enTemporada(c, fecha) {
@@ -139,27 +165,76 @@
     if (s.dias.indexOf(diaSem(sel.fecha)) < 0) return [];
     return s.salidas.map(function (h) {
       var a = fdate(sel.fecha, minH(h)).getTime(), usados = 0;
-      d.reservas.forEach(function (r) { if (ACTIVAS[r.estado] && r.servicio === s.id && r.desde === a && r.id !== sel.salvo) usados += r.personas; });
-      return { min: minH(h), hora: h, quedan: Math.max(0, s.capacidad - usados), capacidad: s.capacidad, valida: a >= lim.desde && a <= lim.hasta };
+      d.reservas.forEach(function (r) { if (r.estado === 'retenida' && r.expira && r.expira < Date.now()) return; if (ACTIVAS[r.estado] && r.servicio === s.id && r.desde === a && r.id !== sel.salvo) usados += r.personas; });
+      var bloq = d.bloqueos.some(function (b) { return b.recurso === s.id && !b.quitado && b.desde <= a && b.hasta > a; });   // un bloqueo cierra la salida
+      return { min: minH(h), hora: h, quedan: bloq ? 0 : Math.max(0, s.capacidad - usados), capacidad: s.capacidad, bloqueado: bloq, valida: a >= lim.desde && a <= lim.hasta };
     }).filter(function (x) { return x.valida; });
   }
-  // Estado de cada día del mes para el calendario: libre, pocos, lleno o cerrado
+  // Unidades bloqueadas por el negocio en una noche (para decir "bloqueado" y no "completo")
+  function bloqueadasNoche(d, rec, fecha) { var a = fdate(fecha).getTime(), b = a + 864e5, n = 0; d.bloqueos.forEach(function (x) { if (x.recurso === rec && !x.quitado && x.desde < b && x.hasta > a) n += x.unidades || 1; }); return n; }
+  var fcorta = function (f) { return fdate(f).toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' }); };
+  // Estado de cada día del mes para el calendario, con lo que queda (info de total) y el MOTIVO de cada día que no se puede elegir:
+  // libre, pocos, lleno, bloqueado, cerrado, pasado (ya pasó o muy pronto), lejos, corte (hay una noche completa antes) o min (estadía mínima)
   function mes(d, sel, anio, mesN) {
-    var c = d.config, out = {}, n = new Date(anio, mesN + 1, 0).getDate(), lim = limites(c);
+    var c = d.config, P = c.politicas, out = {}, n = new Date(anio, mesN + 1, 0).getDate(), lim = limites(c), hoyS = hoy();
+    var eligeSalida = c.modo === 'noches' && sel.recurso && sel.llegada && !sel.salida, corte = null, minN = 1;
+    if (eligeSalida) {   // primera noche completa después de la llegada: no se puede salir después de ella
+      for (var k = 0; k < 62 && !corte; k++) { var fk = sumaDias(sel.llegada, k); if (libresNoche(d, sel.recurso, fk, sel.salvo) <= 0) corte = fk; }
+      minN = enTemporada(c, sel.llegada) ? P.estadiaMinAlta || 1 : P.estadiaMin || 1;
+    }
     for (var i = 1; i <= n; i++) {
-      var f = anio + '-' + pad(mesN + 1) + '-' + pad(i), fin = fdate(f).getTime() + 864e5, est = 'cerrado', info = '';
-      if (fin <= lim.desde - (c.modo === 'noches' ? 0 : 864e5) || fdate(f).getTime() > lim.hasta) { out[f] = { estado: 'pasado' }; continue; }
-      if (c.modo === 'noches') { var lb = sel.recurso ? libresNoche(d, sel.recurso, f, sel.salvo) : c.recursos.reduce(function (t, r) { return t + libresNoche(d, r.id, f, sel.salvo); }, 0), tot = sel.recurso ? recurso(d, sel.recurso).unidades : c.recursos.reduce(function (t, r) { return t + r.unidades; }, 0); est = lb <= 0 ? 'lleno' : lb / tot <= .34 ? 'pocos' : 'libre'; info = lb; }
-      else if (c.modo === 'cupos') { if (sel.servicio) { var sl = salidas(d, { servicio: sel.servicio, fecha: f }); if (sl.length) { var q = sl.reduce(function (t, x) { return t + x.quedan; }, 0), cap = sl.reduce(function (t, x) { return t + x.capacidad; }, 0); est = q < (sel.personas || 1) ? 'lleno' : q / cap <= .3 ? 'pocos' : 'libre'; info = q; } } }
-      else if ((sel.servicio || sel.recurso) && abierto(c, f).length) { var hs = horas(d, { servicio: sel.servicio, recurso: sel.recurso, fecha: f, horas: sel.horas }); est = !hs.length ? 'lleno' : hs.length <= 4 ? 'pocos' : 'libre'; info = hs.length; }
-      out[f] = { estado: est, info: info };
+      var f = anio + '-' + pad(mesN + 1) + '-' + pad(i), ini = fdate(f).getTime(), fin = ini + 864e5, est = 'cerrado', info = '', total = '', motivo = '';
+      if (f < hoyS) { out[f] = { estado: 'pasado', motivo: 'Este día ya pasó.' }; continue; }
+      if (eligeSalida && f > sel.llegada) {   // eligiendo el día de salida: vale si todas las noches anteriores tienen cupo y se cumple el mínimo
+        var nn = difDias(sel.llegada, f);
+        if (ini > lim.hasta) out[f] = { estado: 'lejos', motivo: 'Todavía no se puede reservar para tan adelante (hasta ' + (P.maxDias || 365) + ' días).' };
+        else if (corte && f > corte) out[f] = { estado: 'corte', motivo: 'La noche del ' + fcorta(corte) + ' está completa: puedes salir a más tardar ese día.' };
+        else if (nn < minN) out[f] = { estado: 'min', motivo: 'En estas fechas la estadía mínima es de ' + minN + ' noches.' };
+        else out[f] = { estado: 'libre', info: nn, motivo: nn + (nn === 1 ? ' noche' : ' noches') };
+        continue;
+      }
+      if (fin <= lim.desde - (c.modo === 'noches' ? 0 : 864e5)) { out[f] = { estado: 'pasado', motivo: 'Muy pronto: se reserva con al menos ' + P.anticipacionHoras + ' horas de anticipación.' }; continue; }
+      if (ini > lim.hasta) { out[f] = { estado: 'lejos', motivo: 'Todavía no se puede reservar para tan adelante (hasta ' + (P.maxDias || 365) + ' días).' }; continue; }
+      if (c.modo === 'noches') {
+        var recs = sel.recurso ? [recurso(d, sel.recurso)] : c.recursos, lb = 0, bl = 0;
+        total = recs.reduce(function (t, r) { return t + r.unidades; }, 0);
+        recs.forEach(function (r) { lb += Math.max(0, libresNoche(d, r.id, f, sel.salvo)); bl += bloqueadasNoche(d, r.id, f); });
+        est = lb <= 0 ? (bl >= total ? 'bloqueado' : 'lleno') : lb / total <= .34 ? 'pocos' : 'libre'; info = lb;
+        motivo = est === 'bloqueado' ? 'No disponible: el negocio cerró esta fecha.' : est === 'lleno' ? 'Completo: no queda ninguna de ' + total + '.' : 'Quedan ' + lb + ' de ' + total + '.';
+      }
+      else if (c.modo === 'cupos') {
+        if (!sel.servicio) { est = 'libre'; motivo = ''; }
+        else {
+          var sl = salidas(d, { servicio: sel.servicio, fecha: f, salvo: sel.salvo }), s0 = servicio(d, sel.servicio);
+          if (s0 && s0.dias.indexOf(diaSem(f)) < 0) { est = 'cerrado'; motivo = 'Este tour no sale los ' + fdate(f).toLocaleDateString('es-CL', { weekday: 'long' }) + '.'; }
+          else if (!sl.length) { est = 'pasado'; motivo = 'Las salidas de este día ya no se pueden reservar.'; }
+          else if (sl.every(function (x) { return x.bloqueado; })) { est = 'bloqueado'; motivo = 'No disponible: el negocio cerró esta fecha.'; }
+          else { var q = sl.reduce(function (t, x) { return t + x.quedan; }, 0), cap = sl.reduce(function (t, x) { return t + x.capacidad; }, 0); est = q < (sel.personas || 1) ? 'lleno' : q / cap <= .3 ? 'pocos' : 'libre'; info = q; total = cap; motivo = est === 'lleno' ? (q ? 'Quedan ' + q + ' cupos: no alcanzan para ' + sel.personas + ' personas.' : 'Completo: no quedan cupos.') : 'Quedan ' + q + ' de ' + cap + ' cupos.'; }
+        }
+      }
+      else if (!abierto(c, f).length) { est = 'cerrado'; motivo = 'Cerrado este día.'; }
+      else if (sel.servicio || sel.recurso) { var hs = horas(d, { servicio: sel.servicio, recurso: sel.recurso, fecha: f, horas: sel.horas, salvo: sel.salvo }); est = !hs.length ? 'lleno' : hs.length <= 4 ? 'pocos' : 'libre'; info = hs.length; motivo = hs.length ? hs.length + (hs.length === 1 ? ' hora libre.' : ' horas libres.') : 'Sin horas libres este día.'; }
+      else { est = 'libre'; }
+      out[f] = { estado: est, info: info, total: total, motivo: motivo };
     }
     return out;
+  }
+  // Días libres más cercanos a una fecha (para sugerir cuando el elegido no se puede)
+  function cercanas(d, sel, fecha, max) {
+    var out = [], anio, m, est = {};
+    for (var k = 1; k <= 45 && out.length < (max || 3); k++) {
+      [sumaDias(fecha, k), sumaDias(fecha, -k)].forEach(function (f) {
+        if (out.length >= (max || 3) || f < hoy()) return;
+        var key = f.slice(0, 7); if (!est[key]) { anio = +f.slice(0, 4); m = +f.slice(5, 7) - 1; est[key] = mes(d, sel, anio, m); }
+        var e = est[key][f]; if (e && (e.estado === 'libre' || e.estado === 'pocos')) out.push(f);
+      });
+    }
+    return out.sort();
   }
 
   // ---------- Precio ----------
   function precio(d, sel, codigo) {
-    var c = d.config, lineas = [], base = 0, extra = 0, inicio, noches = 0;
+    var c = efectiva(d.config), lineas = [], base = 0, extra = 0, inicio, noches = 0;
     if (c.modo === 'noches') {
       var r = recurso(d, sel.recurso); noches = difDias(sel.llegada, sel.salida); inicio = fdate(sel.llegada).getTime();
       for (var i = 0; i < noches; i++) {
@@ -167,7 +242,7 @@
         base += Math.round(r.precio * (t ? t.factor : 1) * (fin ? c.factorFinde : 1) / 100) * 100;
       }
       lineas.push([r.nombre + ' · ' + noches + (noches === 1 ? ' noche' : ' noches'), base]);
-      (sel.extras || []).forEach(function (x) { var s = servicio(d, x); if (s) { extra += s.precio; lineas.push([s.nombre, s.precio]); } });
+      (sel.extras || []).forEach(function (x) { var s = c.servicios.filter(function (y) { return y.id === x; })[0]; if (s) { extra += s.precio; lineas.push([s.nombre, s.precio]); } });
     } else if (c.modo === 'cupos') { var s1 = servicio(d, sel.servicio); base = s1.precio * sel.personas; inicio = fdate(sel.fecha, sel.min).getTime(); lineas.push([s1.nombre + ' · ' + sel.personas + (sel.personas === 1 ? ' persona' : ' personas'), base]); }
     else if (c.modo === 'horas') { var s2 = servicio(d, sel.servicio); base = s2.precio; inicio = fdate(sel.fecha, sel.min).getTime(); lineas.push([s2.nombre, base]); }
     else { var r2 = recurso(d, sel.recurso); base = r2.precio * sel.horas; inicio = fdate(sel.fecha, sel.min).getTime(); lineas.push([r2.nombre + ' · ' + sel.horas + ' h', base]); }
@@ -238,7 +313,8 @@
       var r = { id: codigoNuevo(d).toLowerCase() + Date.now().toString(36), codigo: codigoNuevo(d), creada: Date.now(), modo: c.modo, recurso: rec, servicio: sel.servicio || null, extras: sel.extras || [],
         desde: desde, hasta: hasta, personas: sel.personas || 1, horas: sel.horas || null, cliente: cliente, precio: pr, pagado: 0, moneda: 'CLP',
         estado: conDep ? 'retenida' : 'confirmada', expira: conDep ? Date.now() + (c.politicas.retencionMin || 10) * 6e4 : null,
-        canal: opc.canal || 'Sitio web', idioma: cliente.idioma || 'es', historial: [{ estado: conDep ? 'retenida' : 'confirmada', t: Date.now() }], semilla: !!opc.semilla };
+        canal: opc.canal || 'Sitio web', idioma: cliente.idioma || 'es', historial: [{ estado: conDep ? 'retenida' : 'confirmada', t: Date.now() }], semilla: !!opc.semilla, respuestas: opc.respuestas || {} };
+      if (c.modo !== 'cupos') { r.unidad = unidadPara(d, rec, desde, hasta, null); r.unidadNombre = nombreUnidad(recurso(d, rec), r.unidad); }
       if (pr.promo && pr.promo.codigo && pr.motivo.indexOf(pr.promo.codigo) > -1) c.promos.forEach(function (p) { if (p.codigo === pr.promo.codigo) p.usos++; });
       d.reservas.push(r);
       if (!opc.semilla) programarAvisos(d, r, conDep ? 'pago' : 'confirmacion');
@@ -277,7 +353,7 @@
 
   // ---------- Avisos automáticos (correo y WhatsApp; en la demo se registran como enviados, no salen) ----------
   function aviso(d, r, tipo, cuando) {
-    var cfg = d.config.notif[tipo]; if (!cfg || !cfg.activo) return;
+    var cfg = (efectiva(d.config).notif || {})[tipo]; if (!cfg || !cfg.activo) return;
     ['correo', 'whatsapp'].forEach(function (can) {
       if (!cfg[can]) return;
       if (can === 'correo' && !r.cliente.correo) return;
@@ -357,9 +433,11 @@
       return Promise.all(filas.map(function (f) { return Nube.escribir(NUBE, 'bloqueos', Nube.idNuevo(), { agenda: id, neg: id, recurso: rec, desde: f.desde, hasta: f.hasta, motivo: f.motivo, origen: origen }, { pin: pin, modo: 'poner' }).catch(function () {}); }));
     }).then(function () { nubes[id].sondeos[3].ya(); return filas.length; });
   }
-  function bloquear(id, rec, desde, hasta, motivo) {
-    if (nubes[id]) return Nube.escribir(NUBE, 'bloqueos', Nube.idNuevo(), { agenda: id, neg: id, recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual' }, { pin: pinEquipo(), modo: 'poner' }).then(function () { nubes[id].sondeos[3].ya(); return { ok: true }; }).catch(function (e) { return { error: mensajeError(e && e.codigo ? e.codigo : 'red') }; });
-    return cambiar(id, function (d) { d.bloqueos.push({ id: 'b' + Date.now().toString(36), recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual', unidades: 1 }); }); }
+  // Bloquear fechas: de una unidad (unidad = número) o de todas las unidades del recurso (unidad = 'todas', lo normal al cerrar por vacaciones o mantención)
+  function bloquear(id, rec, desde, hasta, motivo, unidad) {
+    var todas = unidad === 'todas' || unidad == null, u = todas ? null : +unidad;
+    if (nubes[id]) return Nube.escribir(NUBE, 'bloqueos', Nube.idNuevo(), { agenda: id, neg: id, recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual', todas: todas, unidad: u }, { pin: pinEquipo(), modo: 'poner' }).then(function () { nubes[id].sondeos[3].ya(); return { ok: true }; }).catch(function (e) { return { error: mensajeError(e && e.codigo ? e.codigo : 'red') }; });
+    return cambiar(id, function (d) { var r = recurso(d, rec), tot = r ? Math.max(1, r.unidades || 1) : 1; d.bloqueos.push({ id: 'b' + Date.now().toString(36), recurso: rec, desde: desde, hasta: hasta, motivo: motivo || 'Bloqueo manual', origen: 'manual', unidades: u ? 1 : tot, unidad: u, todas: !u && tot > 1 }); }); }
 
   // ---------- Datos de prueba para el panel (marcados; clientes "de prueba") ----------
   function sembrar(id) {
@@ -433,6 +511,7 @@
     demasiadas_retenciones: 'Ya tienes 2 reservas esperando pago. Págalas o espera a que venzan.', conflicto: 'Esta reserva cambió mientras la editabas. Ábrela otra vez para ver la versión actual.',
     no_modificable: 'Esta reserva ya no se puede modificar.', transicion_invalida: 'Ese cambio no está permitido para esta reserva.', retencion_vencida: 'La retención venció y la fecha se liberó. Haz una reserva nueva.',
     aun_no: 'Esa reserva todavía no empieza.', 'sin permiso': 'No tienes permiso para hacer eso.', config_invalida: 'La configuración no es válida: revisa nombres, códigos y números.', bloqueo_invalido: 'Revisa las fechas del bloqueo.',
+    bloqueado: 'El negocio cerró esa fecha. Elige otra.', sin_espera: 'Este negocio no usa lista de espera.', unidad_invalida: 'Esa unidad no existe.',
     red: 'No hay conexión. Revisa tu internet e intenta de nuevo.'
   };
   function mensajeError(c) {
@@ -445,6 +524,8 @@
     if (k === 'tarde_modificar') return 'Ya no se puede modificar: faltan menos de ' + a[0] + ' horas. Escríbele al negocio.';
     if (k === 'datos') return { nombre: 'Escribe tu nombre y apellido.', correo: 'Escribe un correo válido.', telefono: 'Escribe un celular válido, con código de país.', contacto: 'Escribe un correo o un celular válido.' }[a[0]] || 'Revisa tus datos.';
     if (k === 'transicion_invalida') return MSJ[k];
+    if (k === 'unidad_ocupada') return a[0] === 'bloqueo' ? 'Esa unidad está bloqueada en esas fechas.' : 'Esa unidad está ocupada en esas fechas por la reserva ' + a[0] + '.';
+    if (k === 'campo') { var cp = null; NEGOCIOS.some(function (n) { var d = leer(n.id); cp = d && (d.config.campos || []).filter(function (x) { return x.id === a[0]; })[0]; return cp; }); return cp ? 'Completa «' + cp.etiqueta + '»' + (cp.tipo === 'numero' ? ' con un número' : '') + '.' : 'Completa los datos que pide el negocio.'; }
     return MSJ[k] || MSJ[c] || 'No se pudo guardar (' + c + '). Intenta de nuevo.';
   }
   function reservaDe(id, rid) { return leer(id).reservas.filter(function (x) { return x.id === rid; })[0] || null; }
@@ -462,16 +543,35 @@
   }
   function crearNube(id, sel, cliente, opc) {
     var rid = Nube.idNuevo();
-    var doc = { agenda: id, neg: id, sel: JSON.parse(JSON.stringify(sel)), cliente: cliente, codigoPromo: opc.codigo || '', canal: opc.canal || undefined, sinPago: !!opc.sinPago };
-    recordarMia(id, rid);
+    var doc = { agenda: id, neg: id, sel: JSON.parse(JSON.stringify(sel)), cliente: cliente, codigoPromo: opc.codigo || '', canal: opc.canal || undefined, sinPago: !!opc.sinPago, respuestas: opc.respuestas || {} };
+    if (!opc.equipo) recordarMia(id, rid);   // la reserva que hace la recepción por teléfono no queda en "Mis reservas" de ese equipo
     return escribirRes(id, rid, doc, 'poner').then(function (x) { if (x.error) { olvidarMia(id, rid); return { error: x.error, codigo: x.codigo }; } return { reserva: x.reserva }; });
   }
   function modificar(id, rid, cambios) {
     if (!nubes[id]) return Promise.resolve({ error: 'Modificar reservas solo funciona conectado.' });
     var r = reservaDe(id, rid); if (!r) return Promise.resolve({ error: 'No encontramos la reserva.' });
     var data = { baseRev: r.rev || 1 };
-    ['sel', 'cliente', 'codigoPromo'].forEach(function (k) { if (cambios[k] !== undefined) data[k] = cambios[k]; });
+    ['sel', 'cliente', 'codigoPromo', 'respuestas'].forEach(function (k) { if (cambios[k] !== undefined) data[k] = cambios[k]; });
     return escribirRes(id, rid, data, 'parchar');
+  }
+  // El equipo mueve una reserva a otra unidad del mismo alojamiento o recurso (el servidor revisa que esté libre esas fechas)
+  function moverUnidad(id, rid, u) {
+    u = +u;
+    if (nubes[id]) return escribirRes(id, rid, { unidad: u }, 'parchar');
+    return Promise.resolve(cambiar(id, function (d) {
+      var r = d.reservas.filter(function (x) { return x.id === rid; })[0]; if (!r) return { error: 'No encontramos la reserva.' };
+      var t = tomadas(d, r.recurso, r.desde, r.hasta, r.id); if (t[u]) return { error: mensajeError('unidad_ocupada:' + t[u]) };
+      var rr = recurso(d, r.recurso), antes = r.unidadNombre || 'sin unidad'; r.unidad = u; r.unidadNombre = nombreUnidad(rr, u); r.historial.push({ estado: r.estado, t: Date.now(), movida: antes + ' → ' + r.unidadNombre });
+      return { ok: true, reserva: r };
+    }));
+  }
+  // Estado de cada unidad de un recurso en el periodo de una reserva (para elegir a dónde moverla)
+  function unidadesDe(id, rid) {
+    var d = leer(id), r = d.reservas.filter(function (x) { return x.id === rid; })[0]; if (!r) return [];
+    var rr = recurso(d, r.recurso); if (!rr) return [];
+    var t = tomadas(d, r.recurso, r.desde, r.hasta, r.id), out = [];
+    for (var u = 1; u <= Math.max(1, rr.unidades || 1); u++) out.push({ u: u, nombre: nombreUnidad(rr, u), actual: r.unidad === u, ocupada: t[u] || '' });
+    return out;
   }
   // Precio calculado por el servidor (con códigos de descuento, que nunca se publican)
   function cotizar(id, sel, codigo) {
@@ -505,7 +605,7 @@
       nuevos = d.bloqueos.filter(function (b) { return !b._pub; });
       r.filas.forEach(function (f) { var x = f.data; if (!x || x.neg !== id) return; x.id = f.id; var i = -1; nuevos.forEach(function (y, k) { if (y.id === x.id) i = k; }); if (i < 0) nuevos.push(x); else nuevos[i] = x; });
     } else {
-      nuevos = (r.pub || []).filter(function (p) { return p && p.n === id && p.e === 'bloqueo'; }).map(function (p, i) { return { id: 'pub-b' + i, _pub: true, recurso: String(p.r).split(':')[1], desde: p.d, hasta: p.h, unidades: 1, motivo: 'No disponible' }; });
+      nuevos = (r.pub || []).filter(function (p) { return p && p.n === id && p.e === 'bloqueo'; }).map(function (p, i) { return { id: 'pub-b' + i, _pub: true, recurso: String(p.r).split(':')[1], desde: p.d, hasta: p.h, unidades: p.u || 1, motivo: 'No disponible' }; });
     }
     nuevos = nuevos.filter(function (b) { return !b.quitado; });
     if (Nube.canon(nuevos) === Nube.canon(d.bloqueos)) return;
@@ -588,7 +688,7 @@
     mes: mes, horas: horas, salidas: salidas, libresNoche: libresNoche, precio: precio, validar: validar, crear: crear, estado: estado, pagar: pagar,
     cancelar: cancelar, reembolso: reembolso, esperar: esperar, automatico: automatico, exportarIcal: exportarIcal, importarIcal: importarIcal, bloquear: bloquear, quitarBloqueo: quitarBloqueo,
     sembrar: sembrar, restablecer: restablecer, conectar: conectar, desconectar: desconectar, entrarEquipo: entrarEquipo, seguir: seguir, enLinea: enLinea, listo: listo, equipoVisto: equipoVisto, recurso: recurso, servicio: servicio, enTemporada: enTemporada, fechaHora: fechaHora,
-    modificar: modificar, cotizar: cotizar, mensajeError: mensajeError, conectado: conectado, mias: mias, reservaDe: reservaDe, configPendiente: configPendiente, publicarConfig: publicarConfig, descartarConfig: descartarConfig, estaPublicada: estaPublicada, AGENDA: AG, NUBE: function () { return NUBE; },
+    modificar: modificar, moverUnidad: moverUnidad, unidadesDe: unidadesDe, nombreUnidad: nombreUnidad, cercanas: cercanas, modulo: modulo, efectiva: efectiva, MODULOS: MODULOS, cotizar: cotizar, mensajeError: mensajeError, conectado: conectado, mias: mias, reservaDe: reservaDe, configPendiente: configPendiente, publicarConfig: publicarConfig, descartarConfig: descartarConfig, estaPublicada: estaPublicada, AGENDA: AG, NUBE: function () { return NUBE; },
     util: { fstr: fstr, fdate: fdate, hoy: hoy, sumaDias: sumaDias, difDias: difDias, diaSem: diaSem, hMin: hMin, minH: minH, clp: clp, pad: pad }
   };
 })();

@@ -9,7 +9,7 @@
   var NUBE = R.NUBE(), rol = 'recepcion', quien = '';
   var tab = 'resumen', rango = 30, filtro = { estado: '', texto: '' }, desdeCal = U.hoy();
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
-  var TABS = [['resumen', 'Resumen', 0], ['reservas', 'Reservas', 0], ['calendario', 'Calendario', 0], ['catalogo', 'Catálogo', 1], ['horarios', 'Horarios y temporadas', 1], ['promos', 'Promociones', 1], ['politicas', 'Políticas', 1], ['avisos', 'Avisos', 0], ['integraciones', 'Integraciones', 1], ['reportes', 'Reportes', 0], ['negocio', 'Negocio y equipo', 1]];
+  var TABS = [['resumen', 'Resumen', 0], ['reservas', 'Reservas', 0], ['calendario', 'Calendario', 0], ['catalogo', 'Catálogo', 1], ['horarios', 'Horarios y temporadas', 1], ['promos', 'Promociones', 1], ['politicas', 'Políticas', 1], ['avisos', 'Avisos', 0], ['integraciones', 'Integraciones', 1], ['reportes', 'Reportes', 0], ['modulos', 'Módulos y formulario', 1], ['negocio', 'Negocio y equipo', 1]];
   var chip = function (e) { var x = R.ESTADOS[e] || [e, '#64748b']; return '<span class="chip" style="--ec:' + x[1] + '">' + x[0] + '</span>'; };
   var nombreDe = function (D, r) { var x = r.servicio ? R.servicio(D, r.servicio) : R.recurso(D, r.recurso); return x ? x.nombre : (r.servicio || r.recurso); };
   var dia = function (ms) { return new Date(ms).toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' }); };
@@ -45,7 +45,7 @@
 
   app.innerHTML = '<div class="wrap"><aside class="alerta-nueva" data-alerta hidden role="status"></aside><div class="barra-pub" data-barra hidden></div><div class="negocios" role="group" aria-label="Negocio"></div><div class="adm"><nav class="menu-adm" aria-label="Secciones del panel"></nav><div data-vista></div></div></div>';
   alerta = app.querySelector('[data-alerta]');
-  function tabsVisibles() { return TABS.filter(function (t) { return esJefe() || !t[2]; }); }
+  function tabsVisibles() { var c = R.leer(neg).config; return TABS.filter(function (t) { return (esJefe() || !t[2]) && !(t[0] === 'promos' && !R.modulo(c, 'promociones')); }); }
   function pintar() {
     R.automatico(neg);
     var D = R.leer(neg);
@@ -61,9 +61,17 @@
     barra.innerHTML = sinPub ? '<span><b>Esta agenda todavía no está publicada.</b> Tus clientes no pueden reservar hasta que la publiques.</span><button class="btn chico prim" type="button" data-publicar>Publicar agenda</button>'
       : pendiente ? '<span>Tienes cambios <b>sin publicar</b> en el catálogo, precios, horarios o políticas.</span><button class="btn chico prim" type="button" data-publicar>Publicar cambios</button><button class="btn chico" type="button" data-descartar>Descartar</button>' : '';
     app.querySelector('[data-vista]').innerHTML = VISTAS[tab](D);
+    llenarUnidades();
     [].forEach.call(document.querySelectorAll('[data-cliente]'), function (a) { a.href = '../?negocio=' + neg; });
   }
 
+  // Bloquear: elegir todas las unidades o una en particular del recurso elegido
+  function llenarUnidades() {
+    var sel = app.querySelector('#b-uni'), rec = app.querySelector('#b-rec'); if (!sel || !rec) return;
+    var rr = R.recurso(R.leer(neg), rec.value), n = rr ? rr.unidades || 1 : 1, opts = '<option value="todas">' + (n > 1 ? 'Todas (' + n + ')' : 'Todas') + '</option>';
+    for (var u = 1; u <= n && n > 1; u++) opts += '<option value="' + u + '">' + esc(R.nombreUnidad(rr, u)) + '</option>';
+    sel.innerHTML = opts;
+  }
   // ---------- Métricas compartidas por Resumen y Reportes ----------
   function metricas(D, dias) {
     var c = D.config, fin = U.fdate(U.sumaDias(U.hoy(), 1)).getTime(), ini = fin - dias * 864e5, todas = D.reservas.filter(function (r) { return !r._pub; });
@@ -105,7 +113,7 @@
       var filas = [];
       c.modo === 'noches' ? c.recursos.forEach(function (r) { for (var u = 0; u < r.unidades; u++) filas.push({ rec: r.id, nom: r.nombre + (r.unidades > 1 ? ' ' + (u + 1) : ''), u: u }); }) : (c.modo === 'cupos' ? c.servicios : c.recursos).forEach(function (r) { filas.push({ rec: r.id, nom: r.nombre }); });
       var asign = {};
-      if (c.modo === 'noches') c.recursos.forEach(function (r) { var unid = []; P.filter(function (x) { return x.recurso === r.id && x.estado !== 'cancelada'; }).sort(function (a, b) { return a.desde - b.desde; }).forEach(function (x) { for (var u = 0; u < r.unidades; u++) if (!unid[u] || unid[u] <= x.desde) { unid[u] = x.hasta; asign[x.id] = u; return; } asign[x.id] = 0; }); });
+      if (c.modo === 'noches') c.recursos.forEach(function (r) { var unid = []; P.filter(function (x) { return x.recurso === r.id && x.estado !== 'cancelada' && x.unidad; }).forEach(function (x) { asign[x.id] = x.unidad - 1; }); P.filter(function (x) { return x.recurso === r.id && x.estado !== 'cancelada' && !x.unidad; }).sort(function (a, b) { return a.desde - b.desde; }).forEach(function (x) { for (var u = 0; u < r.unidades; u++) if (!unid[u] || unid[u] <= x.desde) { unid[u] = x.hasta; asign[x.id] = u; return; } asign[x.id] = 0; }); });
       var html = '<h1 style="font-size:24px;margin-bottom:10px">Calendario</h1><div class="acciones-r" style="justify-content:flex-start;margin:0 0 10px"><button class="btn chico" type="button" data-cal="-7">‹ Semana anterior</button><button class="btn chico" type="button" data-cal="0">Hoy</button><button class="btn chico" type="button" data-cal="7">Semana siguiente ›</button></div>' +
         '<div class="caja scroll"><div class="timeline"><div class="tl-fila cab" style="--n:' + n + '"><span class="nom"></span>' + dias.map(function (f) { return '<span>' + U.fdate(f).toLocaleDateString('es-CL', { weekday: 'narrow', day: 'numeric' }) + '</span>'; }).join('') + '</div>';
       filas.forEach(function (fi) {
@@ -115,21 +123,23 @@
           var rs = P.filter(function (r) { return r.estado !== 'cancelada' && r.recurso === fi.rec && r.desde < b && r.hasta > a && (c.modo !== 'noches' || asign[r.id] === fi.u); });
           var bl = D.bloqueos.filter(function (x) { return x.recurso === fi.rec && !x.quitado && x.desde < b && x.hasta > a; });
           if (rs.length) { var r0 = rs[0]; html += '<span class="oc" style="--ec:' + R.ESTADOS[r0.estado][1] + '" title="' + esc(r0.codigo + ' · ' + r0.cliente.nombre + ' · ' + R.ESTADOS[r0.estado][0]) + '">' + (c.modo === 'noches' ? (r0.desde >= a ? r0.codigo.slice(0, 3) : '') : c.modo === 'cupos' ? rs.reduce(function (s, x) { return s + x.personas; }, 0) : rs.length) + '</span>'; }
-          else if (bl.length && (c.modo !== 'noches' || fi.u === 0)) html += '<span class="bl" title="' + esc(bl[0].motivo) + '"></span>';
+          else if (bl.length && (c.modo !== 'noches' || bl.some(function (x) { return x.unidad ? x.unidad - 1 === fi.u : x.todas || (x.unidades || 1) > fi.u; }))) html += '<span class="bl" title="' + esc(bl[0].motivo) + '"></span>';
           else html += '<span></span>';
         });
         html += '</div>';
       });
       var manuales = D.bloqueos.filter(function (b) { return !b._pub && !b.quitado && b.hasta > Date.now(); }).sort(function (a, b) { return a.desde - b.desde; });
       html += '</div><p class="nota" style="margin-top:8px">' + (c.modo === 'noches' ? 'Cada fila es una unidad. Color = estado de la reserva; rayado = bloqueado (manual o sincronizado por iCal).' : c.modo === 'cupos' ? 'El número es la cantidad de personas reservadas ese día.' : 'El número es la cantidad de reservas del día.') + '</p></div>' +
-        '<section class="caja"><h2>Bloquear fechas</h2><form class="form-l" data-bloq><div class="campo"><label for="b-rec">Recurso</label><select id="b-rec">' + (c.modo === 'cupos' ? c.servicios : c.recursos).map(function (r) { return '<option value="' + esc(r.id) + '">' + esc(r.nombre) + '</option>'; }).join('') + '</select></div><div class="campo"><label for="b-desde">Desde</label><input id="b-desde" type="date" value="' + U.hoy() + '"></div><div class="campo"><label for="b-hasta">Hasta</label><input id="b-hasta" type="date" value="' + U.sumaDias(U.hoy(), 1) + '"></div><div class="campo"><label for="b-mot">Motivo</label><input id="b-mot" value="Mantención"></div><button class="btn prim" type="submit">Bloquear</button></form>' +
-        (manuales.length ? '<h3 style="margin:14px 0 6px;font-size:15px">Bloqueos vigentes</h3><ul class="lista-b">' + manuales.map(function (b) { var rr = R.recurso(D, b.recurso) || R.servicio(D, b.recurso) || {}; return '<li><span>' + esc(rr.nombre || b.recurso) + ' · ' + dia(b.desde) + ' → ' + dia(b.hasta) + ' · ' + esc(b.motivo || '') + '</span><button class="btn chico" type="button" data-quitar-bloqueo="' + esc(b.id) + '">Quitar</button></li>'; }).join('') + '</ul>' : '') + '</section>';
+        '<section class="caja"><h2>Bloquear fechas</h2><form class="form-l" data-bloq><div class="campo"><label for="b-rec">Recurso</label><select id="b-rec">' + (c.modo === 'cupos' ? c.servicios : c.recursos).map(function (r) { return '<option value="' + esc(r.id) + '">' + esc(r.nombre) + '</option>'; }).join('') + '</select></div>' + (c.modo !== 'cupos' && c.recursos.some(function (r) { return (r.unidades || 1) > 1; }) ? '<div class="campo"><label for="b-uni">Unidad</label><select id="b-uni"></select></div>' : '') + '<div class="campo"><label for="b-desde">Desde</label><input id="b-desde" type="date" value="' + U.hoy() + '"></div><div class="campo"><label for="b-hasta">Hasta</label><input id="b-hasta" type="date" value="' + U.sumaDias(U.hoy(), 1) + '"></div><div class="campo"><label for="b-mot">Motivo</label><input id="b-mot" value="Mantención"></div><button class="btn prim" type="submit">Bloquear</button></form>' +
+        (manuales.length ? '<h3 style="margin:14px 0 6px;font-size:15px">Bloqueos vigentes</h3><ul class="lista-b">' + manuales.map(function (b) { var rr = R.recurso(D, b.recurso) || R.servicio(D, b.recurso) || {}; return '<li><span>' + esc(b.unidad ? R.nombreUnidad(rr, b.unidad) : (rr.nombre || b.recurso) + (b.todas ? ' (todas)' : '')) + ' · ' + dia(b.desde) + ' → ' + dia(b.hasta) + ' · ' + esc(b.motivo || '') + '</span><button class="btn chico" type="button" data-quitar-bloqueo="' + esc(b.id) + '">Quitar</button></li>'; }).join('') + '</ul>' : '') + '</section>';
       return html;
     },
     reservas: function (D) {
-      var c = D.config, P = propias(D);
+      var c = D.config, P = propias(D), conUnidades = function (r) { var rr = c.modo !== 'cupos' && R.recurso(D, r.recurso); return rr && (rr.unidades || 1) > 1; };
+      var sinUnidad = P.filter(function (r) { return ACTIVAS.indexOf(r.estado) > -1 && r.hasta > Date.now() && !r.unidad && r.rev && conUnidades(r); });
       var l = P.slice().sort(function (a, b) { return b.desde - a.desde; }).filter(function (r) { return (!filtro.estado || r.estado === filtro.estado) && (!filtro.texto || (r.codigo + ' ' + r.cliente.nombre + ' ' + r.canal).toLowerCase().indexOf(filtro.texto.toLowerCase()) > -1); });
-      return '<h1 style="font-size:24px;margin-bottom:10px">Reservas</h1><div class="form-l" style="margin-bottom:12px"><div class="campo"><label for="f-txt">Buscar</label><input id="f-txt" value="' + esc(filtro.texto) + '" placeholder="Código, nombre o canal"></div><div class="campo"><label for="f-est">Estado</label><select id="f-est"><option value="">Todos</option>' + Object.keys(R.ESTADOS).map(function (k) { return '<option value="' + k + '"' + (filtro.estado === k ? ' selected' : '') + '>' + R.ESTADOS[k][0] + '</option>'; }).join('') + '</select></div><button class="btn" type="button" data-csv-res>Descargar CSV</button></div>' +
+      return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px"><h1 style="font-size:24px">Reservas</h1><button class="btn prim" type="button" data-nueva-res>+ Nueva reserva (teléfono o mostrador)</button></div>' +
+        (sinUnidad.length ? '<p class="aviso-grande" role="status" style="font-size:14px"><span><b>' + sinUnidad.length + ' reserva(s) sin unidad fija</b> (' + sinUnidad.map(function (r) { return esc(r.codigo); }).join(', ') + '): ninguna unidad quedaba libre todas sus noches. Usa <b>Mover</b> para asignarla.</span></p>' : '') + '<div class="form-l" style="margin-bottom:12px"><div class="campo"><label for="f-txt">Buscar</label><input id="f-txt" value="' + esc(filtro.texto) + '" placeholder="Código, nombre o canal"></div><div class="campo"><label for="f-est">Estado</label><select id="f-est"><option value="">Todos</option>' + Object.keys(R.ESTADOS).map(function (k) { return '<option value="' + k + '"' + (filtro.estado === k ? ' selected' : '') + '>' + R.ESTADOS[k][0] + '</option>'; }).join('') + '</select></div><button class="btn" type="button" data-csv-res>Descargar CSV</button></div>' +
         '<div class="caja scroll"><table class="tabla"><thead><tr><th>Código</th><th>Cuándo</th><th>Qué</th><th>Cliente</th><th>Canal</th><th>Total</th><th>Pagado</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>' +
         (l.slice(0, 80).map(function (r) {
           var acc = [], sale = r.desde <= Date.now();
@@ -139,8 +149,10 @@
           if (r.estado === 'confirmada' || r.estado === 'pagada') acc.push('<button class="btn chico" type="button" data-acc="checkin" data-id="' + r.id + '">' + (c.modo === 'noches' ? 'Check-in' : 'Llegó') + '</button>');
           if ((r.estado === 'confirmada' || r.estado === 'pagada') && sale) acc.push('<button class="btn chico" type="button" data-acc="noshow" data-id="' + r.id + '">No llegó</button>');
           if (r.estado === 'checkin') acc.push('<button class="btn chico" type="button" data-acc="completada" data-id="' + r.id + '">' + (c.modo === 'noches' ? 'Check-out' : 'Terminar') + '</button>');
+          if (ACTIVAS.indexOf(r.estado) > -1 && conUnidades(r) && r.hasta > Date.now()) acc.push('<button class="btn chico" type="button" data-mover="' + r.id + '">Mover</button>');
           if (ACTIVAS.indexOf(r.estado) > -1) acc.push('<button class="btn chico peligro" type="button" data-acc="cancelada" data-id="' + r.id + '">Cancelar</button>');
-          return '<tr><td><b>' + esc(r.codigo) + '</b>' + ((r.rev || 1) > 1 ? '<br><small class="nota">v' + r.rev + ' modificada</small>' : '') + '</td><td>' + dia(r.desde) + (c.modo === 'noches' ? ' → ' + dia(r.hasta) : ' ' + hora(r.desde)) + '</td><td>' + esc(nombreDe(D, r)) + (r.personas > 1 ? ' · ' + r.personas + ' pers.' : '') + '</td><td>' + esc(r.cliente.nombre) + '<br><small class="nota">' + esc(r.cliente.telefono || r.cliente.correo || '') + '</small></td><td>' + esc(r.canal) + '</td><td>' + clp(r.precio.total) + '</td><td>' + clp(r.pagado || 0) + '</td><td>' + chip(r.estado) + '</td><td style="display:flex;gap:4px;flex-wrap:wrap">' + acc.join('') + '</td></tr>';
+          var resp = Object.keys(r.respuestas || {}).map(function (k) { var cp = (c.campos || []).filter(function (x) { return x.id === k; })[0]; return (cp ? cp.etiqueta : k) + ': ' + r.respuestas[k]; }).join(' · ');
+          return '<tr><td><b>' + esc(r.codigo) + '</b>' + ((r.rev || 1) > 1 ? '<br><small class="nota">v' + r.rev + ' modificada</small>' : '') + '</td><td>' + dia(r.desde) + (c.modo === 'noches' ? ' → ' + dia(r.hasta) : ' ' + hora(r.desde)) + '</td><td>' + esc(nombreDe(D, r)) + (r.personas > 1 ? ' · ' + r.personas + ' pers.' : '') + (r.unidadNombre && r.unidadNombre !== nombreDe(D, r) ? '<br><small><b>' + esc(r.unidadNombre) + '</b></small>' : '') + '</td><td>' + esc(r.cliente.nombre) + '<br><small class="nota">' + esc(r.cliente.telefono || r.cliente.correo || '') + '</small>' + (resp ? '<br><small class="nota">' + esc(resp) + '</small>' : '') + '</td><td>' + esc(r.canal) + '</td><td>' + clp(r.precio.total) + '</td><td>' + clp(r.pagado || 0) + '</td><td>' + chip(r.estado) + '</td><td style="display:flex;gap:4px;flex-wrap:wrap">' + acc.join('') + '</td></tr>';
         }).join('') || '<tr><td colspan="9" class="nota">Sin reservas con ese filtro. Aparecen aquí apenas un cliente reserva desde el sitio, con un aviso y sonido.</td></tr>') + '</tbody></table></div><p class="nota" style="margin-top:6px">Se muestran las 80 más recientes de ' + l.length + '.</p>';
     },
     catalogo: function (D) {
@@ -223,6 +235,24 @@
         '<section class="caja"><h2>Por canal</h2>' + lista(agrupar(m.validas, function (r) { return r.canal; })) + '</section><section class="caja"><h2>' + (noches ? 'Por alojamiento' : 'Por servicio') + '</h2>' + lista(agrupar(m.validas, function (r) { return nombreDe(D, r); }, function (r) { return r.precio.total; }), clp) + '</section>' +
         '<section class="caja"><h2>Por país del cliente</h2>' + lista(agrupar(m.validas, function (r) { return r.cliente.pais || 'Sin dato'; })) + '</section><section class="caja"><h2>Descuentos usados</h2>' + lista(agrupar(m.validas.filter(function (r) { return r.precio.descuento; }), function (r) { return r.precio.motivo; }, function (r) { return r.precio.descuento; }), clp) + '</section></div>';
     },
+    modulos: function (D) {
+      var c = D.config, P = propias(D), MODO = { noches: 'Por noches (alojamiento)', cupos: 'Salidas con cupos (tours y actividades)', horas: 'Citas por hora con profesional', bloques: 'Arriendo de espacios por horas' }[c.modo];
+      var ret = P.filter(function (r) { return r.estado === 'retenida'; }).length, esp = (D.espera || []).filter(function (e) { return !e.avisado; }).length, prog = D.avisos.filter(function (a) { return a.estado === 'programado'; }).length;
+      var M = [['pagos', 'Pagos y depósito', 'Pide un depósito para confirmar y guarda el cupo mientras el cliente paga.', ret ? ret + ' reserva(s) esperando pago se mantienen; las nuevas ya no pedirán depósito.' : ''],
+        ['promociones', 'Promociones', 'Códigos de descuento y descuentos automáticos (anticipada, estadía larga, grupo, último minuto).', 'Las reservas ya hechas conservan su descuento.'],
+        ['extras', 'Paquetes y extras', 'El cliente agrega extras al reservar (tinaja, escapada romántica…).', ''],
+        ['avisos', 'Avisos automáticos', 'Confirmación, recordatorio y pedir opinión por correo o WhatsApp.', prog ? 'Los ' + prog + ' aviso(s) ya programados se mantienen; las reservas nuevas no programarán más.' : ''],
+        ['espera', 'Lista de espera', 'Si no hay cupo, el cliente deja su contacto y se le avisa cuando se libera.', esp ? 'Hay ' + esp + ' persona(s) esperando: se conservan en la lista.' : ''],
+        ['campos', 'Formulario propio', 'Preguntas del negocio al reservar (las de abajo).', ''],
+        ['modificar', 'El cliente modifica online', 'Cambiar fecha u hora desde su enlace, hasta ' + (c.politicas.modificarHoras != null ? c.politicas.modificarHoras : 24) + ' h antes. Si se apaga, puede cancelar pero no cambiar.', '']]
+        .filter(function (x) { return x[0] !== 'extras' || c.modo === 'noches'; });
+      var TIPOS = { texto: 'Texto', numero: 'Número', opciones: 'Lista de opciones', si: 'Sí o no' }, campos = c.campos || [];
+      return '<h1 style="font-size:24px;margin-bottom:6px">Módulos y formulario</h1><p class="nota" style="margin-bottom:12px">Tipo de agenda: <b>' + MODO + '</b> (lo define el rubro). Encima de eso, cada módulo se enciende o apaga sin perder nada: las reservas ya hechas conservan lo suyo. Los cambios quedan en el borrador hasta que tocas <b>Publicar cambios</b>.</p>' +
+        '<section class="caja"><h2>Módulos</h2><ul class="lista-b">' + M.map(function (x) { var on = R.modulo(c, x[0]); return '<li style="align-items:flex-start"><label class="chk" style="padding:0"><input type="checkbox" data-modulo="' + x[0] + '"' + (on ? ' checked' : '') + ' data-impacto="' + esc(x[3]) + '"><span><b>' + x[1] + '</b><br><small class="nota">' + x[2] + '</small></span></label><span class="estado-i ' + (on ? 'si">Encendido' : 'no">Apagado') + '</span></li>'; }).join('') + '</ul></section>' +
+        '<section class="caja"><h2>Formulario: preguntas propias</h2><p class="nota" style="margin-bottom:8px">Además de nombre, correo y celular. Ejemplos: patente del vehículo, alergias, edad de los niños, cómo nos conociste. Máximo 10.' + (R.modulo(c, 'campos') ? '' : ' <b>El módulo "Formulario propio" está apagado: no se muestran.</b>') + '</p>' +
+        '<div class="scroll"><table class="tabla"><thead><tr><th>Pregunta</th><th>Tipo</th><th>Obligatoria</th><th></th></tr></thead><tbody>' + (campos.length ? campos.map(function (cp, i) { return '<tr><td><b>' + esc(cp.etiqueta) + '</b>' + (cp.ayuda ? '<br><small class="nota">' + esc(cp.ayuda) + '</small>' : '') + '</td><td>' + TIPOS[cp.tipo] + (cp.tipo === 'opciones' ? '<br><small class="nota">' + esc((cp.opciones || []).join(', ')) + '</small>' : '') + '</td><td><input type="checkbox" data-campo-obl="' + i + '"' + (cp.obligatorio ? ' checked' : '') + ' style="width:22px;height:22px" aria-label="Obligatoria"></td><td><button class="btn chico peligro" type="button" data-campo-quitar="' + i + '">Quitar</button></td></tr>'; }).join('') : '<tr><td colspan="4" class="nota">Sin preguntas propias.</td></tr>') + '</tbody></table></div>' +
+        (campos.length < 10 ? '<form class="form-l" data-campo-nuevo style="margin-top:12px"><div class="campo"><label for="cf-et">Pregunta</label><input id="cf-et" maxlength="80" placeholder="Patente del vehículo"></div><div class="campo"><label for="cf-tipo">Tipo</label><select id="cf-tipo">' + Object.keys(TIPOS).map(function (k) { return '<option value="' + k + '">' + TIPOS[k] + '</option>'; }).join('') + '</select></div><div class="campo"><label for="cf-op">Opciones (si es lista, separadas por coma)</label><input id="cf-op" maxlength="400" placeholder="Instagram, Google, Un amigo"></div><div class="campo"><label for="cf-ay">Ayuda (opcional)</label><input id="cf-ay" maxlength="120"></div><label class="chk"><input type="checkbox" id="cf-obl"><span>Obligatoria</span></label><button class="btn prim" type="submit">Agregar</button></form>' : '') + '</section>';
+    },
     negocio: function (D) {
       var c = D.config, COL = ['#2f6f4e', '#c2562b', '#1d6fb8', '#5b4bb7', '#b8437a', '#a16207'];
       return '<h1 style="font-size:24px;margin-bottom:6px">Negocio y equipo</h1><div class="grid2"><form class="caja" data-negocio><h2>Datos del negocio</h2><div style="display:grid;gap:12px">' +
@@ -259,6 +289,7 @@
       inp('e-nombre', 'Nombre', e.nombre, 'maxlength="60"') + '<div class="campo"><label for="e-desc">Descripción corta</label><textarea id="e-desc" rows="2" maxlength="160">' + esc(e.desc || '') + '</textarea></div>' +
       (!(esRec && m === 'horas') ? inp('e-precio', m === 'noches' && esRec ? 'Precio por noche ($)' : m === 'cupos' ? 'Precio por persona ($)' : m === 'bloques' ? 'Precio por hora ($)' : 'Precio ($)', e.precio, 'type="number" min="0" step="500" inputmode="numeric"') : '') +
       (esRec && (m === 'noches' || m === 'horas' || m === 'bloques') ? inp('e-unid', 'Unidades iguales (cuántas hay)', e.unidades == null ? 1 : e.unidades, 'type="number" min="1" max="50"') : '') +
+      (esRec && m !== 'cupos' ? inp('e-nuni', 'Nombre de cada unidad (opcional, separados por coma)', (e.nombresUnidades || []).join(', '), 'placeholder="Copihue 1, Copihue 2… o Cabaña Roja, Cabaña Azul" maxlength="400"') : '') +
       (esRec && (m === 'noches' || m === 'bloques') ? inp('e-cap', 'Capacidad (personas)', e.capacidad || 2, 'type="number" min="1" max="500"') : '') +
       (esRec && m === 'bloques' ? inp('e-minh', 'Mínimo de horas', e.minHoras || 1, 'type="number" min="1" max="12"') : '') +
       (esRec && m === 'horas' ? '<div class="campo"><span class="lbl">Servicios que atiende</span>' + c.servicios.map(function (s) { return '<label class="chk"><input type="checkbox" data-atiende="' + esc(s.id) + '"' + ((e.servicios || []).indexOf(s.id) > -1 ? ' checked' : '') + '><span>' + esc(s.nombre) + '</span></label>'; }).join('') + '<small class="campo-err" role="alert"></small></div>' : '') +
@@ -283,12 +314,100 @@
       if (fallos.length) { var f0 = fallos[0]; if (f0) { f0.scrollIntoView({ block: 'center' }); f0.focus(); } dlg.querySelector('[data-err-general]').textContent = 'Revisa los campos marcados en rojo.'; return; }
       var s = nuevo ? { id: slug(v('e-nombre'), lista.map(function (q) { return q.id; })) } : e;
       s.nombre = v('e-nombre').slice(0, 60); s.desc = v('e-desc').slice(0, 160); if (dlg.querySelector('#e-precio')) s.precio = pr;
-      if (dlg.querySelector('#e-unid')) s.unidades = Math.max(1, num('e-unid', 1)); if (dlg.querySelector('#e-cap')) s.capacidad = Math.max(1, num('e-cap', 2)); if (dlg.querySelector('#e-minh')) s.minHoras = Math.max(1, num('e-minh', 1));
+      if (dlg.querySelector('#e-unid')) s.unidades = Math.max(1, num('e-unid', 1)); if (dlg.querySelector('#e-nuni')) { var nu = v('e-nuni').split(',').map(function (z) { return z.trim().slice(0, 40); }).filter(Boolean).slice(0, s.unidades || 1); if (nu.length) s.nombresUnidades = nu; else delete s.nombresUnidades; } if (dlg.querySelector('#e-cap')) s.capacidad = Math.max(1, num('e-cap', 2)); if (dlg.querySelector('#e-minh')) s.minHoras = Math.max(1, num('e-minh', 1));
       if (dlg.querySelector('#e-dur')) s.duracion = Math.max(5, num('e-dur', 30)); if (dlg.querySelector('#e-minp')) s.minPersonas = Math.max(1, num('e-minp', 1));
       if (dlg.querySelector('#e-sal')) { s.salidas = sal; s.dias = dias; } if (dlg.querySelector('[data-atiende]')) s.servicios = atiende;
       var inc = v('e-inc').split('\n').map(function (l) { return l.trim(); }).filter(Boolean).slice(0, 8); if (inc.length) s.incluye = inc; else delete s.incluye;
       R.guardarConfig(neg, function (cfg) { var l = tipo === 'recurso' ? cfg.recursos : cfg.servicios, i = -1; l.forEach(function (q, k) { if (q.id === s.id) i = k; }); if (i < 0) l.push(s); else l[i] = s; });
       dlg.close(); pintar(); toast('Guardado en el borrador. Tócalo "Publicar cambios" para que lo vean tus clientes.');
+    });
+  }
+
+  // ---------- Reserva por teléfono, WhatsApp o mostrador (la crea el equipo; el servidor valida la disponibilidad igual que en el sitio) ----------
+  function nuevaReserva() {
+    var D = R.leer(neg), c = D.config, m = c.modo, efe = R.efectiva(c), lista = m === 'noches' || m === 'bloques' ? c.recursos : c.servicios;
+    var hoyS = U.hoy(), sel = { personas: m === 'horas' ? 1 : 2 };
+    var dlg = document.createElement('dialog'); dlg.className = 'editor'; document.body.appendChild(dlg);
+    var campos = R.modulo(c, 'campos') ? (c.campos || []) : [];
+    dlg.innerHTML = '<form method="dialog" novalidate><div class="ed-cab"><h2>Nueva reserva</h2><button class="btn chico" type="button" data-cerrar aria-label="Cerrar">×</button></div><div class="ed-cuerpo">' +
+      '<p class="nota">Para reservas que llegan por teléfono, WhatsApp o en persona. El sistema revisa que haya cupo, igual que en el sitio.</p>' +
+      '<div class="campo"><label for="nr-que">' + (m === 'noches' ? 'Alojamiento' : m === 'bloques' ? 'Espacio' : m === 'cupos' ? 'Tour' : 'Servicio') + '</label><select id="nr-que">' + lista.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.nombre) + '</option>'; }).join('') + '</select></div>' +
+      (m === 'noches' ? '<div class="form-l"><div class="campo"><label for="nr-lleg">Llegada</label><input id="nr-lleg" type="date" min="' + hoyS + '" value="' + hoyS + '"></div><div class="campo"><label for="nr-sal">Salida</label><input id="nr-sal" type="date" min="' + U.sumaDias(hoyS, 1) + '" value="' + U.sumaDias(hoyS, 1) + '"></div></div>'
+        : '<div class="campo"><label for="nr-fecha">Día</label><input id="nr-fecha" type="date" min="' + hoyS + '" value="' + hoyS + '"></div>') +
+      (m === 'horas' ? '<div class="campo"><label for="nr-prof">Profesional</label><select id="nr-prof"></select></div>' : '') +
+      (m === 'bloques' ? '<div class="campo"><label for="nr-hrs">Horas</label><input id="nr-hrs" type="number" min="1" max="12" value="1"></div>' : '') +
+      (m !== 'noches' ? '<div class="campo"><label for="nr-hora">' + (m === 'cupos' ? 'Salida' : 'Hora') + '</label><select id="nr-hora"></select></div>' : '') +
+      (m !== 'horas' ? '<div class="campo"><label for="nr-pers">Personas</label><input id="nr-pers" type="number" min="1" max="500" value="2"></div>' : '') +
+      '<p class="nota" data-nr-disp role="status"></p>' +
+      '<div class="campo"><label for="nr-nombre">Nombre y apellido</label><input id="nr-nombre" maxlength="60" autocomplete="off"><small class="campo-err" role="alert"></small></div>' +
+      '<div class="form-l"><div class="campo"><label for="nr-tel">Celular</label><input id="nr-tel" type="tel" maxlength="20" placeholder="+56 9 1234 5678"><small class="campo-err" role="alert"></small></div><div class="campo"><label for="nr-correo">Correo (opcional)</label><input id="nr-correo" type="email" maxlength="120"><small class="campo-err" role="alert"></small></div></div>' +
+      '<div class="campo"><label for="nr-canal">Llegó por</label><select id="nr-canal"><option>Teléfono</option><option>WhatsApp</option><option>Presencial</option></select></div>' +
+      campos.map(function (cp) { return '<div class="campo"><label for="nr-c-' + esc(cp.id) + '">' + esc(cp.etiqueta) + ' <small class="nota">(opcional para el equipo)</small></label>' + (cp.tipo === 'opciones' || cp.tipo === 'si' ? '<select id="nr-c-' + esc(cp.id) + '" data-resp="' + esc(cp.id) + '"><option value=""></option>' + (cp.tipo === 'si' ? ['Sí', 'No'] : cp.opciones || []).map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select>' : '<input id="nr-c-' + esc(cp.id) + '" data-resp="' + esc(cp.id) + '" maxlength="300">') + '</div>'; }).join('') +
+      (efe.politicas.deposito ? '<label class="chk"><input type="checkbox" id="nr-sinpago" checked><span>Confirmar sin esperar el depósito (paga al llegar o ya lo transfirió). Si lo desmarcas, queda retenida ' + efe.politicas.retencionMin + ' minutos esperando el pago.</span></label>' : '') +
+      '</div><div class="ed-pie"><span class="campo-err" data-err-general style="margin-right:auto"></span><button class="btn" type="button" data-cerrar>Cancelar</button><button class="btn prim" type="submit">Crear reserva</button></div></form>';
+    var $ = function (s) { return dlg.querySelector(s); }, val = function (s) { var el = $(s); return el ? el.value.trim() : ''; };
+    function leerSel() {
+      var k = m === 'noches' || m === 'bloques' ? 'recurso' : 'servicio'; sel = { personas: m === 'horas' ? 1 : Math.max(1, +val('#nr-pers') || 1) }; sel[k] = val('#nr-que');
+      if (m === 'noches') { sel.llegada = val('#nr-lleg'); sel.salida = val('#nr-sal'); }
+      else { sel.fecha = val('#nr-fecha'); var h = $('#nr-hora'); if (h && h.value !== '') sel.min = +h.value; }
+      if (m === 'horas' && val('#nr-prof')) sel.recurso = val('#nr-prof');
+      if (m === 'bloques') sel.horas = Math.max(1, +val('#nr-hrs') || 1);
+      return sel;
+    }
+    // Horas o salidas libres del día elegido, y cuánto queda en las noches elegidas
+    function refrescar(cambioHoras) {
+      var D2 = R.leer(neg), s = leerSel(), disp = $('[data-nr-disp]');
+      if (m === 'horas' && cambioHoras !== 'prof') { var profs = c.recursos.filter(function (r) { return (r.servicios || []).indexOf(s.servicio) > -1; }), pa = val('#nr-prof'); $('#nr-prof').innerHTML = '<option value="">Cualquiera</option>' + profs.map(function (r) { return '<option value="' + esc(r.id) + '"' + (r.id === pa ? ' selected' : '') + '>' + esc(r.nombre) + '</option>'; }).join(''); s = leerSel(); }
+      if (m === 'noches') {
+        if (!s.llegada || !s.salida || s.salida <= s.llegada) { disp.textContent = 'Elige la llegada y una salida posterior.'; return; }
+        var rr = R.recurso(D2, s.recurso), min = rr.unidades;
+        for (var f = s.llegada; f < s.salida; f = U.sumaDias(f, 1)) min = Math.min(min, R.libresNoche(D2, s.recurso, f));
+        disp.innerHTML = min > 0 ? 'Quedan <b>' + min + ' de ' + rr.unidades + '</b> para esas noches.' : '<b style="color:var(--lleno)">No queda ninguna libre esas noches.</b>';
+        return;
+      }
+      var hs = !s.fecha ? [] : m === 'cupos' ? R.salidas(D2, s).filter(function (x) { return x.quedan > 0; }) : R.horas(D2, s), sel0 = val('#nr-hora');
+      $('#nr-hora').innerHTML = hs.length ? hs.map(function (h) { return '<option value="' + h.min + '"' + (String(h.min) === sel0 ? ' selected' : '') + '>' + h.hora + (m === 'cupos' ? ' · quedan ' + h.quedan : '') + '</option>'; }).join('') : '<option value="">Sin horas libres ese día</option>';
+      disp.textContent = hs.length ? hs.length + (m === 'cupos' ? ' salida(s) con cupo.' : ' hora(s) libre(s) ese día.') : 'Ese día no queda nada libre (o está cerrado).';
+    }
+    refrescar();
+    dlg.showModal(); dlg.addEventListener('close', function () { dlg.remove(); });
+    dlg.addEventListener('click', function (ev) { if (ev.target.closest('[data-cerrar]')) dlg.close(); });
+    dlg.addEventListener('change', function (ev) { if (ev.target.id === 'nr-hora') return; if (ev.target.id === 'nr-lleg' && val('#nr-sal') <= val('#nr-lleg')) $('#nr-sal').value = U.sumaDias(val('#nr-lleg'), 1); refrescar(ev.target.id === 'nr-prof' ? 'prof' : ''); });
+    dlg.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      [].forEach.call(dlg.querySelectorAll('.campo.mal'), function (cc) { cc.classList.remove('mal'); var s0 = cc.querySelector('.campo-err'); if (s0) s0.textContent = ''; });
+      var mal = function (id, msg) { var cont = $(id).closest('.campo'); cont.classList.add('mal'); cont.querySelector('.campo-err').textContent = msg; }, fallo = false;
+      var tel = val('#nr-tel').replace(/[^\d+]/g, ''), cor = val('#nr-correo');
+      if (val('#nr-nombre').length < 3) { mal('#nr-nombre', 'Escribe nombre y apellido.'); fallo = true; }
+      if (!tel && !cor) { mal('#nr-tel', 'Escribe el celular o el correo.'); fallo = true; }
+      if (tel && tel.replace(/\D/g, '').length < 8) { mal('#nr-tel', 'Celular con código de país, por ejemplo +56 9 1234 5678.'); fallo = true; }
+      if (cor && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cor)) { mal('#nr-correo', 'Correo no válido.'); fallo = true; }
+      var s = leerSel();
+      if (m !== 'noches' && s.min == null) { $('[data-err-general]').textContent = 'Elige un día con horas libres.'; return; }
+      if (fallo) { $('[data-err-general]').textContent = 'Revisa los campos marcados en rojo.'; return; }
+      var resp = {}; [].forEach.call(dlg.querySelectorAll('[data-resp]'), function (el) { if (el.value.trim()) resp[el.dataset.resp] = el.value.trim(); });
+      var btn = $('[type="submit"]'); btn.disabled = true; btn.textContent = 'Creando…'; $('[data-err-general]').textContent = '';
+      Promise.resolve(R.crear(neg, s, { nombre: val('#nr-nombre'), correo: cor, telefono: tel, pais: 'Chile', idioma: 'es' }, { canal: val('#nr-canal'), sinPago: !!($('#nr-sinpago') && $('#nr-sinpago').checked), equipo: true, respuestas: resp })).then(function (o) {
+        btn.disabled = false; btn.textContent = 'Crear reserva';
+        if (!o || o.error) { $('[data-err-general]').textContent = (o && o.error) || 'No se pudo crear.'; refrescar(); return; }
+        dlg.close(); tab = 'reservas'; pintar();
+        toast('Reserva ' + o.reserva.codigo + ' creada' + (o.reserva.unidadNombre ? ' · ' + o.reserva.unidadNombre : '') + '. Dale el código al cliente.');
+      });
+    });
+  }
+  // Mover una reserva a otra unidad (cabaña, habitación, box) del mismo tipo
+  function mover(id) {
+    var D = R.leer(neg), r = D.reservas.filter(function (z) { return z.id === id; })[0]; if (!r) return;
+    var us = R.unidadesDe(neg, id);
+    var dlg = document.createElement('dialog'); dlg.className = 'editor'; document.body.appendChild(dlg);
+    dlg.innerHTML = '<form method="dialog"><div class="ed-cab"><h2>Mover ' + esc(r.codigo) + '</h2><button class="btn chico" type="button" data-cerrar aria-label="Cerrar">×</button></div><div class="ed-cuerpo"><p class="nota">' + esc(nombreDe(D, r)) + ' · ' + dia(r.desde) + (D.config.modo === 'noches' ? ' → ' + dia(r.hasta) : ' ' + hora(r.desde)) + '. Hoy está en <b>' + esc(r.unidadNombre || 'sin unidad asignada') + '</b>. Elige a cuál moverla:</p><div style="display:grid;gap:8px">' +
+      us.map(function (x) { return '<button class="btn' + (x.actual ? ' prim' : '') + '" type="button" data-u="' + x.u + '"' + (x.actual || x.ocupada ? ' disabled' : '') + '>' + esc(x.nombre) + (x.actual ? ' · aquí está ahora' : x.ocupada ? ' · ocupada' + (x.ocupada === 'bloqueo' ? ' (bloqueada)' : ' por ' + esc(x.ocupada)) : ' · libre') + '</button>'; }).join('') +
+      '</div><p class="campo-err" data-err-general></p></div><div class="ed-pie"><button class="btn" type="button" data-cerrar>Cerrar</button></div></form>';
+    dlg.showModal(); dlg.addEventListener('close', function () { dlg.remove(); });
+    dlg.addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-cerrar]')) { dlg.close(); return; }
+      var b = ev.target.closest('[data-u]'); if (!b) return; b.disabled = true;
+      R.moverUnidad(neg, id, +b.dataset.u).then(function (o) { if (!o || o.error) { dlg.querySelector('[data-err-general]').textContent = (o && o.error) || 'No se pudo mover.'; b.disabled = false; return; } dlg.close(); toast(r.codigo + ' ahora está en ' + (o.reserva && o.reserva.unidadNombre) + '.'); pintar(); });
     });
   }
 
@@ -315,6 +434,8 @@
       return;
     }
     if ((x = e.target.closest('[data-nuevo]'))) { editor(x.dataset.nuevo, null); return; }
+    if (e.target.closest('[data-nueva-res]')) { nuevaReserva(); return; }
+    if ((x = e.target.closest('[data-mover]'))) { mover(x.dataset.mover); return; }
     if ((x = e.target.closest('[data-ed]'))) { var p = x.dataset.ed.split(':'); editor(p[0], p[1]); return; }
     if ((x = e.target.closest('[data-del]'))) {
       var pd = x.dataset.del.split(':'), tipoD = pd[0], idD = pd[1], enUso = propias(D).filter(function (r) { return ACTIVAS.indexOf(r.estado) > -1 && r.desde > Date.now() && (tipoD === 'recurso' ? r.recurso === idD : r.servicio === idD); }).length;
@@ -323,6 +444,7 @@
       pintar(); return;
     }
     if (e.target.closest('[data-nueva-temp]')) { R.guardarConfig(neg, function (cfg) { cfg.temporadas = cfg.temporadas || []; cfg.temporadas.push({ nombre: 'Nueva temporada', desde: '01-01', hasta: '01-31', factor: 1.2 }); }); pintar(); return; }
+    if ((x = e.target.closest('[data-campo-quitar]'))) { if (!confirm('¿Quitar esta pregunta? Las respuestas ya guardadas en reservas se mantienen.')) return; R.guardarConfig(neg, function (cfg) { cfg.campos.splice(+x.dataset.campoQuitar, 1); }); pintar(); return; }
     if ((x = e.target.closest('[data-quitar-temp]'))) { R.guardarConfig(neg, function (cfg) { cfg.temporadas.splice(+x.dataset.quitarTemp, 1); }); pintar(); return; }
     if ((x = e.target.closest('[data-color]'))) { R.guardarConfig(neg, function (cfg) { cfg.color = x.dataset.color; }); pintar(); return; }
     if (e.target.closest('[data-ical-bajar]')) { var rec = app.querySelector('#ic-rec').value; bajar(neg + '-' + rec + '.ics', R.exportarIcal(neg, rec), 'text/calendar'); return; }
@@ -336,6 +458,12 @@
   app.addEventListener('change', function (e) {
     var t = e.target, ds = t.dataset;
     if (t.id === 'f-est') { filtro.estado = t.value; pintar(); }
+    if (t.id === 'b-rec') llenarUnidades();
+    if (ds.modulo) {
+      if (!t.checked && ds.impacto && !confirm('Apagar este módulo. ' + ds.impacto + ' ¿Seguir?')) { t.checked = true; return; }
+      R.guardarConfig(neg, function (c) { c.modulos = c.modulos || {}; c.modulos[ds.modulo] = t.checked; }); pintar(); return;
+    }
+    if (ds.campoObl !== undefined) { R.guardarConfig(neg, function (c) { c.campos[+ds.campoObl].obligatorio = t.checked; }); pintar(); return; }
     if (ds.regla) { R.guardarConfig(neg, function (c) { c.reglas[+ds.regla].activa = t.checked; }); pintar(); }
     if (ds.promo) { R.guardarConfig(neg, function (c) { c.promos[+ds.promo].activa = t.checked; }); pintar(); }
     if (ds.notif) { R.guardarConfig(neg, function (c) { c.notif[ds.notif][ds.c] = t.checked; }); pintar(); }
@@ -344,7 +472,13 @@
   app.addEventListener('input', function (e) { if (e.target.id === 'f-txt') { filtro.texto = e.target.value; clearTimeout(app._b); app._b = setTimeout(function () { pintar(); var i = app.querySelector('#f-txt'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 300); } });
   app.addEventListener('submit', function (e) {
     e.preventDefault(); var f = e.target, v = function (id) { var el = f.querySelector('#' + id); return el ? el.value : ''; };
-    if (f.matches('[data-bloq]')) { var a = U.fdate(v('b-desde')).getTime(), b = U.fdate(v('b-hasta')).getTime(); if (!(b > a)) return toast('La fecha "hasta" debe ser después de "desde".', true); BUS(R.bloquear(neg, v('b-rec'), a, b, v('b-mot').slice(0, 60))).then(function (o) { if (o && !o.error) { toast('Fechas bloqueadas: ya no se pueden reservar.'); pintar(); } }); return; }
+    if (f.matches('[data-bloq]')) { var a = U.fdate(v('b-desde')).getTime(), b = U.fdate(v('b-hasta')).getTime(); if (!(b > a)) return toast('La fecha "hasta" debe ser después de "desde".', true); BUS(R.bloquear(neg, v('b-rec'), a, b, v('b-mot').slice(0, 60), v('b-uni') || 'todas')).then(function (o) { if (o && !o.error) { toast('Fechas bloqueadas: ya no se pueden reservar.'); pintar(); } }); return; }
+    if (f.matches('[data-campo-nuevo]')) {
+      var et = v('cf-et').trim(), tp = v('cf-tipo'), ops = v('cf-op').split(',').map(function (z) { return z.trim().slice(0, 60); }).filter(Boolean).slice(0, 20);
+      if (!et) return toast('Escribe la pregunta.', true); if (tp === 'opciones' && !ops.length) return toast('Escribe las opciones separadas por coma.', true);
+      R.guardarConfig(neg, function (c) { c.campos = c.campos || []; var cp = { id: slug(et, c.campos.map(function (z) { return z.id; })), etiqueta: et.slice(0, 80), tipo: tp, obligatorio: f.querySelector('#cf-obl').checked }; if (tp === 'opciones') cp.opciones = ops; if (v('cf-ay').trim()) cp.ayuda = v('cf-ay').trim().slice(0, 120); c.campos.push(cp); });
+      toast('Pregunta agregada al borrador.'); pintar(); return;
+    }
     if (f.matches('[data-nueva-promo]')) { var cod = v('p-cod').trim().toUpperCase().replace(/[^A-Z0-9]/g, ''); if (cod.length < 3) return toast('El código debe tener al menos 3 letras o números.', true); if ((R.leer(neg).config.promos || []).some(function (p) { return p.codigo === cod; })) return toast('Ese código ya existe.', true); R.guardarConfig(neg, function (c) { c.promos = c.promos || []; c.promos.push({ codigo: cod, tipo: v('p-tipo'), valor: Math.max(1, +v('p-val') || 1), minimo: Math.max(0, +v('p-min') || 0), activa: true, usos: 0, usosMax: Math.max(1, +v('p-max') || 100) }); }); toast('Código ' + cod + ' creado en el borrador.'); pintar(); return; }
     if (f.matches('[data-pol]')) {
       R.guardarConfig(neg, function (c) {

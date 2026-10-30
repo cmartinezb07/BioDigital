@@ -1125,3 +1125,4 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 - **Repositorio:** el `.gitignore` excluía todos los CSV y la planilla de ejemplo de la reserva simple no estaba en GitHub; se agregó la excepción solo para esos archivos ficticios.
 - **Prueba de reglas:** U1 dependía de la fecha (dos pruebas caían el mismo miércoles); corregido, 89/89.
 - **Menú simple sin mensualidad:** el dueño cambia precios, agotados y descripciones en su planilla de Google (misma idea que la reserva simple); la carta sigue siendo una página fija (buena para Google) y lee la planilla al abrirse.
+- **Cartel con QR** (`ejemplos/_compartido/cartel.html`): A4 para imprimir o imagen 1080 px; se abre desde Panel PRO › Integraciones y las herramientas de reserva simple y fidelización dejan el enlace listo.

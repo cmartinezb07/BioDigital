@@ -68,4 +68,5 @@ console.log(`Listo: web/propuesta/ejemplos/${id}/ (${sellos} sellos → ${premio
   PIN dueño ${pins.dueno} · caja ${pins.caja} (entregarlos por un canal privado)
   SQL de accesos: web/herramientas/fidelizaciones/${id}-instalar.sql
 Siguiente: (1) ejecutar nube-sql/007 si aún no está y ese SQL en Supabase, (2) probar http://localhost:4321/ejemplos/${id}/ y /local/,
-(3) publicar: npx wrangler pages deploy web/propuesta/ejemplos/${id} --project-name=${id} --branch=main --commit-dirty=true, (4) imprimir el QR que lleva a la tarjeta.`);
+(3) publicar: npx wrangler pages deploy web/propuesta/ejemplos/${id} --project-name=${id} --branch=main --commit-dirty=true, (4) imprimir el cartel con el QR que lleva a la tarjeta:
+    https://biodigitales.cl/ejemplos/_compartido/cartel.html?url=${encodeURIComponent(urlFinal || 'https://DIRECCION-DE-LA-TARJETA/')}&titulo=${encodeURIComponent('Junta sellos y gana')}&sub=${encodeURIComponent(nombre + ' · ' + premio)}&color=${encodeURIComponent(color)}`);

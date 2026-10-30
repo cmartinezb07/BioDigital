@@ -1116,3 +1116,11 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 - **Decisión:** lo ocupado sale del **Google Calendar del dueño** (público "solo libre/ocupado", consulta freeBusy con llave gratis de Bío Digital); el WhatsApp trae un **enlace para el negocio** (datos tras `#`, sin servidor) para **agendar en su calendario y confirmar al cliente en 2 toques**, proponer otra hora o avisar que no hay; el cliente recibe su enlace de calendario con recordatorio; **varios servicios** en una solicitud. La planilla queda opcional (precios y servicios).
 - **PRO, siguiente:** recordatorios automáticos por correo y ficha de cliente (historial, frecuentes); reseña en Google después de la visita. WhatsApp automático y pago en línea cuando un cliente los pague.
 - **Pendiente:** crear la llave de la API de Google Calendar (Google Cloud de Bío Digital, restringida a biodigitales.cl y *.pages.dev) y probar con un calendario real.
+
+## 30-oct-2026 (noche) — Mejoras autónomas (el usuario pidió seguir mejorando sin revisar)
+- **PRO:** pestaña Clientes (ficha armada con las reservas: visitas, gastado, frecuentes, nuevos, sin volver 60+ días, próxima reserva; WhatsApp para invitar a volver, agradecer o pedir reseña) y enlace de reseña de Google (`config.resenaUrl`) también en el aviso de después de la visita (SQL 006g, aplicado).
+- **Menú PRO:** `nuevo-restaurante.mjs` pone el WhatsApp del local (o quita el botón); antes dejaba el de Bío Digital.
+- **Fidelización:** la tarjeta lee `fidelizacion.config.js` (nombre, sigla, color, sellos, premio) y `nuevo-fidelizacion.mjs` la arma para un local nuevo con su SQL de accesos (fuera de git).
+- **Riesgo encontrado:** la regla que impide que un cliente se sume sellos solo protegía al negocio de la demo ('fidelizacion'). Corrección lista en `nube-sql/007-fidelizacion-cualquier-negocio.sql`; **el permiso bloqueó aplicarla**: aplicarla antes de entregar la primera tarjeta real.
+- **Repositorio:** el `.gitignore` excluía todos los CSV y la planilla de ejemplo de la reserva simple no estaba en GitHub; se agregó la excepción solo para esos archivos ficticios.
+- **Prueba de reglas:** U1 dependía de la fecha (dos pruebas caían el mismo miércoles); corregido, 89/89.

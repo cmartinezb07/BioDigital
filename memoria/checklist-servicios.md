@@ -13,7 +13,7 @@ Lo que ofrece https://biodigitales.cl (revisado el 30-oct), contrastado con lo q
 | 5 | Registro fotográfico ($4.990) | ✅ | Fotos con celular en el local, según lo que pida el cliente; formato simple, sin límite fijo de fotos, entrega lo antes posible. `foto-a-modelo.py` para las fotos de la carta | — |
 | 6 | Sistema de reservas simple (desde $24.990) | 🟡 casi | Demo `ejemplos/reservas-simple/`: lo ocupado sale del Google Calendar del dueño, varios servicios por solicitud, enlace para que el negocio agende y confirme en 2 toques, recordatorio para el cliente; planilla opcional para precios; `aplicar-formulario-agenda.mjs --simple`; prueba 18/18 | **Crear la llave de Google Calendar de Bío Digital** y probar con un calendario real |
 | 7 | Sistema de reservas PRO ($99.990; $79.990 + $20.000/mes) | ✅ | Todo lo del 29-oct, demo publicada el 30-oct | Correo y WhatsApp reales y pasarela (necesitan cuentas); mesas y profesional + recurso solo si un cliente lo pide |
-| 8 | Tarjeta de fidelización ($9.990; $5.990 lanzamiento) | ✅ | `ejemplos/fidelizacion/`: tarjeta con QR y sellos, caja con cámara, canje, métricas | No hay herramienta para armarla para un cliente nuevo (se copia a mano); Wallet de Google/Apple es aparte y con costo mensual |
+| 8 | Tarjeta de fidelización ($9.990; $5.990 lanzamiento) | ✅ | `ejemplos/fidelizacion/`: tarjeta con QR y sellos, caja con cámara, canje, métricas | Herramienta `nuevo-fidelizacion.mjs` (30-oct): nombre, color, sellos y premio por local. **Antes del primer local real: aplicar `nube-sql/007`** (protege los sellos de cualquier negocio; el permiso me bloqueó aplicarlo). Wallet es aparte y con costo mensual |
 
 ## Packs y ofertas
 

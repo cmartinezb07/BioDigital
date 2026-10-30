@@ -53,3 +53,9 @@ web/herramientas/agendas/
 # Material privado de clientes (fotos y cartas de terceros): no va al repositorio
 material-clientes/
 web/propuesta/ejemplos/la-joya-del-sur/
+
+# Planilla de ejemplo de la demo de reserva simple (datos ficticios): sí se versiona
+!web/propuesta/ejemplos/reservas-simple/planilla-ejemplo/*.csv
+
+# PIN de tarjetas de fidelización reales generados por nuevo-fidelizacion.mjs
+web/herramientas/fidelizaciones/

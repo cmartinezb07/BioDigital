@@ -1,0 +1,6 @@
+Servicio,Precio,Duración (min),Descripción,Activo
+Corte y lavado,12000,45,"Incluye lavado y secado.",Sí
+Color completo,35000,120,,Sí
+Manicure semipermanente,10000,60,,Sí
+Corte de barba,8000,30,Perfilado con navaja.,Sí
+Alisado,,90,Fila sin precio: se ignora,Sí

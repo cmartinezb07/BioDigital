@@ -5,10 +5,13 @@
 // Sin Wallet, que sí tiene mensualidad y se cotiza aparte. Ver memoria/conexion-nube.md.
 (function () {
   'use strict';
-  var CLAVE = 'bdfid-v2', MI = 'bdfid-mi', NEG = 'fidelizacion';
-  var PROGRAMA = { negocio: 'Café Mirador', sigla: 'CM', comuna: 'Concepción', sellos: 8, premio: 'Un café de especialidad gratis', minutosEntreSellos: 1 };
+  // El programa de cada local viene de fidelizacion.config.js (window.FIDELIZACION; lo arma nuevo-fidelizacion.mjs). Sin él, el de la demostración.
+  var FC = window.FIDELIZACION || {}, NEG = FC.negocio || 'fidelizacion';
+  var CLAVE = 'bdfid-v2' + (NEG === 'fidelizacion' ? '' : '-' + NEG), MI = 'bdfid-mi' + (NEG === 'fidelizacion' ? '' : '-' + NEG);   // dos locales en un mismo celular no se mezclan
+  var PROGRAMA = Object.assign({ negocio: 'Café Mirador', sigla: 'CM', comuna: 'Concepción', sellos: 8, premio: 'Un café de especialidad gratis', minutosEntreSellos: 1, color: '#6b4226' }, FC.programa || {});
   var TAZA = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5Z"/><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/></svg>';
-  var LOGO = '<span class="logo-n" style="--lc:#6b4226;--lt:36px" aria-hidden="true">' + 'CM' + '</span>';
+  document.documentElement.style.setProperty('--fid', PROGRAMA.color);   // el color del local tiñe la tarjeta
+  var LOGO = '<span class="logo-n" style="--lc:' + PROGRAMA.color + ';--lt:36px" aria-hidden="true">' + String(PROGRAMA.sigla).replace(/[<>&"]/g, '') + '</span>';
   // Tarjeta (se usa para la del cliente y para la vista previa del alta)
   function htmlTarjeta(t, ejemplo) {
     var completa = t.sellos >= PROGRAMA.sellos;
@@ -131,7 +134,7 @@
     if (!t) { box.innerHTML = '<p class="err">No encontramos la tarjeta ' + esc(c) + '. Revisa el código.</p>'; return; }
     box.innerHTML = '<p style="font-size:20px;font-weight:700">' + esc(t.nombre) + ' · ' + t.sellos + ' de ' + PROGRAMA.sellos + ' sellos</p><div class="acciones-r" style="justify-content:flex-start"><button class="btn prim" type="button" data-sellar="' + t.codigo + '"' + (t.sellos >= PROGRAMA.sellos ? ' disabled' : '') + '>Sumar un sello</button><button class="btn" type="button" data-canjear="' + t.codigo + '"' + (t.sellos < PROGRAMA.sellos ? ' disabled' : '') + '>Canjear premio</button></div>';
   }
-  if (modo === 'local') Nube.acceso({ negocio: NEG, titulo: 'Caja · ' + PROGRAMA.negocio, aceptan: ['caja', 'dueno'], pistas: [{ rol: 'Caja', pin: '764193' }, { rol: 'Dueño', pin: '482916' }] }).then(function () {
+  if (modo === 'local') Nube.acceso({ negocio: NEG, titulo: 'Caja · ' + PROGRAMA.negocio, aceptan: ['caja', 'dueno'], pistas: FC.negocio ? null : [{ rol: 'Caja', pin: '764193' }, { rol: 'Dueño', pin: '482916' }] }).then(function () {
     entrarEquipo();
     var sel = new URLSearchParams(location.search).get('tarjeta') || '';
     app.innerHTML = '<h1 style="font-size:26px">Caja · ' + esc(PROGRAMA.negocio) + '</h1><p class="nota" style="margin-bottom:14px">Escanea el QR de la tarjeta del cliente y suma su sello. Premio a los ' + PROGRAMA.sellos + ' sellos: ' + esc(PROGRAMA.premio) + '.</p>' +

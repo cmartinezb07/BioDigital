@@ -12,6 +12,7 @@ import { WHATSAPP } from './config.mjs';
 // El restaurante se muestra con cuatro imágenes seguidas (menú, pedido con repartidor, cocina y panel), pero lleva a solo DOS páginas:
 // 1) el menú para ver la carta y pedir; 2) el panel del restaurante, donde cada persona entra con su código (cocinero, repartidor o jefe).
 // `destino`: página a la que lleva la tarjeta. `soloCarrusel`: sale en la portada pero no como tarjeta aparte en la galería.
+// `soloGaleria`: sale en la galería de ejemplos pero no en el carrusel de la portada (la portada no crece).
 // `capturaRuta`: la captura se toma de una copia de la plantilla con pedidos de muestra (herramientas/semillas-restaurante.mjs).
 const LISTA = [
   { id: 'fogon-del-sur', rubro: 'Restaurantes', nombre: 'Fogón del Sur', comuna: 'Concepción', que: 'Menú digital: ver la carta y pedir', ref: 'Diseño propio (skill crear-menu-digital)', espera: 6000,
@@ -64,6 +65,9 @@ const LISTA = [
     capturaRuta: 'captura-reservas/admin/', preparar: "sessionStorage.setItem('nube-pin-captura-reservas', '482916'); location.reload();",
     seg: 'Dueño que quiere ver su ocupación y sus ingresos sin planillas.',
     crea: { C: 'Avisos automáticos y calendario sincronizado con Airbnb y Booking', A: 'Control: depósitos, cancelaciones y capacidad', R: 'Planillas y cuadernos', E: 'Pagar comisión por cada reserva' } },
+  { id: 'reservas-simple', sistema: true, soloGaleria: true, ruta: 'reservas-simple/?negocio=salon', rubro: 'Reserva simple', nombre: 'Salón Brillo', comuna: 'Chiguayante', que: 'Horas libres según la agenda del dueño, solicitud por WhatsApp, sin mensualidad', ref: 'Diseño propio', espera: 5000,
+    seg: 'Negocio chico que agenda por WhatsApp y no quiere pagar una mensualidad.',
+    crea: { C: 'Horas libres tomadas de su propio Google Calendar', A: 'Confirmar y agendar en dos toques', R: 'El ir y venir de mensajes preguntando horas', E: 'La mensualidad' } },
   { id: 'fidelizacion', sistema: true, ruta: 'fidelizacion/', rubro: 'Tarjeta de fidelización', nombre: 'Café Mirador', comuna: 'Concepción', que: 'Sellos con QR en el celular, sin mensualidad', ref: 'Diseño propio',
     espera: 6000,
     preparar: "localStorage.setItem('bdfid-mi', 'ZZCAP001'); location.reload();",

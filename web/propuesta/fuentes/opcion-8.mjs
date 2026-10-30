@@ -233,7 +233,7 @@ main, .top, .site-foot { border-inline: 1px solid var(--line-2); max-width: var(
         <h2 class="h2">Así se ven las páginas que hacemos</h2>
         <p class="muted">Negocios de ejemplo del Gran Concepción, cada uno con su estilo. Haz clic en uno para recorrerlo en vivo.</p>
       </div>
-      <div class="tg" data-par="-12" data-tilt data-images='${JSON.stringify(EJEMPLOS.map((e) => ({ src: e.img, ph: e.grande, url: e.url, rubro: e.rubro, nombre: e.nombre, comuna: e.comuna, que: e.que }))).replace(/&/g, '&amp;').replace(/'/g, '&#39;')}' aria-label="Carrusel de ejemplos de páginas web por rubro"></div>
+      <div class="tg" data-par="-12" data-tilt data-images='${JSON.stringify(EJEMPLOS.filter((e) => !e.soloGaleria).map((e) => ({ src: e.img, ph: e.grande, url: e.url, rubro: e.rubro, nombre: e.nombre, comuna: e.comuna, que: e.que }))).replace(/&/g, '&amp;').replace(/'/g, '&#39;')}' aria-label="Carrusel de ejemplos de páginas web por rubro"></div>
       <p class="tg-ver"><button class="btn btn-sm" type="button" data-tilt-open>Ver ejemplos en grande</button><a class="btn btn-sm" href="ejemplos/">Todos los ejemplos</a></p>
     </div>
   </div>`,

@@ -8,6 +8,28 @@
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
   var clp = function (n) { return '$' + n.toLocaleString('es-CL'); };
 
+  // Planilla de Google del dueño (opcional, sin mensualidad): cambia precios, marca agotados y corrige descripciones desde su celular.
+  // Columnas: Plato · Precio · Disponible (Sí/No) · Descripción. Se reconoce el plato por su nombre; una fila que no calza o sin precio válido se ignora.
+  // Platos nuevos no aparecen solos (la carta es una página fija, buena para Google): se agregan al regenerarla.
+  if (cfg.planilla && window.fetch) {
+    var norm = function (s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); };
+    var porNombre = {}; Object.keys(platos).forEach(function (id) { porNombre[norm(platos[id].nombre)] = id; });
+    fetch(cfg.planilla, { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
+      var filas = [], f = [], v = '', dentro = false;
+      for (var i = 0; i < t.length; i++) { var ch = t[i]; if (dentro) { if (ch === '"') { if (t[i + 1] === '"') { v += '"'; i++; } else dentro = false; } else v += ch; } else if (ch === '"') dentro = true; else if (ch === ',') { f.push(v); v = ''; } else if (ch === '\n' || ch === '\r') { if (ch === '\r' && t[i + 1] === '\n') i++; f.push(v); filas.push(f); f = []; v = ''; } else v += ch; }
+      if (v || f.length) { f.push(v); filas.push(f); }
+      var cab = (filas.shift() || []).map(norm), col = function (x, k) { var j = cab.findIndex(function (c) { return c.indexOf(k) === 0; }); return j > -1 ? String(x[j] || '').trim() : ''; };
+      filas.forEach(function (x) {
+        var id = porNombre[norm(col(x, 'plato') || col(x, 'nombre'))], el = id && $('.plato[data-id="' + id + '"]'); if (!el) return;
+        var pr = col(x, 'precio').replace(/[$\s.]/g, ''); if (/^\d{1,7}$/.test(pr)) { platos[id].precio = +pr; $('.precio', el).textContent = clp(+pr); }
+        var d = col(x, 'descrip'); if (d && $('.desc', el)) { $('.desc', el).textContent = d.slice(0, 200); platos[id].descripcion = d.slice(0, 200); }
+        var agot = /^(no|agotado|n)$/.test(norm(col(x, 'disponible'))); el.classList.toggle('agotado', agot);
+        var ag = $('.agot', el); if (agot && !ag) { $('.txt', el).insertAdjacentHTML('beforeend', '<p class="agot">Agotado hoy</p>'); } else if (!agot && ag) ag.remove();
+        var b3 = $('.ver3d', el); if (b3) b3.hidden = agot;
+      });
+    }).catch(function () { /* sin planilla se ve la carta tal como se publicó */ });
+  }
+
   // Buscador
   var q = $('#buscar'), vacio = $('#sin-resultados');
   if (q) q.addEventListener('input', function () {

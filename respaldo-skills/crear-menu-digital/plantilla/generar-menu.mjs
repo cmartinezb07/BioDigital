@@ -123,7 +123,7 @@ const etiquetas = (p) => (p.etiquetas || []).length ? `<p class="etq">${p.etique
 const miniatura = (p) => !p.foto ? '' : p.modelo && !p.agotado
   ? `<button class="mini ver3d" type="button" data-id="${esc(p.id)}" aria-label="Ver ${esc(p.nombre)} en 3D">${imagen(p, 168)}</button>`
   : `<div class="mini">${imagen(p, 168)}</div>`;
-const plato = (p) => `<article class="plato${p.foto ? ' con-foto' : ''}${p.agotado ? ' agotado' : ''}" data-texto="${esc(`${p.nombre} ${p.descripcion || ''}`.toLowerCase())}">
+const plato = (p) => `<article class="plato${p.foto ? ' con-foto' : ''}${p.agotado ? ' agotado' : ''}" data-id="${esc(p.id)}" data-texto="${esc(`${p.nombre} ${p.descripcion || ''}`.toLowerCase())}">
         ${miniatura(p)}
         <div class="txt">
           <div class="linea"><h3>${esc(p.nombre)}</h3><span class="puntos" aria-hidden="true"></span><span class="precio">${clp(p.precio)}</span></div>
@@ -250,7 +250,7 @@ ${conModelo ? `<dialog id="visor" aria-label="Plato en 3D">
     <div class="visor-info"><h2></h2><p class="visor-desc"></p><div class="visor-acc"><button class="btn-ar" type="button" hidden>Ver en tu mesa</button><span class="nota-ar"></span></div></div>
   </div>
 </dialog>` : ''}
-<script type="application/json" id="menu-datos">${JSON.stringify({ libreria3d: libLocal ? { url: MV.local } : { url: MV.url, sri: MV.sri }, categorias: cfg.categorias.map((c) => ({ platos: c.platos.map((p) => ({ id: p.id, nombre: p.nombre, descripcion: p.descripcion || '', precio: p.precio, foto: p.foto || null, modelo: p.modelo || null, escala: p.escala || null })) })) }).replace(/</g, '\\u003c')}</script>
+<script type="application/json" id="menu-datos">${JSON.stringify({ planilla: (cfg.negocio && cfg.negocio.planilla) || null, libreria3d: libLocal ? { url: MV.local } : { url: MV.url, sri: MV.sri }, categorias: cfg.categorias.map((c) => ({ platos: c.platos.map((p) => ({ id: p.id, nombre: p.nombre, descripcion: p.descripcion || '', precio: p.precio, foto: p.foto || null, modelo: p.modelo || null, escala: p.escala || null })) })) }).replace(/</g, '\\u003c')}</script>
 ${analitica}
 <script src="menu.js"></script>
 </body>
@@ -285,7 +285,8 @@ const pagPriv = base404(`Privacidad · ${n.nombre}`, `<p class="sobre">Privacida
 const headers = (() => {
   const mv = conModelo ? ` ${libLocal ? '' : 'https://ajax.googleapis.com '}https://www.gstatic.com` : '';
   const cf = hayAnalitica ? ' https://static.cloudflareinsights.com' : '';
-  const connect = ["'self'", ...hosts, ...(conModelo ? ['https://www.gstatic.com', 'blob:', 'data:'] : []), ...(hayAnalitica ? ['https://cloudflareinsights.com'] : [])].join(' ');
+  const conPlanilla = !!(cfg.negocio && cfg.negocio.planilla);   // la planilla de Google del dueño (precios y agotados), publicada como CSV
+  const connect = ["'self'", ...hosts, ...(conPlanilla ? ['https://docs.google.com', 'https://*.googleusercontent.com'] : []), ...(conModelo ? ['https://www.gstatic.com', 'blob:', 'data:'] : []), ...(hayAnalitica ? ['https://cloudflareinsights.com'] : [])].join(' ');
   return `/*
   Content-Security-Policy: default-src 'none'; script-src 'self'${mv}${cf} 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src ${connect}; worker-src blob:; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff

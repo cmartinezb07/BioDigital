@@ -1124,3 +1124,4 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 - **Riesgo encontrado:** la regla que impide que un cliente se sume sellos solo protegía al negocio de la demo ('fidelizacion'). Corrección lista en `nube-sql/007-fidelizacion-cualquier-negocio.sql`; **el permiso bloqueó aplicarla**: aplicarla antes de entregar la primera tarjeta real.
 - **Repositorio:** el `.gitignore` excluía todos los CSV y la planilla de ejemplo de la reserva simple no estaba en GitHub; se agregó la excepción solo para esos archivos ficticios.
 - **Prueba de reglas:** U1 dependía de la fecha (dos pruebas caían el mismo miércoles); corregido, 89/89.
+- **Menú simple sin mensualidad:** el dueño cambia precios, agotados y descripciones en su planilla de Google (misma idea que la reserva simple); la carta sigue siendo una página fija (buena para Google) y lee la planilla al abrirse.

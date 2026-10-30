@@ -88,11 +88,11 @@
   // ---------- Almacenamiento y avisos en vivo ----------
   function leer(id) {
     var base = NEGOCIOS.filter(function (n) { return n.id === id; })[0]; if (!base) return null;
-    var d = null; try { d = JSON.parse(localStorage.getItem(V + id)); } catch (e) {}
-    if (!d) d = { config: JSON.parse(JSON.stringify(base)), reservas: [], bloqueos: [], avisos: [] };
+    var d = null; if (!AG.sinCache) try { d = JSON.parse(localStorage.getItem(V + id)); } catch (e) {}   // la reserva simple (sinCache) siempre parte de su planilla
+    if (!d) { var cf = JSON.parse(JSON.stringify(base)); d = { config: cf, reservas: cf.ocupadas || [], bloqueos: cf.bloqueos || [], avisos: [] }; delete cf.bloqueos; delete cf.ocupadas; }
     return d;
   }
-  function guardar(id, d) { try { localStorage.setItem(V + id, JSON.stringify(d)); } catch (e) {} avisar(id); }
+  function guardar(id, d) { if (!AG.sinCache) try { localStorage.setItem(V + id, JSON.stringify(d)); } catch (e) {} avisar(id); }
   var canal = null; try { canal = new BroadcastChannel('bd-reservas'); } catch (e) {}
   var oyentes = [];
   function avisar(id) { var m = { id: id, t: Date.now() }; if (canal) canal.postMessage(m); oyentes.forEach(function (f) { f(m); }); }
@@ -202,7 +202,7 @@
         total = recs.reduce(function (t, r) { return t + r.unidades; }, 0);
         recs.forEach(function (r) { lb += Math.max(0, libresNoche(d, r.id, f, sel.salvo)); bl += bloqueadasNoche(d, r.id, f); });
         est = lb <= 0 ? (bl >= total ? 'bloqueado' : 'lleno') : lb / total <= .34 ? 'pocos' : 'libre'; info = lb;
-        motivo = est === 'bloqueado' ? 'No disponible: el negocio cerró esta fecha.' : est === 'lleno' ? 'Completo: no queda ninguna de ' + total + '.' : 'Quedan ' + lb + ' de ' + total + '.';
+        motivo = est === 'bloqueado' ? 'No disponible: el negocio cerró esta fecha.' : est === 'lleno' ? (total === 1 ? 'Ocupado: ya está reservado.' : 'Completo: no queda ninguna de ' + total + '.') : 'Quedan ' + lb + ' de ' + total + '.';
       }
       else if (c.modo === 'cupos') {
         if (!sel.servicio) { est = 'libre'; motivo = ''; }

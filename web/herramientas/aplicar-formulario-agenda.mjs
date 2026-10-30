@@ -1,6 +1,9 @@
 // De las respuestas del formulario del cliente a un sistema de reservas funcionando (carpeta lista, agenda, accesos y prueba), en un solo paso.
 //
-// Uso:  node web/herramientas/aplicar-formulario-agenda.mjs respuestas.json [--id cabanas-sol] [--demo] [--url https://…]
+// Uso:  node web/herramientas/aplicar-formulario-agenda.mjs respuestas.json [--id cabanas-sol] [--demo] [--url https://…] [--simple]
+//   --simple         arma la RESERVA SIMPLE ($24.990, sin base de datos): lo ocupado sale del Google Calendar del dueño, la solicitud llega por
+//                    WhatsApp con un enlace para agendar y confirmar en dos toques, y precios y servicios se editan en su planilla de Google.
+//                    Solo para citas y alojamiento. Deja la carpeta lista, las plantillas CSV de la planilla y los pendientes (sin SQL ni PIN).
 //   respuestas.json  las respuestas del cliente: o el JSON del formulario ({ "nombre": "Cabañas del Sol", "catalogo": "…", … }, el que llega
 //                    al panel interno) o el texto que copia el formulario ("- ¿Cómo se llama tu negocio?: Cabañas del Sol"), guardado en un archivo.
 //   --id             nombre corto del negocio en la base (por defecto sale del nombre del negocio)
@@ -54,7 +57,7 @@ const sinTildes = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '');
 const bajo = (s) => sinTildes(s).toLowerCase();
 const slug = (s, max = 24) => bajo(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, max);
 const id = opt('id') || slug(nombre, 20);
-const demo = args.includes('--demo'), urlFinal = opt('url');
+const demo = args.includes('--demo'), urlFinal = opt('url'), simple = args.includes('--simple');
 const pad = (n) => String(n).padStart(2, '0');
 const unico = (base, usados) => { let x = base || 'item', n = 2; while (usados.has(x)) x = (base || 'item').slice(0, 26) + '-' + n++; usados.add(x); return x; };
 
@@ -273,6 +276,7 @@ if (txt('observaciones')) falta('Observaciones del cliente por revisar a mano: "
 if (!txt('web_actual') || /no/i.test(bajo(txt('web_actual')).slice(0, 3))) { /* sin sistema anterior */ } else falta('Ya tenía un sistema o planilla de reservas: acordar cómo migrar las reservas existentes (no se importan solas).');
 
 // ---------- 8. Plantilla, accesos y prueba ----------
+if (simple) { crearSimple(); process.exit(0); }
 mkdirSync(join(aqui, 'agendas'), { recursive: true });
 const archivoAg = join(aqui, 'agendas', id + '-agendas.json');
 writeFileSync(archivoAg, JSON.stringify([cfg], null, 1));
@@ -308,3 +312,48 @@ console.log(`\n${nombre} (${id}): agenda "${modo}", ${cfg.recursos.length} recur
 console.log(`Pendientes (${pendientes.length}) en web/herramientas/agendas/${id}-pendientes.md:`); pendientes.forEach((p) => console.log('  · ' + p));
 console.log(`\nSiguiente:\n  1. Ejecutar web/herramientas/agendas/${id}-instalar.sql en Supabase (proyecto biodigital-demos).\n  2. node web/herramientas/cargar-agendas.mjs --negocio ${id} --pin ${pins.dueno} --archivo web/herramientas/agendas/${id}-agendas.json\n  3. node web/herramientas/revisar.mjs http://localhost:4321/ejemplos/${id}/ --anchos 390,1440 --probar web/herramientas/agendas/${id}-prueba.js\n  4. Entrar a ${id}/admin/ con el PIN del jefe y revisar catálogo, horarios y políticas con el cliente.`);
 void catalogo;
+
+// ---------- Reserva simple: carpeta autosuficiente, sin base de datos ----------
+function crearSimple() {
+  if (modo !== 'horas' && modo !== 'noches') { console.error('La reserva simple es para citas o alojamiento. Para tours o arriendo de espacios usa el sistema PRO (sin --simple).'); process.exit(1); }
+  const BASE = join(EJ, 'reservas-simple'), DEST = join(EJ, id);
+  if (existsSync(DEST)) { console.error('Ya existe ' + DEST + ': elige otro --id o bórrala primero.'); process.exit(1); }
+  mkdirSync(join(DEST, 'planilla-plantilla'), { recursive: true }); mkdirSync(join(aqui, 'agendas'), { recursive: true });
+  const dig = txt('telefono').replace(/\D/g, ''), wa = dig.length === 9 && dig[0] === '9' ? '56' + dig : dig;
+  if (wa.length < 10) falta('WhatsApp del negocio: no se entendió "' + txt('telefono') + '". Escríbelo en simple.config.js (whatsapp: "569XXXXXXXX").');
+  const neg = { ...cfg, id: agendaId, whatsapp: wa, politicas: { ...cfg.politicas, deposito: 0 }, promos: [], reglas: [], planilla: {}, calendario: { id: txt('correo') || '', llave: '' } };
+  delete neg.notif;
+  if (modo === 'horas') { const todos = cfg.servicios.map((x) => x.id); neg.recursos = cfg.recursos.length ? cfg.recursos.map((r) => ({ ...r, servicios: r.servicios && r.servicios.length ? r.servicios : todos })) : [{ id: 'agenda', nombre, unidades: 1, servicios: todos }]; }
+  writeFileSync(join(DEST, 'simple.config.js'), '// Reserva simple de ' + nombre + ': la solicitud llega por WhatsApp y el negocio confirma. Armada con aplicar-formulario-agenda.mjs --simple.\n// planilla: pegar los enlaces CSV publicados de cada pestaña de la planilla de Google del dueño (ver PLANILLA.md). Sin planilla se usa este catálogo.\nwindow.SIMPLE = ' + JSON.stringify({ demo: false, negocios: [neg] }, null, 1) + ';\n');
+  for (const [de, a] of [['reservas-simple/simple.js', 'simple.js'], ['reservas/motor.js', 'motor.js'], ['reservas/estilo.css', 'estilo.css'], ['reservas-simple/widget.js', 'widget.js']]) writeFileSync(join(DEST, a), readFileSync(join(EJ, de), 'utf8'));
+  let html = readFileSync(join(BASE, 'index.html'), 'utf8')
+    .replace(/<html lang="es" data-ejemplo="[^"]*">/, '<html lang="es">').replace('../reservas/estilo.css', 'estilo.css').replace(/\s*<link rel="stylesheet" href="\.\.\/_compartido\/demo\.css[^"]*">/, '')
+    .replace(/\s*<script src="\.\.\/_compartido\/demo\.js[^"]*" defer><\/script>/, '').replace(/data-motor="\.\.\/reservas\/motor\.js[^"]*"/, 'data-motor="motor.js"').replace(/href="\.\.\/\.\.\/marca\/favicon-32\.png[^"]*"/, 'href="data:,"')
+    .replace(/<title>[^<]*<\/title>/, '<title>Reserva tu hora · ' + nombre + '</title>').replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="Pide tu reserva en ' + nombre + ' por WhatsApp: elige el día y la hora.">');
+  if (urlFinal) html = html.replace('<meta name="robots" content="noindex, nofollow">', '<link rel="canonical" href="' + urlFinal + '">');
+  writeFileSync(join(DEST, 'index.html'), html);
+  const c = (v) => { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const cat = modo === 'horas' ? ['Servicio,Precio,Duración (min),Descripción,Activo', ...cfg.servicios.map((x) => [x.nombre, x.precio, x.duracion || 30, x.desc || '', 'Sí'].map(c).join(','))]
+    : ['Cabaña,Precio por noche,Personas,Cantidad,Descripción,Activo', ...cfg.recursos.map((x) => [x.nombre, x.precio, x.capacidad || 2, x.unidades || 1, x.desc || '', 'Sí'].map(c).join(','))];
+  writeFileSync(join(DEST, 'planilla-plantilla', modo === 'horas' ? 'servicios.csv' : 'cabanas.csv'), cat.join('\n') + '\n');
+  if (modo === 'horas') { const NOM = { lun: 'Lunes', mar: 'Martes', mie: 'Miércoles', jue: 'Jueves', vie: 'Viernes', sab: 'Sábado', dom: 'Domingo' }; writeFileSync(join(DEST, 'planilla-plantilla', 'horario.csv'), ['Día,Abre,Cierra', ...Object.keys(NOM).flatMap((k) => ((cfg.horario || {})[k] || []).map((t) => [NOM[k], t[0], t[1]].join(',')))].join('\n') + '\n'); }
+  const tipoCat = modo === 'horas' ? 'Servicios' : 'Cabañas';
+  writeFileSync(join(DEST, 'CONFIGURAR.md'), ['# Configurar la reserva simple de ' + nombre, '',
+    '## 1. Google Calendar (las horas ocupadas) — obligatorio',
+    'La página no ofrece lo que esté ocupado en el Google Calendar del dueño. Solo lee "libre/ocupado": nunca nombres ni detalles.',
+    '1. En el Google Calendar del dueño (en el computador): Configuración › su calendario › Permisos de acceso › marcar **"Disponible públicamente"** con **"Ver solo libre/ocupado (ocultar detalles)"**.',
+    '2. En `simple.config.js` → `calendario.id`: el correo de Gmail del dueño (o el "ID del calendario" que aparece en Integrar el calendario).',
+    '3. `calendario.llave`: la llave de la API de Google Calendar de Bío Digital (gratis; restringida a nuestros dominios; la guarda el equipo).',
+    ...(modo === 'noches' ? ['4. Si cada cabaña tiene su propio calendario, poner su ID en la cabaña (`recursos[].calendario`). Si no, un evento en el calendario ocupa todas.'] : []),
+    '', '**Cómo lo usa el dueño:** cada solicitud le llega por WhatsApp con un enlace. Lo toca y: "Agendar en mi Google Calendar" (guardar) → esa hora deja de ofrecerse; "Confirmar por WhatsApp" → le llega al cliente la confirmación con la dirección y su recordatorio. Si no puede, propone otra hora o avisa con un toque. Lo que agende a mano en su calendario (vacaciones, horas por teléfono) también queda ocupado.', '',
+    '## 2. Planilla de Google (precios y servicios) — opcional',
+    '1. Crear la planilla en la cuenta del negocio con una pestaña por cada archivo de `planilla-plantilla/` (Archivo › Importar › Subir › "Insertar hojas nuevas").',
+    '2. Archivo › Compartir › **Publicar en la Web**: cada pestaña en formato **CSV**; copiar los enlaces.',
+    "3. Pegarlos en `simple.config.js` → `planilla: { servicios: '…'" + (modo === 'horas' ? ", horario: '…'" : '') + " }` y publicar la página una vez.",
+    '- **' + (modo === 'horas' ? 'Servicios' : 'Cabañas') + '**: cambiar precio o descripción, agregar uno nuevo (una fila) o poner "No" en Activo para ocultarlo. Una fila sin precio no se muestra.',
+    ...(modo === 'horas' ? ['- **Horario**: una fila por tramo (Lunes, 10:00, 14:00 y Lunes, 15:00, 20:00 para cerrar a almorzar). Un día sin filas queda cerrado.'] : []),
+    '- Desde la planilla no se cambia el tipo de agenda (' + (modo === 'horas' ? 'citas' : 'alojamiento') + ').', '',
+    'Probar con `?revisar=1` al final de la dirección: muestra lo que no se pudo leer (planilla o calendario).', ''].join('\n'));
+  writeFileSync(join(aqui, 'agendas', id + '-pendientes.md'), '# Pendientes de ' + nombre + ' (' + id + ', reserva simple)\n\n' + pendientes.map((p) => '- [ ] ' + p).join('\n') + '\n- [ ] Compartir el Google Calendar del dueño como "ver solo libre/ocupado" y poner su ID y la llave de Bío Digital en simple.config.js (ver web/propuesta/ejemplos/' + id + '/CONFIGURAR.md).\n- [ ] Opcional: planilla de Google para precios y servicios (mismo archivo).\n- [ ] Probar: node web/herramientas/revisar.mjs "http://localhost:4321/ejemplos/' + id + '/?revisar=1" --anchos 390,1440\n');
+  console.log('\n' + nombre + ' (' + id + '): reserva simple "' + modo + '" con ' + (modo === 'horas' ? cfg.servicios.length + ' servicios' : cfg.recursos.length + ' alojamientos') + '. WhatsApp: ' + (wa || '(falta)') + '.\nCarpeta: web/propuesta/ejemplos/' + id + '/ · configurar: CONFIGURAR.md (calendario y planilla)\nPendientes (' + (pendientes.length + 2) + ') en web/herramientas/agendas/' + id + '-pendientes.md');
+}

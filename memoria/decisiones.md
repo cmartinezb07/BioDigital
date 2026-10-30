@@ -1104,3 +1104,15 @@ Se creó el repositorio en `C:\Users\criss\OneDrive\Escritorio\Proyecto DCP` par
 - **Pruebas:** reglas del servidor 89/89 (12 nuevas), motor local, pantallas del cliente y panel: todo ok el 29-oct.
 - **Cierre a medias:** `006e` aplicado y agendas de la demo cargadas (las 38 reservas de prueba del formato antiguo se borraron), pero **el deploy a biodigital-bgw.pages.dev lo bloqueó el permiso de producción**: hasta que el usuario publique, la demo en vivo tiene el cliente viejo con las reglas nuevas y no deja reservar. Comandos en la skill `contexto_biodigital` → Publicación.
 - **Pendiente que necesita cuentas externas (no se puede hacer sin el usuario):** correo real (proveedor con cuota gratis), WhatsApp (API oficial, costo por conversación, recurrente), pasarela (Mercado Pago, comisión por pago). Y por construir: mesas, profesional + recurso.
+
+## 30-oct-2026 — Reserva simple construida
+- **Decisión del usuario:** el dueño edita precios, descripciones, servicios del mismo tipo (no cambiar de rubro) y horario en **su planilla de Google**, publicada como CSV ($0, a su nombre, sin mensualidad). Alternativas descartadas: editor con PIN en Cloudflare (datos en nuestra cuenta) y "nos pide el cambio" (no es autoservicio).
+- **Idea del usuario:** que se vean las horas ya tomadas. Resuelto con la pestaña **Ocupado**: el dueño anota lo confirmado (el WhatsApp trae la línea "Para la planilla"); con hora o cabaña = "Ocupado", sin nada = cierre del negocio. Límite dicho: si dos piden lo mismo antes de anotarlo, se resuelve por WhatsApp (lo automático es el PRO).
+- **Hecho:** demo `web/propuesta/ejemplos/reservas-simple/` (salón y cabañas), `aplicar-formulario-agenda.mjs --simple`, prueba `pruebas/reservas-simple.js` 14/14; el motor del PRO acepta `sinCache` y datos de partida (pruebas del PRO siguen en verde). Videos y fotos: listos (videos a cargo de Godoy).
+- **Por verificar:** lectura del CSV publicado de Google con el primer cliente real.
+
+## 30-oct-2026 (tarde) — Reserva simple rehecha sobre Google Calendar
+- **Crítica del usuario:** solo armar un mensaje de WhatsApp no vale $24.990 (un cliente frecuente escribe directo). Hay que diferenciarla del WhatsApp y del PRO, sin mensualidad.
+- **Decisión:** lo ocupado sale del **Google Calendar del dueño** (público "solo libre/ocupado", consulta freeBusy con llave gratis de Bío Digital); el WhatsApp trae un **enlace para el negocio** (datos tras `#`, sin servidor) para **agendar en su calendario y confirmar al cliente en 2 toques**, proponer otra hora o avisar que no hay; el cliente recibe su enlace de calendario con recordatorio; **varios servicios** en una solicitud. La planilla queda opcional (precios y servicios).
+- **PRO, siguiente:** recordatorios automáticos por correo y ficha de cliente (historial, frecuentes); reseña en Google después de la visita. WhatsApp automático y pago en línea cuando un cliente los pague.
+- **Pendiente:** crear la llave de la API de Google Calendar (Google Cloud de Bío Digital, restringida a biodigitales.cl y *.pages.dev) y probar con un calendario real.

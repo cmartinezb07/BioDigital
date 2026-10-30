@@ -9,7 +9,9 @@
 // Cada negocio real define sus agendas en agenda.config.js (window.AGENDA); sin eso se usan las 5 de demostración.
 (function () {
   'use strict';
-  var V = 'bdres-v1-', MIS = 'bdres-mis-';   // se completan con el negocio apenas se lee la configuración (dos negocios en un mismo sitio no mezclan su caché)
+  // v2 (30-oct-2026): la copia local de la demo antigua (reservas en el formato viejo, ya borradas de la base) se ignora y se borra; si no, se mezclaba con las nuevas
+  try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf('bdres-v1-') === 0 || k.indexOf('bdres-mis-') === 0) localStorage.removeItem(k); }); } catch (e) {}
+  var V = 'bdres-v2-', MIS = 'bdres-mis2-';   // se completan con el negocio apenas se lee la configuración (dos negocios en un mismo sitio no mezclan su caché)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var fstr = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
   var fdate = function (s, min) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2], 0, min || 0); };

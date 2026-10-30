@@ -35,3 +35,4 @@
 - [Posible cliente: La Joya del Sur (Penco)](memoria/cliente-la-joya-del-sur.md) — diagnóstico del 27-oct, qué ofrecerles y plan para la reunión del miércoles 28-oct 18:00
 - [Propuestas comerciales](propuestas/LEEME.md) — plantilla de una página en PDF (`node propuestas/generar.mjs <negocio>`), precios importados del sitio; primera: Café Kairós (27-oct-2026).
 - [Reservas: lo que pidió el usuario](memoria/reservas-requisitos.md) — encargo, observaciones de prueba y lista universal en un lugar; qué falta para terminar el sistema (29-oct)
+- [Checklist de servicios](memoria/checklist-servicios.md) — cada servicio de biodigitales.cl: listo, a medias o por hacer (30-oct)

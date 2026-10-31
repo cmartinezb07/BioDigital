@@ -360,3 +360,5 @@ main > section { position: relative; padding-block: clamp(28px, 3.6vw, 52px); }
 .lanz-t { grid-area: t; font-size: 15px; }
 .lanz-p { grid-area: p; justify-content: flex-start; }
 .lanz li .btn { grid-area: b; grid-column: auto; min-height: 44px; padding-inline: 14px; }
+.det-nota { margin: 8px 0 0; }
+.det-nota small { color: var(--fg-3); font-size: 12px; }

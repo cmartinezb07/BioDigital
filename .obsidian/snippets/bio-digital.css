@@ -1,0 +1,37 @@
+/* Bío Digital: explorador ordenado y con color */
+/* Ocultar carpetas de código del explorador */
+.nav-folder:has(> .nav-folder-title[data-path="web"]),
+.nav-folder:has(> .nav-folder-title[data-path="functions"]),
+.nav-folder:has(> .nav-folder-title[data-path="scripts"]),
+.nav-folder:has(> .nav-folder-title[data-path="test"]),
+.nav-folder:has(> .nav-folder-title[data-path="migrations"]),
+.nav-folder:has(> .nav-folder-title[data-path="deployment"]),
+.nav-folder:has(> .nav-folder-title[data-path="respaldo-skills"]),
+.nav-folder:has(> .nav-folder-title[data-path="reports"]),
+.nav-folder:has(> .nav-folder-title[data-path="enlaces"]),
+.nav-folder:has(> .nav-folder-title[data-path="material-clientes"]),
+.nav-folder:has(> .nav-folder-title[data-path="research_notes"]) { display: none; }
+
+/* Carpetas principales: icono y color */
+.nav-folder-title { font-weight: 600; }
+.nav-folder-title[data-path="00 Inicio"] { color: #f59e0b; }
+.nav-folder-title[data-path="10 Decisiones"] { color: #22c55e; }
+.nav-folder-title[data-path="20 Servicios"] { color: #3b82f6; }
+.nav-folder-title[data-path="memoria"] { color: #a855f7; }
+.nav-folder-title[data-path="servicios"],
+.nav-folder-title[data-path="servicios-futuros"] { color: #06b6d4; }
+.nav-folder-title[data-path="docs"],
+.nav-folder-title[data-path="propuestas"] { color: #ec4899; }
+.nav-folder-title[data-path="00 Inicio"] .nav-folder-title-content::before { content: "🏠 "; }
+.nav-folder-title[data-path="10 Decisiones"] .nav-folder-title-content::before { content: "🧭 "; }
+.nav-folder-title[data-path="20 Servicios"] .nav-folder-title-content::before { content: "🛒 "; }
+.nav-folder-title[data-path="memoria"] .nav-folder-title-content::before { content: "🧠 "; }
+.nav-folder-title[data-path="servicios"] .nav-folder-title-content::before { content: "📦 "; }
+.nav-folder-title[data-path="servicios-futuros"] .nav-folder-title-content::before { content: "🔮 "; }
+.nav-folder-title[data-path="docs"] .nav-folder-title-content::before { content: "📘 "; }
+.nav-folder-title[data-path="propuestas"] .nav-folder-title-content::before { content: "📄 "; }
+
+/* Encabezados de las notas con acento de marca */
+.markdown-rendered h1, .cm-s-obsidian .HyperMD-header-1 { border-bottom: 2px solid #f59e0b; padding-bottom: .2em; }
+.markdown-rendered h2 { color: var(--text-accent); }
+.markdown-rendered table { width: 100%; }

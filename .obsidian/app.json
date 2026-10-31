@@ -1,0 +1,18 @@
+{
+  "userIgnoreFilters": [
+    "web/",
+    "functions/",
+    "scripts/",
+    "test/",
+    "migrations/",
+    "deployment/",
+    ".wrangler/",
+    ".git/",
+    ".impeccable/",
+    "respaldo-skills/",
+    "reports/",
+    "enlaces/",
+    "material-clientes/",
+    "research_notes/"
+  ]
+}

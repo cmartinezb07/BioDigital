@@ -1,0 +1,7 @@
+Servicio,Categoría,Precio,Duración (min),Descripción,Activo
+Fade,Cortes,15000,45,"Degradado a máquina y terminación a tijera.",Sí
+Corte clásico,Cortes,10000,40,,Sí
+Corte niño,Cortes,8000,30,"Hasta 12 años.",Sí
+Corte + barba,Cortes,16000,60,"Corte a elección y barba a navaja.",Sí
+Barba a navaja,Barba,7000,30,,Sí
+Perfilado,Otros,4000,15,,Sí

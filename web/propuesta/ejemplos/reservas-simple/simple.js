@@ -36,13 +36,22 @@
   function fecha(s) {
     s = norm(s); var m;
     if ((m = /^hoy\s*\+\s*(\d{1,3})$/.exec(s))) { var d = new Date(); d.setDate(d.getDate() + +m[1]); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }   // solo para la demostración
-    if ((m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s))) return m[1] + '-' + pad(+m[2]) + '-' + pad(+m[3]);
-    if ((m = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/.exec(s))) return (m[3].length === 2 ? '20' + m[3] : m[3]) + '-' + pad(+m[2]) + '-' + pad(+m[1]);
+    var ok = function (y, mo, d) { var t = new Date(y, mo - 1, d); return t.getFullYear() === y && t.getMonth() === mo - 1 && t.getDate() === d ? y + '-' + pad(mo) + '-' + pad(d) : null; };   // descarta fechas imposibles (p. ej. 10/28/2026 en formato americano)
+    if ((m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s))) return ok(+m[1], +m[2], +m[3]);
+    if ((m = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/.exec(s))) return ok(+(m[3].length === 2 ? '20' + m[3] : m[3]), +m[2], +m[1]);
+    if ((m = /^(\d{5})(?:[.,]\d+)?$/.exec(s))) { var e = new Date(Date.UTC(1899, 11, 30) + +m[1] * 86400000); return ok(e.getUTCFullYear(), e.getUTCMonth() + 1, e.getUTCDate()); }   // número de serie de Excel
     return null;
   }
-  function hora(s) { var m = /^(\d{1,2})(?:[:.h](\d{2}))?\s*(?:hrs?|h)?$/i.exec(String(s || '').trim()); return m && +m[1] < 24 && +(m[2] || 0) < 60 ? +m[1] * 60 + +(m[2] || 0) : null; }
+  function hora(s) {
+    s = String(s || '').trim().toLowerCase(); var m, x;
+    if (/^0?[.,]\d+$/.test(s)) { x = parseFloat(s.replace(',', '.')); if (x > 0 && x < 1) { x = Math.round(x * 1440); return x < 1440 ? x : null; } }   // fracción de día de Excel
+    if ((m = /^(\d{1,2})(?:[:.h](\d{2}))?(?::\d{2})?\s*([ap])\.?\s*m\.?$/.exec(s))) return +m[1] >= 1 && +m[1] <= 12 && +(m[2] || 0) < 60 ? (+m[1] % 12 + (m[3] === 'p' ? 12 : 0)) * 60 + +(m[2] || 0) : null;
+    m = /^(\d{1,2})(?:[:.h](\d{2})(?::\d{2})?)?\s*(?:hrs?|h)?$/.exec(s); return m && +m[1] < 24 && +(m[2] || 0) < 60 ? +m[1] * 60 + +(m[2] || 0) : null;
+  }
   var hm = function (m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
-  var numero = function (s) { var t = String(s || '').replace(/[$\s.]/g, '').replace(/,\d{1,2}$/, ''); return /^\d{1,8}$/.test(t) ? +t : null; };
+  var numero = function (s) { var t = String(s || '').replace(/[$\s]/g, '').replace(/[.,]\d{1,2}$/, '').replace(/[.,]/g, ''); return /^\d{1,8}$/.test(t) ? +t : null; };   // '.dd' o ',dd' final = decimales (se descartan); el resto son miles
+  // Rangos de seguridad (misma regla que la plantilla Excel y que barberia-simple/contenido.js): fuera de rango se descarta y se usa el respaldo.
+  var PRECIO_MAX = 500000, PRECIO_AVISO = 100000, DUR_MIN = 5, DUR_MAX = 720;
   var activo = function (o) { var a = norm(col(o, 'activo', 'disponible')); return !/^(no|n|0|false)$/.test(a); };
   var DIAS = { lunes: 'lun', martes: 'mar', miercoles: 'mie', jueves: 'jue', viernes: 'vie', sabado: 'sab', domingo: 'dom', lun: 'lun', mar: 'mar', mie: 'mie', jue: 'jue', vie: 'vie', sab: 'sab', dom: 'dom' };
 
@@ -55,11 +64,13 @@
       if (precio == null) { avisos.push('Fila ' + o._fila + ' (' + nombre + '): falta el precio o no es un número. No se muestra.'); return; }
       if (!activo(o)) return;
       var previo = base.filter(function (x) { return norm(x.nombre) === norm(nombre); })[0];
+      if (precio > PRECIO_MAX) { avisos.push('Precio fuera de rango en ' + nombre + ': revisa los ceros'); if (!previo) return; precio = previo.precio; }
+      else if (precio > PRECIO_AVISO) avisos.push('Precio alto en ' + nombre + ' ($' + precio + '): revisa los ceros si no es correcto.');
       var x = previo ? copia(previo) : { id: '' };
       x.id = previo && usados.indexOf(previo.id) < 0 ? (usados.push(previo.id), previo.id) : slug(nombre, usados);
       x.nombre = nombre; x.precio = precio;
       var desc = col(o, 'descrip'); if (desc) x.desc = desc.slice(0, 200); else if (!previo) delete x.desc;
-      if (horas) { var dur = numero(col(o, 'duracion', 'minutos')); x.duracion = dur && dur >= 5 && dur <= 720 ? dur : (x.duracion || 30); if (!dur) avisos.push('Fila ' + o._fila + ' (' + nombre + '): sin duración; se usan ' + x.duracion + ' minutos.'); }
+      if (horas) { var dur = numero(col(o, 'duracion', 'minutos')); x.duracion = dur && dur >= DUR_MIN && dur <= DUR_MAX ? dur : (x.duracion || 30); if (dur && !(dur >= DUR_MIN && dur <= DUR_MAX)) avisos.push('Duración fuera de rango en ' + nombre + ' (' + DUR_MIN + '-' + DUR_MAX + ' min): se usan ' + x.duracion + ' minutos.'); else if (!dur) avisos.push('Fila ' + o._fila + ' (' + nombre + '): sin duración; se usan ' + x.duracion + ' minutos.'); }
       else { var cap = numero(col(o, 'personas', 'capacidad')), can = numero(col(o, 'cantidad', 'unidades')); x.capacidad = cap && cap > 0 ? cap : (x.capacidad || 2); x.unidades = can && can > 0 && can <= 50 ? can : (x.unidades || 1); }
       lista.push(x);
     });
@@ -82,6 +93,7 @@
     filas.forEach(function (o) {
       var d = fecha(col(o, 'desde', 'fecha', 'llegada')), h = fecha(col(o, 'hasta', 'salida')) || null, hd = hora(col(o, 'hora desde', 'hora inicio')), hh = hora(col(o, 'hora hasta', 'hora fin')), que = norm(col(o, 'que', 'cabana', 'servicio'));
       if (!d) { avisos.push('Ocupado, fila ' + o._fila + ': falta la fecha o no se entiende (usa 16-11-2026).'); return; }
+      if (!h && col(o, 'hasta', 'salida')) avisos.push('Ocupado, fila ' + o._fila + ': la fecha final no se entiende (usa 16-11-2026); se bloquea solo el primer día.');
       var a, b;
       if (c.modo === 'noches') { a = ms(d); b = h && h > d ? ms(h) : a + 864e5; }
       else if (hd != null) { a = ms(d, hd); b = hh != null && hh > hd ? ms(d, hh) : a + 60 * 6e4; }
@@ -95,6 +107,15 @@
     });
     c.bloqueos = bl; c.ocupadas = oc;
   }
+  /* DEMO: con demoPlanilla:true y datos guardados por mi-planilla/ en localStorage se usan en vez del CSV (convertidos a texto CSV y pasados por el mismo parser). Si falta o está dañado, se lee el CSV. */
+  function demoCSV(parte) {
+    try {
+      var d = JSON.parse(localStorage.getItem('bio_demo_planilla_barberia')), t = d && d[parte];
+      if (!Array.isArray(t) || !t.length || !t.every(Array.isArray)) return null;
+      return t.map(function (f) { return f.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n');
+    } catch (e) { return null; }
+  }
+  function traerP(parte, url) { var d = cfg.demoPlanilla ? demoCSV(parte) : null; return d != null ? Promise.resolve(d) : traer(url); }
   function traer(url) {
     if (!url) return Promise.resolve(null);
     var ctl = window.AbortController ? new AbortController() : null, t = setTimeout(function () { if (ctl) ctl.abort(); }, 6000);
@@ -130,7 +151,16 @@
   var cfg = copia(neg), P = cfg.planilla || {};
   cfg.politicas = Object.assign({ deposito: 0, anticipacionHoras: 0, maxDias: 365, cancelacion: [] }, cfg.politicas);
   cfg.promos = []; cfg.reglas = []; cfg.temporadas = cfg.temporadas || []; cfg.factorFinde = cfg.factorFinde || 1;
-  Promise.all([traer(P.servicios), traer(P.horario), traer(P.ocupado)]).then(function (t) {
+  // Barberos (CSV "Barbero,Activo"): reemplazan las opciones del campo "barbero"; "Sin preferencia" siempre va primero
+  function aplicarBarberos(c, texto) {
+    var nombres = [];
+    if (texto) csv(texto).forEach(function (o) { var n = col(o, 'barbero', 'nombre', 'profesional').slice(0, 40); if (n && activo(o) && nombres.indexOf(n) < 0) nombres.push(n); });
+    var campo = (c.campos || []).filter(function (x) { return x.id === 'barbero'; })[0];
+    if (!nombres.length || !campo) { avisos.push(texto == null ? 'No se pudo leer la planilla de barberos: se usan los guardados.' : 'La planilla no trae ningún barbero activo: se usan los guardados.'); return; }
+    campo.opciones = ['Sin preferencia'].concat(nombres);
+  }
+  Promise.all([traerP('servicios', P.servicios), traerP('horario', P.horario), traer(P.ocupado), traerP('barberos', P.barberos)]).then(function (t) {
+    if (P.barberos) aplicarBarberos(cfg, t[3]);
     if (P.servicios && t[0] == null) avisos.push('No se pudo leer la planilla de servicios: se usa el catálogo guardado.');
     if (t[0]) aplicarCatalogo(cfg, csv(t[0]));
     if (t[1] && cfg.modo === 'horas') aplicarHorario(cfg, csv(t[1]));
@@ -167,7 +197,7 @@
 
     function pintar() {
       var cc = c(), mapa = cfg.mapa || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(cfg.direccion + ', ' + (cfg.comuna || ''));
-      var negs = S.demo && S.negocios.length > 1 ? '<div class="negocios" role="group" aria-label="Negocio de ejemplo">' + S.negocios.map(function (n) { return '<a class="btn chico" href="?negocio=' + n.id + '" aria-pressed="' + (n.id === neg.id) + '">' + R.icono(n.icono, 18) + esc(n.rubro) + '</a>'; }).join('') + '</div>' : '';
+      var negs = S.demo && S.negocios.length > 1 && !q.get('widget') && !q.get('solo') ? '<div class="negocios" role="group" aria-label="Negocio de ejemplo">' + S.negocios.map(function (n) { return '<a class="btn chico" href="?negocio=' + n.id + '" aria-pressed="' + (n.id === neg.id) + '">' + R.icono(n.icono, 18) + esc(n.rubro) + '</a>'; }).join('') + '</div>' : '';
       var pasos = ['Qué', 'Cuándo', 'Tus datos', 'Enviar'];
       app.innerHTML = '<div class="wrap">' + negs + '<header class="cab"><div class="marca-n">' + R.logo(cc) + '<div><h1>' + esc(cc.nombre) + '</h1><p>' + esc(cc.rubro) + ' · ' + esc(cc.direccion) + '</p></div></div>' +
         '<p class="acciones-r" style="justify-content:flex-start;margin-top:8px"><a class="btn chico" href="' + esc(mapa) + '" target="_blank" rel="noopener">Cómo llegar</a><a class="btn chico" href="https://wa.me/' + esc(cfg.whatsapp) + '" target="_blank" rel="noopener">Escribir por WhatsApp</a></p></header>' +

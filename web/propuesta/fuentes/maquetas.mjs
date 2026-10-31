@@ -8,6 +8,7 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { WHATSAPP } from './config.mjs';
+import { NOTA_PLANILLA } from './comun.mjs';
 
 // El restaurante se muestra con cuatro imágenes seguidas (menú, pedido con repartidor, cocina y panel), pero lleva a solo DOS páginas:
 // 1) el menú para ver la carta y pedir; 2) el panel del restaurante, donde cada persona entra con su código (cocinero, repartidor o jefe).
@@ -68,6 +69,10 @@ const LISTA = [
   { id: 'reservas-simple', sistema: true, soloGaleria: true, ruta: 'reservas-simple/?negocio=salon', rubro: 'Reserva simple', nombre: 'Salón Brillo', comuna: 'Chiguayante', que: 'Horas libres según la agenda del dueño, solicitud por WhatsApp, sin mensualidad', ref: 'Diseño propio', espera: 5000,
     seg: 'Negocio chico que agenda por WhatsApp y no quiere pagar una mensualidad.',
     crea: { C: 'Horas libres tomadas de su propio Google Calendar', A: 'Confirmar y agendar en dos toques', R: 'El ir y venir de mensajes preguntando horas', E: 'La mensualidad' } },
+  { id: 'barberia-simple', sistema: true, soloGaleria: true, ruta: 'barberia-simple/', rubro: 'Barbería con reserva simple', nombre: 'Barbería El Filo', comuna: 'Talcahuano', que: 'Página + reserva simple + panel del dueño (Mi agenda) + planilla editable: horas libres según el Google Calendar del dueño, solicitud por WhatsApp', nota: true, ref: 'Framer · DBC Dallas Barber Club (plantilla gratuita) + reserva simple', espera: 6000,
+    despues: "document.querySelector('#reserva').scrollIntoView({block:'start'});",
+    seg: 'Hombre joven que agenda por WhatsApp y no quiere pagar una mensualidad por un sistema de reservas.',
+    crea: { C: 'Ver solo las horas libres y pedir la suya sin esperar respuesta para saber si hay', A: 'El dueño confirma y agenda en dos toques desde su celular. Incluye página, reserva, panel del dueño (Mi agenda) y una planilla editable para precios, horarios y avisos', R: 'El ir y venir de mensajes preguntando "¿tienes hora el sábado?"', E: 'La mensualidad y el cuaderno de citas' } },
   { id: 'fidelizacion', sistema: true, ruta: 'fidelizacion/', rubro: 'Tarjeta de fidelización', nombre: 'Café Mirador', comuna: 'Concepción', que: 'Sellos con QR en el celular, sin mensualidad', ref: 'Diseño propio',
     espera: 6000,
     preparar: "localStorage.setItem('bdfid-mi', 'ZZCAP001'); location.reload();",
@@ -95,6 +100,7 @@ export function escribirGaleria() {
           <div><dt>Reduce</dt><dd>${esc(e.crea.R)}</dd></div>
           <div><dt>Elimina</dt><dd>${esc(e.crea.E)}</dd></div>
         </dl>
+        ${e.nota ? `<p class="gx-nota">${esc(NOTA_PLANILLA)}</p>` : ''}
         <a class="gx-ir" href="${e.destino || e.ruta || e.id + '/'}">${e.id === 'restaurante-panel' ? 'Entrar al panel' : e.sistema ? 'Ver la pantalla' : 'Ver la página'} <span aria-hidden="true">↗</span></a>
       </div>
     </article>`).join('');
@@ -135,6 +141,7 @@ main { max-width:1200px; margin:0 auto; padding:56px 16px 96px; }
 .gx-eti { margin:0; font-size:13px; color:var(--fg-3); }
 .gx h2 { margin:4px 0 10px; font-size:clamp(26px,3vw,34px); letter-spacing:-.02em; font-weight:600; }
 .gx-seg { margin:0; color:var(--fg-2); }
+.gx-nota { margin:-6px 0 14px; font-size:12px; color:var(--fg-2); opacity:.8; }
 .gx-crea { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0; }
 .gx-crea div { padding:10px 12px; border-radius:12px; background:var(--bg-3); }
 .gx-crea div:first-child { grid-column:1 / -1; background:linear-gradient(115deg, color-mix(in srgb, var(--c1) 22%, var(--bg-3)), color-mix(in srgb, var(--c2) 16%, var(--bg-3))); }

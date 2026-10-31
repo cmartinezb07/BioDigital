@@ -1,4 +1,6 @@
 import { WHATSAPP, WHATSAPP_VISIBLE, MAIL, DOMINIO_ANUAL, INSTAGRAM, SUPABASE_URL, SUPABASE_KEY } from './config.mjs';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 // Contenido común del sitio (precios, catálogo, FAQ, carrito). La estética (o) viene de opcion-8.mjs y esto arma la página completa.
 // o = { n, nombre, titulo, fuentes, css, hero, fondo, script, marca, tema, deco }
 // Catálogo vigente desde el 11-oct-2026: seis productos con precio propio y un pack completo.
@@ -57,7 +59,7 @@ const SERVICIOS = [
   ['photography', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
     ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
   ['reservations', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
-    ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Sin panel ni disponibilidad en vivo: si lo necesitas, mira el Sistema de reservas PRO']],
+    ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Panel de solo lectura con tu agenda y horas ocupadas bloqueadas solas; la confirmas tú por WhatsApp. Pagos y administración: mira el Sistema de reservas PRO']],
   ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
     ['QR con sellos, sin tarjetas de papel', 'Queda como acceso directo en el celular del cliente, sin instalar nada', 'Ves cuántos clientes están volviendo']],
 ];
@@ -108,6 +110,10 @@ const COMO = {
 // Versión con más trabajo de un producto: se agrega aparte y se cotiza (hoy ninguna).
 const EXTRA = {};
 // Demos completas (páginas aparte) y su versión con más funciones: a cotizar, porque usan servicios con costo mensual o por uso.
+// Letra chica de la planilla editable: texto único, definido en ejemplos/barberia-simple/demo.config.js (lo usan las demos y la galería).
+// Va en los servicios cuyo contenido edita el dueño desde su Google Sheet (hoy: Sistema de reservas simple).
+export const NOTA_PLANILLA = readFileSync(fileURLToPath(new URL('../ejemplos/barberia-simple/demo.config.js', import.meta.url)), 'utf8').match(/nota:\s*'([^']+)'/)[1];
+const NOTA_SERVICIO = { reservations: NOTA_PLANILLA };
 const DEMO = {
   'interactive-menu-pro': ['ejemplos/fogon-del-sur/', 'Ver la demo del Menú digital PRO', 'Es el sistema real con datos de ejemplo: pide en la mesa, para retirar o con delivery, y entra al panel con los códigos de demostración. Con pedidos en línea reales, los pagos y mapas de terceros pueden tener costo aparte.'],
   'loyalty-card': ['ejemplos/fidelizacion/', 'Ver la tarjeta de ejemplo', 'Pruébala: crea tu tarjeta en tu celular y suma sellos desde la caja del local (con el PIN de demostración) en otro equipo.'],
@@ -259,6 +265,7 @@ ${o.hero.trim()}
                 <div><h4>Cómo funciona</h4><ol>${COMO[id].map((x) => `<li>${x}</li>`).join('')}</ol></div>
               </div>
               ${EXTRA[id] ? `<div class="det-extra"><div><h4>${EXTRA[id].titulo} <span class="rec">${EXTRA[id].cuesta}</span></h4><p>${EXTRA[id].texto}</p><small>${EXTRA[id].precio}</small></div>${agregar(EXTRA[id].id, 'Agregar la versión interactiva', false)}</div>` : ''}
+              ${NOTA_SERVICIO[id] ? `<p class="det-nota"><small>${NOTA_SERVICIO[id]}</small></p>` : ''}
               ${DEMO[id] ? `<p class="det-demo"><a href="${b}${DEMO[id][0]}">${DEMO[id][1]} ↗</a><small>${DEMO[id][2]}</small></p>` : ''}
               ${esPro(id) ? mens() : ''}
               <div class="det-foot"><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}${esPro(id) ? `<small>Instalación única. Mensualidad ${clp(MENSUAL)} desde el 2.º mes</small>` : ''}${NOTA[id] ? `<small>${NOTA[id]}</small>` : ''}</span>${agregar(id)}</div>

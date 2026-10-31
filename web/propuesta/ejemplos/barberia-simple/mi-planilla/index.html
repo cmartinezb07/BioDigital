@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi planilla · Barbería El Filo</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#141414">
+<link rel="stylesheet" href="planilla.css?v=42bf2246">
+<script src="planilla.js?v=255bb422" defer></script>
+</head>
+<body>
+<div class="franja" role="note">
+  <p>Demostración: así edita el dueño su página desde su propia planilla de Google. Aquí lo que cambies se guarda solo en tu navegador.</p>
+  <a class="ver" href="../index.html" id="ver-pagina">Ver mi página con los cambios</a>
+  <small class="pie" id="nota-pie">Para editar el contenido de tu página se usa una planilla de Google Sheets propia, que Bío Digital configura a pedido del cliente. Sin mensualidad.</small>
+</div>
+<header class="barra">
+  <h1>Planilla de Barbería El Filo</h1>
+  <p class="sub">Cambia una celda y tu página se actualiza. Rojo = corregir, amarillo = revisar.</p>
+  <div class="acciones">
+    <button type="button" id="agregar" class="btn">Agregar fila</button>
+    <button type="button" id="restablecer" class="btn sec">Restablecer ejemplo</button>
+  </div>
+</header>
+<main>
+  <p id="estado" role="status" class="estado"></p>
+  <div class="hoja" id="hoja"></div>
+</main>
+<nav class="pestanas" id="pestanas" role="tablist" aria-label="Pestañas de la planilla"></nav>
+</body>
+</html>

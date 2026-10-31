@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "node .claude/hooks/vault-prompt.mjs" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [ { "type": "command", "command": "node .claude/hooks/vault-commit.mjs", "if": "Bash(git *)" } ] }
+    ]
+  }
+}

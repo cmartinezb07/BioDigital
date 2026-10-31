@@ -1,6 +1,6 @@
 # CLAUDE.md — Proyecto Bío Digital (Dirección y Control de Proyectos)
 
-Este proyecto es **independiente**: no hereda instrucciones de otros CLAUDE.md o carpetas del usuario. Todo lo relevante está en este archivo y en `memoria/`.
+Este proyecto es **independiente**: no hereda datos ni contexto de otros proyectos; solo aplican las preferencias generales de `~/.claude/CLAUDE.md` (idioma, ahorro de tokens, orquestación). Todo lo relevante está en este archivo y en `memoria/`.
 
 ## Qué es este proyecto
 
@@ -8,8 +8,9 @@ Startup de curso: activación de presencia digital para micro y pequeñas empres
 
 ## Antes de responder, lee
 
-1. [MEMORY.md](MEMORY.md) — índice de todo lo decidido hasta ahora.
-2. El archivo específico de `memoria/` relevante a la pregunta, no todos.
+1. [00 Inicio/Inicio.md](00%20Inicio/Inicio.md) (tabla "qué necesito → dónde está") y [Estado.md](00%20Inicio/Estado.md) — vault de Obsidian: estado y pendientes en una página. **Es la fuente viva; las decisiones nuevas se escriben en `10 Decisiones/AAAA-MM-DD.md`**, no en `memoria/decisiones.md` (congelado el 30-oct).
+2. Solo la nota del vault relevante a la pregunta (usar Grep, no leer todo). [MEMORY.md](MEMORY.md) queda como índice histórico.
+3. Ahorro de tokens: no leer completos `PRD.md`, `memoria/decisiones.md` ni la skill `contexto_biodigital` salvo necesidad.
 
 No repitas trabajo ya resuelto en `memoria/` sin releerlo primero — puede haber cambiado.
 
@@ -26,9 +27,25 @@ Consultor estratégico + gerente de proyecto + especialista en automatización/I
 - **Distingue costo único de costo recurrente.** Es el error estructural más fácil de cometer en este proyecto (servicios con IA vs. servicios de entrega única) — nunca lo mezcles sin decirlo explícitamente.
 - **Recuerda la fecha real.** Verifica la fecha del sistema antes de asumir que algo del cronograma original (ej. la Jornada de Terreno del 11-sep-2026) todavía está en el futuro.
 
+## Obsidian y economía de tokens (obligatorio, desde el 30-oct)
+
+- **Toda consulta pasa primero por el vault** (esta carpeta): `00 Inicio/Inicio.md` → un solo archivo. Nunca explorar el repo a ciegas.
+- **Cuando hay un avance o decisión real del proyecto (no investigación suelta, ideas ni borradores), el commit/push actualiza el vault en el mismo paso:** nota del día en `10 Decisiones/AAAA-MM-DD.md` (qué y por qué, 3-6 líneas), `00 Inicio/Estado.md` y `00 Inicio/Pendientes.md` si cambiaron, y `20 Servicios/Servicios.md` si cambió un servicio. Antes de `git commit` de un avance real, verificar que el vault está incluido; en cambios menores usar `[sin-vault]` en el mensaje. Nunca crear notas nuevas del vault para investigación o ideas aún no decididas: eso va en el chat; se archiva solo cuando el usuario diga que importa.
+- **Ventana de contexto:** Grep/Glob antes de Read; Read con `offset`/`limit`; no releer lo ya leído; salidas de comandos acotadas (`| head`, `--stat`); búsquedas amplias a un subagente Explore, que devuelve solo la conclusión; archivos grandes (`PRD.md`, `precios-catalogo.md`, skill `contexto_biodigital`) solo por Grep.
+- **Presupuesto diario/semanal:** una sesión por tema; al cerrar un tema, dejar el estado escrito en el vault y recomendar `/clear` o sesión nueva; respuestas cortas, sin repetir lo que el usuario ya sabe; no regenerar ni verificar de más lo que ya pasó pruebas.
+
+## Agentes y flujo de trabajo (desde el 30-oct)
+
+- **Orquestador + especialistas** en `.claude/agents/`: `orquestador` (Opus, agente principal; un subagente no puede invocar a otros), `web-sitio`, `menu-restaurante`, `reservas-agendas`, `nube-supabase`, `qa-pruebas`, `comercial`, `investigador` (solo lectura, Haiku), `registro-vault` (Haiku).
+- **Aquí se usan estos agentes, no los generales** (`*-general` de `~/.claude/agents/`, para otros proyectos).
+- **Tarea pequeña = sin subagentes.** Delegar solo si la tarea es grande o las partes son independientes y no tocan los mismos archivos. Un subagente evita llenar el contexto principal con lecturas largas.
+- **Flujo para trabajo grande** (ideas de superpowers): aclarar lo ambiguo con 1-3 preguntas → plan corto en tareas → hacer → **verificar con evidencia** (pruebas ejecutadas, `git diff --stat`) antes de decir "listo" → si algo falla, causa raíz, no parches.
+- **Avance visible:** lista de tareas (TaskCreate) y barra de texto `[███░░] 3/5` al reportar.
+- Gastar tokens cuando aporta (verificar, probar, investigar a fondo); no gastarlos en releer, regenerar o explorar a ciegas.
+
 ## Registro de avance
 
-Cuando se tome una decisión, se cierre un cliente, se valide o descarte una herramienta, o se detecte un riesgo nuevo: agrégalo a `memoria/decisiones.md` (o al archivo temático correspondiente) y actualiza `MEMORY.md` si corresponde una entrada nueva. No dejes decisiones importantes solo en el chat — si no queda escrito en `memoria/`, se pierde en la siguiente sesión.
+Cuando se tome una decisión, se cierre un cliente, se valide o descarte una herramienta, o se detecte un riesgo nuevo: agrégalo a la nota del día en `10 Decisiones/` (o al archivo temático de `memoria/`) y actualiza `00 Inicio/Estado.md`. No dejes decisiones importantes solo en el chat — si no queda escrito en el vault, se pierde en la siguiente sesión.
 
 ## Qué NO hacer
 

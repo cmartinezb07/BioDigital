@@ -59,3 +59,24 @@ web/propuesta/ejemplos/la-joya-del-sur/
 
 # PIN de tarjetas de fidelización reales generados por nuevo-fidelizacion.mjs
 web/herramientas/fidelizaciones/
+
+# Obsidian (estado local del editor)
+.obsidian/workspace*.json
+.obsidian/cache
+node_modules/
+test-results/
+playwright-report/
+
+# Llaves locales de prueba (nunca al repositorio)
+llave.local.js
+**/llave.local.js
+
+# Llaves locales del panel Mi agenda (nunca al repositorio)
+config.local.js
+**/config.local.js
+
+# Plantillas de planilla para entregar a clientes (sin datos reales)
+!docs/plantillas/*.xlsx
+
+# Nota interna con datos personales: queda solo en este equipo
+memoria/contexto-completo.md

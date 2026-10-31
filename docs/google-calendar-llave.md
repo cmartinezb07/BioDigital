@@ -23,3 +23,10 @@ Y el dueño, en su Google Calendar (en el computador): Configuración › su cal
 ## Probar
 Abrir la página del cliente con `?revisar=1` al final: si el calendario no se pudo leer, lo dice ahí (permiso del calendario, llave restringida a otro dominio, etc.).
 Prueba rápida con el calendario de Bío Digital: compartirlo como arriba, poner su correo en `calendario.id` de la demo (`ejemplos/reservas-simple/simple.config.js`, quitando `demo`) y crear un evento mañana a las 11:00: esa hora debe dejar de ofrecerse.
+
+## Probar con un calendario real (sin subir la llave a GitHub)
+1. Crear un calendario de prueba en Google Calendar → Configuración → **Permisos de acceso** → "Disponible públicamente" con **Ver solo libre/ocupado**. Crear 2 o 3 eventos de ejemplo.
+2. Crear el archivo `web/propuesta/ejemplos/reservas-simple/llave.local.js` (está en `.gitignore`, nunca se sube) con:
+   `window.BIO_CAL_PRUEBA = { id: 'correo-del-calendario@gmail.com', llave: 'AIza…' };`
+3. Abrir `/ejemplos/reservas-simple/?negocio=prueba&revisar=1`. Si la llave está restringida a `biodigitales.cl` y `*.pages.dev`, desde `localhost` Google la rechaza: agregar temporalmente `http://localhost:4321/*` a las restricciones de sitios web de la llave y quitarlo al terminar.
+4. Las horas de los eventos del calendario deben salir bloqueadas en el día correspondiente.

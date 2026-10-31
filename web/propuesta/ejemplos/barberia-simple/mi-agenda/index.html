@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi agenda · Barbería El Filo</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#141414">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="panel.css?v=42e1d23a">
+</head>
+<body>
+<div id="cinta" class="cinta" hidden>Modo demostración · citas de ejemplo, no son reales</div>
+<main class="wrap">
+  <header class="cab"><p class="sup">Mi agenda</p><h1 id="negocio">Barbería El Filo</h1></header>
+
+  <nav class="dias" aria-label="Elegir día">
+    <button type="button" class="dia" data-dia="hoy" aria-pressed="false">Hoy</button>
+    <button type="button" class="dia" data-dia="manana" aria-pressed="true">Mañana</button>
+    <label class="dia otro">Elegir otro día<input type="date" id="otro" aria-label="Elegir otro día"></label>
+  </nav>
+  <h2 id="titulo-dia" class="titulo-dia" aria-live="polite"></h2>
+
+  <section id="sesion" class="sesion" hidden>
+    <p id="sesion-msg" role="status"></p>
+    <button type="button" id="entrar" class="btn prim grande">Entrar con Google</button>
+  </section>
+
+  <button type="button" id="actualizar" class="btn grande act">Actualizar</button>
+  <p id="estado" class="estado" role="status" aria-live="polite"></p>
+
+  <section id="resumen" class="resumen" hidden aria-label="Resumen del día">
+    <div><b id="r-n">0</b><span>clientes</span></div>
+    <div><b id="r-ini">–</b><span>primera hora</span></div>
+    <div><b id="r-fin">–</b><span>última termina</span></div>
+    <div><b id="r-libre">–</b><span>tiempo libre</span></div>
+  </section>
+
+  <ol id="lista" class="lista"></ol>
+  <p id="vacio" class="vacio" hidden></p>
+
+  <section class="accesos" aria-label="Accesos del dueño">
+    <h2>Mi negocio</h2>
+    <div class="botones">
+      <a class="btn prim" id="a-planilla" data-pieza="planilla">Editar mi página (planilla)</a>
+      <a class="btn" id="a-servicios" target="_blank" rel="noopener">Editar mis servicios y precios</a>
+      <a class="btn" id="a-horario" target="_blank" rel="noopener">Mi horario</a>
+      <a class="btn" id="a-barberos" target="_blank" rel="noopener">Mis barberos</a>
+      <a class="btn" id="a-aviso" target="_blank" rel="noopener">Poner un aviso o promoción</a>
+      <a class="btn prim" id="a-pagina" target="_blank" rel="noopener">Ver mi página</a>
+    </div>
+    <p class="nota">Los cambios se ven en tu página al recargarla.</p>
+    <p class="nota chica" id="nota-demo" hidden></p>
+  </section>
+</main>
+<script src="../demo.config.js?v=c575a755" onerror="void 0"></script>
+<script src="config.js?v=6e6af496"></script>
+<script>document.write('<script src="config.local.js" onerror="void 0"><\/script>');</script>
+<script src="panel.js?v=78f5926e"></script>
+</body>
+</html>

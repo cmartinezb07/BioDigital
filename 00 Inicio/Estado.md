@@ -7,10 +7,10 @@ tags: [estado]
 
 ## RETOMAR AQUÍ (cierre del 1-nov, seguridad terminada)
 - **Hecho y publicado (verificado en vivo):** auditoría `security-audit` (run-1 + 3 verificadores), migraciones SQL 008-013 en Supabase demos, `_headers`, consentimiento en formularios, Gmail en «Enviar por correo», cartel QR acotado, clave de Google rotada, panel activo y revisado. El formulario guarda solicitudes en el panel (3 de prueba el 31-oct/1-nov).
-- **Sin commit en git:** hay ~40 archivos modificados y 6 migraciones nuevas sin guardar (solo se hace commit cuando el dueño lo pide).
+- **Git al día:** commit `f7a46ef` subido a GitHub el 1-nov (público: no subir PIN reales ni claves; `web/local-secretos/` está ignorada).
 - **Pendiente con el primer cliente real:** ver [[Pendientes]] ("Con el primer cliente real"): hash de PIN, `pago_prueba` en false, subir `maximo`, OAuth, Supabase Pro (el plan gratis pausa el panel tras ~7 días sin uso), Mercado Pago (Benjamín), `DOMINIOS_CLIENTES` del cartel.
 - **Siguiente tema:** links de Instagram/artículos en cola (ver [[Pendientes]], punto 3). Segunda corrida de `security-audit` solo con el primer cliente o un avance grande.
-- **Mantenimiento:** revisar `demo.alertas` (Supabase demos) y borrar las 3 solicitudes de prueba del panel.
+- **Mantenimiento:** revisar `demo.alertas` (Supabase demos) de vez en cuando (hoy 0). Las 3 solicitudes de prueba del panel ya se borraron (1-nov); el formulario guardó bien de punta a punta.
 
 ## Qué existe
 - **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev, única dirección donde se publica). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios y textos en `web/propuesta/fuentes/comun.mjs`. **Los cambios del 31-oct (precio de la reserva simple, portada, demo de la barbería) aún no están publicados.**

@@ -17,7 +17,7 @@ Ordenados por impacto (orden fijado el 31-oct). Al terminar uno, tacharlo aquí 
 ## PUBLICADO y verificado en vivo (1-nov, noche)
 - En biodigitales.cl y biodigital-bgw.pages.dev: Gmail en «Enviar por correo», casilla de consentimiento en los 3 formularios, borrador que no se re-guarda, privacidad completa, cabeceras (HSTS, permisos, frame-ancestors + noindex en pantallas de personal) y los arreglos de las demos (simple.js, fidelizacion.js, cocina.js).
 - Única observación: `/ejemplos/reservas-simple/llave.local.js` sin parámetros sigue saliendo de la caché de Cloudflare (270 B); la clave dentro está EXPIRADA en Google (HTTP 400), inofensiva. Repetir la purga por URL en Cloudflare (biodigitales.cl) si se quiere limpiar.
-- Falta: que el dueño pruebe el formulario en vivo (el panel aún tiene 0 solicitudes).
+- Probado por el dueño: el formulario guarda en el panel (las 3 solicitudes de prueba se borraron el 1-nov).
 
 ## Verificadores independientes (1-nov): 3 agentes, resultado
 - **SQL (008-012):** resisten; cerrados en `013` (IPv6 por /64, negocio recortado a 40, visitas sin `pub`, nube_leer a prueba de `pub` mala, casts de tarjetas, p_cupo u/max/r). Quedan como hardening: `nube_importar` del dueño no sanea (solo afecta su negocio), `ruta`/`repartidor` del reparto sin sanear (el cliente los pinta con esc()/mapa), `bloqueado` y registro del fallo no atómicos (marginal), confirmar que el esquema `demo` NO está expuesto en PostgREST.

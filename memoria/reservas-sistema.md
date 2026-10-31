@@ -62,7 +62,7 @@ Fuentes: [Capterra, alternativas a FareHarbor](https://www.capterra.es/alternati
 
 | Pieza | Tipo | Costo aprox. |
 |---|---|---|
-| Configurar el motor, el calendario y el panel para el negocio | **Único** | Lo cotiza Bío Digital (el catálogo dice "reservas desde $24.990" para la versión simple; la completa **no cabe** en ese precio) |
+| Configurar el motor, el calendario y el panel para el negocio | **Único** | Lo cotiza Bío Digital (el catálogo dice "reservas desde $27.990" para la versión simple; la completa **no cabe** en ese precio) |
 | Base de datos en la nube | **Recurrente** | $0 en el plan gratis de Supabase (con límites); plan Pro ~US$25 al mes |
 | Correos automáticos | Recurrente si crece | $0 con un proveedor con cuota gratis mensual; pago por sobre la cuota |
 | WhatsApp automático | **Por mensaje** | Tarifa por conversación de Meta para Chile |

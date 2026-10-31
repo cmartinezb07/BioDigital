@@ -21,7 +21,7 @@ test.describe('barbería · planilla de demostración', () => {
   test('la franja explica la demo y enlaza a la página', async ({ page }) => {
     await page.goto(PLANILLA);
     await expect(page.locator('.franja')).toContainText('Demostración: así edita el dueño su página desde su propia planilla de Google. Aquí lo que cambies se guarda solo en tu navegador.');
-    await expect(page.locator('#nota-pie')).toContainText('Para editar el contenido de tu página se usa una planilla de Google Sheets propia, que Bío Digital configura a pedido del cliente. Sin mensualidad.');
+    await expect(page.locator('#nota-pie')).toContainText('Para editar el contenido de tu página se usa una planilla de Google Sheets propia, incluida en el precio y configurada por Bío Digital a pedido del cliente. Sin mensualidad.');
     await expect(page.getByRole('link', { name: 'Ver mi página con los cambios' })).toHaveAttribute('href', '../index.html');
   });
 

@@ -1,7 +1,7 @@
 // De las respuestas del formulario del cliente a un sistema de reservas funcionando (carpeta lista, agenda, accesos y prueba), en un solo paso.
 //
 // Uso:  node web/herramientas/aplicar-formulario-agenda.mjs respuestas.json [--id cabanas-sol] [--demo] [--url https://…] [--simple]
-//   --simple         arma la RESERVA SIMPLE ($24.990, sin base de datos): lo ocupado sale del Google Calendar del dueño, la solicitud llega por
+//   --simple         arma la RESERVA SIMPLE ($27.990, sin base de datos): lo ocupado sale del Google Calendar del dueño, la solicitud llega por
 //                    WhatsApp con un enlace para agendar y confirmar en dos toques, y precios y servicios se editan en su planilla de Google.
 //                    Solo para citas y alojamiento. Deja la carpeta lista, las plantillas CSV de la planilla y los pendientes (sin SQL ni PIN).
 //   respuestas.json  las respuestas del cliente: o el JSON del formulario ({ "nombre": "Cabañas del Sol", "catalogo": "…", … }, el que llega

@@ -3,7 +3,7 @@ const entries = [
   ['social-video', 'Video para redes', 9990, true],
   ['interactive-menu', 'Menú digital', 27990, true],
   ['photography', 'Registro fotográfico', 4990, false],
-  ['reservations', 'Sistema de reservas', 24990, true],
+  ['reservations', 'Sistema de reservas', 27990, true],
   ['loyalty-card', 'Tarjeta de fidelización', 9990, false],
   ['interactive-menu-pro', 'Menú digital PRO', 99990, false],
   ['reservations-pro', 'Sistema de reservas PRO', 99990, false],

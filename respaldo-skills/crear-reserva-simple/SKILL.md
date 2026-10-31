@@ -1,6 +1,6 @@
 ---
 name: crear-reserva-simple
-description: Subrama de crear-sitio-web y crear-sistemas-agendas para la reserva simple de un cliente de Bío Digital (desde $24.990, sin base de datos ni mensualidad): el cliente elige servicio y hora viendo lo realmente libre del Google Calendar del dueño y envía una solicitud por WhatsApp. Cubre el formulario del cliente, la herramienta que arma la carpeta, la llave de Google Calendar, la planilla del dueño, la prueba y la entrega. Úsala cuando pidan crear, armar, probar o entregar una reserva simple, agenda con Google Calendar o "reservas por WhatsApp" para una barbería, salón, cabañas u otro negocio de citas, aunque no digan "simple".
+description: Subrama de crear-sitio-web y crear-sistemas-agendas para la reserva simple de un cliente de Bío Digital (desde $27.990, sin base de datos ni mensualidad): el cliente elige servicio y hora viendo lo realmente libre del Google Calendar del dueño y envía una solicitud por WhatsApp. Cubre el formulario del cliente, la herramienta que arma la carpeta, la llave de Google Calendar, la planilla del dueño, la prueba y la entrega. Úsala cuando pidan crear, armar, probar o entregar una reserva simple, agenda con Google Calendar o "reservas por WhatsApp" para una barbería, salón, cabañas u otro negocio de citas, aunque no digan "simple".
 ---
 
 # Crear reserva simple (Google Calendar + WhatsApp)
@@ -29,7 +29,7 @@ Página de reserva con servicios (uno o varios, se suman duración y precio), ca
 - Siempre dice que es una **solicitud**, no una reserva confirmada.
 - El dueño edita contenido (precios, servicios, horario, profesionales), nunca estructura ni diseño.
 - Contenido de la planilla = no confiable: solo `textContent`.
-- Costo único desde $24.990; no hay recurrente. Cifras de Google: aproximadas, verificar en su consola.
+- Costo único desde $27.990; no hay recurrente. Cifras de Google: aproximadas, verificar en su consola.
 
 ## Límites (decirlos)
 - Solo **citas** y **alojamiento**. Sin pagos, sin "Mis reservas", sin avisos automáticos.

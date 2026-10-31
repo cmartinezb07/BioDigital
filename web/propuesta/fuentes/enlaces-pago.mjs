@@ -7,7 +7,7 @@ export const PAYMENT_LINKS = Object.freeze({
   'social-video': { amount: 9990, url: '' },
   'interactive-menu': { amount: 27990, url: '' },
   'photography': { amount: 4990, url: 'https://mpago.la/2WXuyew' },
-  'reservations': { amount: 24990, url: '' },
+  'reservations': { amount: 27990, url: '' },
   'loyalty-card': { amount: 9990, url: 'https://mpago.la/1YgPBi2' },
   'interactive-menu-pro': { amount: 99990, url: '' },
   'reservations-pro': { amount: 99990, url: '' },

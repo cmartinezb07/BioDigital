@@ -25,7 +25,7 @@ núcleo universal (negocios, sucursales, roles, servicios y recursos, horarios y
 **Lo más grande que falta** (ver la checklist): módulos activables de verdad (hoy son 4 modos por rubro), mesas de restaurante, profesional + recurso a la vez, formularios con campos propios por negocio, sucursales, correo/SMS/WhatsApp y pasarela reales, reserva por teléfono desde el panel, mover una reserva de unidad, acceso a "mis reservas" con correo + código, widget para insertar en otra web.
 
 ## 5. Decisiones ya tomadas que importan aquí
-- **Sin anticipo** de Bío Digital (27-oct). Reservas simple: $24.990, solicitud por WhatsApp, sin panel. Reservas PRO: $79.990 de lanzamiento ($99.990 normal) + $20.000 al mes desde el segundo mes. Precios y qué incluye cada una: `servicios/README.md` y `fuentes/comun.mjs`.
+- **Sin anticipo** de Bío Digital (27-oct). Reservas simple: $27.990, solicitud por WhatsApp, sin panel. Reservas PRO: $79.990 de lanzamiento ($99.990 normal) + $20.000 al mes desde el segundo mes. Precios y qué incluye cada una: `servicios/README.md` y `fuentes/comun.mjs`.
 - **No prometer** lo que no existe: hoy no se envían correos ni WhatsApp (quedan "enviados (simulado)"), no hay pasarela real, y los módulos no se activan.
 - Una propuesta nunca debe decir "sin esperar respuesta", "agenda del día en el teléfono" o "confirmación automática" para la reserva simple (lo corrigió Xavier en `propuestas/zoul-barber/`).
 - El cliente no edita la página, pero **sí** edita su catálogo y horarios desde el panel PRO (borrador → publicar).

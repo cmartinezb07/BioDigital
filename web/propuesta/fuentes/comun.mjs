@@ -58,15 +58,15 @@ const SERVICIOS = [
     ['QR impreso para las mesas o el mesón', 'Foto, descripción y precio por producto', 'Funciona en cualquier celular, sin instalar nada', 'Sin pedidos ni cocina: si los necesitas, mira el Menú digital PRO']],
   ['photography', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
     ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
-  ['reservations', 'calendar', 'Sistema de reservas', 24990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
-    ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Panel de solo lectura con tu agenda y horas ocupadas bloqueadas solas; la confirmas tú por WhatsApp. Pagos y administración: mira el Sistema de reservas PRO']],
+  ['reservations', 'calendar', 'Sistema de reservas', 27990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
+    ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Planilla de Google Sheets incluida para que edites precios, horarios y avisos', 'Panel de solo lectura con tu agenda y horas ocupadas bloqueadas solas; la confirmas tú por WhatsApp. Pagos y administración: mira el Sistema de reservas PRO']],
   ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
     ['QR con sellos, sin tarjetas de papel', 'Queda como acceso directo en el celular del cliente, sin instalar nada', 'Ves cuántos clientes están volviendo']],
 ];
-const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 127.940
+const SUMA = SERVICIOS.reduce((t, s) => t + s[3], 0);   // 130.940
 const PACK = 79990;
 const PACK_5 = 69990;                                   // promoción para los primeros 5 clientes
-const AHORRO = SUMA - PACK;                             // 47.950
+const AHORRO = SUMA - PACK;                             // 50.950
 
 // Versión PRO: sistemas con base de datos, panel y acceso por código. Llevan una mensualidad y el primer mes no se cobra.
 const MENSUAL = 20000;
@@ -257,7 +257,7 @@ ${o.hero.trim()}
       <div class="precios">
         <div class="tarifario reveal" data-seq>
           ${VISIBLES.map(([id, ic, t, precio, desde, p, items]) => `<div class="item${esPro(id) ? ' item-pro' : ''}" id="svc-${id}"${d.shine ? ' data-shine' : ''}>
-            <button class="fila" type="button" aria-expanded="false" aria-controls="det-${id}"${esPro(id) ? ' data-gato="pro"' : ''}>${ico(ic, 18)}<b>${esPro(id) ? t.replace(/ PRO$/, '') + '<span class="pro">PRO</span>' : t}</b><span class="num">${desde ? '<small>desde</small> ' : ''}${clp(precio)}${esPro(id) ? '<small class="mes-fila">+ ' + clp(MENSUAL) + '/mes</small>' : ''}</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
+            <button class="fila" type="button" aria-expanded="false" aria-controls="det-${id}"${esPro(id) ? ' data-gato="pro"' : ''}>${ico(ic, 18)}<b>${esPro(id) ? t.replace(/ PRO$/, '') + '<span class="pro">PRO</span>' : t}</b><span class="num">${desde ? '<small>desde</small>' : ''}<span>${clp(precio)}</span>${esPro(id) ? '<small class="mes-fila">+ ' + clp(MENSUAL) + '/mes</small>' : ''}</span><svg class="chev" width="18" height="18" aria-hidden="true"><use href="#i-chev"/></svg></button>
             <div class="det" id="det-${id}" hidden>
               <p>${p}</p>
               <div class="det-cols">

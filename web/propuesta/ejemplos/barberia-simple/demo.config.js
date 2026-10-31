@@ -9,5 +9,5 @@
    5) Probar: sin franja, sin boton a mi-planilla/ y cambios de la planilla visibles en la pagina. */
 window.BARBERIA_DEMO = {
   activo: true,
-  nota: 'Para editar el contenido de tu página se usa una planilla de Google Sheets propia, que Bío Digital configura a pedido del cliente. Sin mensualidad. Los cambios se ven en unos minutos.'
+  nota: 'Para editar el contenido de tu página se usa una planilla de Google Sheets propia, incluida en el precio y configurada por Bío Digital a pedido del cliente. Sin mensualidad. Los cambios se ven en unos minutos.'
 };

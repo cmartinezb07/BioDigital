@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs';
 // Recorrido de la demo de la barbería: página del cliente -> panel Mi agenda -> Mi planilla.
 const BASE = '/ejemplos/barberia-simple/';
 const hayPlanilla = existsSync('web/propuesta/ejemplos/barberia-simple/mi-planilla/index.html');
-const NOTA = 'Para editar el contenido de tu página se usa una planilla de Google Sheets propia, que Bío Digital configura a pedido del cliente. Sin mensualidad.';
+const NOTA = 'Para editar el contenido de tu página se usa una planilla de Google Sheets propia, incluida en el precio y configurada por Bío Digital a pedido del cliente. Sin mensualidad.';
 
 function vigilar(page) {
   const errores = [];

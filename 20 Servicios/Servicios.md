@@ -12,7 +12,7 @@ tags: [pendientes]
 | Menú digital simple (QR, planilla de Google) | desde $27.990 | ✅ |
 | Menú digital PRO | $99.990 o $79.990 + $20.000/mes | ✅ |
 | Registro fotográfico | $4.990 | ✅ |
-| Reservas simple (Google Calendar) | desde $24.990 | ✅ probada con calendario real; demo de barbería con "Mi agenda" (¿incluido en el precio? por confirmar); configurar la planilla del cliente: costo por definir |
+| Reservas simple (Google Calendar) | desde $27.990 (planilla de Google Sheets incluida) | ✅ probada con calendario real; demo de barbería con "Mi agenda" (¿incluido en el precio? por confirmar); configurar la planilla del cliente: costo por definir |
 | Reservas PRO | $99.990 o $79.990 + $20.000/mes | ✅ demo publicada |
 | Tarjeta de fidelización | $9.990 ($5.990 lanzamiento) | ✅ aplicar SQL 007 antes de uso real |
 

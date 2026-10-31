@@ -2,6 +2,9 @@
 
 Una nota por día (la más reciente primero). **Lee solo la del día que necesitas**, no todas. Origen: `memoria/decisiones.md` (132 KB), partido el 30-oct-2026. De ahora en adelante las decisiones nuevas se escriben aquí.
 
+## [[2026-10-31]]
+- Reserva simple sube a $27.990, planilla incluida y check-in de servicios
+
 ## [[2026-10-30]]
 - Reserva simple construida
 - (tarde) — Reserva simple rehecha sobre Google Calendar

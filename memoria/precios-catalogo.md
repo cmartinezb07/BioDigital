@@ -68,7 +68,7 @@ Con una base de datos propia por cliente: 1 cliente ≈ US$25; 3 clientes ≈ US
 | Video | $9.990 | 3 | $3.330 |
 | Menú digital | $27.990 | 6 | $4.670 |
 | Registro fotográfico | $4.990 | 5 | **$1.000** |
-| Reservas | $24.990 | 5 | $5.000 |
+| Reservas | $27.990 | 5 | $5.600 |
 | Fidelización | $9.990 | 4 | $2.500 |
 | **Pack completo (seis productos)** | $79.990 | 37 | **$2.160** |
 
@@ -99,7 +99,7 @@ Regla: **lista** = ≥ $8.000 por hora y por debajo de las referencias del merca
 | 3 videos | $24.990 | **$74.990** | **$54.990** | $9.400 | ídem |
 | Menú QR (solo carta, hasta ~40 productos) | $27.990 | **$59.990** | **$44.990** | $10.000 | Neolo $4.000 a $9.000 al mes: a 3 años $150.000 a $330.000 |
 | Registro fotográfico (12 a 15 fotos) | $4.990 | **$59.990** | **$44.990** | $12.000 | Cronoshare $5.000 a $20.000 por foto = $60.000 a $240.000 |
-| Reservas simple (agenda + confirmación por WhatsApp, sin base de datos) | $24.990 | **$49.990** | **$36.990** | $10.000 | AgendaPro $15.900 + IVA al mes |
+| Reservas simple (agenda + confirmación por WhatsApp, sin base de datos) | $27.990 | **$49.990** | **$36.990** | $10.000 | AgendaPro $15.900 + IVA al mes |
 | Cambios menores a una página ya entregada | — | **$9.990 por cambio** o **3 por $24.990** | igual | — | evita una mensualidad que prometimos no cobrar |
 
 El dominio .cl sigue **a costo del cliente** (≈ $10.000 al año, a su nombre).
@@ -162,7 +162,7 @@ Aun a $249.990, el pack queda **por debajo de la sola página** de una agencia c
 | Videos | $9.990 | $29.990 (3 por $74.990) | único |
 | Menú QR simple | $27.990 | $59.990 | único |
 | Fotos | $4.990 | $59.990 | único |
-| Reservas simple | $24.990 | $49.990 | único |
+| Reservas simple | $27.990 | $49.990 | único |
 | Reservas completo | a cotizar | $119.990 + $12.900/mes | único + mensual |
 | Fidelización | $9.990 | $39.990 + $4.990/mes | único + mensual |
 | Menú con pedidos | a cotizar | $149.000 a $349.000 + $14.900 a $34.900/mes | único + mensual |
@@ -206,7 +206,7 @@ Reemplazan las propuestas anteriores de este documento y de `precios-menu-digita
 | Menú digital simple (carta con QR, desde) | $27.990 | — | No lleva |
 | **Menú digital PRO** (pedidos, cocina, panel) | $99.990 | $79.990 | $20.000 |
 | Registro fotográfico | $4.990 | $4.990 | No lleva |
-| Sistema de reservas simple (por WhatsApp, desde) | $24.990 | — | No lleva |
+| Sistema de reservas simple (por WhatsApp, desde) | $27.990 | — | No lleva |
 | **Sistema de reservas PRO** (calendario en vivo, panel) | $99.990 | $79.990 | $20.000 |
 | Tarjeta de fidelización | $9.990 | $7.990 | No lleva |
 | **Pack esencial** (los 6 simples; SKU `full-pack`) | $79.990 | $69.990 | No lleva |

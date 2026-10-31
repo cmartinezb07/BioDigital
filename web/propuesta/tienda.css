@@ -1,7 +1,7 @@
 /* Tienda: desglose por producto, carrito y formulario del pedido. Usa las variables de cada estética. */
 .tarifario .item { border-bottom: 1px solid var(--line-2); }
 .tarifario .item:last-of-type { border-bottom: 0; }
-.tarifario button.fila { width: 100%; border: 0; border-bottom: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; grid-template-columns: 36px minmax(0, 1fr) auto 18px; }
+.tarifario button.fila { width: 100%; border: 0; border-bottom: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; grid-template-columns: 36px minmax(0, 1fr) var(--t-precio) 18px; }
 .tarifario button.fila .chev { color: var(--fg-3); transition: transform .3s var(--ease-out); }
 .tarifario button.fila[aria-expanded="true"] .chev { transform: rotate(90deg); }
 @media (hover: hover) and (pointer: fine) { .tarifario button.fila:hover { background: var(--bg-3); } }

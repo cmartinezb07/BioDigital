@@ -51,7 +51,7 @@ desactivar la promoción/enlace cuando se agoten; hoy no hay inventario automát
 ## Qué conserva cotización previa
 
 Página web (desde $49.990), video para redes (desde $9.990), menú digital
-(desde $27.990), reservas (desde $24.990) y menú digital interactivo (a cotizar).
+(desde $27.990), reservas (desde $27.990) y menú digital interactivo (a cotizar).
 El usuario confirmó mantener este criterio.
 
 El cliente puede armar el carrito completo. Si contiene varios productos o

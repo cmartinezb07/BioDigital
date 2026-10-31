@@ -32,6 +32,9 @@ Ordenados por impacto (orden fijado el 31-oct). Al terminar uno, tacharlo aquí 
 - [ ] `foto-a-modelo.py` no existe en el repo: revisar las referencias que lo nombran.
 - [ ] Instalar claude-hud y 6 skills de marketing (bloqueado por permisos; lo corre el usuario).
 - [ ] Reunión/seguimiento con La Joya del Sur → [[cliente-la-joya-del-sur]].
+- [ ] Galería: decidir si la tarjeta de la barbería queda entre Cabañas y Dental o al final.
+- [ ] Galería: "Mi agenda" y "Mi planilla" solo tienen enlace de texto (sin captura). Verificar `.mi-pedido` con un pedido activo real y las pantallas del equipo tras el PIN (hoy solo cocina y repartidor).
+- [ ] Revisar el guion huérfano `web/herramientas/pruebas/barberia.js` (sin uso).
 
 ## Mejoras (solo si un cliente las pide)
 - Reservas PRO: mesas (restaurante) y profesional + recurso (clínica, taller); correo/WhatsApp reales y pasarela (necesitan cuentas externas).

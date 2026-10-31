@@ -106,17 +106,3 @@
     });
   });
 })();
-
-/* Franja de demostración: solo existe si demo.config.js define window.BARBERIA_DEMO (nunca en la entrega real). */
-document.addEventListener('DOMContentLoaded', function () {
-  var D = window.BARBERIA_DEMO; if (!D || !D.activo) return;
-  var f = document.createElement('aside'); f.className = 'recorrido'; f.setAttribute('aria-label', 'Recorrido de la demostración');
-  f.innerHTML = '<div class="recorrido-in"><b>Demo · recorre las 3 piezas:</b>' +
-    '<a href="./" aria-current="page" data-pieza="cliente">Página del cliente</a>' +
-    '<a href="mi-agenda/" data-pieza="agenda">Panel del dueño (Mi agenda)</a>' +
-    '<a href="mi-planilla/" data-pieza="planilla">Mi planilla (editar precios, horarios, avisos)</a>' +
-    '<p>El dueño edita el contenido (precios, horarios, avisos) desde su Google Sheet, nunca la estructura de la página.</p>' +
-    '<p class="recorrido-nota" data-nota></p></div>';
-  f.querySelector('[data-nota]').textContent = D.nota || '';
-  document.body.insertBefore(f, document.body.firstChild);
-});

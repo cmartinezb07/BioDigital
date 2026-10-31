@@ -14,11 +14,14 @@ tags: [estado]
 - **Skills** (respaldo en `respaldo-skills/`): crear-sitio-web, crear-menu-digital, crear-sistemas-agendas, contexto_biodigital, propuesta-comercial, crear-reserva-simple, crear-fidelizacion, crear-registro-fotografico, crear-videos-redes.
 - **Clientes cerrados:** ninguno aún. Posible: La Joya del Sur (Penco) → [[cliente-la-joya-del-sur]].
 
-## Último trabajo (31-oct, tarde)
+## Último trabajo (31-oct, noche)
+- **Galería de ejemplos:** una tarjeta por demo con enlaces a sus piezas; franja "Demo · recorre las N piezas" en barbería, Fogón del Sur, reservas PRO y fidelización. Sin publicar. Detalle: [[2026-10-31]].
+
+## Último trabajo previo (31-oct, tarde)
 - **Reserva simple a $27.990** (antes $24.990), con planilla de Google incluida y sin mensualidad; pack esencial sigue en $79.990 ($69.990 de lanzamiento). Detalle: [[2026-10-31]].
 - **Portada:** lista de productos con una sola tipografía para precios y filas alineadas.
 - **Check-in de servicios:** listos página web, menú simple, menú PRO y reservas PRO; el resto pendiente (ver [[checklist-servicios]]).
-- **QA:** 200 pasan, 0 fallan, 4 omitidas por fecha.
+- **QA:** 232 pasan, 0 fallan, 4 omitidas por fecha.
 - **Mercado Pago:** 6 de 21 enlaces con URL; falta crear el de la reserva simple a $27.990.
 
 ## Trabajo de la madrugada (31-oct)
@@ -38,7 +41,7 @@ tags: [estado]
 ## Estado por servicio
 Ver [[Servicios]] (resumen) o [[checklist-servicios]] (detalle).
 
-- **Pruebas de recorrido:** `npm run e2e` (Playwright: 24/24 páginas públicas + 12/12 recorrido de la reserva simple; faltan menú y fidelización). Suite total: 200 pasan, 0 fallan, 4 omitidas por fecha (31-oct).
+- **Pruebas de recorrido:** `npm run e2e` (Playwright: 24/24 páginas públicas + 12/12 recorrido de la reserva simple; faltan menú y fidelización). Suite total: 232 pasan, 0 fallan, 4 omitidas por fecha (31-oct).
 - **Barbería El Filo con reserva simple** (`ejemplos/barberia-simple/`): demo completa, alimentada por la planilla del dueño; Google real del mini panel pendiente de credenciales OAuth. **Sin publicar.**
 - **Agentes:** orquestador + 8 especialistas en `.claude/agents/` (ver `CLAUDE.md`).
 

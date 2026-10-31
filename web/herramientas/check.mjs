@@ -26,7 +26,7 @@ const PAGINAS = [
   { nombre: 'Ejemplo · Dental (Oris)', ruta: '/ejemplos/dental/', prueba: 'dental.js', mov: true },
   { nombre: 'Ejemplo · Contable (Taxo)', ruta: '/ejemplos/estudio-contable/', prueba: 'estudio-contable.js', mov: true },
   { nombre: 'Ejemplo · Técnico (Kyntra)', ruta: '/ejemplos/tecnico/', prueba: 'tecnico.js' },
-  { nombre: 'Ejemplo · Barbería (DBC)', ruta: '/ejemplos/barberia/', prueba: 'barberia.js', mov: true },
+  { nombre: 'Ejemplo · Barbería El Filo (reserva simple)', ruta: '/ejemplos/barberia-simple/' },
   { nombre: 'Ejemplo · Pastelería (Boolka)', ruta: '/ejemplos/casa-dulce/', prueba: 'casa-dulce.js', mov: true },
   { nombre: 'Ejemplo · Restaurante (menú con pedidos)', ruta: '/ejemplos/fogon-del-sur/', prueba: 'fogon-del-sur.js' },
   { nombre: 'Restaurante · Pago del pedido', ruta: '/ejemplos/fogon-del-sur/pagar/' },

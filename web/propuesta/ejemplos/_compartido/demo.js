@@ -38,6 +38,66 @@
     '<button type="button" aria-label="Ocultar aviso">×</button>';
   document.body.appendChild(c);
   c.querySelector('button').addEventListener('click', function () { c.remove(); });
+  // Franja "Demo · recorre las N piezas": una sola tabla define qué piezas forman cada demo. Va en el flujo (no fija), arriba de la página.
+  // Las demos de una sola pieza no la muestran. `q`: parámetro de la dirección que distingue dos piezas con la misma ruta.
+  var GRUPOS = {
+    'barberia-simple': [
+      { ruta: '', clave: 'cliente', txt: 'Página del cliente' },
+      { ruta: 'mi-agenda/', clave: 'agenda', txt: 'Panel del dueño (Mi agenda)' },
+      { ruta: 'mi-planilla/', clave: 'planilla', txt: 'Mi planilla' }
+    ],
+    'fogon-del-sur': [
+      { ruta: '', clave: 'carta', txt: 'Carta del cliente' },
+      { ruta: 'pedido/?demo', clave: 'pedido', txt: 'Pedido en vivo' },
+      { ruta: 'cocina/', clave: 'cocina', txt: 'Cocina' },
+      { ruta: 'repartidor/', clave: 'repartidor', txt: 'Repartidor' },
+      { ruta: 'panel/', clave: 'panel', txt: 'Administración' }
+    ],
+    'reservas': [
+      { ruta: '', clave: 'cliente', txt: 'Página del cliente' },
+      { ruta: '?mis=1', clave: 'mis', txt: 'Mis reservas', q: 'mis' },
+      { ruta: 'admin/', clave: 'admin', txt: 'Panel del negocio' }
+    ],
+    'fidelizacion': [
+      { ruta: '', clave: 'tarjeta', txt: 'Tarjeta del cliente' },
+      { ruta: 'local/', clave: 'local', txt: 'Caja del local' }
+    ]
+  };
+  function recorrido() {
+    var m = location.pathname.match(/^(.*\/ejemplos\/)([^\/]+)\/(.*)$/); if (!m || !GRUPOS[m[2]]) return;
+    var grupo = m[2], piezas = GRUPOS[grupo], resto = m[3].replace(/index\.html$/, '');
+    var D = window.BARBERIA_DEMO;
+    if (grupo === 'barberia-simple' && !(D && D.activo)) return; // entrega real: sin franja
+    var q = new URLSearchParams(location.search);
+    var actual = null;
+    piezas.forEach(function (p) {
+      var r = p.ruta.split(/[?]/)[0];
+      if (r !== resto) return;
+      if (p.q ? q.get(p.q) : !piezas.some(function (o) { return o.q && o.ruta.split('?')[0] === r && q.get(o.q); })) actual = p;
+    });
+    if (!actual) return;
+    var subir = resto.split('/').filter(Boolean).length, atras = ''; while (subir--) atras += '../';
+    var f = document.createElement('aside'); f.className = 'bd-recorrido recorrido'; f.setAttribute('aria-label', 'Recorrido de la demostración');
+    var fila = document.createElement('div'); fila.className = 'bd-rec-fila';
+    var b = document.createElement('b'); b.textContent = 'Demo · recorre las ' + piezas.length + ' piezas:'; fila.appendChild(b);
+    piezas.forEach(function (p) {
+      var a = document.createElement('a'); a.href = (atras + p.ruta) || './'; a.textContent = p.txt; a.setAttribute('data-pieza', p.clave);
+      if (p === actual) a.setAttribute('aria-current', 'page');
+      fila.appendChild(a);
+    });
+    f.appendChild(fila);
+    // Barbería: aclaración y nota comercial de la planilla (texto único de demo.config.js), solo en la página del cliente
+    if (grupo === 'barberia-simple' && actual.clave === 'cliente') {
+      var e = document.createElement('div'); e.className = 'bd-rec-extra';
+      var p1 = document.createElement('p'); p1.textContent = 'El dueño edita el contenido (precios, horarios, avisos) desde su Google Sheet, nunca la estructura de la página.';
+      var p2 = document.createElement('p'); p2.className = 'recorrido-nota'; p2.setAttribute('data-nota', ''); p2.textContent = D.nota || '';
+      e.appendChild(p1); e.appendChild(p2); f.appendChild(e);
+    }
+    document.body.insertBefore(f, document.body.firstChild);
+    document.documentElement.classList.add('bd-con-recorrido');
+  }
+  // Se arma al terminar de leer la página: así demo.config.js (que se carga después) ya está disponible
+  if (document.readyState === 'complete') recorrido(); else document.addEventListener('DOMContentLoaded', recorrido);
   // Formularios y botones de la demo: no envían, avisan
   document.addEventListener('submit', function (e) {
     var f = e.target; if (!f.matches('[data-demo]')) return;

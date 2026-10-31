@@ -12,3 +12,19 @@
 @media (max-width: 520px) { .bd-demo { font-size: 12px; gap: 6px; padding-left: 12px; } .bd-demo .bd-txt span { display: none; } .bd-demo a { padding: 0 12px; } }
 @media (prefers-reduced-motion: reduce) { .bd-demo, .bd-toast { animation: none; } }
 @media print { .bd-demo, .bd-toast { display: none; } }
+
+/* Franja "Demo · recorre las piezas": en el flujo (no fija), una fila que se desliza sola en celulares; la página no se ensancha. */
+.bd-recorrido { position: relative; z-index: 10000; box-sizing: border-box; width: 100%; max-width: 100vw; background: #141414; color: #f3f0ea; padding: 4px 16px; font: 500 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: 0; text-align: left; }
+.bd-rec-fila { display: flex; align-items: center; gap: 8px; max-width: 1200px; margin: 0 auto; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.bd-rec-fila::-webkit-scrollbar { display: none; }
+.bd-recorrido b { flex: none; color: #6fd8ff; white-space: nowrap; }
+.bd-recorrido a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 99px; color: #f3f0ea; text-decoration: none; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25); }
+.bd-recorrido a:hover { box-shadow: inset 0 0 0 1px #6fd8ff; }
+.bd-recorrido a[aria-current="page"] { background: #f3f0ea; color: #141414; font-weight: 700; }
+.bd-recorrido a:focus-visible { outline: 3px solid #6fd8ff; outline-offset: -3px; }
+.bd-rec-extra { max-width: 1200px; margin: 0 auto; padding: 0 0 6px; }
+.bd-rec-extra p { margin: 0; opacity: .8; font-size: 12px; }
+.bd-rec-extra .recorrido-nota { opacity: .6; font-size: 11px; }
+@media print { .bd-recorrido { display: none; } }
+/* El aviso fijo "Mi pedido" (arriba a la izquierda) baja un poco para no quedar bajo la franja cuando la página está arriba. */
+.bd-con-recorrido .mi-pedido { top: 64px; }

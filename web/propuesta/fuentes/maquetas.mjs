@@ -15,8 +15,17 @@ import { NOTA_PLANILLA } from './comun.mjs';
 // `destino`: página a la que lleva la tarjeta. `soloCarrusel`: sale en la portada pero no como tarjeta aparte en la galería.
 // `soloGaleria`: sale en la galería de ejemplos pero no en el carrusel de la portada (la portada no crece).
 // `capturaRuta`: la captura se toma de una copia de la plantilla con pedidos de muestra (herramientas/semillas-restaurante.mjs).
+// Piezas de las demos con varias pantallas: la galería las muestra como enlaces bajo el botón principal de la tarjeta.
+// Tercer valor: captura (ejemplos/<id>-chica.webp) que se muestra como miniatura; sin captura, solo texto. Los enlaces deben coincidir con la tabla GRUPOS de ejemplos/_compartido/demo.js (la franja "Demo · recorre las piezas"); lo comprueba pruebas-e2e/galeria-piezas.spec.mjs.
+const PIEZAS = {
+  'fogon-del-sur': [['Carta del cliente', 'fogon-del-sur/'], ['Pedido en vivo', 'fogon-del-sur/pedido/?demo', 'restaurante-seguimiento'], ['Cocina', 'fogon-del-sur/cocina/', 'restaurante-cocina'], ['Repartidor', 'fogon-del-sur/repartidor/'], ['Administración', 'fogon-del-sur/panel/', 'restaurante-panel']],
+  reservas: [['Página del cliente', 'reservas/'], ['Mis reservas', 'reservas/?mis=1'], ['Calendario', 'reservas/admin/', 'reservas-calendario'], ['Panel del negocio', 'reservas/admin/', 'reservas-panel']],
+  fidelizacion: [['Tarjeta del cliente', 'fidelizacion/'], ['Caja del local', 'fidelizacion/local/']],
+  'barberia-simple': [['Página del cliente', 'barberia-simple/'], ['Panel del dueño (Mi agenda)', 'barberia-simple/mi-agenda/'], ['Mi planilla', 'barberia-simple/mi-planilla/']],
+};
 const LISTA = [
   { id: 'fogon-del-sur', rubro: 'Restaurantes', nombre: 'Fogón del Sur', comuna: 'Concepción', que: 'Menú digital: ver la carta y pedir', ref: 'Diseño propio (skill crear-menu-digital)', espera: 6000,
+    piezas: PIEZAS['fogon-del-sur'],
     seg: 'Comensal que no conoce el local y duda qué pedir.',
     crea: { C: 'Pedir desde el celular y seguir el delivery en el mapa', A: 'Pedidos desde la mesa, para retirar o a domicilio', R: 'Preguntas al garzón y llamadas para pedir', E: 'La carta en PDF que no se lee en el celular' } },
   { id: 'estetica', rubro: 'Estética y bienestar', nombre: 'Centro Aurora', comuna: 'Chiguayante', que: 'Reservas por hora', ref: '21st.dev · Forma pilates studio',
@@ -28,9 +37,11 @@ const LISTA = [
   { id: 'cabanas', rubro: 'Cabañas y arriendos', nombre: 'Cabañas Los Copihues', comuna: 'Hualqui', que: 'Reservas por noche', ref: '21st.dev · Villa Aurelia',
     seg: 'Familia de Concepción que busca escaparse un fin de semana cerca.',
     crea: { C: 'Reserva directa con el total por noches calculado', A: 'Sensación del lugar: escenas y fotos grandes', R: 'Ida y vuelta de mensajes', E: 'Comisión de plataformas intermediarias' } },
-  { id: 'barberia', rubro: 'Barberías', nombre: 'El Filo', comuna: 'Talcahuano', que: 'Reservas por hora', ref: 'Framer · DBC Dallas Barber Club (plantilla gratuita)',
-    seg: 'Hombre joven que no quiere hacer fila un sábado.',
-    crea: { C: 'Elegir barbero y hora desde el celular', A: 'Identidad de barrio y estilo', R: 'Espera en el local', E: 'La fila por orden de llegada' } },
+  { id: 'barberia-simple', ruta: 'barberia-simple/', rubro: 'Barberías', nombre: 'Barbería El Filo', comuna: 'Talcahuano', que: 'Página + reserva simple + panel del dueño (Mi agenda) + planilla editable: horas libres según el Google Calendar del dueño, solicitud por WhatsApp', nota: true, ref: 'Framer · DBC Dallas Barber Club (plantilla gratuita) + reserva simple', espera: 6000,
+    piezas: PIEZAS['barberia-simple'],
+    despues: "document.querySelector('#reserva').scrollIntoView({block:'start'});",
+    seg: 'Hombre joven que agenda por WhatsApp y no quiere pagar una mensualidad por un sistema de reservas.',
+    crea: { C: 'Ver solo las horas libres y pedir la suya sin esperar respuesta para saber si hay', A: 'El dueño confirma y agenda en dos toques desde su celular. Incluye página, reserva, panel del dueño (Mi agenda) y una planilla editable para precios, horarios y avisos', R: 'El ir y venir de mensajes preguntando "¿tienes hora el sábado?"', E: 'La mensualidad y el cuaderno de citas' } },
   { id: 'dental', rubro: 'Clínicas dentales', nombre: 'Clínica Sonríe', comuna: 'Hualpén', que: 'Agenda de evaluación', ref: '21st.dev · Oris Dental',
     seg: 'Adulto que posterga el dentista por miedo o por no saber cuánto costará.',
     crea: { C: 'Sección "Sin miedo" y reserva por especialista', A: 'Explicación de cada tratamiento', R: 'Sorpresas en la cuenta: precio de evaluación visible', E: 'Llamar a la recepción para pedir hora' } },
@@ -49,12 +60,13 @@ const LISTA = [
     preparar: "sessionStorage.setItem('nube-pin-captura-fogon', '247135'); location.reload();",
     seg: 'Cocina que recibe pedidos de la mesa, del mesón y del delivery al mismo tiempo.',
     crea: { C: 'Comandas que llegan solas y avisan al cliente al marcarlas', A: 'Orden: reloj por pedido en verde, amarillo y rojo', R: 'Comandas de papel perdidas', E: 'Gritar los pedidos a la cocina' } },
-  { id: 'restaurante-panel', sistema: true, destino: 'fogon-del-sur/panel/', ruta: 'fogon-del-sur/panel/', capturaRuta: 'captura-fogon/panel/', rubro: 'Panel del restaurante', nombre: 'Fogón del Sur · Panel del restaurante', comuna: 'Concepción', que: 'Ventas y estadísticas; entran cocina, reparto y jefe con su código', ref: 'Diseño propio', espera: 8000,
+  { id: 'restaurante-panel', sistema: true, soloCarrusel: true, destino: 'fogon-del-sur/panel/', ruta: 'fogon-del-sur/panel/', capturaRuta: 'captura-fogon/panel/', rubro: 'Panel del restaurante', nombre: 'Fogón del Sur · Panel del restaurante', comuna: 'Concepción', que: 'Ventas y estadísticas; entran cocina, reparto y jefe con su código', ref: 'Diseño propio', espera: 8000,
     preparar: "sessionStorage.setItem('nube-pin-captura-fogon', '482916'); location.reload();",
     despues: "document.querySelector('[data-tab=estadisticas]').click();",
     seg: 'Equipo del restaurante: el cocinero ve los pedidos, el repartidor sus entregas y el jefe todo el negocio.',
     crea: { C: 'Un solo acceso: cada persona entra con su código a lo suyo', A: 'Datos reales: ventas, platos más pedidos, horas fuertes y opiniones con respuesta', R: 'Comandas de papel y llamadas al repartidor', E: 'Decidir sin datos' } },
   { id: 'reservas', sistema: true, ruta: 'reservas/', capturaRuta: 'captura-reservas/', rubro: 'Sistema de reservas', nombre: 'Reservas en línea', comuna: 'Gran Concepción', que: 'Cabañas, tours, centro médico, espacios y salones', ref: 'Diseño propio',
+    piezas: PIEZAS.reservas,
     seg: 'Negocio que hoy coordina reservas por WhatsApp y pierde clientes fuera de horario.',
     crea: { C: 'Calendario con disponibilidad en vivo, depósito y código de reserva', A: 'Idiomas, monedas y promociones', R: 'Mensajes de ida y vuelta', E: 'Las reservas dobles' } },
   { id: 'reservas-calendario', sistema: true, soloCarrusel: true, destino: 'reservas/admin/', ruta: 'reservas/admin/', capturaRuta: 'captura-reservas/admin/', rubro: 'Calendario de reservas', nombre: 'Cabañas Bosque Nativo · Calendario', comuna: 'Gran Concepción', que: 'Cada cabaña y cada noche: quién llega, quién está y qué está bloqueado', ref: 'Diseño propio', espera: 8000,
@@ -62,18 +74,15 @@ const LISTA = [
     despues: "document.querySelector('[data-tab=calendario]').click();",
     seg: 'Dueño de cabañas que hoy anota las reservas en un cuaderno o una planilla.',
     crea: { C: 'Ver de un vistazo qué cabaña está libre cada noche', A: 'Orden: colores por estado y bloqueos de fechas', R: 'El cuaderno y las planillas', E: 'La reserva doble' } },
-  { id: 'reservas-panel', sistema: true, ruta: 'reservas/admin/', rubro: 'Panel de reservas', nombre: 'Panel del negocio', comuna: 'Gran Concepción', que: 'Ocupación, calendario, políticas y reportes', ref: 'Diseño propio', espera: 8000,
+  { id: 'reservas-panel', sistema: true, soloCarrusel: true, ruta: 'reservas/admin/', rubro: 'Panel de reservas', nombre: 'Panel del negocio', comuna: 'Gran Concepción', que: 'Ocupación, calendario, políticas y reportes', ref: 'Diseño propio', espera: 8000,
     capturaRuta: 'captura-reservas/admin/', preparar: "sessionStorage.setItem('nube-pin-captura-reservas', '482916'); location.reload();",
     seg: 'Dueño que quiere ver su ocupación y sus ingresos sin planillas.',
     crea: { C: 'Avisos automáticos y calendario sincronizado con Airbnb y Booking', A: 'Control: depósitos, cancelaciones y capacidad', R: 'Planillas y cuadernos', E: 'Pagar comisión por cada reserva' } },
   { id: 'reservas-simple', sistema: true, soloGaleria: true, ruta: 'reservas-simple/?negocio=salon', rubro: 'Reserva simple', nombre: 'Salón Brillo', comuna: 'Chiguayante', que: 'Horas libres según la agenda del dueño, solicitud por WhatsApp, sin mensualidad', ref: 'Diseño propio', espera: 5000,
     seg: 'Negocio chico que agenda por WhatsApp y no quiere pagar una mensualidad.',
     crea: { C: 'Horas libres tomadas de su propio Google Calendar', A: 'Confirmar y agendar en dos toques', R: 'El ir y venir de mensajes preguntando horas', E: 'La mensualidad' } },
-  { id: 'barberia-simple', sistema: true, soloGaleria: true, ruta: 'barberia-simple/', rubro: 'Barbería con reserva simple', nombre: 'Barbería El Filo', comuna: 'Talcahuano', que: 'Página + reserva simple + panel del dueño (Mi agenda) + planilla editable: horas libres según el Google Calendar del dueño, solicitud por WhatsApp', nota: true, ref: 'Framer · DBC Dallas Barber Club (plantilla gratuita) + reserva simple', espera: 6000,
-    despues: "document.querySelector('#reserva').scrollIntoView({block:'start'});",
-    seg: 'Hombre joven que agenda por WhatsApp y no quiere pagar una mensualidad por un sistema de reservas.',
-    crea: { C: 'Ver solo las horas libres y pedir la suya sin esperar respuesta para saber si hay', A: 'El dueño confirma y agenda en dos toques desde su celular. Incluye página, reserva, panel del dueño (Mi agenda) y una planilla editable para precios, horarios y avisos', R: 'El ir y venir de mensajes preguntando "¿tienes hora el sábado?"', E: 'La mensualidad y el cuaderno de citas' } },
   { id: 'fidelizacion', sistema: true, ruta: 'fidelizacion/', rubro: 'Tarjeta de fidelización', nombre: 'Café Mirador', comuna: 'Concepción', que: 'Sellos con QR en el celular, sin mensualidad', ref: 'Diseño propio',
+    piezas: PIEZAS.fidelizacion,
     espera: 6000,
     preparar: "localStorage.setItem('bdfid-mi', 'ZZCAP001'); location.reload();",
     seg: 'Cliente frecuente que pierde la tarjeta de papel.',
@@ -101,7 +110,8 @@ export function escribirGaleria() {
           <div><dt>Elimina</dt><dd>${esc(e.crea.E)}</dd></div>
         </dl>
         ${e.nota ? `<p class="gx-nota">${esc(NOTA_PLANILLA)}</p>` : ''}
-        <a class="gx-ir" href="${e.destino || e.ruta || e.id + '/'}">${e.id === 'restaurante-panel' ? 'Entrar al panel' : e.sistema ? 'Ver la pantalla' : 'Ver la página'} <span aria-hidden="true">↗</span></a>
+        <a class="gx-ir" href="${e.destino || e.ruta || e.id + '/'}">${e.sistema ? 'Ver la pantalla' : 'Ver la página'} <span aria-hidden="true">↗</span></a>
+        ${e.piezas ? `<nav class="gx-piezas" aria-label="Piezas de ${esc(e.nombre)}"><span>Piezas:</span>${e.piezas.map(([t, h, im]) => im ? `<a class="gx-mini" href="${h}"><img src="${im}-chica.webp" alt="" width="320" height="200" loading="lazy"><span>${esc(t)}</span></a>` : `<a href="${h}">${esc(t)}</a>`).join('')}</nav>` : ''}
       </div>
     </article>`).join('');
   const html = `<!doctype html>
@@ -149,16 +159,13 @@ main { max-width:1200px; margin:0 auto; padding:56px 16px 96px; }
 .gx-crea dd { margin:2px 0 0; font-size:14px; color:var(--fg); }
 .gx-ir { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:0 18px; border-radius:99px; background:var(--fg); color:var(--bg); text-decoration:none; font-weight:600; font-size:14px; transition:transform .3s; }
 .gx-ir:hover { transform:translateY(-2px); }
-.sis { margin-top:56px; }
-.sis h2 { margin:0 0 6px; font-size:28px; letter-spacing:-.02em; }
-.sis > p { margin:0; color:var(--fg-2); }
-.sis-l { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap:16px; margin-top:18px; }
-.sis-l > div { padding:22px; border:1px solid var(--line); border-radius:22px; background:var(--bg-2); }
-.sis-l h3 { margin:0 0 8px; font-size:20px; letter-spacing:-.01em; }
-.sis-l p { margin:0; color:var(--fg-2); font-size:15px; }
-.sis-a { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px !important; }
-.sis-a a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border-radius:99px; border:1px solid var(--line); text-decoration:none; font-weight:600; font-size:14px; color:var(--fg); }
-.sis-a a:first-child { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+.gx-piezas { display:grid; grid-template-columns:repeat(auto-fill, minmax(124px, 1fr)); align-items:start; gap:8px; margin-top:14px; font-size:13px; color:var(--fg-3); }
+.gx-piezas > span { grid-column:1 / -1; }
+.gx-piezas a { display:flex; align-items:center; justify-content:center; text-align:center; min-height:44px; padding:0 14px; border:1px solid var(--line); border-radius:99px; text-decoration:none; font-weight:500; color:var(--fg); transition:border-color .2s; }
+.gx-piezas a:hover { border-color:var(--c1); }
+.gx-piezas a.gx-mini { flex-direction:column; align-items:stretch; gap:6px; justify-content:flex-start; text-align:left; padding:6px 6px 8px; border-radius:12px; font-size:12px; line-height:1.3; }
+.gx-mini img { display:block; width:100%; height:auto; aspect-ratio:1.6; object-fit:cover; border-radius:8px; }
+.gx-mini span { padding:0 2px; }
 .cta { margin-top:56px; padding:32px; border-radius:22px; border:1px solid var(--line); background:var(--bg-2); text-align:center; }
 .cta h2 { margin:0 0 8px; font-size:28px; letter-spacing:-.02em; }
 .cta p { margin:0 0 20px; color:var(--fg-2); }
@@ -179,12 +186,6 @@ footer a { display:inline-flex; align-items:center; min-height:44px; color:var(-
   </div>
   <div class="lista">${tarjetas}
   </div>
-  <section class="sis" aria-labelledby="t-sis"><h2 id="t-sis">Sistemas completos, conectados</h2><p>Funcionan de verdad: haz un pedido, una reserva o abre una tarjeta desde tu celular y mira cómo llega a la pantalla del local en otro equipo. Las pantallas del equipo (panel del restaurante, panel de reservas, caja) piden un código de demostración, que se muestra al entrar. Es un local de ejemplo: no escribas datos personales reales.</p>
-    <div class="sis-l">
-      <div><h3>Restaurante: menú, pedidos y panel</h3><p>Dos entradas: la carta para ver el menú y pedir (en la mesa, para retirar o a domicilio, con el repartidor en el mapa), y el panel del restaurante, donde el cocinero, el repartidor y el jefe entran con su código a lo suyo.</p><p class="sis-a"><a href="fogon-del-sur/">Ver el menú y pedir</a><a href="fogon-del-sur/panel/">Panel del restaurante</a></p></div>
-      <div><h3>Reservas: cabañas, tours, centro médico, espacios y salones</h3><p>Calendario con disponibilidad en vivo, depósito y política de cancelación, promociones, idiomas y monedas. Panel con inventario, avisos automáticos, iCal y reportes.</p><p class="sis-a"><a href="reservas/">Reservar</a><a href="reservas/admin/">Panel del negocio</a></p></div>
-      <div><h3>Tarjeta de fidelización con QR</h3><p>La tarjeta de sellos en el celular del cliente, sin papel ni aplicación. El local escanea el QR, suma el sello y ve cuántos clientes vuelven. Sin mensualidad.</p><p class="sis-a"><a href="fidelizacion/">Tarjeta del cliente</a><a href="fidelizacion/local/">Caja del local</a></p></div>
-    </div></section>
   <section class="cta"><h2>¿Quieres una así para tu negocio?</h2><p>El diagnóstico es gratis en el primer contacto.</p><a href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hola Bío Digital, vi los ejemplos y quiero una página para mi negocio.')}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></section>
 </main>
 <footer><span>© 2026 Bío Digital · Negocios ficticios hechos para mostrar nuestro trabajo</span><span><a href="../privacidad/">Privacidad</a> · <a href="../terminos/">Términos</a></span></footer>

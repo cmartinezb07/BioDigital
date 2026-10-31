@@ -19,7 +19,7 @@ test.describe('barbería · recorrido de la demo', () => {
     await page.goto(BASE);
     const franja = page.locator('aside.recorrido');
     await expect(franja).toBeVisible();
-    await expect(franja.locator('a')).toHaveText(['Página del cliente', 'Panel del dueño (Mi agenda)', 'Mi planilla (editar precios, horarios, avisos)']);
+    await expect(franja.locator('a')).toHaveText(['Página del cliente', 'Panel del dueño (Mi agenda)', 'Mi planilla']);
     await expect(franja).toContainText('nunca la estructura');
     await expect(franja.locator('[data-nota]')).toContainText(NOTA);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);

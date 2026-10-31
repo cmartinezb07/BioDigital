@@ -34,3 +34,5 @@ tr.apagada td:not(.rojo):not(.amarillo):not(.si):not(.no) { background:#d9d9d9; 
 .pestana[aria-selected="true"] { background:#fff; border-top:3px solid var(--rojo); font-weight:700; }
 .vacio { padding:24px 16px; }
 @media (max-width:600px) { .barra h1 { font-size:18px; } }
+/* La cinta fija "Ejemplo de Bío Digital" sube para no tapar las pestañas de abajo (Servicios, Horario...) */
+.bd-demo { bottom: 64px !important; }

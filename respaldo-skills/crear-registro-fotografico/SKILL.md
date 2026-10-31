@@ -9,7 +9,7 @@ description: Subrama de crear-sitio-web para el servicio de registro fotográfic
 
 ## Principios
 - **Con celular, simple y rápido.** Sin estudio ni equipo especial. Luz natural, fondo limpio, fotos reales del local (nada de stock ni imágenes generadas que parezcan del negocio).
-- **Sin límite fijo de fotos.** Ojo: el catálogo hoy dice "10 a 15 fotos editadas" (`comun.mjs`, servicio `photography`). Cambiarlo es una decisión aparte; no lo cambies desde aquí.
+- **Sin límite fijo de fotos:** la cantidad depende del producto u objetivo del cliente (decisión del 31-oct). El catálogo (`comun.mjs`, servicio `photography`) ya dice lo mismo.
 - Solo Gran Concepción: vamos al local del cliente.
 
 ## Antes de la sesión

@@ -1,0 +1,45 @@
+# Cabeceras de seguridad del sitio público (Cloudflare Pages las lee de la raíz de la carpeta publicada). Auditoría security-audit, 1-nov-2026.
+# Qué NO hay: una Content-Security-Policy estricta. El sitio usa scripts en línea, Google Fonts, Supabase, cdnjs, mapas y Mercado Pago;
+# una CSP completa se rompería sin pruebas largas. Y NO se pone frame-ancestors en todo el sitio porque los widgets de reserva
+# (ejemplos/reservas*/widget.js) se incrustan por diseño en los sitios de los clientes.
+
+/*
+  Strict-Transport-Security: max-age=31536000
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+  Permissions-Policy: camera=(self), geolocation=(self), microphone=(), payment=(), usb=()
+
+# Pantallas internas (personal, dueño, caja, cocina, reparto) y retornos de pago: nadie puede meterlas en un marco ajeno ni indexarlas.
+/ejemplos/fogon-del-sur/cocina/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/fogon-del-sur/panel/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/fogon-del-sur/repartidor/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/la-joya-del-sur/cocina/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/la-joya-del-sur/panel/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/la-joya-del-sur/repartidor/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/reservas/admin/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/fidelizacion/local/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/barberia-simple/mi-agenda/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/ejemplos/barberia-simple/mi-planilla/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+/pago/*
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow

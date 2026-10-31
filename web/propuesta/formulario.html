@@ -89,6 +89,7 @@
   <div class="fin">
     <div class="aviso"><b>Último paso.</b> Aprieta el botón, se copian tus respuestas y nos las pegas por WhatsApp o correo. Si prefieres, descárgalas como archivo.</div>
     <p id="estado-envio" role="status" class="ok"></p>
+    <p class="nota"><label><input type="checkbox" id="acepto-envio"> Acepto que Bío Digital use estas respuestas solo para preparar mi propuesta. <a href="privacidad/" target="_blank" rel="noopener">Política de privacidad</a>.</label> <small>(Solo hace falta si usas el botón «Enviar»; copiar o descargar no manda nada a Bío Digital.)</small></p>
     <p><button class="pri" id="enviar" hidden>Enviar</button> <button class="pri" id="copiar">Copiar mis respuestas</button> <button id="wa" hidden>Abrir WhatsApp para pegarlas</button> <button id="bajar">Descargar como archivo</button> <button id="ver">Ver respuestas</button></p>
     <textarea id="salida" hidden readonly aria-label="Tus respuestas"></textarea>
   </div>
@@ -321,7 +322,7 @@ function pintar() {
     if (i) l.classList.toggle('sel', i.checked);
   });
   datos = recoger();
-  try { localStorage.setItem(CLAVE, JSON.stringify(datos)); } catch (e) {}
+  if (!window.__briefEnviado) { try { localStorage.setItem(CLAVE, JSON.stringify(datos)); } catch (e) {} }
   var total = 0, hechas = 0;
   FORM.forEach(function (s) { s.p.forEach(function (p) { total++; if (datos[p.id]) hechas++; }); });
   var pct = Math.round(hechas / total * 100);
@@ -376,14 +377,15 @@ if (AGENCIA.envio) {
     var est = document.getElementById('estado-envio');
     var nombre = String(datos.nombre || '').trim();
     if (nombre.length < 2) { est.className = ''; est.textContent = 'Primero escribe el nombre de tu negocio (primera sección).'; return; }
+    if (!document.getElementById('acepto-envio').checked) { est.className = ''; est.textContent = 'Marca la casilla de privacidad para enviar tus respuestas a Bío Digital.'; return; }
     benv.disabled = true; est.className = ''; est.textContent = 'Enviando…';
     fetch(AGENCIA.envio.url + '/rest/v1/levantamientos', {
       method: 'POST', credentials: 'omit',
       headers: { apikey: AGENCIA.envio.llave, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ tipo: AGENCIA.envio.tipo || 'web', negocio: nombre.slice(0, 80), contacto: String(datos.telefono || datos.correo || '').slice(0, 80) || null, respuestas: datos, texto: texto().slice(0, 40000) })
+      body: JSON.stringify({ tipo: AGENCIA.envio.tipo || 'web', negocio: nombre.slice(0, 80), contacto: String(datos.telefono || datos.correo || '').slice(0, 80) || null, respuestas: Object.assign({}, datos, { acepto_en: new Date().toISOString() }), texto: texto().slice(0, 40000) })
     }).then(function (r) {
       if (!r.ok) throw new Error('no');
-      est.className = 'ok'; est.textContent = '¡Recibido! Ya tenemos tus respuestas. Te contactaremos pronto.';
+      est.className = 'ok'; est.textContent = '¡Recibido! Ya tenemos tus respuestas. Te contactaremos pronto.'; window.__briefEnviado = true; try { localStorage.removeItem(CLAVE); } catch (e) {}
     }).catch(function () {
       benv.disabled = false; est.className = '';
       est.textContent = 'No pudimos enviarlo ahora. Usa "Copiar mis respuestas" y pégalas por WhatsApp o correo.';

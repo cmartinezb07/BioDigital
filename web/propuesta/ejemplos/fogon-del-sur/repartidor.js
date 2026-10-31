@@ -41,7 +41,7 @@
     var libres = l.filter(function (p) { return p.estado === 'listo' && (!p.asignadoA || p.asignadoA === yo); });
     var deOtros = l.filter(function (p) { return p.estado === 'listo' && p.asignadoA && p.asignadoA !== yo; });
     app.querySelector('[data-listos]').innerHTML = libres.length ? libres.map(function (p) {
-      return '<article class="comanda" style="--ec:' + P.ESTADOS.listo.color + '"><div class="cab"><b>#' + esc(p.codigo) + '</b><span class="tipo">' + esc(p.cliente.comuna) + ' · ' + p.km + ' km</span>' + (p.asignadoA === yo ? '<span class="tipo">Asignado a ti</span>' : '') + '</div>' + lineas(p) +
+      return '<article class="comanda" style="--ec:' + P.ESTADOS.listo.color + '"><div class="cab"><b>#' + esc(p.codigo) + '</b><span class="tipo">' + esc(p.cliente.comuna) + ' · ' + (Number(p.km) || 0) + ' km</span>' + (p.asignadoA === yo ? '<span class="tipo">Asignado a ti</span>' : '') + '</div>' + lineas(p) +
         '<p class="sis-nota">' + esc(p.cliente.direccion) + ' · ' + clp(p.total) + (p.pago.pagado ? ' · pagado' : ' · cobrar al recibir') + '</p><div class="acc"><button class="btn-s prim" type="button" data-tomar="' + esc(p.id) + '"' + (tomando[p.id] ? ' disabled' : '') + '>Tomar y salir</button></div></article>';
     }).join('') : '<p class="sis-nota">No hay pedidos listos. Cuando la cocina marque uno como listo, aparece aquí.</p>';
     app.querySelector('[data-otros]').textContent = deOtros.length ? deOtros.length + (deOtros.length === 1 ? ' pedido listo está asignado a otro repartidor.' : ' pedidos listos están asignados a otros repartidores.') : '';
@@ -49,14 +49,14 @@
     if (!p || p.estado !== 'camino') {
       box.innerHTML = p && p.estado === 'entregado' ? '<p>Entregaste el pedido #' + esc(p.codigo) + '. ¡Bien hecho!</p>' : '<p class="sis-nota">No tienes una entrega en curso.</p>'; parar();
     } else {
-      var r = p.repartidor || {}, km = r.lat ? P.distancia(r, p.destino) : p.km;
+      var r = p.repartidor || {}, km = r.lat ? P.distancia(r, p.destino) : (Number(p.km) || 0);
       box.innerHTML = '<p style="font-size:20px;font-weight:700">#' + esc(p.codigo) + ' · ' + esc(p.cliente.nombre) + '</p><p>' + esc(p.cliente.direccion) + ', ' + esc(p.cliente.comuna) + '</p>' + lineas(p) +
         (p.cliente.telefono ? '<p><a class="btn-s" href="tel:' + esc(p.cliente.telefono) + '">Llamar al cliente</a></p>' : '') +
         '<p class="sis-nota" style="margin-top:8px">' + (r.lat ? 'Ubicación compartida a las ' + P.hora(r.t) + ' · faltan ' + km.toFixed(1) + ' km' + (km < .06 ? ' · ¡ya llegaste! Marca la entrega.' : '') : 'Todavía no se comparte tu ubicación: el cliente no ve la moto en su mapa.') + '</p>' +
         '<div class="acc" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">' +
         (vigilar != null ? '<span class="pagado">GPS real activo: el cliente te ve en su mapa</span>' : detener ? '<span class="por-pagar">Recorrido de prueba en curso</span>' : '<button class="btn-s prim" type="button" data-gps>Compartir mi ubicación (GPS)</button>' + (R.demo ? '<button class="btn-s" type="button" data-sim>Probar sin moto: simular recorrido</button>' : '')) +
         '<button class="btn-s prim" type="button" data-entregar>' + (p.pago.pagado ? 'Marcar entregado' : 'Entregado y cobrado (' + clp(p.total) + ')') + '</button></div>' +
-        '<p style="margin-top:10px"><a class="btn-s" href="https://www.google.com/maps/dir/?api=1&destination=' + p.destino.lat + ',' + p.destino.lng + '" target="_blank" rel="noopener">Abrir la ruta en Google Maps</a></p>';
+        '<p style="margin-top:10px"><a class="btn-s" href="https://www.google.com/maps/dir/?api=1&destination=' + (Number(p.destino.lat) || 0) + ',' + (Number(p.destino.lng) || 0) + '" target="_blank" rel="noopener">Abrir la ruta en Google Maps</a></p>';
     }
     var hechas = l.filter(function (x) { return x.estado === 'entregado' && (x.asignadoA === yo || (x.repartidor && x.repartidor.nombre === yo)); }).sort(function (a, b) { return (P.cuando(b, 'entregado') || 0) - (P.cuando(a, 'entregado') || 0); });
     app.querySelector('[data-hist]').innerHTML = hechas.length ? '<p>' + hechas.length + (hechas.length === 1 ? ' entrega' : ' entregas') + ' · ' + clp(hechas.reduce(function (t, x) { return t + x.total; }, 0)) + ' en pedidos</p><ul style="margin:6px 0 0 18px">' + hechas.slice(0, 15).map(function (x) { return '<li>#' + esc(x.codigo) + ' · ' + esc(x.cliente.comuna) + ' · ' + clp(x.total) + ' · ' + P.fecha(P.cuando(x, 'entregado')) + ' ' + P.hora(P.cuando(x, 'entregado')) + '</li>'; }).join('') + '</ul>' : 'Todavía no has terminado entregas.';

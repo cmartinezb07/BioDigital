@@ -29,5 +29,13 @@
     x.fillStyle = '#6b7280'; x.font = '400 26px Inter, system-ui, sans-serif'; x.fillText(url.length > 60 ? url.slice(0, 57) + '…' : url, W / 2, 1000);
     var a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'cartel-qr.png'; a.click();
   });
-  pintar();
+  // Los dominios de Bío Digital (y los de clientes ya incorporados) arman el cartel directo. Cualquier otra dirección pide confirmar antes:
+  // así este cartel no sirve para que un tercero arme un QR "de Bío Digital" que lleve a un sitio ajeno sin que se note.
+  var DOMINIOS_CLIENTES = [];   // al incorporar un cliente con dominio propio, agrégalo aquí (ej. 'lajoyadelsur.cl')
+  var host = ''; try { host = new URL(url).hostname.toLowerCase(); } catch (e) { /* dirección inválida: se pide confirmar igual */ }
+  var propio = /^(localhost|127\.0\.0\.1|biodigitales\.cl|biodigital-bgw\.pages\.dev)$/.test(host) || /\.biodigitales\.cl$/.test(host) || DOMINIOS_CLIENTES.indexOf(host) > -1;
+  if (propio) { pintar(); return; }
+  var barra = document.querySelector('.barra'); barra.style.display = 'none';
+  main.innerHTML = '<section class="hoja"><div><h1>Revisa a dónde lleva este QR</h1><p class="sub">Este cartel apunta a <strong>' + esc(host || url) + '</strong>, que no es un sitio de Bío Digital. Confirma que es el sitio de tu negocio antes de imprimirlo o compartirlo.</p></div><p><button type="button" id="c-ok">Es el sitio de mi negocio, continuar</button></p></section>';
+  document.getElementById('c-ok').addEventListener('click', function () { barra.style.display = ''; pintar(); });
 })();

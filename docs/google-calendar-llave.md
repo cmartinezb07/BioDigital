@@ -8,7 +8,7 @@ Para eso necesita **una llave de API de Bío Digital**. Se crea una sola vez y s
 2. Menú ☰ › **APIs y servicios › Biblioteca** › buscar **Google Calendar API** › **Habilitar**.
 3. **APIs y servicios › Credenciales › Crear credenciales › Clave de API**. Copiar la clave (empieza con `AIza`).
 4. En esa clave, **Editar clave de API**:
-   - **Restricciones de aplicaciones:** "Sitios web" (referentes HTTP). Agregar: `https://biodigitales.cl/*`, `https://*.biodigitales.cl/*`, `https://*.pages.dev/*` y los dominios propios de cada cliente cuando existan.
+   - **Restricciones de aplicaciones:** "Sitios web" (referentes HTTP). Agregar: `https://biodigitales.cl/*`, `https://*.biodigitales.cl/*`, `https://biodigital-bgw.pages.dev/*` (nunca `https://*.pages.dev/*`: cualquiera puede crear un sitio en pages.dev y usar tu llave) y los dominios propios de cada cliente cuando existan.
    - **Restricciones de API:** "Restringir clave" › marcar solo **Google Calendar API**.
    - Guardar.
 5. Anotar la clave en el gestor de contraseñas del equipo (no en el chat ni en un documento público). Es "publicable": va dentro de la página, pero las restricciones del paso 4 impiden que otros sitios la usen.
@@ -28,5 +28,8 @@ Prueba rápida con el calendario de Bío Digital: compartirlo como arriba, poner
 1. Crear un calendario de prueba en Google Calendar → Configuración → **Permisos de acceso** → "Disponible públicamente" con **Ver solo libre/ocupado**. Crear 2 o 3 eventos de ejemplo.
 2. Crear el archivo `web/propuesta/ejemplos/reservas-simple/llave.local.js` (está en `.gitignore`, nunca se sube) con:
    `window.BIO_CAL_PRUEBA = { id: 'correo-del-calendario@gmail.com', llave: 'AIza…' };`
-3. Abrir `/ejemplos/reservas-simple/?negocio=prueba&revisar=1`. Si la llave está restringida a `biodigitales.cl` y `*.pages.dev`, desde `localhost` Google la rechaza: agregar temporalmente `http://localhost:4321/*` a las restricciones de sitios web de la llave y quitarlo al terminar.
+3. Abrir `/ejemplos/reservas-simple/?negocio=prueba&revisar=1`. Si la llave está restringida a `biodigitales.cl` y `biodigital-bgw.pages.dev`, desde `localhost` Google la rechaza: agregar temporalmente `http://localhost:4321/*` a las restricciones de sitios web de la llave y quitarlo al terminar.
 4. Las horas de los eventos del calendario deben salir bloqueadas en el día correspondiente.
+
+## Dónde vive `llave.local.js` (cambio del 1-nov)
+El archivo ya NO va en `web/propuesta/` (esa carpeta se publica entera con `wrangler pages deploy`). Va en `web/local-secretos/ejemplos/reservas-simple/llave.local.js` (ignorado por git) y `web/servir.py` lo entrega solo en el computador local. Para publicar con calendario real de un cliente se usa su propia llave restringida a su dominio, nunca esta.

@@ -80,3 +80,5 @@ config.local.js
 
 # Nota interna con datos personales: queda solo en este equipo
 memoria/contexto-completo.md
+# Llaves de prueba fuera de la carpeta que se publica (las entrega web/servir.py)
+web/local-secretos/

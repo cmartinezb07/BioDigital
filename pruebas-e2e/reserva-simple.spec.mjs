@@ -3,8 +3,10 @@ import { test, expect } from '@playwright/test';
 // Recorrido de un cliente en la reserva simple: elige, agenda, deja sus datos y arma la solicitud de WhatsApp.
 // La demo simula el Google Calendar del dueño: mañana ocupa 11:00-12:00 y 16:00-17:30; pasado mañana +2 días (día 3) cerrado;
 // la cabaña Copihue está tomada desde el día 5.
+// FECHA_PRUEBA=AAAA-MM-DD simula "hoy" (para correr en fin de semana las pruebas que dependen de un día hábil).
+const hoy = () => (process.env.FECHA_PRUEBA ? new Date(`${process.env.FECHA_PRUEBA}T09:00:00`) : new Date());
 const iso = (dias) => {
-  const d = new Date();
+  const d = hoy();
   d.setDate(d.getDate() + dias);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
@@ -68,6 +70,7 @@ test.describe('reserva simple · salón (por horas)', () => {
   });
 
   test('el calendario del dueño bloquea lo ocupado: mañana sin 11:00 y el día 3 cerrado', async ({ page }) => {
+    if (process.env.FECHA_PRUEBA) await page.clock.install({ time: hoy() });
     await page.goto('/ejemplos/reservas-simple/?negocio=salon');
     await page.locator('[data-elige="corte"]').click();
     await page.locator('[data-sig]').click();

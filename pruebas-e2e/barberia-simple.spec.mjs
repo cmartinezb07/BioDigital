@@ -2,14 +2,17 @@ import { test, expect } from '@playwright/test';
 
 // Barbería El Filo con reserva simple: el widget (iframe) dentro del sitio de la barbería.
 // El calendario del dueño es simulado: mañana ocupa 11:00-13:00 y 17:00-18:00; en 2 días 10:00-12:30 y 15:00-16:30; en 4 días todo el día.
+// FECHA_PRUEBA=AAAA-MM-DD simula "hoy" (para correr en fin de semana las pruebas que dependen de un día hábil).
+const hoy = () => (process.env.FECHA_PRUEBA ? new Date(`${process.env.FECHA_PRUEBA}T09:00:00`) : new Date());
 const iso = (dias) => {
-  const d = new Date();
+  const d = hoy();
   d.setDate(d.getDate() + dias);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
 // El marco de la reserva se carga al llegar a él (carga diferida): hay que bajar hasta la sección, como lo haría un cliente.
 async function abrir(page) {
+  if (process.env.FECHA_PRUEBA) await page.clock.install({ time: hoy() });
   await page.goto('/ejemplos/barberia-simple/', { waitUntil: 'domcontentloaded' });
   await page.locator('#reserva').scrollIntoViewIfNeeded();
   return page.frameLocator('iframe[title="Reserva por WhatsApp"]');

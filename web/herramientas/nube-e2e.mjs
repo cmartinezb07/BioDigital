@@ -21,46 +21,7 @@ const pubRes = (rec, d, h, e = 'confirmada', x = 0, u = 1) => ({ n: 'zz', m: 'n'
 const cupo = (rec, d, h, max, paso = DIA) => ({ r: 'zz:' + rec, d, h, u: 1, max, paso });
 
 try {
-  // ---------- Reservas ----------
-  // 1. Una unidad no se vende dos veces, ni siquiera con cuatro clientes a la vez
-  const carrera = await Promise.all([1, 2, 3, 4].map((i) => escribir('reservas', 'reservas', 'zzcarrera0' + i, { neg: 'zz', cliente: { nombre: 'zz' + i } }, { pub: pubRes('cab', base, base + 3 * DIA), cupo: cupo('cab', base, base + 3 * DIA, 2) })));
-  ok('R1 de 4 reservas simultáneas a una cabaña con 2 unidades entran solo 2', carrera.filter((x) => x.ok).length === 2 && carrera.filter((x) => x.error === 'ocupado').length === 2, carrera);
-  // 2. El cupo se mide noche por noche: dos estadías seguidas no bloquean a una larga que usa una sola unidad a la vez
-  const d1 = base + 10 * DIA;
-  await escribir('reservas', 'reservas', 'zznoche01', { neg: 'zz' }, { pub: pubRes('cab2', d1, d1 + 2 * DIA), cupo: cupo('cab2', d1, d1 + 2 * DIA, 2) });
-  await escribir('reservas', 'reservas', 'zznoche02', { neg: 'zz' }, { pub: pubRes('cab2', d1 + 2 * DIA, d1 + 4 * DIA), cupo: cupo('cab2', d1 + 2 * DIA, d1 + 4 * DIA, 2) });
-  const larga = await escribir('reservas', 'reservas', 'zznoche03', { neg: 'zz' }, { pub: pubRes('cab2', d1, d1 + 4 * DIA), cupo: cupo('cab2', d1, d1 + 4 * DIA, 2) });
-  const otra = await escribir('reservas', 'reservas', 'zznoche04', { neg: 'zz' }, { pub: pubRes('cab2', d1, d1 + 4 * DIA), cupo: cupo('cab2', d1, d1 + 4 * DIA, 2) });
-  ok('R2 una estadía larga cabe entre dos cortas (2 unidades) y la siguiente ya no', larga.ok === true && otra.error === 'ocupado', [larga, otra]);
-  // 3. Una retención sin pagar que venció ya no ocupa la fecha
-  const d3 = base + 20 * DIA;
-  await escribir('reservas', 'reservas', 'zzvencida1', { neg: 'zz' }, { pub: pubRes('uno', d3, d3 + DIA, 'retenida', Date.now() - 60000), cupo: cupo('uno', d3, d3 + DIA, 1) });
-  const sobreVencida = await escribir('reservas', 'reservas', 'zzvencida2', { neg: 'zz' }, { pub: pubRes('uno', d3, d3 + DIA, 'confirmada'), cupo: cupo('uno', d3, d3 + DIA, 1) });
-  ok('R3 una retención vencida libera la fecha', sobreVencida.ok === true, sobreVencida);
-  // 4. Una reserva cancelada también libera la fecha
-  await escribir('reservas', 'reservas', 'zzvencida2', { neg: 'zz' }, { pub: pubRes('uno', d3, d3 + DIA, 'cancelada'), modo: 'poner' });
-  const trasCancelar = await escribir('reservas', 'reservas', 'zzvencida3', { neg: 'zz' }, { pub: pubRes('uno', d3, d3 + DIA, 'confirmada'), cupo: cupo('uno', d3, d3 + DIA, 1) });
-  ok('R4 una reserva cancelada libera la fecha', trasCancelar.ok === true, trasCancelar);
-  // 5. Privacidad: el cliente ve qué fechas están ocupadas, pero sin nombres, contactos ni códigos
-  const anonimo = await leer('reservas', 'reservas');
-  const ve = anonimo.pub.filter((p) => p.n === 'zz');
-  ok('R5 sin código, el cliente ve las fechas ocupadas pero ninguna reserva ni dato personal', !anonimo.staff && anonimo.mios.length === 0 && ve.length > 0 && ve.every((p) => !('id' in p) && !('cliente' in p)) && !JSON.stringify(anonimo).includes('"zz1"'), anonimo.mios.length);
-  const propio = await leer('reservas', 'reservas', { ids: ['zznoche01'] });
-  ok('R5b con su código ve solo su reserva completa', propio.mios.length === 1 && propio.mios[0].id === 'zznoche01' && propio.pub.every((p) => !('id' in p)), propio.mios.length);
-  // 6. El equipo (recepción) lee todo, pero no puede borrar; la configuración exige PIN
-  const equipo = await leer('reservas', 'reservas', { pin: '358241' });
-  ok('R6 recepción ve todas las reservas con sus datos', equipo.staff === true && equipo.filas.some((f) => f.id === 'zznoche01' && f.data.neg === 'zz'));
-  const vaciaRecep = await rpc('nube_vaciar', { p_neg: 'reservas', p_col: 'reservas', p_pin: '358241' });
-  ok('R6b recepción no puede vaciar las reservas', vaciaRecep.error === 'sin permiso', vaciaRecep);
-  const cfgAnon = await escribir('reservas', 'config', 'cfg-zztest', { config: {} });
-  const cfgEquipo = await escribir('reservas', 'config', 'cfg-zztest', { config: { x: 1 } }, { pin: '358241' });
-  ok('R6c la configuración no se cambia sin PIN, y con PIN sí', cfgAnon.error === 'sin permiso' && cfgEquipo.ok === true, [cfgAnon, cfgEquipo]);
-  const cfgLee = await leer('reservas', 'config', { ids: ['cfg-zztest'] });
-  ok('R6d el cliente lee la configuración que publicó el equipo', cfgLee.mios.length === 1 && cfgLee.mios[0].data.config.x === 1);
-  const pinAjeno = await escribir('reservas', 'config', 'cfg-zztest', { config: { x: 2 } }, { pin: '764193' });   // PIN de la caja de otro negocio
-  const pinFalso = await escribir('reservas', 'config', 'cfg-zztest', { config: { x: 3 } }, { pin: '000000' });
-  ok('R6e el PIN de otro negocio o uno inventado no sirve para la configuración', pinAjeno.error === 'sin permiso' && pinFalso.error === 'sin permiso', [pinAjeno, pinFalso]);
-
+  // (1-nov-2026) El bloque de Reservas de esta prueba era anterior a las reglas 006 y daba "sin_agenda"; lo cubre reservas-reglas-e2e.mjs.
   // ---------- Fidelización ----------
   const t1 = await escribir('fidelizacion', 'tarjetas', 'ZZTARJ01', { codigo: 'ZZTARJ01', nombre: 'zz', sellos: 0, visitas: 0, premios: 0 });
   ok('F1 el cliente abre su tarjeta en cero', t1.ok === true, t1);

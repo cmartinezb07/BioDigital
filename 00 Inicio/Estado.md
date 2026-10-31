@@ -5,6 +5,13 @@ tags: [estado]
 
 ↩ [[Inicio]] · Siguiente: [[Pendientes]]
 
+## RETOMAR AQUÍ (cierre del 1-nov, seguridad terminada)
+- **Hecho y publicado (verificado en vivo):** auditoría `security-audit` (run-1 + 3 verificadores), migraciones SQL 008-013 en Supabase demos, `_headers`, consentimiento en formularios, Gmail en «Enviar por correo», cartel QR acotado, clave de Google rotada, panel activo y revisado. El formulario guarda solicitudes en el panel (3 de prueba el 31-oct/1-nov).
+- **Sin commit en git:** hay ~40 archivos modificados y 6 migraciones nuevas sin guardar (solo se hace commit cuando el dueño lo pide).
+- **Pendiente con el primer cliente real:** ver [[Pendientes]] ("Con el primer cliente real"): hash de PIN, `pago_prueba` en false, subir `maximo`, OAuth, Supabase Pro (el plan gratis pausa el panel tras ~7 días sin uso), Mercado Pago (Benjamín), `DOMINIOS_CLIENTES` del cartel.
+- **Siguiente tema:** links de Instagram/artículos en cola (ver [[Pendientes]], punto 3). Segunda corrida de `security-audit` solo con el primer cliente o un avance grande.
+- **Mantenimiento:** revisar `demo.alertas` (Supabase demos) y borrar las 3 solicitudes de prueba del panel.
+
 ## Qué existe
 - **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev, única dirección donde se publica). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios y textos en `web/propuesta/fuentes/comun.mjs`. **Los cambios del 31-oct (precio de la reserva simple, portada, demo de la barbería) aún no están publicados.**
 - **Catálogo (31-oct):** seis productos de pago único; reserva simple $27.990 (planilla incluida, sin mensualidad); dos sistemas PRO con mensualidad de $20.000 (primer mes gratis); pack esencial $79.990 ($69.990 de lanzamiento); pack PRO $120.000. **Sin anticipo:** se paga al entregar y firmar el acta.
@@ -15,6 +22,7 @@ tags: [estado]
 - **Clientes cerrados:** ninguno aún. Posible: La Joya del Sur (Penco) → [[cliente-la-joya-del-sur]].
 
 ## Último trabajo (31-oct, noche)
+- **Pendientes menores cerrados:** 24 horas confirmado, $24.990 verificado, camino A elegido, 4 tests por fecha corren con `FECHA_PRUEBA` (18/18). Sin publicar. Detalle: [[2026-10-31]].
 - **Galería de ejemplos:** una tarjeta por demo con enlaces a sus piezas; franja "Demo · recorre las N piezas" en barbería, Fogón del Sur, reservas PRO y fidelización. Sin publicar. Detalle: [[2026-10-31]].
 
 ## Último trabajo previo (31-oct, tarde)
@@ -36,7 +44,7 @@ tags: [estado]
 - Reservas PRO: módulos activables, unidad asignada, reserva por teléfono, bloqueos, pestaña Clientes, reseña de Google, recordar a los de mañana por WhatsApp. Demo publicada el 30-oct. Detalle: [[2026-10-29]], [[2026-10-30]].
 - Reserva simple sobre Google Calendar del dueño (sin mensualidad), probada con calendario real.
 - Menú simple con planilla de Google; fidelización parametrizable; cartel con QR.
-- Cómo editar en la página sin Supabase: Camino A (Google) o B (Cloudflare con PIN), **sin decidir**; recomendación A.
+- Cómo editar en la página sin Supabase: **Camino A (Google)** elegido el 31-oct; falta crear el ID de cliente OAuth.
 
 ## Estado por servicio
 Ver [[Servicios]] (resumen) o [[checklist-servicios]] (detalle).
@@ -46,9 +54,6 @@ Ver [[Servicios]] (resumen) o [[checklist-servicios]] (detalle).
 - **Agentes:** orquestador + 8 especialistas en `.claude/agents/` (ver `CLAUDE.md`).
 
 ## Riesgos abiertos
-- `nube-sql/007` (sellos de fidelización para cualquier negocio) **sin aplicar**: aplicar antes de entregar la primera tarjeta real.
 - Supabase gratis se pausa sin uso: pasar a Pro antes del primer cliente.
-- "Respondemos en menos de 24 horas **por confirmar**" visible en la página (`comun.mjs`, ~línea 390).
-- Registro fotográfico: la página dice "10 a 15 fotos editadas" y la decisión vigente es "sin límite fijo". Hay que decidir cuál manda.
 - Mercado Pago: 15 de 21 enlaces sin URL y sin enlace de la reserva simple a $27.990.
-- Repositorio de GitHub público con fichas de clientes y precios: decidir si pasa a privado.
+- Repositorio de GitHub público con fichas de clientes y precios: se deja así por ahora (decisión del 31-oct).

@@ -98,7 +98,7 @@
       ((p.rev || 1) > 1 ? '<p><span class="etiqueta-mod">Modificado · versión ' + p.rev + '</span></p>' : '') +
       '<ul>' + p.items.map(function (i) { return '<li>' + P.lineaHtml(i) + '</li>'; }).join('') + '</ul>' +
       (p.nota ? '<p class="sis-nota"><b>Observación:</b> ' + esc(p.nota) + '</p>' : '') +
-      '<p class="sis-nota">' + esc(cli.nombre) + (cli.telefono ? ' · <a href="tel:' + esc(cli.telefono) + '">' + esc(cli.telefono) + '</a>' : '') + (p.tipo === 'delivery' ? '<br>' + esc(cli.direccion) + ', ' + esc(cli.comuna) + ' · ' + p.km + ' km' : '') + '</p>' +
+      '<p class="sis-nota">' + esc(cli.nombre) + (cli.telefono ? ' · <a href="tel:' + esc(cli.telefono) + '">' + esc(cli.telefono) + '</a>' : '') + (p.tipo === 'delivery' ? '<br>' + esc(cli.direccion) + ', ' + esc(cli.comuna) + ' · ' + (Number(p.km) || 0) + ' km' : '') + '</p>' +
       '<p><b>' + clp(p.total) + '</b> <span class="sis-nota">(productos ' + clp(p.subtotal) + (p.envio ? ' + envío ' + clp(p.envio) : '') + ')</span> <span class="' + (p.pago.pagado ? 'pagado">Pagado' : 'por-pagar">Por pagar') + '</span>' + (p.pago.metodo === 'linea' ? ' <span class="sis-nota">en línea</span>' : '') + '</p>' +
       (p.estado === 'cancelado' && p.motivo ? '<p class="sis-nota">Motivo: ' + esc(p.motivo) + '</p>' : '') +
       (p.tipo === 'delivery' && ['aceptado', 'preparacion', 'listo'].indexOf(p.estado) > -1 ? '<div class="campo"><label class="lbl" for="as-' + esc(p.id) + '">Repartidor asignado</label><select id="as-' + esc(p.id) + '" data-asignar><option value="">Sin asignar (lo toma quien esté libre)</option>' + Panel.repartidores.map(function (n) { return '<option' + (p.asignadoA === n ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select></div>' : (p.asignadoA ? '<p class="sis-nota">Repartidor: ' + esc(p.asignadoA) + '</p>' : '')) +
@@ -138,7 +138,7 @@
 
   // ======================= Estadísticas =======================
   function desdeDia() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() - (dias - 1) * 864e5; }
-  function contar(arr, f) { var o = {}; arr.forEach(function (x) { var k = f(x); if (k) o[k] = (o[k] || 0) + (x._n || 1); }); return Object.keys(o).map(function (k) { return [k, o[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
+  function contar(arr, f) { var o = {}; arr.forEach(function (x) { var k = f(x); if (k) o[k] = (o[k] || 0) + (Number(x._n) || 1); }); return Object.keys(o).map(function (k) { return [k, o[k]]; }).sort(function (a, b) { return b[1] - a[1]; }); }
   function barras(pares, fmt) {
     var max = Math.max.apply(null, pares.map(function (x) { return x[1]; }).concat([1]));
     return '<div class="barras" role="img" aria-label="' + esc(pares.map(function (x) { return x[0] + ': ' + (fmt ? fmt(x[1]) : x[1]); }).join(', ')) + '">' + pares.map(function (x) { return '<div title="' + esc(x[0] + ': ' + (fmt ? fmt(x[1]) : x[1])) + '"><i style="height:' + (x[1] / max * 82) + '%"></i><small>' + esc(x[0]) + '</small></div>'; }).join('') + '</div>';

@@ -329,7 +329,7 @@
       if (!noches && x.svc) { var s0 = x.svc.length === 1 ? x.svc[0] : null; if (s0) otras = R.horas(D(), { servicio: s0, fecha: x.f }).filter(function (h) { return h.min !== x.m; }).slice(0, 6); }
       var tomada = noches ? !!R.validar(D(), { recurso: x.rec, llegada: x.l, salida: x.s, personas: x.p }) : !!(x.svc && x.svc.length === 1 && R.servicio(D(), x.svc[0]) && !R.horas(D(), { servicio: x.svc[0], fecha: x.f }).some(function (h) { return h.min === x.m; }));
       app.innerHTML = '<div class="wrap" style="max-width:640px"><header class="cab"><div class="marca-n">' + R.logo(cc) + '<div><h1>Solicitud para ' + esc(cc.nombre) + '</h1><p>Para el negocio · nada de esto se guarda en internet</p></div></div></header>' +
-        '<section class="caja"><h2>' + esc(x.n) + '</h2><p><b>' + esc(x.q) + '</b><br>' + esc(cuandoTxt) + (noches ? ' · ' + x.p + ' personas' : '') + '<br>Total estimado: ' + clp(x.tot) + '<br>Celular: ' + esc(x.t) + Object.keys(x.r || {}).map(function (k) { return '<br>' + esc(k) + ': ' + esc(x.r[k]); }).join('') + '</p>' +
+        '<section class="caja"><h2>' + esc(x.n) + '</h2><p><b>' + esc(x.q) + '</b><br>' + esc(cuandoTxt) + (noches ? ' · ' + Math.max(1, Math.min(99, parseInt(x.p, 10) || 1)) + ' personas' : '') + '<br>Total estimado: ' + clp(x.tot) + '<br>Celular: ' + esc(x.t) + Object.keys(x.r || {}).map(function (k) { return '<br>' + esc(k) + ': ' + esc(x.r[k]); }).join('') + '</p>' +
         (tomada ? '<p class="aviso-grande" role="status" style="margin-top:10px"><span><b>Ojo:</b> en tu Google Calendar ya hay algo a esa hora. Revisa antes de confirmar.</span></p>' : '') + '</section>' +
         '<section class="caja"><h2>Si puedes</h2><ol style="margin:0;padding:0;list-style:none;display:grid;gap:12px"><li><a class="btn prim" href="' + esc(gcal(x.q + ' · ' + x.n, det)) + '" target="_blank" rel="noopener">1. Agendar en mi Google Calendar</a><br><small class="nota">Se abre con todo escrito: toca Guardar. Esa hora deja de ofrecerse en tu página.</small></li>' +
         '<li><a class="btn prim" href="' + esc(wa(conf)) + '" target="_blank" rel="noopener">2. Confirmar a ' + esc(x.n.split(' ')[0]) + ' por WhatsApp</a><br><small class="nota">Le llega la confirmación con la dirección y un botón para agregarlo a su calendario (le avisa antes).</small></li></ol></section>' +
@@ -337,7 +337,7 @@
         '<p style="margin-top:10px"><a class="btn" target="_blank" rel="noopener" href="' + esc(wa('Hola ' + x.n.split(' ')[0] + ', lo siento: ' + (noches ? 'esas fechas ya no están disponibles' : 'ese día no me quedan horas') + '. Puedes ver lo que sí queda libre aquí: ' + location.origin + location.pathname + '?negocio=' + neg.id)) + '">Avisar que no hay disponibilidad</a></p></section></div>';
     }
     var g = /^#g=([A-Za-z0-9_-]+)$/.exec(location.hash);
-    if (g) { try { var gx = JSON.parse(decodeURIComponent(escape(atob(g[1].replace(/-/g, '+').replace(/_/g, '/'))))); if (gx && gx.n && gx.t && (gx.f || gx.l)) return gestion(gx); } catch (e) { /* enlace dañado: se muestra la página normal */ } }
+    if (g) { try { var gx = JSON.parse(decodeURIComponent(escape(atob(g[1].replace(/-/g, '+').replace(/_/g, '/'))))); if (gx && gx.n && gx.t && (gx.f || gx.l) && (gx.l ? /^\d{4}-\d{2}-\d{2}$/.test(String(gx.l)) && /^\d{4}-\d{2}-\d{2}$/.test(String(gx.s)) : /^\d{4}-\d{2}-\d{2}$/.test(String(gx.f)) && Number.isInteger(gx.m) && Number.isInteger(gx.d))) return gestion(gx); } catch (e) { /* enlace dañado: se muestra la página normal */ } }
     pintar();
   }
 })();

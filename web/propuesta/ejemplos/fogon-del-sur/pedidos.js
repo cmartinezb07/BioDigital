@@ -280,7 +280,7 @@
   // Ruta por calles (servicio público de demostración de OSRM). Si no responde, línea recta con puntos intermedios.
   function ruta(a, b) {
     var recta = function () { var r = []; for (var i = 0; i <= 40; i++) r.push([a.lat + (b.lat - a.lat) * i / 40, a.lng + (b.lng - a.lng) * i / 40]); return r; };
-    var url = 'https://router.project-osrm.org/route/v1/driving/' + a.lng + ',' + a.lat + ';' + b.lng + ',' + b.lat + '?overview=full&geometries=geojson';
+    var url = 'https://router.project-osrm.org/route/v1/driving/' + (Number(a.lng) || 0) + ',' + (Number(a.lat) || 0) + ';' + (Number(b.lng) || 0) + ',' + (Number(b.lat) || 0) + '?overview=full&geometries=geojson';
     var ctl = window.AbortController ? new AbortController() : null;
     if (ctl) setTimeout(function () { ctl.abort(); }, 5000);
     return fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) { return r.json(); }).then(function (j) {

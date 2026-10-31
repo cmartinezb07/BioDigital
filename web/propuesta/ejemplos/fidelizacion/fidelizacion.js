@@ -11,14 +11,14 @@
   var PROGRAMA = Object.assign({ negocio: 'Café Mirador', sigla: 'CM', comuna: 'Concepción', sellos: 8, premio: 'Un café de especialidad gratis', minutosEntreSellos: 1, color: '#6b4226' }, FC.programa || {});
   var TAZA = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5Z"/><path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/></svg>';
   document.documentElement.style.setProperty('--fid', PROGRAMA.color);   // el color del local tiñe la tarjeta
-  var LOGO = '<span class="logo-n" style="--lc:' + PROGRAMA.color + ';--lt:36px" aria-hidden="true">' + String(PROGRAMA.sigla).replace(/[<>&"]/g, '') + '</span>';
+  var LOGO = '<span class="logo-n" style="--lc:' + String(PROGRAMA.color).replace(/[^#a-zA-Z0-9(),.% -]/g, '') + ';--lt:36px" aria-hidden="true">' + String(PROGRAMA.sigla).replace(/[<>&"]/g, '') + '</span>';
   // Tarjeta (se usa para la del cliente y para la vista previa del alta)
   function htmlTarjeta(t, ejemplo) {
     var completa = t.sellos >= PROGRAMA.sellos;
-    return '<section class="tarjeta' + (completa ? ' completa' : '') + (ejemplo ? ' ejemplo' : '') + '"' + (ejemplo ? ' aria-label="Vista previa de la tarjeta"' : '') + '><div class="t-cab"><span class="t-marca">' + LOGO + PROGRAMA.negocio + '</span><span>' + esc(t.nombre) + '</span></div>' +
+    return '<section class="tarjeta' + (completa ? ' completa' : '') + (ejemplo ? ' ejemplo' : '') + '"' + (ejemplo ? ' aria-label="Vista previa de la tarjeta"' : '') + '><div class="t-cab"><span class="t-marca">' + LOGO + esc(PROGRAMA.negocio) + '</span><span>' + esc(t.nombre) + '</span></div>' +
       '<div class="sellos" role="img" aria-label="' + t.sellos + ' de ' + PROGRAMA.sellos + ' sellos">' + Array.from({ length: PROGRAMA.sellos }, function (_, i) { return '<i class="' + (i < t.sellos ? 'on' : '') + '" style="--i:' + i + '">' + (i < t.sellos ? TAZA : i + 1) + '</i>'; }).join('') + '</div>' +
       '<p class="t-prem">' + (completa ? '¡Completaste tu tarjeta! Muestra este QR para canjear: ' : 'Te faltan ' + (PROGRAMA.sellos - t.sellos) + ' para: ') + '<b>' + esc(PROGRAMA.premio) + '</b></p>' +
-      '<div class="t-qr"><div data-qr></div><p class="codigo">' + t.codigo + '</p><p class="nota">' + (ejemplo ? 'Así se verá tu tarjeta en el celular.' : 'Muéstralo en caja para sumar tu sello.') + '</p></div></section>';
+      '<div class="t-qr"><div data-qr></div><p class="codigo">' + esc(t.codigo) + '</p><p class="nota">' + (ejemplo ? 'Así se verá tu tarjeta en el celular.' : 'Muéstralo en caja para sumar tu sello.') + '</p></div></section>';
   }
   var leer = function () { try { return JSON.parse(localStorage.getItem(CLAVE)) || { tarjetas: [], eventos: [] }; } catch (e) { return { tarjetas: [], eventos: [] }; } };
   var canal = null; try { canal = new BroadcastChannel('bd-fidelizacion'); } catch (e) {}
@@ -99,10 +99,10 @@
       qr(app.querySelector('[data-qr]'), location.origin + location.pathname);
       return;
     }
-    var url = location.origin + location.pathname.replace(/index\.html$/, '') + 'local/?tarjeta=' + t.codigo;
+    var url = location.origin + location.pathname.replace(/index\.html$/, '') + 'local/?tarjeta=' + encodeURIComponent(t.codigo);
     app.innerHTML = htmlTarjeta(t) +
       '<section class="caja"><h2>Guárdala en tu celular</h2><p class="nota">En el navegador, toca <b>Compartir → Agregar a inicio</b> (iPhone) o <b>⋮ → Agregar a la pantalla principal</b> (Android). Queda como una app, sin descargar nada.</p><p class="nota" style="margin-top:8px">Visitas: ' + (t.visitas || 0) + ' · premios canjeados: ' + (t.premios || 0) + '</p>' +
-      '<p class="nota" style="margin-top:8px">Demostración: el <a href="local/?tarjeta=' + t.codigo + '" target="_blank" rel="noopener">lado del local</a> es otra pantalla (pide un PIN, que se muestra ahí). Ábrela en otro equipo y suma un sello: tu tarjeta cambia sola. No escribas datos reales.</p></section>';
+      '<p class="nota" style="margin-top:8px">Demostración: el <a href="local/?tarjeta=' + encodeURIComponent(t.codigo) + '" target="_blank" rel="noopener">lado del local</a> es otra pantalla (pide un PIN, que se muestra ahí). Ábrela en otro equipo y suma un sello: tu tarjeta cambia sola. No escribas datos reales.</p></section>';
     qr(app.querySelector('[data-qr]'), url);
   }
   if (modo === 'cliente') {
@@ -126,13 +126,13 @@
     var ev = function (tipo, desde) { return d.eventos.filter(function (e) { return e.tipo === tipo && e.t >= desde; }).length; };
     var vuelven = d.tarjetas.filter(function (t) { return (t.visitas || 0) >= 2; }).length;
     app.querySelector('[data-kpi]').innerHTML = [['Tarjetas', d.tarjetas.length, 'clientes en el programa'], ['Sellos hoy', ev('sello', hoy.getTime()), ev('sello', hoy.getTime() - 6 * 864e5) + ' en 7 días'], ['Premios canjeados', ev('premio', 0), 'desde el inicio'], ['Clientes que vuelven', d.tarjetas.length ? Math.round(vuelven / d.tarjetas.length * 100) + ' %' : '—', 'con 2 visitas o más']].map(function (k) { return '<div class="kpi"><span>' + k[0] + '</span><b>' + k[1] + '</b><small>' + k[2] + '</small></div>'; }).join('');
-    app.querySelector('[data-lista]').innerHTML = d.tarjetas.length ? d.tarjetas.slice().sort(function (a, b) { return (b.ultimo || b.creada) - (a.ultimo || a.creada); }).slice(0, 30).map(function (t) { return '<tr><td><b>' + t.codigo + '</b></td><td>' + esc(t.nombre) + '</td><td>' + t.sellos + ' / ' + PROGRAMA.sellos + '</td><td>' + (t.visitas || 0) + '</td><td><button class="btn chico" type="button" data-usar="' + t.codigo + '">Elegir</button></td></tr>'; }).join('') : '<tr><td colspan="5" class="nota">Aún no hay tarjetas. Crea una en el lado del cliente.</td></tr>';
+    app.querySelector('[data-lista]').innerHTML = d.tarjetas.length ? d.tarjetas.slice().sort(function (a, b) { return (b.ultimo || b.creada) - (a.ultimo || a.creada); }).slice(0, 30).map(function (t) { return '<tr><td><b>' + esc(t.codigo) + '</b></td><td>' + esc(t.nombre) + '</td><td>' + t.sellos + ' / ' + PROGRAMA.sellos + '</td><td>' + (t.visitas || 0) + '</td><td><button class="btn chico" type="button" data-usar="' + esc(t.codigo) + '">Elegir</button></td></tr>'; }).join('') : '<tr><td colspan="5" class="nota">Aún no hay tarjetas. Crea una en el lado del cliente.</td></tr>';
   }
   function actual(c) {
     var t = buscar(leer(), c), box = app.querySelector('[data-actual]');
     if (!c) { box.innerHTML = '<p class="nota">Escanea o escribe el código de una tarjeta.</p>'; return; }
     if (!t) { box.innerHTML = '<p class="err">No encontramos la tarjeta ' + esc(c) + '. Revisa el código.</p>'; return; }
-    box.innerHTML = '<p style="font-size:20px;font-weight:700">' + esc(t.nombre) + ' · ' + t.sellos + ' de ' + PROGRAMA.sellos + ' sellos</p><div class="acciones-r" style="justify-content:flex-start"><button class="btn prim" type="button" data-sellar="' + t.codigo + '"' + (t.sellos >= PROGRAMA.sellos ? ' disabled' : '') + '>Sumar un sello</button><button class="btn" type="button" data-canjear="' + t.codigo + '"' + (t.sellos < PROGRAMA.sellos ? ' disabled' : '') + '>Canjear premio</button></div>';
+    box.innerHTML = '<p style="font-size:20px;font-weight:700">' + esc(t.nombre) + ' · ' + t.sellos + ' de ' + PROGRAMA.sellos + ' sellos</p><div class="acciones-r" style="justify-content:flex-start"><button class="btn prim" type="button" data-sellar="' + esc(t.codigo) + '"' + (t.sellos >= PROGRAMA.sellos ? ' disabled' : '') + '>Sumar un sello</button><button class="btn" type="button" data-canjear="' + esc(t.codigo) + '"' + (t.sellos < PROGRAMA.sellos ? ' disabled' : '') + '>Canjear premio</button></div>';
   }
   if (modo === 'local') Nube.acceso({ negocio: NEG, titulo: 'Caja · ' + PROGRAMA.negocio, aceptan: ['caja', 'dueno'], pistas: FC.negocio ? null : [{ rol: 'Caja', pin: '764193' }, { rol: 'Dueño', pin: '482916' }] }).then(function () {
     entrarEquipo();

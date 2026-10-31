@@ -13,7 +13,20 @@ puerto = int(sys.argv[1]) if len(sys.argv) > 1 else 4321
 carpeta = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path.abspath(__file__)), 'propuesta')
 
 
+# Llaves y configuración de prueba (llave.local.js, config.local.js): viven FUERA de la carpeta que se publica (web/local-secretos/,
+# misma ruta relativa) y solo este servidor local las entrega. Así un deploy de web/propuesta nunca las sube.
+SECRETOS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'local-secretos')
+
+
 class SinCache(http.server.SimpleHTTPRequestHandler):
+    def translate_path(self, path):
+        ruta = super().translate_path(path)
+        if os.path.basename(ruta) in ('llave.local.js', 'config.local.js'):
+            alterna = os.path.join(SECRETOS, os.path.relpath(ruta, carpeta))
+            if os.path.isfile(alterna):
+                return alterna
+        return ruta
+
     def end_headers(self):
         self.send_header('Cache-Control', 'no-store, must-revalidate')
         super().end_headers()

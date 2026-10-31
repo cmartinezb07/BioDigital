@@ -13,7 +13,7 @@
 | Página web | desde $49.990 | desde $39.990 | Hasta 5 secciones, WhatsApp, mapa y horario; correo `contacto@tunegocio.cl` por reenvío |
 | Videos para redes | desde $9.990 | — | Video vertical de 15 a 30 segundos, grabado y editado en el local |
 | Menú digital (carta con QR) | desde $27.990 | — | Carta o lista de precios con QR, sin pedidos ni cocina |
-| Registro fotográfico | $4.990 | — | 10 a 15 fotos editadas, sesión en el local |
+| Registro fotográfico | $4.990 | — | Fotos editadas según el producto u objetivo, sesión en el local |
 | Sistema de reservas (simple) | desde $27.990 | — | Calendario; la solicitud llega armada por WhatsApp y el negocio confirma. **Sin panel ni disponibilidad en vivo** |
 | Tarjeta de fidelización | $9.990 | $5.990 | Sellos con QR en el celular del cliente |
 | **Pack esencial (los seis)** | $79.990 | **$69.990** | Los seis productos de arriba |

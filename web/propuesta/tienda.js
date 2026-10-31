@@ -221,8 +221,18 @@
     var d = datos(), txt = mensaje(d);
     registrar(d, canal === 'correo' ? 'correo' : 'whatsapp');
     if (canal === 'correo') {
-      location.href = 'mailto:' + form.dataset.mail + '?subject=' + encodeURIComponent('Pedido de diagnóstico: ' + d.negocio) + '&body=' + encodeURIComponent(txt);
-      status.textContent = 'Se abrió tu correo con el pedido listo. Falta que presiones "Enviar" allá.';
+      var asunto = 'Pedido de diagnóstico: ' + d.negocio;
+      var mailto = 'mailto:' + form.dataset.mail + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(txt);
+      // En escritorio muchos equipos no tienen un programa de correo configurado y el enlace mailto no hace nada: se abre Gmail en una pestaña nueva
+      // (más un enlace para quien use otro programa). En celular se usa el correo del teléfono.
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        location.href = mailto;
+        status.textContent = 'Se abrió tu correo con el pedido listo. Falta que presiones "Enviar" allá.';
+      } else {
+        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(form.dataset.mail) + '&su=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(txt), '_blank', 'noopener');
+        status.textContent = 'Se abrió Gmail con el pedido listo. Falta que presiones "Enviar" allá. ¿Usas otro correo? ';
+        var otro = document.createElement('a'); otro.href = mailto; otro.textContent = 'Abrir con mi programa de correo'; status.appendChild(otro);
+      }
     } else {
       var wa = form.dataset.wa;
       window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(txt), '_blank', 'noopener');

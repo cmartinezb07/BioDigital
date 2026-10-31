@@ -57,7 +57,7 @@ const SERVICIOS = [
   ['interactive-menu', 'qr', 'Menú digital', 27990, true, 'Tu carta o lista de precios en un QR, sin cartas de papel.',
     ['QR impreso para las mesas o el mesón', 'Foto, descripción y precio por producto', 'Funciona en cualquier celular, sin instalar nada', 'Sin pedidos ni cocina: si los necesitas, mira el Menú digital PRO']],
   ['photography', 'camera', 'Registro fotográfico', 4990, false, 'Fotos reales de tu local y tus productos, listas para las redes, el menú y la web.',
-    ['Sesión en tu local, sin estudio', '10 a 15 fotos editadas', 'Quedan tuyas, para usarlas donde quieras']],
+    ['Sesión en tu local, sin estudio', 'Fotos editadas según el producto u objetivo que necesites', 'Quedan tuyas, para usarlas donde quieras']],
   ['reservations', 'calendar', 'Sistema de reservas', 27990, true, 'Que te reserven hora desde el celular, sin llamadas ni mensajes cruzados.',
     ['Calendario con tus servicios y horarios', 'La solicitud te llega armada por WhatsApp y tú confirmas', 'Planilla de Google Sheets incluida para que edites precios, horarios y avisos', 'Panel de solo lectura con tu agenda y horas ocupadas bloqueadas solas; la confirmas tú por WhatsApp. Pagos y administración: mira el Sistema de reservas PRO']],
   ['loyalty-card', 'card', 'Tarjeta de fidelización', 9990, false, 'La tarjeta de sellos de toda la vida, pero en el celular del cliente.',
@@ -101,7 +101,7 @@ const COMO = {
   web: ['Nos cuentas de tu negocio y elegimos las secciones', 'Armamos la página con tus fotos, textos y datos', 'La publicamos a tu nombre y la dejamos funcionando'],
   'social-video': ['Definimos contigo qué mostrar', 'Grabamos en tu local', 'Editamos y te lo entregamos listo para publicar'],
   'interactive-menu': ['Nos pasas tu carta y tus precios', 'Armamos el menú digital y el QR', 'Te entregamos el QR impreso, listo para usar'],
-  photography: ['Coordinamos día y hora en tu local', 'Sacamos las fotos de tus productos y espacios', 'Editamos y te entregamos de 10 a 15 fotos'],
+  photography: ['Coordinamos día y hora en tu local', 'Sacamos las fotos de tus productos y espacios', 'Editamos y te entregamos las fotos que tu producto u objetivo requiera'],
   reservations: ['Definimos tus horarios y servicios', 'Configuramos la agenda en línea', 'Tus clientes reservan solos, a cualquier hora'],
   'loyalty-card': ['Defines el premio y cuántos sellos lleva', 'Armamos la tarjeta con tu marca', 'Tus clientes la guardan en el celular y tú sumas sellos'],
   'interactive-menu-pro': ['Nos pasas tu carta, tus fotos, tus comunas y tus horarios', 'Dejamos andando la carta, los pedidos, la cocina y el panel, y probamos un pedido de cada tipo', 'Te damos los códigos de acceso y te enseñamos a usar el panel'],
@@ -387,7 +387,7 @@ ${o.hero.trim()}
       <div class="final reveal">
         ${d.final || ''}
         <h2 id="t-final" class="h2">¿Tu negocio está listo <span class="accent">para vender en internet?</span></h2>
-        <p>Te lo decimos gratis en la primera conversación. Recibimos solicitudes 24/7 y respondemos en menos de 24 horas <span class="note">por confirmar</span></p>
+        <p>Te lo decimos gratis en la primera conversación. Recibimos solicitudes 24/7 y respondemos en menos de 24 horas.</p>
         <div class="cta-row">
           <a class="btn btn-main" href="#diagnostico">Pide tu diagnóstico gratis ${arrow}</a>
           ${redes()}

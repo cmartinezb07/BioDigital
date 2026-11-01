@@ -48,7 +48,7 @@ Ordenados por impacto (orden fijado el 31-oct). Al terminar uno, tacharlo aquí 
 ## Orden de prioridad (31-oct)
 1. [ ] **Publicar en biodigital-bgw** con todos los cambios juntos, cuando el usuario diga que está listo (lo corre el usuario):
    `node web/propuesta/fuentes/generar.mjs --publico 8`, `npx wrangler pages deploy --project-name=biodigital --branch=main --commit-dirty=true`, `node web/propuesta/fuentes/generar.mjs 8`.
-2. [ ] **Mercado Pago:** crear el enlace de la reserva simple a $27.990 y completar los 15 que faltan (hoy 6 de 21 tienen URL). IVA de los productos nuevos: sigue pendiente.
+2. [ ] **Mercado Pago:** los 15 productos con pago directo ya tienen enlace (01-nov); falta **desplegar** el sitio y abrir los 15 enlaces en el navegador para confirmar el monto y el receptor. Los 6 de cotización previa no llevan enlace. IVA de los productos nuevos: sigue pendiente.
 3. [ ] **Base y privacidad:** pasar Supabase a Pro cuando haya primer cliente real (no antes); PIN privados por cliente (revisar límite de intentos y reactivar `biodigital-panel`, pausado); privacidad revisada con el negocio.
 5. [ ] **Primer cliente real** (aún no hay ninguno; posible: [[cliente-la-joya-del-sur]]). Confirmar con Godoy el plan de videos.
 6. [ ] **Camino A (Entrar con Google)** para editar dentro de la página: crear el ID de cliente OAuth y probar el acceso real (`docs/google-oauth-panel.md`).

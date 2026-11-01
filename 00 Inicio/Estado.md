@@ -30,7 +30,7 @@ tags: [estado]
 - **Portada:** lista de productos con una sola tipografía para precios y filas alineadas.
 - **Check-in de servicios:** listos página web, menú simple, menú PRO y reservas PRO; el resto pendiente (ver [[checklist-servicios]]).
 - **QA:** 232 pasan, 0 fallan, 4 omitidas por fecha.
-- **Mercado Pago:** 6 de 21 enlaces con URL; falta crear el de la reserva simple a $27.990.
+- **Mercado Pago (01-nov):** 15 de 21 con enlace de pago directo en el repo (6 son de cotización previa, sin enlace a propósito); los 9 nuevos no estarán en el sitio hasta desplegar.
 
 ## Trabajo de la madrugada (31-oct)
 - **Demo completa de la barbería:** página del cliente, panel "Mi agenda" (resumen de mañana, Actualizar, "Editar mi página (planilla)") y "Mi planilla" simulada. Checklist de entrega real en `demo.config.js`, `docs/guia-planilla-dueno.md` y skill `crear-reserva-simple`.
@@ -55,5 +55,5 @@ Ver [[Servicios]] (resumen) o [[checklist-servicios]] (detalle).
 
 ## Riesgos abiertos
 - Supabase gratis se pausa sin uso: pasar a Pro antes del primer cliente.
-- Mercado Pago: 15 de 21 enlaces sin URL y sin enlace de la reserva simple a $27.990.
+- Mercado Pago: falta desplegar los 9 enlaces nuevos y confirmar en el navegador los montos de los 15.
 - Repositorio de GitHub público con fichas de clientes y precios: se deja así por ahora (decisión del 31-oct).

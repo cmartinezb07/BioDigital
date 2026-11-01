@@ -13,7 +13,7 @@ tags: [estado]
 - **Mantenimiento:** revisar `demo.alertas` (Supabase demos) de vez en cuando (hoy 0). Las 3 solicitudes de prueba del panel ya se borraron (1-nov); el formulario guardó bien de punta a punta.
 
 ## Qué existe
-- **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev, única dirección donde se publica). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios y textos en `web/propuesta/fuentes/comun.mjs`. **Los cambios del 31-oct (precio de la reserva simple, portada, demo de la barbería) aún no están publicados.**
+- **Sitio oficial:** https://biodigitales.cl (misma versión en biodigital-bgw.pages.dev, única dirección donde se publica). Se genera con `node web/propuesta/fuentes/generar.mjs 8`; precios y textos en `web/propuesta/fuentes/comun.mjs`. Publicado el 01-nov (despliegue `c3901e8f`), con los cambios del 31-oct y los 15 enlaces de Mercado Pago.
 - **Catálogo (31-oct):** seis productos de pago único; reserva simple $27.990 (planilla incluida, sin mensualidad); dos sistemas PRO con mensualidad de $20.000 (primer mes gratis); pack esencial $79.990 ($69.990 de lanzamiento); pack PRO $120.000. **Sin anticipo:** se paga al entregar y firmar el acta.
 - **Panel interno** (`web/panel/`, Supabase `biodigital-panel`) y **nube de demos** (Supabase `biodigital-demos`): [[conexion-nube]].
 - **Formularios del cliente:** página web, menú digital, reservas.
@@ -30,7 +30,7 @@ tags: [estado]
 - **Portada:** lista de productos con una sola tipografía para precios y filas alineadas.
 - **Check-in de servicios:** listos página web, menú simple, menú PRO y reservas PRO; el resto pendiente (ver [[checklist-servicios]]).
 - **QA:** 232 pasan, 0 fallan, 4 omitidas por fecha.
-- **Mercado Pago (01-nov):** 15 de 21 con enlace de pago directo en el repo (6 son de cotización previa, sin enlace a propósito); los 9 nuevos no estarán en el sitio hasta desplegar.
+- **Mercado Pago (01-nov):** 15 de 21 con enlace de pago directo, publicados en biodigitales.cl (6 son de cotización previa, sin enlace a propósito).
 
 ## Trabajo de la madrugada (31-oct)
 - **Demo completa de la barbería:** página del cliente, panel "Mi agenda" (resumen de mañana, Actualizar, "Editar mi página (planilla)") y "Mi planilla" simulada. Checklist de entrega real en `demo.config.js`, `docs/guia-planilla-dueno.md` y skill `crear-reserva-simple`.
@@ -55,5 +55,5 @@ Ver [[Servicios]] (resumen) o [[checklist-servicios]] (detalle).
 
 ## Riesgos abiertos
 - Supabase gratis se pausa sin uso: pasar a Pro antes del primer cliente.
-- Mercado Pago: falta desplegar los 9 enlaces nuevos y confirmar en el navegador los montos de los 15.
+- Mercado Pago: falta abrir los 15 enlaces en el navegador para confirmar el monto y el receptor.
 - Repositorio de GitHub público con fichas de clientes y precios: se deja así por ahora (decisión del 31-oct).

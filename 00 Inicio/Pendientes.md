@@ -50,7 +50,7 @@ Ordenados por impacto (orden fijado el 31-oct). Al terminar uno, tacharlo aquí 
    `node web/propuesta/fuentes/generar.mjs --publico 8`, `npx wrangler pages deploy --project-name=biodigital --branch=main --commit-dirty=true`, `node web/propuesta/fuentes/generar.mjs 8`.
 2. [ ] **Mercado Pago:** los 15 productos con pago directo ya tienen enlace y están publicados (01-nov); falta abrir los 15 enlaces en el navegador para confirmar el monto y el receptor. Los 6 de cotización previa no llevan enlace. IVA de los productos nuevos: sigue pendiente.
 3. [ ] **Base y privacidad:** pasar Supabase a Pro cuando haya primer cliente real (no antes); PIN privados por cliente (revisar límite de intentos y reactivar `biodigital-panel`, pausado); privacidad revisada con el negocio.
-5. [ ] **Primer cliente real** (aún no hay ninguno; posible: [[cliente-la-joya-del-sur]]). Confirmar con Godoy el plan de videos.
+5. [ ] **Primer cliente real** (aún no hay ninguno; posible: [[cliente-la-joya-del-sur]]). Plan de videos en `respaldo-skills/crear-videos-redes` (02-nov, con piloto de edición); faltan plazo, videos por semana y probar la grabación en un local real (Godoy).
 6. [ ] **Camino A (Entrar con Google)** para editar dentro de la página: crear el ID de cliente OAuth y probar el acceso real (`docs/google-oauth-panel.md`).
 
 ## Ya resuelto

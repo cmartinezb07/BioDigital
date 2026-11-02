@@ -8,7 +8,7 @@ tags: [pendientes]
 | Servicio | Precio | Estado |
 |---|---|---|
 | Página web | desde $49.990 ($39.990 lanzamiento) | ✅ lista, sin cliente aún |
-| Videos para redes | desde $9.990 | ✅ Godoy |
+| Videos para redes | desde $9.990 | ✅ Godoy · plan en la skill y piloto de edición (02-nov); falta grabar en un local real, plazo y videos por semana |
 | Menú digital simple (QR, planilla de Google) | desde $27.990 | ✅ |
 | Menú digital PRO | $99.990 o $79.990 + $20.000/mes | ✅ |
 | Registro fotográfico | $4.990 | ✅ |
